@@ -1,35 +1,122 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom'
+
+// pages
+import Home from './pages/Home'
+import Company from './pages/about/Company'
+import Team from './pages/about/Team'
+import Services from './pages/pricing/Services'
+import Insurance from './pages/pricing/Insurance'
+import Financing from './pages/pricing/Financing'
+import Iui from './pages/services/Iui'
+import Ivf from './pages/services/Ivf'
+import Hcm from './pages/news/Hcm'
+import Hanoi from './pages/news/Hanoi'
+import Danang from './pages/news/Danang'
+import Nhatrang from './pages/news/Nhatrang'
+
+// layouts
+import RootLayout from './pages/RootLayout'
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "about",
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: "company",
+            element: <Company />
+          },
+          {
+            path: "team",
+            element: <Team />,
+          },
+        ],
+      },
+      {
+        path: "pricing",
+        children: [
+          {
+            index: true,
+            element: <Home />
+          },
+          {
+            path: "services",
+            element: <Services />
+          },
+          {
+            path: "insurance",
+            element: <Insurance />
+          },
+          {
+            path: "financing",
+            element: <Financing />
+          },
+        ]
+      },
+      {
+        path: "services",
+        children: [
+          {
+            index: true,
+            element: <Home />
+          },
+          {
+            path: "iui",
+            element: <Iui />
+          },
+          {
+            path: "ivf",
+            element: <Ivf />
+          }
+        ]
+      },
+      {
+        path: "news",
+        children: [
+          {
+            index: true,
+            element: <Home />
+          }, 
+          {
+            path: "hcm",
+            element: <Hcm />
+          },
+          {
+            path: "hanoi",
+            element: <Hanoi />
+          },
+          {
+            path: "danang",
+            element: <Danang />
+          },
+          {
+            path: "nhatrang",
+            element: <Nhatrang />
+          }
+        ]
+      }
+    ],
+  },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1 className="text-red-500">Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <RouterProvider router={router} />
+  );
 }
 
 export default App
