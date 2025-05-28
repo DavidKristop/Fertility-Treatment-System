@@ -4,8 +4,8 @@ import InfoBar from '../components/InfoBar'
 
 export default function RootLayout() {
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900">
-            <header className="bg-white shadow-md">
+        <div className="min-h-screen text-gray-900">
+            <header className="shadow-md">
                 <InfoBar />
                 <NavBar />
             </header>
