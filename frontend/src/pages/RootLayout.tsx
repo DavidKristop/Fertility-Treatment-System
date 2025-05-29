@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import NavBar from '../components/NavBar'
 import InfoBar from '../components/InfoBar'
 
