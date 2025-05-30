@@ -1,5 +1,4 @@
-package com.group3.backend.controller; // Adjust this package to match your project structure
-
+package com.group3.backend.controller;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
