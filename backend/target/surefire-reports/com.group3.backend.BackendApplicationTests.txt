@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.group3.backend.BackendApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.871 s -- in com.group3.backend.BackendApplicationTests

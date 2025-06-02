@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom"; // Assuming you are using react-router-dom for NavLink
-import { Card, CardFooter } from "@/components/ui/card"; // Adjust path as per your shadcn setup
+import { NavLink } from "react-router-dom"; 
+import { Card, CardFooter } from "@/components/ui/card"; 
 
 export default function ServicesSection() {
   return (
