@@ -2,37 +2,52 @@ import { NavLink } from 'react-router-dom'
 import main_img from '../../assets/main.jpg'
 import icon_white from '../../assets/icon-white-text.png'
 import demo_hospital from '../../assets/demo-hospital.jpg'
-import { PhoneIcon } from '@heroicons/react/16/solid'
+import { PhoneIcon } from "@heroicons/react/24/solid";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function Banner() {
     return (
-        <div className="outer-container aspect-[1/1] lg:aspect-[5/2] relative overflow-hidden">
-            <img src={main_img} alt="Doctors" className="hidden lg:block absolute w-full h-auto z-0 object-cover" />
-            <img src={demo_hospital} alt="Doctors" className="absolute lg:hidden w-full h-auto z-0 object-cover" />
+        <div className="relative aspect-[4/3] md:aspect-[2/1] lg:aspect-[5/2] overflow-hidden">
+            <img
+                src={main_img}
+                alt="Medical professionals providing care"
+                className="hidden lg:block absolute inset-0 w-full h-full object-cover z-0"
+            />
+            <img
+                src={demo_hospital}
+                alt="Hospital environment backdrop"
+                className="lg:hidden absolute inset-0 w-full h-full object-cover z-0"
+            />
 
-            <div className="max-container">
-                <div className=" bg-blue-800/90 saturate-80 text-white w-[90%] justify-self-center lg:w-[25%] py-[3vw] lg:py-[1vw] my-[8vw] lg:my-[4vw] lg:justify-self-auto">
-                    <div className='mb-[4vw] lg:mb-[1vw]'>
-                        <img src={icon_white} alt="" className="w-[50%] mx-auto border-b-2 border-white" />
-                    </div>
-
-                    <div className="w-[80%] mx-auto">
-                        <p className="text-[4vw] lg:text-[1.1vw] text-center">
-                            Đồng hành cùng bạn vì một cuộc sống khỏe mạnh. “Khám nhanh – Điều trị chuẩn – Dịch vụ tận tâm”.
+            <div className="relative z-10 h-full container mx-auto flex flex-col justify-center items-center lg:items-start py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+                <Card className="bg-blue-800/90 text-white saturate-80 w-11/12 max-w-sm sm:max-w-md lg:w-auto lg:max-w-[320px]">
+                    <CardContent className="flex flex-col items-center text-center gap-4 sm:gap-5">
+                        <img
+                            src={icon_white}
+                            alt="UCARE Logo"
+                            className="w-3/5 max-w-[180px] border-b border-white pb-2 sm:pb-3"
+                        />
+                        <p className="text-sm sm:text-base leading-relaxed">
+                            Đồng hành cùng bạn vì một cuộc sống khỏe mạnh. “Khám nhanh – Điều trị
+                            chuẩn – Dịch vụ tận tâm”.
                         </p>
-                    </div>
+                        <Button
+                            variant="outline"
+                            className="w-4/5 max-w-[200px] rounded-full uppercase font-semibold border-white text-black hover:bg-white hover:text-blue-800"
+                            asChild
+                        >
+                            <NavLink to="#">Lên lịch</NavLink>
+                        </Button>
+                    </CardContent>
+                </Card>
 
-                    <NavLink to='#' className="block w-[50%] my-[3vw] lg:my-[1vw] mx-auto border-2 text-center text-white text-[4vw] lg:text-[1.2vw] font-semibold uppercase hover:bg-white hover:text-blue-800 hover:saturate-70  rounded-full">
-                        Lên lịch
-                    </NavLink>
-                </div>
-
-                <span className="hidden lg:flex justify-center items-center ml-auto py-[0.5vw] w-[22%] h-[8%] rounded-full bg-blue-800/90 filter saturate-80 text-white">
-                    <PhoneIcon className='block mt-[1.5%] mr-[5%] w-[12%] h-auto' />
-                    <p className='text-white text-[2vw] font-bold uppercase'>
+                <div className="hidden lg:flex items-center gap-2 bg-blue-800/90 text-white saturate-80 px-4 py-3 rounded-full absolute bottom-6 right-6 sm:bottom-8 sm:right-8 md:bottom-10 md:right-10">
+                    <PhoneIcon className="h-5 w-5 flex-shrink-0" />
+                    <p className="font-semibold text-base md:text-lg whitespace-nowrap">
                         0903 123 1234
                     </p>
-                </span>
+                </div>
             </div>
         </div>
     )
