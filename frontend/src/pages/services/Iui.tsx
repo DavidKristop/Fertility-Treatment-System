@@ -33,7 +33,7 @@ export default function Iui() {
           </div>
 
           {/* Image */}
-          <div className="order-1 lg:order-2">
+          <div className="order-1 lg:order-2 justify-self-end">
             <div className="lg:max-w-[450px]">
               <img
                 src={demo_hospital}
@@ -69,7 +69,7 @@ export default function Iui() {
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-1">Less Invasive</h3>
                     <p className="text-muted-foreground">Simpler procedure compared to IVF with minimal discomfort</p>
@@ -77,7 +77,7 @@ export default function Iui() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-1">Cost-Effective</h3>
                     <p className="text-muted-foreground">
@@ -87,7 +87,7 @@ export default function Iui() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold mb-1">Natural Process</h3>
                     <p className="text-muted-foreground">Fertilization occurs naturally within the body</p>
@@ -137,7 +137,7 @@ export default function Iui() {
                 </div>
               </div>
             </div>
-            <div className="lg:max-w-[450px]">
+            <div className="lg:max-w-[450px] justify-self-end">
               <img
                 src={demo_hospital}
                 alt="Doctor consultation"
@@ -157,7 +157,7 @@ export default function Iui() {
             </div>
             <div className="order-1 lg:order-2">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
                   2
                 </div>
                 <h3 className="text-2xl font-bold">Ovulation Monitoring</h3>
@@ -168,15 +168,15 @@ export default function Iui() {
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-green-600" />
+                  <Calendar className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Regular monitoring appointments</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-green-600" />
+                  <Calendar className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Hormone level tracking</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-green-600" />
+                  <Calendar className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Ovulation prediction</span>
                 </div>
               </div>
@@ -187,7 +187,7 @@ export default function Iui() {
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
                   3
                 </div>
                 <h3 className="text-2xl font-bold">Sperm Preparation</h3>
@@ -198,20 +198,20 @@ export default function Iui() {
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <TestTube className="w-4 h-4 text-purple-600" />
+                  <TestTube className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Sperm washing and concentration</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <TestTube className="w-4 h-4 text-purple-600" />
+                  <TestTube className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Quality assessment</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <TestTube className="w-4 h-4 text-purple-600" />
+                  <TestTube className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Preparation for insemination</span>
                 </div>
               </div>
             </div>
-            <div className="lg:max-w-[450px]">
+            <div className="lg:max-w-[450px] justify-self-end">
               <img
                 src={demo_hospital}
                 alt="Laboratory sperm preparation"
@@ -231,7 +231,7 @@ export default function Iui() {
             </div>
             <div className="order-1 lg:order-2">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
                   4
                 </div>
                 <h3 className="text-2xl font-bold">IUI Procedure & Follow-up</h3>
@@ -242,15 +242,15 @@ export default function Iui() {
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-pink-600" />
+                  <Clock className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">5-10 minute procedure</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-pink-600" />
+                  <Clock className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Pregnancy test in 2 weeks</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-pink-600" />
+                  <Clock className="w-4 h-4 text-blue-600" />
                   <span className="text-sm">Ongoing support and monitoring</span>
                 </div>
               </div>
