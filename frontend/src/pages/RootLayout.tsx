@@ -1,13 +1,14 @@
 import { Outlet } from 'react-router-dom'
-import NavBar from '../components/NavBar'
-import InfoBar from '../components/InfoBar'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
+import Navbar from '@/components/layout/Navbar'
 
 export default function RootLayout() {
     return (
         <div className="min-h-screen text-gray-900">
             <header className="shadow-md">
-                <InfoBar />
-                <NavBar />
+                <Header />
+                <Navbar />
             </header>
 
             <main>
@@ -15,7 +16,7 @@ export default function RootLayout() {
             </main>
 
             <footer>
-
+                <Footer />
             </footer>
         </div>
     )
