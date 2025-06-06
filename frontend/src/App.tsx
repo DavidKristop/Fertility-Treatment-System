@@ -16,6 +16,8 @@ import Hcm from './pages/news/Hcm'
 import Hanoi from './pages/news/Hanoi'
 import Danang from './pages/news/Danang'
 import Nhatrang from './pages/news/Nhatrang'
+import LoginPage from './pages/authorization/LoginPage'
+import RegisterPage from './pages/authorization/RegisterPage'
 
 // layouts
 import RootLayout from './pages/RootLayout'
@@ -108,6 +110,12 @@ const router = createBrowserRouter([
             element: <Nhatrang />
           }
         ]
+      },
+      { path: "authorization/login", 
+        element: <LoginPage /> 
+      },
+      { path: "authorization/register", 
+        element: <RegisterPage /> 
       }
     ],
   },

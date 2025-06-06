@@ -169,7 +169,7 @@ export default function NavBar() {
                     </NavigationMenuList>
                 </NavigationMenu>
 
-                <NavLink to="/authorization" className="hidden lg:flex flex-shrink-0 ml-auto">
+                <NavLink to="/authorization/login" className="hidden lg:flex flex-shrink-0 ml-auto">
                     <Button
                         variant="outline"
                         className="text-[#2a3c8e] border-[#2a3c8e] border-2 rounded-full px-3 py-1.5 font-semibold text-xs shadow-sm 
@@ -223,7 +223,7 @@ export default function NavBar() {
                                     )}
                                 </div>
                             ))}
-                            <NavLink to="/authorization" onClick={toggleMenu} className="w-full mt-4">
+                            <NavLink to="/authorization/login" onClick={toggleMenu} className="w-full mt-4">
                                 <Button
                                     variant="outline"
                                     className="w-full border-white border-2 rounded-full px-4 py-1.5 font-semibold text-base text-black
