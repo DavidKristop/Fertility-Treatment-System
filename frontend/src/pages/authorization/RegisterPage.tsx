@@ -34,7 +34,6 @@ export default function RegisterPage() {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="0903 123 1234"
                     className="mt-1 w-full bg-gray-100"
                   />
                 </div>
@@ -47,7 +46,6 @@ export default function RegisterPage() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="••••••••"
                     className="mt-1 w-full bg-gray-100"
                   />
                 </div>
@@ -60,7 +58,6 @@ export default function RegisterPage() {
                   <Input
                     id="confirmPassword"
                     type="password"
-                    placeholder="••••••••"
                     className="mt-1 w-full bg-gray-100"
                   />
                 </div>
