@@ -1,122 +1,35 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom'
+import Header from "@/components/layout/Header"
+import Navbar from "@/components/layout/Navbar"
+import Hero from "@/components/layout/Hero"
+import Services from "@/components/layout/Services"
+import Journey from "@/components/layout/Journey"
+import Testimonial from "@/components/layout/Testimonial"
+import CallbackForm from "@/components/layout/CallbackForm"
+import ExpertSlider from "@/components/layout/ExpertSlider"
+import Quotes from "./components/layout/Quotes"
+import FollowGallery from "./components/layout/FollowGallery"
+import Footer from "./components/layout/Footer"
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-// pages
-import Home from './pages/Home'
-import Company from './pages/about/Company'
-import Team from './pages/about/Team'
-import Services from './pages/pricing/Services'
-import Insurance from './pages/pricing/Insurance'
-import Financing from './pages/pricing/Financing'
-import Iui from './pages/services/Iui'
-import Ivf from './pages/services/Ivf'
-import Hcm from './pages/news/Hcm'
-import Hanoi from './pages/news/Hanoi'
-import Danang from './pages/news/Danang'
-import Nhatrang from './pages/news/Nhatrang'
-
-// layouts
-import RootLayout from './pages/RootLayout'
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "about",
-        children: [
-          {
-            index: true,
-            element: <Home />,
-          },
-          {
-            path: "company",
-            element: <Company />
-          },
-          {
-            path: "team",
-            element: <Team />,
-          },
-        ],
-      },
-      {
-        path: "pricing",
-        children: [
-          {
-            index: true,
-            element: <Home />
-          },
-          {
-            path: "services",
-            element: <Services />
-          },
-          {
-            path: "insurance",
-            element: <Insurance />
-          },
-          {
-            path: "financing",
-            element: <Financing />
-          },
-        ]
-      },
-      {
-        path: "services",
-        children: [
-          {
-            index: true,
-            element: <Home />
-          },
-          {
-            path: "iui",
-            element: <Iui />
-          },
-          {
-            path: "ivf",
-            element: <Ivf />
-          }
-        ]
-      },
-      {
-        path: "news",
-        children: [
-          {
-            index: true,
-            element: <Home />
-          }, 
-          {
-            path: "hcm",
-            element: <Hcm />
-          },
-          {
-            path: "hanoi",
-            element: <Hanoi />
-          },
-          {
-            path: "danang",
-            element: <Danang />
-          },
-          {
-            path: "nhatrang",
-            element: <Nhatrang />
-          }
-        ]
-      }
-    ],
-  },
-]);
-
-function App() {
+export default function App() {
   return (
-    <RouterProvider router={router} />
-  );
+    <div className="flex">
+      <div className="flex flex-col flex-1">
+        <div className="sticky top-0 z-50 bg-white shadow">
+          <Header />
+          <Navbar />
+        </div>
+        <Hero />
+        <Services />
+        <Journey />
+        <Testimonial />
+        <CallbackForm />
+        <ExpertSlider />
+        <Quotes />
+        <FollowGallery />
+        <Footer />
+      </div>
+    </div>
+  )
 }
-
-export default App
