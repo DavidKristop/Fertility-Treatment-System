@@ -58,9 +58,7 @@ export default function App() {
             path="/authorization/register"
             element={<RegisterPage />}
           />
-
-          {/* (Optional) catch‐all → redirect back to “/” if no route matches */}
-          {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+          
         </Routes>
       </div>
     </div>

@@ -1,13 +1,17 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
 import AuthCard from "@/components/auth/AuthCard";
 import AuthHeader from "@/components/auth/AuthHeader";
-import AuthFormFields from "@/components/auth/AuthFormFields";
-import SocialLoginButton from "@/components/auth/SocialLoginButton";
+import RegisterForm from "@/components/auth/RegisterForm";
+import SocialLoginButton from "@/components/auth/GoogleButton";
 
 export default function RegisterPage() {
+  const handleRegister = (values: { phone: string; password: string; confirmPassword: string }) => {
+    console.log('Register values:', values);
+    // Add your registration logic here
+  };
+
   return (
     <AuthCard
       submitButtonText="Đăng kí"
@@ -23,26 +27,16 @@ export default function RegisterPage() {
       <Card className="shadow-none bg-transparent">
         <AuthHeader title="ĐĂNG KÍ" />
         <CardContent className="pt-2">
-          <form className="space-y-6">
-            {/* form fields */}
-            <AuthFormFields mode="register" />
-
-            {/* Submit button */}
-            <div>
-              <Button type="submit" className="w-full bg-gray-300 hover:bg-gray-400 text-black">
-                Đăng kí
-              </Button>
-            </div>
-
-            {/* “Hoặc đăng kí với” text */}
+          <div className="space-y-6">
+            <RegisterForm onSubmit={handleRegister} />
+            <Button type="submit" form="register-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black">
+              Đăng kí
+            </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>
-
-            {/* Google “register” button */}
             <div className="flex justify-center">
               <SocialLoginButton text="Đăng kí Google" />
             </div>
-            {/* bottomLink is passed via AuthCard’s prop */}
-          </form>
+          </div>
         </CardContent>
       </Card>
     </AuthCard>
