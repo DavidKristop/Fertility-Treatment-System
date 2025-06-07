@@ -6,7 +6,7 @@ import img5 from "@/assets/family5.png"
 
 export default function FollowGallery() {
   return (
-    <section className="py-20 px-4 bg-white">
+    <section className="py-10 px-15 bg-white">
       <h2 className="text-2xl sm:text-3xl text-[#004c77] font-semibold text-center mb-12 relative w-fit mx-auto after:block after:mt-2 after:h-[2px] after:bg-[#004c77] after:w-[80px]">
         Theo dõi @Ucare
       </h2>
