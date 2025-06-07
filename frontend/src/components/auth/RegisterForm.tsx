@@ -1,7 +1,6 @@
-import { useFormik } from 'formik';
+import { type FormikProps } from 'formik';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { registerSchema } from '@/lib/validations/auth';
 
 interface RegisterFormValues {
   phone: string;
@@ -10,20 +9,10 @@ interface RegisterFormValues {
 }
 
 interface RegisterFormProps {
-  onSubmit: (values: RegisterFormValues) => void;
+  formik: FormikProps<RegisterFormValues>;
 }
 
-export default function RegisterForm({ onSubmit }: RegisterFormProps) {
-  const formik = useFormik<RegisterFormValues>({
-    initialValues: {
-      phone: '',
-      password: '',
-      confirmPassword: '',
-    },
-    validationSchema: registerSchema,
-    onSubmit,
-  });
-
+export default function RegisterForm({ formik }: RegisterFormProps) {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-4">

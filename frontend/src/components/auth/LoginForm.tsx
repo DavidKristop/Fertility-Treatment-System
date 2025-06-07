@@ -1,7 +1,6 @@
-import { useFormik } from 'formik';
+import { type FormikProps } from 'formik';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { loginSchema } from '@/lib/validations/auth';
 
 interface LoginFormValues {
   phone: string;
@@ -9,19 +8,10 @@ interface LoginFormValues {
 }
 
 interface LoginFormProps {
-  onSubmit: (values: LoginFormValues) => void;
+  formik: FormikProps<LoginFormValues>;
 }
 
-export default function LoginForm({ onSubmit }: LoginFormProps) {
-  const formik = useFormik<LoginFormValues>({
-    initialValues: {
-      phone: '',
-      password: '',
-    },
-    validationSchema: loginSchema,
-    onSubmit,
-  });
-
+export default function LoginForm({ formik }: LoginFormProps) {
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-4">
       <div>
