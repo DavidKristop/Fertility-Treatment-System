@@ -3,6 +3,7 @@ import { Menu } from "lucide-react"
 import logo from "@/assets/ucarelogo.png"
 import { Dropdown } from "@/components/ui/dropdown"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { Link } from "react-router-dom"
 
 
 export default function Navbar() {
@@ -12,12 +13,22 @@ export default function Navbar() {
   return (
     <header className="flex flex-wrap items-center justify-between px-6 py-0 bg-white border-b">
       <div className="flex items-center gap-2 ml-37">
-        <img src={logo} alt="UCare" className="h-15" />
-        <span className="text-[40px] font-bold text-[#417a9b]">UCARE</span>
+        <Link to="/">
+          <img src={logo} alt="UCare" className="h-15 cursor-pointer" />
+        </Link>
+        {/* If you want the “UCare” text to also be clickable: */}
+        <Link to="/">
+          <span className="text-[40px] font-bold text-[#417a9b] cursor-pointer">
+            UCARE
+          </span>
+        </Link>
       </div>
 
+
       <nav className="hidden md:flex items-center text-[#004c77] ml-40">
-        <a href="#" className={navItemClass}>Trang chủ</a>
+        <Link to="/" className={navItemClass}>
+          Trang Chủ
+        </Link>
 
         <Dropdown label="Giới thiệu">
             <DropdownMenuItem>Về UCare</DropdownMenuItem>
@@ -43,12 +54,14 @@ export default function Navbar() {
         </nav>
 
       <div className="flex items-center gap-4 mr-20">
-        <Button
+        <Link to="/authorization/login">
+          <Button
             variant="outline"
             className="text-base font-semibold px-6 py-2 border-[#004c77] text-[#004c77] hover:bg-[#004c77] hover:text-white transition-colors"
-            >
-            Đăng nhập&nbsp;|&nbsp;Đăng ký
-            </Button>
+          >
+          Đăng nhập&nbsp;|&nbsp;Đăng ký
+          </Button>
+        </Link>
       </div>
 
       {/* Mobile menu icon (hiển thị trên mobile) */}
