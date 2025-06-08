@@ -1,12 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthCard from "@/components/auth/AuthCard";
 import AuthHeader from "@/components/auth/AuthHeader";
 import LoginForm from "@/components/auth/LoginForm";
-import SocialLoginButton from "@/components/auth/GoogleButton";
+import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormik } from "formik";
 import { loginSchema } from "@/lib/validations/auth";
+import { auth } from '@/api';
+import { type LoginRequest } from '@/api/types';
 
 interface LoginFormValues {
   phone: string;
@@ -14,9 +16,20 @@ interface LoginFormValues {
 }
 
 export default function LoginPage() {
-  const handleLogin = (values: LoginFormValues) => {
-    console.log('Login values:', values);
-    // Add your login logic here
+  const navigate = useNavigate();
+
+  const handleLogin = async (values: LoginFormValues) => {
+    try {
+      const loginData: LoginRequest = {
+        phone: values.phone,
+        password: values.password
+      };
+      const response = await auth.login(loginData);
+      localStorage.setItem('token', response.token);
+      navigate('/home');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   const formik = useFormik<LoginFormValues>({
@@ -46,9 +59,7 @@ export default function LoginPage() {
               Đăng nhập
             </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng nhập với</div>
-            <div className="flex justify-center">
-              <SocialLoginButton text="Đăng nhập Google" />
-            </div>
+            <GoogleAuth text="Đăng nhập Google" mode="login" />
           </div>
         </CardContent>
       </Card>

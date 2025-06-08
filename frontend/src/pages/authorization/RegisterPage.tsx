@@ -1,12 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthCard from "@/components/auth/AuthCard";
 import AuthHeader from "@/components/auth/AuthHeader";
 import RegisterForm from "@/components/auth/RegisterForm";
-import SocialLoginButton from "@/components/auth/GoogleButton";
+import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormik } from "formik";
 import { registerSchema } from "@/lib/validations/auth";
+import { auth } from '@/api';
+import { type RegisterRequest } from '@/api/types';
 
 interface RegisterFormValues {
   phone: string;
@@ -15,9 +17,21 @@ interface RegisterFormValues {
 }
 
 export default function RegisterPage() {
-  const handleRegister = (values: RegisterFormValues) => {
-    console.log('Register values:', values);
-    // Add your registration logic here
+  const navigate = useNavigate();
+
+  const handleRegister = async (values: RegisterFormValues) => {
+    try {
+      const registerData: RegisterRequest = {
+        phone: values.phone,
+        password: values.password,
+        confirmPassword: values.confirmPassword
+      };
+      const response = await auth.register(registerData);
+      localStorage.setItem('token', response.token);
+      navigate('/home');
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
   };
 
   const formik = useFormik<RegisterFormValues>({
@@ -46,14 +60,12 @@ export default function RegisterPage() {
         <AuthHeader title="ĐĂNG KÍ" />
         <CardContent className="pt-2">
           <div className="space-y-6">
-            <RegisterForm formik={ formik } />
+            <RegisterForm formik={formik} />
             <Button onClick={()=>formik.handleSubmit()} type="submit" form="register-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black">
               Đăng kí
             </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>
-            <div className="flex justify-center">
-              <SocialLoginButton text="Đăng kí Google" />
-            </div>
+            <GoogleAuth text="Đăng kí Google" mode="register" />
           </div>
         </CardContent>
       </Card>
