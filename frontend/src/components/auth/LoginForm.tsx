@@ -1,11 +1,8 @@
 import { type FormikProps } from 'formik';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-
-interface LoginFormValues {
-  phone: string;
-  password: string;
-}
+import type { LoginFormValues } from '@/lib/validations/auth';
+import { Link } from "react-router-dom";
 
 interface LoginFormProps {
   formik: FormikProps<LoginFormValues>;
@@ -32,9 +29,17 @@ export default function LoginForm({ formik }: LoginFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Mật khẩu
-        </Label>
+        <div className="flex justify-between items-center">
+          <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+            Mật khẩu
+          </Label>
+          <Link
+            to="/authorization/forgot-password"
+            className="text-sm text-red-600 hover:underline"
+          >
+            Quên mật khẩu?
+          </Link>
+        </div>
         <Input
           id="password"
           type="password"

@@ -6,15 +6,10 @@ import AuthHeader from "@/components/auth/AuthHeader";
 import RegisterForm from "@/components/auth/RegisterForm";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormik } from "formik";
-import { registerSchema } from "@/lib/validations/auth";
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
 import { auth } from '@/api';
 import { type RegisterRequest } from '@/api/types';
-
-interface RegisterFormValues {
-  phone: string;
-  password: string;
-  confirmPassword: string;
-}
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -40,7 +35,8 @@ export default function RegisterPage() {
         password: '',
         confirmPassword: '',
       },
-      validationSchema: registerSchema,
+      validationSchema: toFormikValidationSchema(registerSchema),
+      validateOnBlur: true,
       onSubmit: handleRegister,
     });
 

@@ -16,6 +16,7 @@ import "slick-carousel/slick/slick-theme.css"
 
 import LoginPage from "./pages/authorization/LoginPage"
 import RegisterPage from "./pages/authorization/RegisterPage"
+import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage";
 
 export default function App() {
   return (
@@ -59,6 +60,10 @@ export default function App() {
             element={<RegisterPage />}
           />
           
+          <Route
+            path="/authorization/forgot-password"
+            element={<ForgotPasswordPage />}
+          />
         </Routes>
       </div>
     </div>

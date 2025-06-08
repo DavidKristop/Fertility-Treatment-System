@@ -6,14 +6,10 @@ import AuthHeader from "@/components/auth/AuthHeader";
 import LoginForm from "@/components/auth/LoginForm";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormik } from "formik";
-import { loginSchema } from "@/lib/validations/auth";
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { loginSchema, type LoginFormValues } from "@/lib/validations/auth";
 import { auth } from '@/api';
 import { type LoginRequest } from '@/api/types';
-
-interface LoginFormValues {
-  phone: string;
-  password: string;
-}
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,7 +33,8 @@ export default function LoginPage() {
       phone: '',
       password: '',
     },
-    validationSchema: loginSchema,
+    validationSchema: toFormikValidationSchema(loginSchema),
+    validateOnBlur: true,
     onSubmit: handleLogin,
   });
 

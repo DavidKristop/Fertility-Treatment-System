@@ -1,12 +1,7 @@
 import { type FormikProps } from 'formik';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-
-interface RegisterFormValues {
-  phone: string;
-  password: string;
-  confirmPassword: string;
-}
+import type { RegisterFormValues } from '@/lib/validations/auth';
 
 interface RegisterFormProps {
   formik: FormikProps<RegisterFormValues>;
