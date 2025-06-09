@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // pages
 import Home from './pages/Home'
@@ -12,13 +9,16 @@ import Insurance from './pages/pricing/Insurance'
 import Financing from './pages/pricing/Financing'
 import Iui from './pages/services/iui'
 import Ivf from './pages/services/ivf'
+import DoctorListPage from "./pages/doctorList/DoctorListPage";
+import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage";
 import LoginPage from './pages/authorization/LoginPage'
 import RegisterPage from './pages/authorization/RegisterPage'
 import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
+
 // layouts
-import RootLayout from './pages/RootLayout'
-import BlogPage from './pages/blog/page'
-import BlogPostPage from './pages/blog/[id]/page'
+import RootLayout from "./pages/RootLayout";
+import BlogPage from "./pages/blog/page";
+import BlogPostPage from "./pages/blog/[id]/page";
 
 const router = createBrowserRouter([
   {
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
           },
           {
             path: "company",
-            element: <Company />
+            element: <Company />,
           },
           {
             path: "team",
@@ -48,49 +48,57 @@ const router = createBrowserRouter([
       },
       {
         path: "blog",
-        element: <BlogPage/>,
+        element: <BlogPage />,
       },
       {
         path: "blog/:id",
-        element: <BlogPostPage/>
+        element: <BlogPostPage />,
       },
       {
         path: "pricing",
         children: [
           {
             index: true,
-            element: <Home />
+            element: <Home />,
           },
           {
             path: "services",
-            element: <Services />
+            element: <Services />,
           },
           {
             path: "insurance",
-            element: <Insurance />
+            element: <Insurance />,
           },
           {
             path: "financing",
-            element: <Financing />
+            element: <Financing />,
           },
-        ]
+        ],
       },
       {
         path: "services",
         children: [
           {
             index: true,
-            element: <Home />
+            element: <Home />,
           },
           {
             path: "iui",
-            element: <Iui />
+            element: <Iui />,
           },
           {
             path: "ivf",
-            element: <Ivf />
-          }
-        ]
+            element: <Ivf />,
+          },
+        ],
+      },
+      {
+        path: "doctors",
+        element: <DoctorListPage />,
+      },
+      {
+        path: "doctors/:id",
+        element: <DoctorDetailPage />,
       },
       {
         path: "authorization",
@@ -114,9 +122,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
