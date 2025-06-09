@@ -12,6 +12,9 @@ import Insurance from './pages/pricing/Insurance'
 import Financing from './pages/pricing/Financing'
 import Iui from './pages/services/iui'
 import Ivf from './pages/services/ivf'
+import LoginPage from './pages/authorization/LoginPage'
+import RegisterPage from './pages/authorization/RegisterPage'
+import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
 // layouts
 import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
@@ -86,6 +89,23 @@ const router = createBrowserRouter([
           {
             path: "ivf",
             element: <Ivf />
+          }
+        ]
+      },
+      {
+        path: "authorization",
+        children: [
+          {
+            path: "login",
+            element: <LoginPage />
+          },
+          {
+            path: "register",
+            element: <RegisterPage />
+          },
+          {
+            path: "forgot-password",
+            element: <ForgotPasswordPage />
           }
         ]
       },

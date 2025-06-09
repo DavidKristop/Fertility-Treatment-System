@@ -2,7 +2,7 @@ import heroImage from "@/assets/hero.jpg"
 import logo from "@/assets/logo.png"
 import { Button } from "@/components/ui/button"
 import { Phone } from "lucide-react"
-
+import { Link } from "react-router-dom"
 
 
 export default function Hero() {
@@ -25,11 +25,14 @@ export default function Hero() {
             </span>
 
             <div className="mt-4 flex justify-center">
+              <Link to="/authorization/login">
                 <Button
                     className="text-[#004c77] bg-white text-2xl font-bold px-12 py-8 rounded-full uppercase hover:bg-[#004c77] hover:text-white"
                     >
                     Lên lịch
                 </Button>
+              </Link>
+                
             </div>
 
         </div>
