@@ -1,35 +1,102 @@
-import Header from "@/components/layout/Header"
-import Navbar from "@/components/layout/Navbar"
-import Hero from "@/components/layout/Hero"
-import Services from "@/components/layout/Services"
-import Journey from "@/components/layout/Journey"
-import Testimonial from "@/components/layout/Testimonial"
-import CallbackForm from "@/components/layout/CallbackForm"
-import ExpertSlider from "@/components/layout/ExpertSlider"
-import Quotes from "./components/layout/Quotes"
-import FollowGallery from "./components/layout/FollowGallery"
-import Footer from "./components/layout/Footer"
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom'
 
-export default function App() {
+// pages
+import Home from './pages/Home'
+import Company from './pages/about/Company'
+import Team from './pages/about/Team'
+import Services from './pages/pricing/Services'
+import Insurance from './pages/pricing/Insurance'
+import Financing from './pages/pricing/Financing'
+import Iui from './pages/services/iui'
+import Ivf from './pages/services/ivf'
+// layouts
+import RootLayout from './pages/RootLayout'
+import BlogPage from './pages/blog/page'
+import BlogPostPage from './pages/blog/[id]/page'
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "about",
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: "company",
+            element: <Company />
+          },
+          {
+            path: "team",
+            element: <Team />,
+          },
+        ],
+      },
+      {
+        path: "blog",
+        element: <BlogPage/>,
+      },
+      {
+        path: "blog/:id",
+        element: <BlogPostPage/>
+      },
+      {
+        path: "pricing",
+        children: [
+          {
+            index: true,
+            element: <Home />
+          },
+          {
+            path: "services",
+            element: <Services />
+          },
+          {
+            path: "insurance",
+            element: <Insurance />
+          },
+          {
+            path: "financing",
+            element: <Financing />
+          },
+        ]
+      },
+      {
+        path: "services",
+        children: [
+          {
+            index: true,
+            element: <Home />
+          },
+          {
+            path: "iui",
+            element: <Iui />
+          },
+          {
+            path: "ivf",
+            element: <Ivf />
+          }
+        ]
+      },
+    ],
+  },
+]);
+
+function App() {
   return (
-    <div className="flex">
-      <div className="flex flex-col flex-1">
-        <div className="sticky top-0 z-50 bg-white shadow">
-          <Header />
-          <Navbar />
-        </div>
-        <Hero />
-        <Services />
-        <Journey />
-        <Testimonial />
-        <CallbackForm />
-        <ExpertSlider />
-        <Quotes />
-        <FollowGallery />
-        <Footer />
-      </div>
-    </div>
-  )
+    <RouterProvider router={router} />
+  );
 }
+
+export default App
