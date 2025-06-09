@@ -30,7 +30,7 @@ export default function App() {
       {/* ── 2) Routes swap out only the “page content” below the Navbar ───────── */}
       <div className="flex-grow">
         <Routes>
-          {/* ──── a) Landing page at “/” ───────────────────────────────────── */}
+          {/* ──── a) Landing page at “/” ──────*/}
           <Route
             path="/"
             element={
@@ -48,13 +48,13 @@ export default function App() {
             }
           />
 
-          {/* ──── b) Login page: still sees Header+Navbar above it ───────────── */}
+          {/* ──── b) Login page───────────── */}
           <Route
             path="/authorization/login"
             element={<LoginPage />}
           />
 
-          {/* ──── c) Register page: still sees Header+Navbar above it ────────── */}
+          {/* ──── c) Register page────────── */}
           <Route
             path="/authorization/register"
             element={<RegisterPage />}
