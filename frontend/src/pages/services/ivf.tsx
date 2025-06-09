@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Phone, CheckCircle, Stethoscope, Calendar, TestTube, Microscope, Heart, Clock } from "lucide-react";
-import demo_hospital from "src/assets/demo-hospital.jpg";
+import demo_hospital from "src/assets/doctor1.jpg";
 
 export default function Ivf() {
   return (
