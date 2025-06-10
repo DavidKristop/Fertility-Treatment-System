@@ -27,12 +27,9 @@ const Pagination: React.FC<Props> = ({
     </div>
   );
 };
-<<<<<<< HEAD
-=======
 
 export default Pagination;
 // This Pagination component can be used in the DoctorProfiles component to handle pagination of doctor profiles.
 // You can import and use it like this:
 //  import Pagination from "../components/Pagination";
 //
->>>>>>> 2c88d1ae3a567f992dd9ac4eecb414d8a77323bd
