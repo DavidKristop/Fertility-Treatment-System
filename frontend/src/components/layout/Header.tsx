@@ -5,7 +5,7 @@ import { MapPin } from "lucide-react"
 
 export default function Header() {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-2 bg-[#004c77] text-white">
+    <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-2 bg-[#004c77] text-white hidden md:flex">
       
       {/* Tìm kiếm */}
       <div className="relative w-full sm:w-64 ml-35">

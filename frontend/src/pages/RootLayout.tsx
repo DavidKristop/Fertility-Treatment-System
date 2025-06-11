@@ -1,23 +1,23 @@
-import { Outlet } from 'react-router-dom'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import Navbar from '@/components/layout/Navbar'
+import { Outlet } from 'react-router-dom';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import Navbar from '@/components/layout/Navbar';
 
 export default function RootLayout() {
-    return (
-        <div className="min-h-screen text-gray-900">
-            <header className="shadow-md">
-                <Header />
-                <Navbar />
-            </header>
+  return (
+    <div className="min-h-screen text-gray-900 flex flex-col">
+      <header className="sticky top-0 z-50 shadow-md bg-white">
+        <Header />
+        <Navbar />
+      </header>
 
-            <main>
-                <Outlet />
-            </main>
+      <main className="flex-grow">
+        <Outlet />
+      </main>
 
-            <footer>
-                <Footer />
-            </footer>
-        </div>
-    )
+      <footer>
+        <Footer />
+      </footer>
+    </div>
+  );
 }
