@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import NotFound from "@/pages/not-found/not-found"
 import { Separator } from "@radix-ui/react-dropdown-menu"
-import { ArrowLeft, Calendar, Clock, Facebook, Linkedin, Share2, Twitter } from "lucide-react"
+import { ArrowLeft, Calendar, Facebook, Linkedin, Share2, Twitter } from "lucide-react"
 import { Link, useParams } from "react-router-dom"
 import placeholder_img from "src/assets/placeholder.png"
 

@@ -6,7 +6,7 @@ interface GoogleButtonProps {
   mode: 'login' | 'register';
 }
 
-export default function GoogleAuth({ text, mode }: GoogleButtonProps) {
+export default function GoogleAuth({ mode }: GoogleButtonProps) {
   const navigate = useNavigate();
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
