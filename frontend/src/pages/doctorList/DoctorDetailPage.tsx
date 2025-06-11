@@ -3,9 +3,6 @@ import doctorImg from "../../assets/doctor1.jpg";
 export default function DoctorDetail() {
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header + Navbar */}
-
-
       {/* Nội dung chính */}
       <div className="flex items-center justify-center p-4">
         <div className="mb-10 w-full max-w-4xl rounded-2xl bg-white p-10 text-gray-900 shadow-xl">

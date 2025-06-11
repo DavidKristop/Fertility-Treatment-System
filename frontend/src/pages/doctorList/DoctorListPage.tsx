@@ -94,7 +94,6 @@ export default function DoctorListPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-
       <section
         id="our-doctors"
         className="py-20"
