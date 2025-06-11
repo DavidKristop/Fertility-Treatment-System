@@ -3,7 +3,7 @@ import NotFound from "@/pages/not-found/not-found"
 import { Separator } from "@radix-ui/react-dropdown-menu"
 import { ArrowLeft, Calendar, Clock, Facebook, Linkedin, Share2, Twitter } from "lucide-react"
 import { Link, useParams } from "react-router-dom"
-import placeholder_img from "src/assets/placeholder.png"
+import placeholder_img from "@/assets/placeholder.png"
 
 // Mock blog data - same as in blog/page.tsx
 const BLOG_POSTS = Array.from({ length: 23 }, (_, i) => ({

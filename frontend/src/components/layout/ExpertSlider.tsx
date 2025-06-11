@@ -1,8 +1,9 @@
-import Slider from "react-slick"
-import Doctor1 from "@/assets/doctor1.jpg"
-import Doctor2 from "@/assets/doctor2.jpg"
-import Doctor3 from "@/assets/doctor3.jpg"
-
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Doctor1 from "@/assets/doctor1.jpg";
+import Doctor2 from "@/assets/doctor2.jpg";
+import Doctor3 from "@/assets/doctor3.jpg";
 
 const experts = [
   {
@@ -20,35 +21,34 @@ const experts = [
     role: "CMO, Genomic + Lab Operations & REI",
     image: Doctor3,
   },
-  // có thể thêm nhiều hơn...
-]
+];
 
 function NextArrow(props: any) {
-  const { onClick } = props
+  const { onClick } = props;
   return (
     <div
       onClick={onClick}
-      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer text-[#004c77] hover:text-[#002f4d]"
+      className="absolute -right-2 top-[200px] -translate-y-1/2 z-10 cursor-pointer text-[#004c77] hover:text-[#002f4d]"
     >
       <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </div>
-  )
+  );
 }
 
 function PrevArrow(props: any) {
-  const { onClick } = props
+  const { onClick } = props;
   return (
     <div
       onClick={onClick}
-      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer text-[#004c77] hover:text-[#002f4d]"
+      className="absolute -left-2 top-[200px] -translate-y-1/2 z-10 cursor-pointer text-[#004c77] hover:text-[#002f4d]"
     >
       <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </div>
-  )
+  );
 }
 
 export default function ExpertSlider() {
@@ -59,19 +59,19 @@ export default function ExpertSlider() {
     slidesToShow: 3,
     slidesToScroll: 1,
     arrows: true,
-    nextArrow: <NextArrow />,     
-    prevArrow: <PrevArrow />, 
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     responsive: [
       {
         breakpoint: 1024,
-        settings: { slidesToShow: 2 }
+        settings: { slidesToShow: 2, arrows: true },
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 1 }
-      }
-    ]
-  }
+        settings: { slidesToShow: 1, arrows: true },
+      },
+    ],
+  };
 
   return (
     <section className="py-20 px-4 bg-white">
@@ -83,13 +83,13 @@ export default function ExpertSlider() {
         <Slider {...settings}>
           {experts.map((expert, idx) => (
             <div key={idx} className="px-4">
-              <div className="bg-white text-center">
+              <div className="bg-white text-center border rounded-lg shadow-md p-4">
                 <img
                   src={expert.image}
                   alt={expert.name}
-                  className="mx-auto mb-4 rounded-md h-[300px] object-cover"
+                  className="mx-auto mb-4 rounded-md h-[300px] w-full object-cover"
                 />
-                <h3 className="font-medium text-lg">{expert.name}</h3>
+                <h3 className="font-medium text-lg text-[#004c77]">{expert.name}</h3>
                 <p className="font-semibold text-sm text-gray-800 mt-1">{expert.role}</p>
               </div>
             </div>
@@ -97,5 +97,5 @@ export default function ExpertSlider() {
         </Slider>
       </div>
     </section>
-  )
+  );
 }

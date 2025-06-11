@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Clock, User, Search, X } from "lucide-react"
 import { Link } from "react-router-dom"
 
-import placeholder_img from "src/assets/placeholder.png"
+import placeholder_img from "@/assets/placeholder.png"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { useUrlParams } from "@/hooks/useURLParams"
 import { usePagination } from "@/hooks/usePagination"
