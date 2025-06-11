@@ -3,8 +3,6 @@ import DoctorCard from "@/components/layout/DoctorCard";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/layout/Header";
-import Navbar from "@/components/layout/Navbar";
 
 const doctors = [
   {
@@ -96,11 +94,6 @@ export default function DoctorListPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header + Navbar */}
-      <div className="sticky top-0 z-50 bg-white shadow">
-        <Header />
-        <Navbar />
-      </div>
       <section
         id="our-doctors"
         className="py-20"
