@@ -14,6 +14,8 @@ import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage";
 import LoginPage from './pages/authorization/LoginPage'
 import RegisterPage from './pages/authorization/RegisterPage'
 import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
+import FAQPage from './pages/faq/FAQPage'
+import FAQQuestionPage from './pages/faq/FAQQuestionPage'
 
 // layouts
 import RootLayout from "./pages/RootLayout";
@@ -114,6 +116,19 @@ const router = createBrowserRouter([
           {
             path: "forgot-password",
             element: <ForgotPasswordPage />
+          }
+        ]
+      },
+      {
+        path: "faq",
+        children: [
+          {
+            index: true,
+            element: <FAQPage />,
+          },
+          {
+            path: "question",
+            element: <FAQQuestionPage />,
           }
         ]
       },
