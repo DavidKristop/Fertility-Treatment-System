@@ -50,6 +50,9 @@ export default function Navbar() {
             <Link to="/doctors">Đội ngũ bác sĩ</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>Câu chuyện thương hiệu</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/blog">Blog</Link>
+          </DropdownMenuItem>
         </Dropdown>
 
         <Dropdown label="Bảng giá">
