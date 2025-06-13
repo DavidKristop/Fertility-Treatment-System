@@ -1,13 +1,15 @@
 import { z } from "zod";
 
 const passwordRegex = /^[A-Z]/;
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 export const loginSchema = z.object({
-  username: z.string({
-    required_error: "Tên đăng nhập là bắt buộc",
+  email: z.string({
+    required_error: "Email là bắt buộc",
   })
-    .min(3, "Tên đăng nhập phải có ít nhất 3 ký tự")
-    .max(20, "Tên đăng nhập không được quá 20 ký tự"),
+    .min(5, "Email phải có ít nhất 5 ký tự")
+    .max(50, "Email không được quá 50 ký tự")
+    .regex(emailRegex, "Email không hợp lệ"),
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
   })

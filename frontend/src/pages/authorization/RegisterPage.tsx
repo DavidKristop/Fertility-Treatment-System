@@ -17,7 +17,7 @@ export default function RegisterPage() {
   const handleRegister = async (values: RegisterFormValues) => {
     try {
       const registerData: RegisterRequest = {
-        username: values.username,
+        email: values.email,
         password: values.password,
         confirmPassword: values.confirmPassword
       };
@@ -31,7 +31,7 @@ export default function RegisterPage() {
 
   const formik = useFormik<RegisterFormValues>({
       initialValues: {
-        username: '',
+        email: '',
         password: '',
         confirmPassword: '',
       },

@@ -12,19 +12,19 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-4">
         <div>
-          <Label htmlFor="username" className="block text-sm font-medium text-gray-700">
-            Tên đăng nhập
+          <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
           </Label>
           <Input
-            id="username"
-            type="text"
-            {...formik.getFieldProps('username')}
+            id="email"
+            type="email"
+            {...formik.getFieldProps('email')}
             className={`mt-1 w-full bg-gray-100 ${
-              formik.touched.username && formik.errors.username ? 'border-red-500' : ''
+              formik.touched.email && formik.errors.email ? 'border-red-500' : ''
             }`}
           />
-          {formik.touched.username && formik.errors.username && (
-            <div className="text-red-500 text-sm mt-1">{formik.errors.username}</div>
+          {formik.touched.email && formik.errors.email && (
+            <div className="text-red-500 text-sm mt-1">{formik.errors.email}</div>
           )}
         </div>
 

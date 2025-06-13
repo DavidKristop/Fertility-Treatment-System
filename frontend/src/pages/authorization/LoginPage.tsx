@@ -17,7 +17,7 @@ export default function LoginPage() {
   const handleLogin = async (values: LoginFormValues) => {
     try {
       const loginData: LoginRequest = {
-        username: values.username,
+        email: values.email,
         password: values.password
       };
       const response = await auth.login(loginData);
@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   const formik = useFormik<LoginFormValues>({
     initialValues: {
-      username: '',
+      email: '',
       password: '',
     },
     validationSchema: toFormikValidationSchema(loginSchema),
