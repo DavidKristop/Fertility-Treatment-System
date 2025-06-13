@@ -18,6 +18,7 @@ export default function LoginForm({ formik }: LoginFormProps) {
         <Input
           id="email"
           type="email"
+          placeholder='example@gmail.com'
           {...formik.getFieldProps('email')}
           className={`mt-1 w-full bg-gray-100 ${
             formik.touched.email && formik.errors.email ? 'border-red-500' : ''
@@ -43,6 +44,7 @@ export default function LoginForm({ formik }: LoginFormProps) {
         <Input
           id="password"
           type="password"
+          placeholder='Nhập mật khẩu của bạn'
           {...formik.getFieldProps('password')}
           className={`mt-1 w-full bg-gray-100 ${
             formik.touched.password && formik.errors.password ? 'border-red-500' : ''
