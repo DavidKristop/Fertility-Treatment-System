@@ -37,12 +37,12 @@ export default function Hero() {
 
         </div>
 
-        <div className="flex-col absolute top-120 left-250 text-white rounded-full shadow-lg w-[380px] h-[100px] hover:scale-105 hover:shadow-xl transition-transform duration-300"
+        <div className="absolute bottom-10 right-10 md:right-20 text-white rounded-full shadow-lg w-[380px] h-[100px] hover:scale-105 hover:shadow-xl transition-transform duration-300"
             style={{ backgroundColor: "rgba(0, 76, 119, 0.8)" }}>
-            <span className="flex items-center gap-2 ml-10 mt-7 text-4xl font-bold">
-                <Phone className="w-10 h-10" />
-                0903 123 1234
-            </span>
+          <span className="flex items-center gap-2 ml-10 mt-7 text-4xl font-bold">
+            <Phone className="w-10 h-10" />
+            0903 123 1234
+          </span>
         </div>
 
         
