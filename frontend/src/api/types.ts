@@ -1,5 +1,5 @@
 export interface LoginRequest {
-    phone: string;
+    username: string;
     password: string;
 }
 
@@ -14,7 +14,7 @@ export interface AuthResponse {
 
 export interface UserProfile {
     id: number;
-    phone: string;
+    username: string;
     role: string;
 }
 

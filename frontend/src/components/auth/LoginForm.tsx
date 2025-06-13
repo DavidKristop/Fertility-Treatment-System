@@ -12,19 +12,19 @@ export default function LoginForm({ formik }: LoginFormProps) {
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-          Số điện thoại
+        <Label htmlFor="username" className="block text-sm font-medium text-gray-700">
+          Tên đăng nhập
         </Label>
         <Input
-          id="phone"
-          type="tel"
-          {...formik.getFieldProps('phone')}
+          id="username"
+          type="text"
+          {...formik.getFieldProps('username')}
           className={`mt-1 w-full bg-gray-100 ${
-            formik.touched.phone && formik.errors.phone ? 'border-red-500' : ''
+            formik.touched.username && formik.errors.username ? 'border-red-500' : ''
           }`}
         />
-        {formik.touched.phone && formik.errors.phone && (
-          <div className="text-red-500 text-sm mt-1">{formik.errors.phone}</div>
+        {formik.touched.username && formik.errors.username && (
+          <div className="text-red-500 text-sm mt-1">{formik.errors.username}</div>
         )}
       </div>
 

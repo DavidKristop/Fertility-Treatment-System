@@ -1,15 +1,13 @@
 import { z } from "zod";
 
-const phoneRegex = /^[0-9]+$/;
 const passwordRegex = /^[A-Z]/;
 
 export const loginSchema = z.object({
-  phone: z.string({
-    required_error: "Số điện thoại là bắt buộc",
+  username: z.string({
+    required_error: "Tên đăng nhập là bắt buộc",
   })
-    .regex(phoneRegex, "Số điện thoại chỉ chứa các chữ số")
-    .min(10, "Số điện thoại phải có ít nhất 10 số")
-    .max(11, "Số điện thoại không được quá 11 số"),
+    .min(3, "Tên đăng nhập phải có ít nhất 3 ký tự")
+    .max(20, "Tên đăng nhập không được quá 20 ký tự"),
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
   })
