@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-const phoneRegex = /^[0-9]+$/;
 const passwordRegex = /^[A-Z]/;
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 export const loginSchema = z.object({
-  phone: z.string({
-    required_error: "Số điện thoại là bắt buộc",
+  email: z.string({
+    required_error: "Email là bắt buộc",
   })
-    .regex(phoneRegex, "Số điện thoại chỉ chứa các chữ số")
-    .min(10, "Số điện thoại phải có ít nhất 10 số")
-    .max(11, "Số điện thoại không được quá 11 số"),
+    .min(5, "Email phải có ít nhất 5 ký tự")
+    .max(50, "Email không được quá 50 ký tự")
+    .regex(emailRegex, "Email không hợp lệ"),
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
   })

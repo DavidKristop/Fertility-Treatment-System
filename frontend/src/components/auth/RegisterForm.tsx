@@ -12,19 +12,20 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-4">
         <div>
-          <Label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-            Số điện thoại
+          <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
           </Label>
           <Input
-            id="phone"
-            type="tel"
-            {...formik.getFieldProps('phone')}
+            id="email"
+            type="email"
+            placeholder='example@gmail.com'
+            {...formik.getFieldProps('email')}
             className={`mt-1 w-full bg-gray-100 ${
-              formik.touched.phone && formik.errors.phone ? 'border-red-500' : ''
+              formik.touched.email && formik.errors.email ? 'border-red-500' : ''
             }`}
           />
-          {formik.touched.phone && formik.errors.phone && (
-            <div className="text-red-500 text-sm mt-1">{formik.errors.phone}</div>
+          {formik.touched.email && formik.errors.email && (
+            <div className="text-red-500 text-sm mt-1">{formik.errors.email}</div>
           )}
         </div>
 
@@ -35,6 +36,7 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
           <Input
             id="password"
             type="password"
+            placeholder='Nhập mật khẩu của bạn'
             {...formik.getFieldProps('password')}
             className={`mt-1 w-full bg-gray-100 ${
               formik.touched.password && formik.errors.password ? 'border-red-500' : ''
@@ -52,6 +54,7 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
           <Input
             id="confirmPassword"
             type="password"
+            placeholder='Nhập lại mật khẩu của bạn'
             {...formik.getFieldProps('confirmPassword')}
             className={`mt-1 w-full bg-gray-100 ${
               formik.touched.confirmPassword && formik.errors.confirmPassword ? 'border-red-500' : ''
