@@ -126,7 +126,7 @@ const router = createBrowserRouter([
   },
   // Doctor Dashboard Routes
   {
-    path: "/doctor",
+    path: "doctor",
     children: [
       {
         path: "dashboard",

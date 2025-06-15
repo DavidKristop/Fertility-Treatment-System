@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 
 import { useState } from "react"
@@ -233,37 +235,55 @@ export default function DoctorSidebar({ isCollapsed, onToggle }: DoctorSidebarPr
         {sidebarItems.map((item) => (
           <div key={item.id}>
             {/* Main Item */}
-            <div
-              className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                isParentActive(item) ? "bg-[#004c77] text-white" : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => {
-                if (item.children) {
-                  toggleExpanded(item.id)
-                } else if (item.path) {
-                  // Navigate to path
-                }
-              }}
-            >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                {!isCollapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
-              </div>
-              {!isCollapsed && (
-                <div className="flex items-center gap-1">
-                  {item.badge && (
+            {item.path ? (
+              <Link to={item.path}>
+                <div
+                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                    isParentActive(item) ? "bg-[#004c77] text-white" : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <item.icon className="h-5 w-5 flex-shrink-0" />
+                    {!isCollapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+                  </div>
+                  {!isCollapsed && item.badge && (
                     <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
                       {item.badge}
                     </Badge>
                   )}
-                  {item.children && (
-                    <ChevronRight
-                      className={`h-4 w-4 transition-transform ${expandedItems.includes(item.id) ? "rotate-90" : ""}`}
-                    />
-                  )}
                 </div>
-              )}
-            </div>
+              </Link>
+            ) : (
+              <div
+                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                  isParentActive(item) ? "bg-[#004c77] text-white" : "text-gray-700 hover:bg-gray-100"
+                }`}
+                onClick={() => {
+                  if (item.children) {
+                    toggleExpanded(item.id)
+                  }
+                }}
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+                </div>
+                {!isCollapsed && (
+                  <div className="flex items-center gap-1">
+                    {item.badge && (
+                      <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                        {item.badge}
+                      </Badge>
+                    )}
+                    {item.children && (
+                      <ChevronRight
+                        className={`h-4 w-4 transition-transform ${expandedItems.includes(item.id) ? "rotate-90" : ""}`}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Children */}
             {item.children && !isCollapsed && expandedItems.includes(item.id) && (
