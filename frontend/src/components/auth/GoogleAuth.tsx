@@ -1,5 +1,5 @@
-import { GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google'
+import { useNavigate } from 'react-router-dom'
 
 interface GoogleButtonProps {
   text: string;

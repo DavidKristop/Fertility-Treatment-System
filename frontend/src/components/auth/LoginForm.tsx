@@ -1,8 +1,8 @@
-import { type FormikProps } from 'formik';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import type { LoginFormValues } from '@/lib/validations/auth';
-import { Link } from "react-router-dom";
+import { type FormikProps } from 'formik'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import type { LoginFormValues } from '@/lib/validations/auth'
+import { Link } from 'react-router-dom'
 
 interface LoginFormProps {
   formik: FormikProps<LoginFormValues>;
