@@ -209,7 +209,6 @@ export default function TodayAppointments() {
                   <TableRow>
                     <TableHead>Thời gian</TableHead>
                     <TableHead>Bệnh nhân</TableHead>
-                    <TableHead>Loại</TableHead>
                     <TableHead>Lý do khám</TableHead>
                     <TableHead>Trạng thái</TableHead>
                     <TableHead>Thời lượng</TableHead>
@@ -236,14 +235,6 @@ export default function TodayAppointments() {
                               {appointment.patient.age} tuổi • {appointment.patient.phone}
                             </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getTypeIcon(appointment.type)}
-                          <span className="capitalize">
-                            {appointment.type === "online" ? "Trực tuyến" : "Tại phòng"}
-                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
