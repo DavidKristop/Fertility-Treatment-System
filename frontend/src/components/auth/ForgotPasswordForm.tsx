@@ -17,13 +17,14 @@ export default function ForgotPasswordForm({ formik }: ForgotPasswordFormProps) 
         <Input
           id="email"
           type="email"
+          placeholder="example@gmail.com"
           {...formik.getFieldProps('email')}
-          className={`mt-1 w-full bg-gray-100 ${
+          className={`mt-1 w-full bg-gray-100 p-2 text-base sm:text-sm ${
             formik.touched.email && formik.errors.email ? 'border-red-500' : ''
           }`}
         />
         {formik.touched.email && formik.errors.email && (
-          <div className="text-red-500 text-sm mt-1">{formik.errors.email}</div>
+          <div className="text-red-500 text-xs sm:text-sm mt-1">{formik.errors.email}</div>
         )}
       </div>
     </form>
