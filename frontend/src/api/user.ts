@@ -1,5 +1,5 @@
-import { fetchWrapper } from '.';
-import type { UserProfile } from './types';
+import { fetchWrapper } from '.'
+import type { UserProfile } from './types'
 
 export const getProfile = async (): Promise<UserProfile> => {
     const response = await fetchWrapper('user/profile', {

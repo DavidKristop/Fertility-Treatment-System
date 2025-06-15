@@ -1,4 +1,4 @@
-import FertilityImage from "@/assets/0VkgqLXqGNQTndYGcB8l2CFaBA6HB0aUZP6wR5a6.jpg";
+import FertilityImage from '@/assets/0VkgqLXqGNQTndYGcB8l2CFaBA6HB0aUZP6wR5a6.jpg'
 
 interface AuthCardProps {
   children: React.ReactNode; // the <Card> contents (AuthHeader, AuthFormFields, GoogleLogin, etc.)
@@ -12,19 +12,19 @@ export default function AuthCard({
   //submitButtonText,
 }: AuthCardProps) {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-gray-50">
       <div className="max-w-3xl w-full bg-gray-200 rounded-xl shadow-lg overflow-hidden flex min-h-0">
         {/* Left: Image */}
         <div className="flex-1 min-h-0">
           <img
             src={FertilityImage}
             alt="Chữa hiếm muộn"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover hidden md:flex"
           />
         </div>
 
         {/* Right: White card with form */}
-        <div className="w-1/2 bg-white p-6">
+        <div className="w-full max-w-md">
           {/* children will include <Card>…</Card> */}
           {children}
 
@@ -33,7 +33,7 @@ export default function AuthCard({
                   Chưa có tài khoản? <Link to="/authorization/register">Đăng ký ngay</Link>
                 </div>
            */}
-          <div className="mt-4 text-center text-sm">{bottomLink}</div>
+          <div className="mt-6 text-center text-sm">{bottomLink}</div>
         </div>
       </div>
     </div>

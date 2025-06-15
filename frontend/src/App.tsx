@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 // pages
 import Home from './pages/Home'
@@ -9,16 +9,21 @@ import Insurance from './pages/pricing/Insurance'
 import Financing from './pages/pricing/Financing'
 import Iui from './pages/services/iui'
 import Ivf from './pages/services/ivf'
-import DoctorListPage from "./pages/doctorList/DoctorListPage";
-import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage";
+import DoctorListPage from './pages/doctorList/DoctorListPage'
+import DoctorDetailPage from './pages/doctorList/DoctorDetailPage'
 import LoginPage from './pages/authorization/LoginPage'
 import RegisterPage from './pages/authorization/RegisterPage'
 import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
 
+// Doctor pages
+import DoctorDashboard from "./pages/doctor/DoctorDashboard"
+import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
+import PatientList from "./pages/doctor/patients/PatientList"
+
 // layouts
-import RootLayout from "./pages/RootLayout";
-import BlogPage from "./pages/blog/page";
-import BlogPostPage from "./pages/blog/[id]/page";
+import RootLayout from './pages/RootLayout'
+import BlogPage from './pages/blog/page'
+import BlogPostPage from './pages/blog/[id]/page'
 
 const router = createBrowserRouter([
   {
@@ -105,21 +110,39 @@ const router = createBrowserRouter([
         children: [
           {
             path: "login",
-            element: <LoginPage />
+            element: <LoginPage />,
           },
           {
             path: "register",
-            element: <RegisterPage />
+            element: <RegisterPage />,
           },
           {
             path: "forgot-password",
-            element: <ForgotPasswordPage />
+            element: <ForgotPasswordPage />,
           }
         ]
       },
     ],
   },
-]);
+  // Doctor Dashboard Routes
+  {
+    path: "/doctor",
+    children: [
+      {
+        path: "dashboard",
+        element: <DoctorDashboard />,
+      },
+      {
+        path: "appointments/today",
+        element: <TodayAppointments />,
+      },
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+    ],
+  },
+])
 
 function App() {
   return <RouterProvider router={router} />;
