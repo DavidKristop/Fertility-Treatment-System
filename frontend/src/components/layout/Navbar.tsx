@@ -53,6 +53,9 @@ export default function Navbar() {
           <DropdownMenuItem>
             <Link to="/blog">Blog</Link>
           </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="blog/:id">Post blog</Link>
+          </DropdownMenuItem>
         </Dropdown>
 
         <Dropdown label="Bảng giá">

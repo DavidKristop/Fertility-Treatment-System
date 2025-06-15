@@ -45,7 +45,7 @@ export default function BlogPostPage() {
 
   // If post doesn't exist, show 404
   if (!post) {
-    return NotFound()
+    return <NotFound />
   }
 
   return (
