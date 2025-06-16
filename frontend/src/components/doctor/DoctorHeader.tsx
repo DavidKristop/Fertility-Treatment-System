@@ -1,4 +1,4 @@
-import { Bell, Search, User } from "lucide-react"
+import { Bell, Search, User, Menu } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -13,40 +13,55 @@ import {
 interface DoctorHeaderProps {
   title: string
   breadcrumbs?: { label: string; path?: string }[]
+  onMenuClick?: () => void
+  showMenuButton?: boolean
 }
 
-export default function DoctorHeader({ title, breadcrumbs }: DoctorHeaderProps) {
+export default function DoctorHeader({ title, breadcrumbs, onMenuClick, showMenuButton = false }: DoctorHeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
-        {/* Left side - Title and Breadcrumbs */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-          {breadcrumbs && breadcrumbs.length > 0 && (
-            <nav className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
-              {breadcrumbs.map((crumb, index) => (
-                <span key={index} className="flex items-center">
-                  {index > 0 && <span className="mx-2">/</span>}
-                  {crumb.path ? (
-                    <a href={crumb.path} className="hover:text-gray-700">
-                      {crumb.label}
-                    </a>
-                  ) : (
-                    <span>{crumb.label}</span>
-                  )}
-                </span>
-              ))}
-            </nav>
+        {/* Left side - Menu button (mobile) + Title and Breadcrumbs */}
+        <div className="flex items-center gap-4">
+          {showMenuButton && (
+            <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden">
+              <Menu className="h-5 w-5" />
+            </Button>
           )}
+
+          <div>
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">{title}</h1>
+            {breadcrumbs && breadcrumbs.length > 0 && (
+              <nav className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
+                {breadcrumbs.map((crumb, index) => (
+                  <span key={index} className="flex items-center">
+                    {index > 0 && <span className="mx-2">/</span>}
+                    {crumb.path ? (
+                      <a href={crumb.path} className="hover:text-gray-700">
+                        {crumb.label}
+                      </a>
+                    ) : (
+                      <span>{crumb.label}</span>
+                    )}
+                  </span>
+                ))}
+              </nav>
+            )}
+          </div>
         </div>
 
         {/* Right side - Search, Notifications, Profile */}
-        <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="relative hidden md:block">
+        <div className="flex items-center gap-2 lg:gap-4">
+          {/* Search - Hidden on small screens */}
+          <div className="relative hidden lg:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input placeholder="Tìm kiếm bệnh nhân, cuộc hẹn..." className="pl-10 w-80" />
+            <Input placeholder="Tìm kiếm bệnh nhân, cuộc hẹn..." className="pl-10 w-60 xl:w-80" />
           </div>
+
+          {/* Search button for mobile */}
+          <Button variant="ghost" size="icon" className="lg:hidden">
+            <Search className="h-5 w-5" />
+          </Button>
 
           {/* Notifications */}
           <div className="relative">
@@ -63,7 +78,7 @@ export default function DoctorHeader({ title, breadcrumbs }: DoctorHeaderProps) 
                 <div className="w-8 h-8 bg-[#004c77] rounded-full flex items-center justify-center">
                   <User className="h-4 w-4 text-white" />
                 </div>
-                <div className="hidden md:block text-left">
+                <div className="hidden lg:block text-left">
                   <div className="text-sm font-medium">Dr. Nguyễn Văn A</div>
                   <div className="text-xs text-gray-500">Chuyên khoa Sản</div>
                 </div>

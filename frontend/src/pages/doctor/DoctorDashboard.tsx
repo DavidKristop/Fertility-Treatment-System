@@ -24,7 +24,7 @@ const todayAppointments = [
     id: 3,
     time: "14:00",
     patient: "Lê Thị Hoa",
-    type: "Tư vấn online",
+    type: "Tư vấn ban đầu",
     status: "confirmed",
   },
   {

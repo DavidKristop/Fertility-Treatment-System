@@ -19,6 +19,7 @@ import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
 import PatientList from "./pages/doctor/patients/PatientList"
+import ViewContracts from "./pages/doctor/contracts/ViewContracts"
 
 // layouts
 import RootLayout from './pages/RootLayout'
@@ -139,6 +140,10 @@ const router = createBrowserRouter([
       {
         path: "patients",
         element: <PatientList />,
+      },
+      {
+        path: "contracts",
+        element: <ViewContracts />,
       },
     ],
   },
