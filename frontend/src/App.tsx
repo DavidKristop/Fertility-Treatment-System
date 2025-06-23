@@ -28,6 +28,7 @@ import ManagerDashboard from "./pages/manager/ManagerDashboard"
 import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
+import AdminDashboard from "./pages/admin/AdminDashboard"
 
 const router = createBrowserRouter([
   {
@@ -164,13 +165,31 @@ const router = createBrowserRouter([
       },
     ],
   },
-      // Patient Dashboard Routes
+      // Manager Dashboard Routes
   {
     path: "manager",
     children: [
       {
         path: "dashboard",
         element: <ManagerDashboard />,
+      },
+      {
+        path: "appointments/today",
+        element: <TodayAppointments />,
+      },
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+    ],
+  },
+        // Admin Dashboard Routes
+  {
+    path: "admin",
+    children: [
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
       },
       {
         path: "appointments/today",
