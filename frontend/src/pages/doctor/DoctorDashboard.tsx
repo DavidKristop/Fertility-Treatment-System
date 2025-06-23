@@ -1,8 +1,11 @@
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Users, Calendar, FileText, Clock, Eye, Phone, Activity, CheckCircle, Download } from "lucide-react"
+import { Users, Calendar, FileText, Activity, CheckCircle, Download, Eye } from "lucide-react"
+import StatsCard from "@/components/doctor/dashboard/StatsCard"
+import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
+import ContractCard from "@/components/doctor/dashboard/ContractCard"
+import QuickActions from "@/components/doctor/dashboard/QuickActions"
 
 // Mock data - Đơn giản hóa, bỏ payment và refund
 const todayStats = {
@@ -165,75 +168,52 @@ export default function DoctorDashboard() {
 
   const breadcrumbs = [{ label: "Trang chủ" }]
 
+  const statsData = [
+    {
+      title: "Lịch hôm nay",
+      value: todayStats.appointments,
+      subtitle: `${todayStats.completedAppointments} hoàn thành`,
+      icon: Calendar,
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Tổng bệnh nhân",
+      value: todayStats.totalPatients,
+      subtitle: `+${todayStats.newPatients} mới hôm nay`,
+      icon: Users,
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Hợp đồng",
+      value: todayStats.totalContracts,
+      subtitle: `${todayStats.activeContracts} đang điều trị`,
+      icon: FileText,
+      iconColor: "text-purple-600",
+    },
+    {
+      title: "Đang điều trị",
+      value: todayStats.activeContracts,
+      subtitle: "Hợp đồng hoạt động",
+      icon: Activity,
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Hoàn thành",
+      value: todayStats.completedContracts,
+      subtitle: "Điều trị thành công",
+      icon: CheckCircle,
+      iconColor: "text-blue-600",
+    },
+  ]
+
   return (
     <DoctorLayout title="Tổng quan" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Lịch hôm nay</p>
-                  <p className="text-2xl font-bold">{todayStats.appointments}</p>
-                  <p className="text-xs text-muted-foreground">{todayStats.completedAppointments} hoàn thành</p>
-                </div>
-                <Calendar className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tổng bệnh nhân</p>
-                  <p className="text-2xl font-bold">{todayStats.totalPatients}</p>
-                  <p className="text-xs text-muted-foreground">+{todayStats.newPatients} mới hôm nay</p>
-                </div>
-                <Users className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hợp đồng</p>
-                  <p className="text-2xl font-bold">{todayStats.totalContracts}</p>
-                  <p className="text-xs text-muted-foreground">{todayStats.activeContracts} đang điều trị</p>
-                </div>
-                <FileText className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Đang điều trị</p>
-                  <p className="text-2xl font-bold text-green-600">{todayStats.activeContracts}</p>
-                  <p className="text-xs text-muted-foreground">Hợp đồng hoạt động</p>
-                </div>
-                <Activity className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hoàn thành</p>
-                  <p className="text-2xl font-bold text-blue-600">{todayStats.completedContracts}</p>
-                  <p className="text-xs text-muted-foreground">Điều trị thành công</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
+          {statsData.map((stat, index) => (
+            <StatsCard key={index} {...stat} />
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -249,25 +229,12 @@ export default function DoctorDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {todayAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col items-center">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">{appointment.time}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">{appointment.patient}</p>
-                        <p className="text-sm text-muted-foreground">{appointment.type}</p>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Phone className="h-3 w-3" />
-                          {appointment.phone}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge className={getAppointmentStatusColor(appointment.status)}>
-                      {getAppointmentStatusText(appointment.status)}
-                    </Badge>
-                  </div>
+                  <AppointmentCard
+                    key={appointment.id}
+                    appointment={appointment}
+                    getStatusColor={getAppointmentStatusColor}
+                    getStatusText={getAppointmentStatusText}
+                  />
                 ))}
               </div>
             </CardContent>
@@ -285,40 +252,12 @@ export default function DoctorDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentContracts.map((contract) => (
-                  <div key={contract.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col items-center">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-xs font-medium">{contract.contractNumber}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">{contract.patient}</p>
-                        <p className="text-sm text-muted-foreground">{contract.treatmentType}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="w-12 bg-gray-200 rounded-full h-1.5">
-                            <div
-                              className={`h-1.5 rounded-full ${
-                                contract.treatmentStatus === "completed"
-                                  ? "bg-blue-600"
-                                  : contract.treatmentStatus === "stopped"
-                                    ? "bg-red-600"
-                                    : "bg-green-600"
-                              }`}
-                              style={{ width: `${contract.progress}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-xs font-medium">{contract.progress}%</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">{contract.currentStage}</p>
-                        <Badge className={getTreatmentStatusColor(contract.treatmentStatus)} variant="secondary">
-                          {getTreatmentStatusText(contract.treatmentStatus)}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">{contract.confirmedDate}</p>
-                    </div>
-                  </div>
+                  <ContractCard
+                    key={contract.id}
+                    contract={contract}
+                    getTreatmentStatusColor={getTreatmentStatusColor}
+                    getTreatmentStatusText={getTreatmentStatusText}
+                  />
                 ))}
               </div>
             </CardContent>
@@ -371,31 +310,7 @@ export default function DoctorDashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Thao tác nhanh</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-20 flex flex-col gap-2">
-                <Calendar className="h-6 w-6" />
-                <span>Xem lịch khám</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2">
-                <Users className="h-6 w-6" />
-                <span>Danh sách bệnh nhân</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2">
-                <FileText className="h-6 w-6" />
-                <span>Hợp đồng điều trị</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2">
-                <Activity className="h-6 w-6" />
-                <span>Tiến độ điều trị</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <QuickActions />
       </div>
     </DoctorLayout>
   )

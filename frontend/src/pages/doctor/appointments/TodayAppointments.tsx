@@ -1,11 +1,10 @@
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Clock, MoreHorizontal, Search, CheckCircle, X, Calendar } from "lucide-react"
+import { Search, CheckCircle, Calendar, Clock } from "lucide-react"
+import StatsCard from "@/components/doctor/dashboard/StatsCard"
+import AppointmentTable from "@/components/doctor/appointments/AppointmentTable"
 
 // Mock data - chỉ khám trực tiếp
 const appointments = [
@@ -113,6 +112,33 @@ export default function TodayAppointments() {
     { label: "Danh sách hôm nay" },
   ]
 
+  const statsData = [
+    {
+      title: "Tổng cuộc hẹn",
+      value: 5,
+      icon: Clock,
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Đã xác nhận",
+      value: 2,
+      icon: CheckCircle,
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Chờ xác nhận",
+      value: 1,
+      icon: Clock,
+      iconColor: "text-yellow-600",
+    },
+    {
+      title: "Đã hoàn thành",
+      value: 1,
+      icon: CheckCircle,
+      iconColor: "text-blue-600",
+    },
+  ]
+
   return (
     <DoctorLayout title="Cuộc hẹn hôm nay" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
@@ -138,50 +164,9 @@ export default function TodayAppointments() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tổng cuộc hẹn</p>
-                  <p className="text-2xl font-bold">5</p>
-                </div>
-                <Clock className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Đã xác nhận</p>
-                  <p className="text-2xl font-bold text-green-600">2</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Chờ xác nhận</p>
-                  <p className="text-2xl font-bold text-yellow-600">1</p>
-                </div>
-                <Clock className="h-8 w-8 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Đã hoàn thành</p>
-                  <p className="text-2xl font-bold text-blue-600">1</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
+          {statsData.map((stat, index) => (
+            <StatsCard key={index} {...stat} />
+          ))}
         </div>
 
         {/* Appointments Table */}
@@ -190,95 +175,11 @@ export default function TodayAppointments() {
             <CardTitle>Danh sách cuộc hẹn - {new Date().toLocaleDateString("vi-VN")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Thời gian</TableHead>
-                    <TableHead>Bệnh nhân</TableHead>
-                    <TableHead>Lý do khám</TableHead>
-                    <TableHead>Trạng thái</TableHead>
-                    <TableHead>Thời lượng</TableHead>
-                    <TableHead className="text-right">Hành động</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {appointments.map((appointment) => (
-                    <TableRow key={appointment.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          {appointment.time}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium">{appointment.patient.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <div className="font-medium">{appointment.patient.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {appointment.patient.age} tuổi • {appointment.patient.phone}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-xs">
-                          <p className="text-sm">{appointment.reason}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(appointment.status)}>
-                          {getStatusText(appointment.status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{appointment.duration} phút</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <CheckCircle className="mr-2 h-4 w-4" />
-                              Xem chi tiết
-                            </DropdownMenuItem>
-                            {appointment.status === "pending" && (
-                              <DropdownMenuItem>
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Xác nhận
-                              </DropdownMenuItem>
-                            )}
-                            {appointment.status !== "completed" && appointment.status !== "cancelled" && (
-                              <>
-                                <DropdownMenuItem>
-                                  <Calendar className="mr-2 h-4 w-4" />
-                                  Dời lịch
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-600">
-                                  <X className="mr-2 h-4 w-4" />
-                                  Hủy cuộc hẹn
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                            {appointment.status === "confirmed" && (
-                              <DropdownMenuItem>
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Đánh dấu hoàn thành
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <AppointmentTable
+              appointments={appointments}
+              getStatusColor={getStatusColor}
+              getStatusText={getStatusText}
+            />
           </CardContent>
         </Card>
       </div>

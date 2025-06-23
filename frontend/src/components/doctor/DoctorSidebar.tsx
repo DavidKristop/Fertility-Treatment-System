@@ -22,9 +22,10 @@ import {
   Stethoscope,
   MessageSquare,
   Inbox,
-  User,
   Eye,
   CalendarCheck,
+  TestTube,
+  Plus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -116,12 +117,24 @@ const sidebarItems: SidebarItem[] = [
         path: "/doctor/treatment-plans/active",
       },
       {
+        id: "create-plan",
+        label: "Tạo kế hoạch mới",
+        icon: Plus,
+        path: "/doctor/treatment-plans",
+      },
+      {
         id: "stages-progress",
         label: "Giai đoạn & tiến độ",
         icon: Activity,
         path: "/doctor/treatment-plans/progress",
       },
     ],
+  },
+  {
+    id: "results",
+    label: "Ghi nhận kết quả",
+    icon: TestTube,
+    path: "/doctor/results/record",
   },
   {
     id: "prescriptions",

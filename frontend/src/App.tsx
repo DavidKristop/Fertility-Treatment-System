@@ -21,6 +21,8 @@ import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
 import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
 import ViewContracts from "./pages/doctor/contracts/ViewContracts"
+import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
+import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
 
@@ -136,30 +138,77 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <DoctorDashboard />,
       },
+      // Appointments routes
       {
-        path: "appointments/today",
-        element: <TodayAppointments />,
+        path: "appointments",
+        children: [
+          {
+            path: "today",
+            element: <TodayAppointments />,
+          },
+          {
+            path: "booked",
+            element: <BookedAppointments />,
+          },
+          {
+            path: "calendar",
+            element: <Calendar />,
+          },
+        ],
       },
-      {
-        path: "appointments/booked",
-        element: <BookedAppointments />,
-      },
-      {
-        path: "appointments/calendar",
-        element: <Calendar />,
-      },
+      // Patient routes
       {
         path: "patients",
-        element: <PatientList />,
+        children: [
+          {
+            index: true,
+            element: <PatientList />,
+          },
+          {
+            path: "search",
+            element: <PatientList />, 
+          },
+        ],
       },
+      // Contract routes
       {
         path: "contracts",
         element: <ViewContracts />,
       },
+      // Treatment Plan routes
+      {
+        path: "treatment-plans",
+        children: [
+          {
+            index: true,
+            element: <TreatmentPlans />,
+          },
+          {
+            path: "active",
+            element: <TreatmentPlans />,
+          },
+          {
+            path: "progress",
+            element: <TreatmentPlans />,
+          },
+        ],
+      },
+      // Results routes
+      {
+        path: "results",
+        children: [
+          {
+            path: "record",
+            element: <RecordResults />,
+          },
+        ],
+      },
+      // Profile routes
       {
         path: "profile",
         element: <DoctorProfile />,
       },
+      
     ],
   },
 ])
