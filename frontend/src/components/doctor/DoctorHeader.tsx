@@ -16,9 +16,18 @@ interface DoctorHeaderProps {
   breadcrumbs?: { label: string; path?: string }[]
   onMenuClick?: () => void
   showMenuButton?: boolean
+  doctorName?: string
+  specialty?: string
 }
 
-export default function DoctorHeader({ title, breadcrumbs, onMenuClick, showMenuButton = false }: DoctorHeaderProps) {
+export default function DoctorHeader({
+  title,
+  breadcrumbs,
+  onMenuClick,
+  showMenuButton = false,
+  doctorName = "Dr. Nguyễn Văn A",
+  specialty = "Chuyên khoa Sản",
+}: DoctorHeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
@@ -80,8 +89,8 @@ export default function DoctorHeader({ title, breadcrumbs, onMenuClick, showMenu
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div className="hidden lg:block text-left">
-                  <div className="text-sm font-medium">Dr. Nguyễn Văn A</div>
-                  <div className="text-xs text-gray-500">Chuyên khoa Sản</div>
+                  <div className="text-sm font-medium">{doctorName}</div>
+                  <div className="text-xs text-gray-500">{specialty}</div>
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -91,10 +100,6 @@ export default function DoctorHeader({ title, breadcrumbs, onMenuClick, showMenu
                   <User className="mr-2 h-4 w-4" />
                   Hồ sơ cá nhân
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell className="mr-2 h-4 w-4" />
-                Cài đặt thông báo
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>

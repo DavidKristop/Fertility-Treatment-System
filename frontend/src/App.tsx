@@ -22,6 +22,7 @@ import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
 import ViewContracts from "./pages/doctor/contracts/ViewContracts"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
+import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
 
 // layouts
 import RootLayout from './pages/RootLayout'
@@ -138,6 +139,10 @@ const router = createBrowserRouter([
       {
         path: "appointments/today",
         element: <TodayAppointments />,
+      },
+      {
+        path: "appointments/booked",
+        element: <BookedAppointments />,
       },
       {
         path: "appointments/calendar",

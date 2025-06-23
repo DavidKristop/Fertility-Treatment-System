@@ -24,6 +24,7 @@ import {
   Inbox,
   User,
   Eye,
+  CalendarCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -69,6 +70,12 @@ const sidebarItems: SidebarItem[] = [
         label: "Xem lịch",
         icon: CalendarDays,
         path: "/doctor/appointments/calendar",
+      },
+      {
+        id: "booked-appointments",
+        label: "Lịch đã đặt",
+        icon: CalendarCheck,
+        path: "/doctor/appointments/booked",
       },
     ],
   },

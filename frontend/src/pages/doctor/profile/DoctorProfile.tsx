@@ -134,14 +134,6 @@ export default function DoctorProfile() {
                     <span>Giấy phép: {formData.licenseNumber}</span>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                  {formData.languages.map((lang, index) => (
-                    <Badge key={index} variant="secondary">
-                      {lang}
-                    </Badge>
-                  ))}
-                </div>
               </div>
 
               <div className="flex gap-2">
