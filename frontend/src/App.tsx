@@ -20,6 +20,8 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
 import PatientList from "./pages/doctor/patients/PatientList"
 import PatientDashboard from "./pages/patient/PatientDashboard"
+import ManagerDashboard from "./pages/manager/ManagerDashboard"
+
 
 
 // layouts
@@ -151,6 +153,24 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <PatientDashboard />,
+      },
+      {
+        path: "appointments/today",
+        element: <TodayAppointments />,
+      },
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+    ],
+  },
+      // Patient Dashboard Routes
+  {
+    path: "manager",
+    children: [
+      {
+        path: "dashboard",
+        element: <ManagerDashboard />,
       },
       {
         path: "appointments/today",
