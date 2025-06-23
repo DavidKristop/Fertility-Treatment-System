@@ -18,8 +18,10 @@ import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
+import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
 import ViewContracts from "./pages/doctor/contracts/ViewContracts"
+import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 
 // layouts
 import RootLayout from './pages/RootLayout'
@@ -138,12 +140,20 @@ const router = createBrowserRouter([
         element: <TodayAppointments />,
       },
       {
+        path: "appointments/calendar",
+        element: <Calendar />,
+      },
+      {
         path: "patients",
         element: <PatientList />,
       },
       {
         path: "contracts",
         element: <ViewContracts />,
+      },
+      {
+        path: "profile",
+        element: <DoctorProfile />,
       },
     ],
   },

@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Clock, MoreHorizontal, Search, Video, MapPin, CheckCircle, X, Calendar } from "lucide-react"
+import { Clock, MoreHorizontal, Search, CheckCircle, X, Calendar } from "lucide-react"
 
-// Mock data
+// Mock data - chỉ khám trực tiếp
 const appointments = [
   {
     id: 1,
@@ -18,7 +18,6 @@ const appointments = [
       phone: "0901234567",
       avatar: "",
     },
-    type: "offline",
     reason: "Tái khám IVF - Giai đoạn 2",
     status: "confirmed",
     duration: 30,
@@ -32,7 +31,6 @@ const appointments = [
       phone: "0912345678",
       avatar: "",
     },
-    type: "online",
     reason: "Tư vấn kết quả xét nghiệm",
     status: "pending",
     duration: 20,
@@ -46,7 +44,6 @@ const appointments = [
       phone: "0923456789",
       avatar: "",
     },
-    type: "offline",
     reason: "Khám đầu - Tư vấn IUI",
     status: "confirmed",
     duration: 45,
@@ -60,7 +57,6 @@ const appointments = [
       phone: "0934567890",
       avatar: "",
     },
-    type: "offline",
     reason: "Theo dõi sau chuyển phôi",
     status: "completed",
     duration: 30,
@@ -74,7 +70,6 @@ const appointments = [
       phone: "0945678901",
       avatar: "",
     },
-    type: "online",
     reason: "Tư vấn kế hoạch điều trị",
     status: "cancelled",
     duration: 30,
@@ -110,14 +105,6 @@ export default function TodayAppointments() {
       default:
         return status
     }
-  }
-
-  const getTypeIcon = (type: string) => {
-    return type === "online" ? (
-      <Video className="h-4 w-4 text-blue-600" />
-    ) : (
-      <MapPin className="h-4 w-4 text-green-600" />
-    )
   }
 
   const breadcrumbs = [

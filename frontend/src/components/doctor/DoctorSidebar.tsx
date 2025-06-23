@@ -9,7 +9,6 @@ import {
   Users,
   FileText,
   Pill,
-  CreditCard,
   Bell,
   BookOpen,
   LogOut,
@@ -21,8 +20,6 @@ import {
   Search,
   Activity,
   Stethoscope,
-  DollarSign,
-  RefreshCw,
   MessageSquare,
   Inbox,
   User,
@@ -56,13 +53,13 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     id: "appointments",
-    label: "Cuộc hẹn",
+    label: "Lịch khám",
     icon: Calendar,
     badge: 5,
     children: [
       {
         id: "today-appointments",
-        label: "Danh sách hôm nay",
+        label: "Lịch khám hôm nay",
         icon: Clock,
         path: "/doctor/appointments/today",
         badge: 3,
@@ -96,7 +93,7 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     id: "contracts",
-    label: "Xem hợp đồng",
+    label: "Hợp đồng điều trị",
     icon: Eye,
     path: "/doctor/contracts",
   },
@@ -139,28 +136,6 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
-    id: "payments",
-    label: "Thanh toán",
-    icon: CreditCard,
-    badge: 12,
-    children: [
-      {
-        id: "pending-payments",
-        label: "Thanh toán chờ",
-        icon: DollarSign,
-        path: "/doctor/payments/pending",
-        badge: 8,
-      },
-      {
-        id: "refund-requests",
-        label: "Yêu cầu hoàn tiền",
-        icon: RefreshCw,
-        path: "/doctor/payments/refunds",
-        badge: 4,
-      },
-    ],
-  },
-  {
     id: "notifications",
     label: "Nhắc nhở & Thông báo",
     icon: Bell,
@@ -186,12 +161,6 @@ const sidebarItems: SidebarItem[] = [
     label: "Blog",
     icon: BookOpen,
     path: "/doctor/blog",
-  },
-  {
-    id: "profile",
-    label: "Hồ sơ & Cài đặt",
-    icon: User,
-    path: "/doctor/profile",
   },
 ]
 
