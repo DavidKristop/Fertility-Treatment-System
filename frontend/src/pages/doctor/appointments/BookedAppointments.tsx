@@ -24,122 +24,102 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 
-// Mock data cho các lịch đã đặt
+// Mock data cho các lịch đã đặt (aligned with ERD - Schedule table)
 const bookedAppointments = [
   {
-    id: 1,
-    bookingDate: "2024-01-10",
-    appointmentDate: "2024-01-15",
-    time: "09:00",
+    id: "550e8400-e29b-41d4-a716-446655440001",
+    appointmentDatetime: "15-01-2024 09:00",
+    estimatedTime: "15-01-2024 10:00",
+    status: "Done", // Pending, Changed, Done, Cancel
     patient: {
+      id: "550e8400-e29b-41d4-a716-446655440011",
       name: "Nguyễn Thị Lan",
       age: 32,
       phone: "0901234567",
       email: "lan.nguyen@email.com",
       address: "123 Nguyễn Huệ, Q1, TP.HCM",
     },
-    service: "Khám sàng lọc + Tư vấn IVF",
-    type: "screening_consultation",
-    status: "confirmed",
+    treatmentPhase: {
+      id: "550e8400-e29b-41d4-a716-446655440021",
+      title: "Giai đoạn 1: Khám và tư vấn",
+      description: "Khám sàng lọc ban đầu và tư vấn phác đồ điều trị",
+    },
     notes: "Lần đầu khám, cần tư vấn chi tiết về quy trình IVF",
     duration: 60,
+    bookingDate: "10-01-2024",
   },
   {
-    id: 2,
-    bookingDate: "2024-01-11",
-    appointmentDate: "2024-01-15",
-    time: "10:30",
+    id: "550e8400-e29b-41d4-a716-446655440002",
+    appointmentDatetime: "15-01-2024 10:30",
+    estimatedTime: "15-01-2024 11:15",
+    status: "Done",
     patient: {
+      id: "550e8400-e29b-41d4-a716-446655440012",
       name: "Trần Văn Nam",
       age: 35,
       phone: "0912345678",
       email: "nam.tran@email.com",
       address: "456 Lê Lợi, Q3, TP.HCM",
     },
-    service: "Khám sàng lọc + Tư vấn IUI",
-    type: "screening_consultation",
-    status: "confirmed",
+    treatmentPhase: {
+      id: "550e8400-e29b-41d4-a716-446655440022",
+      title: "Giai đoạn 1: Khám và tư vấn",
+      description: "Khám sàng lọc ban đầu và tư vấn phác đồ điều trị",
+    },
     notes: "Đã có kết quả xét nghiệm cơ bản",
     duration: 45,
+    bookingDate: "11-01-2024",
   },
   {
-    id: 3,
-    bookingDate: "2024-01-12",
-    appointmentDate: "2024-01-16",
-    time: "14:00",
+    id: "550e8400-e29b-41d4-a716-446655440003",
+    appointmentDatetime: "16-01-2024 14:00",
+    estimatedTime: "16-01-2024 14:45",
+    status: "Pending",
     patient: {
+      id: "550e8400-e29b-41d4-a716-446655440013",
       name: "Lê Thị Hoa",
       age: 28,
       phone: "0923456789",
       email: "hoa.le@email.com",
       address: "789 Võ Văn Tần, Q3, TP.HCM",
     },
-    service: "Khám sàng lọc ban đầu",
-    type: "initial_screening",
-    status: "confirmed",
+    treatmentPhase: {
+      id: "550e8400-e29b-41d4-a716-446655440023",
+      title: "Giai đoạn 1: Khám sàng lọc ban đầu",
+      description: "Khám sàng lọc toàn diện cho cặp vợ chồng",
+    },
     notes: "Cặp vợ chồng trẻ, cần tư vấn toàn diện",
     duration: 45,
+    bookingDate: "12-01-2024",
   },
   {
-    id: 4,
-    bookingDate: "2024-01-13",
-    appointmentDate: "2024-01-17",
-    time: "15:30",
+    id: "550e8400-e29b-41d4-a716-446655440004",
+    appointmentDatetime: "17-01-2024 15:30",
+    estimatedTime: "17-01-2024 16:45",
+    status: "Pending",
     patient: {
+      id: "550e8400-e29b-41d4-a716-446655440014",
       name: "Phạm Minh Tuấn",
       age: 40,
       phone: "0934567890",
       email: "tuan.pham@email.com",
       address: "321 Điện Biên Phủ, Q1, TP.HCM",
     },
-    service: "Tư vấn chuyên sâu + Khám sàng lọc",
-    type: "detailed_consultation",
-    status: "confirmed",
+    treatmentPhase: {
+      id: "550e8400-e29b-41d4-a716-446655440024",
+      title: "Giai đoạn 2: Tư vấn chuyên sâu",
+      description: "Tư vấn chi tiết về phác đồ điều trị phù hợp",
+    },
     notes: "Đã thất bại 2 lần IVF ở nơi khác",
     duration: 75,
-  },
-  {
-    id: 5,
-    bookingDate: "2024-01-14",
-    appointmentDate: "2024-01-18",
-    time: "09:30",
-    patient: {
-      name: "Võ Thị Mai",
-      age: 29,
-      phone: "0945678901",
-      email: "mai.vo@email.com",
-      address: "654 Cách Mạng Tháng 8, Q10, TP.HCM",
-    },
-    service: "Khám sàng lọc + Tư vấn IVF",
-    type: "screening_consultation",
-    status: "confirmed",
-    notes: "Có tiền sử sảy thai, cần thăm khám kỹ",
-    duration: 60,
-  },
-  {
-    id: 6,
-    bookingDate: "2024-01-15",
-    appointmentDate: "2024-01-19",
-    time: "11:00",
-    patient: {
-      name: "Hoàng Văn Đức",
-      age: 38,
-      phone: "0956789012",
-      email: "duc.hoang@email.com",
-      address: "987 Nguyễn Thị Minh Khai, Q3, TP.HCM",
-    },
-    service: "Khám sàng lọc nam giới",
-    type: "male_screening",
-    status: "confirmed",
-    notes: "Tập trung khám sàng lọc yếu tố nam",
-    duration: 30,
+    bookingDate: "13-01-2024",
   },
 ]
 
 export default function BookedAppointments() {
   const [searchTerm, setSearchTerm] = useState("")
   const [dateFilter, setDateFilter] = useState("all")
-  const [serviceFilter, setServiceFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
   const [selectedDate, setSelectedDate] = useState("")
 
   const breadcrumbs = [
@@ -153,57 +133,61 @@ export default function BookedAppointments() {
     const matchesSearch =
       appointment.patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.patient.phone.includes(searchTerm) ||
-      appointment.service.toLowerCase().includes(searchTerm.toLowerCase())
+      appointment.treatmentPhase.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const appointmentDate = appointment.appointmentDatetime.split(" ")[0]
+    const today = new Date().toLocaleDateString("en-GB").replace(/\//g, "-")
+    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString("en-GB").replace(/\//g, "-")
 
     const matchesDate =
       dateFilter === "all" ||
-      (dateFilter === "today" && appointment.appointmentDate === new Date().toISOString().split("T")[0]) ||
-      (dateFilter === "tomorrow" &&
-        appointment.appointmentDate === new Date(Date.now() + 86400000).toISOString().split("T")[0]) ||
-      (dateFilter === "custom" && selectedDate && appointment.appointmentDate === selectedDate)
+      (dateFilter === "today" && appointmentDate === today) ||
+      (dateFilter === "tomorrow" && appointmentDate === tomorrow) ||
+      (dateFilter === "custom" && selectedDate && appointmentDate === selectedDate.split("-").reverse().join("-"))
 
-    const matchesService = serviceFilter === "all" || appointment.type === serviceFilter
+    const matchesStatus = statusFilter === "all" || appointment.status === statusFilter
 
-    return matchesSearch && matchesDate && matchesService
+    return matchesSearch && matchesDate && matchesStatus
   })
 
-  const getServiceBadgeColor = (type: string) => {
-    switch (type) {
-      case "screening_consultation":
-        return "bg-blue-100 text-blue-800"
-      case "initial_screening":
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case "Done":
         return "bg-green-100 text-green-800"
-      case "detailed_consultation":
-        return "bg-purple-100 text-purple-800"
-      case "male_screening":
-        return "bg-orange-100 text-orange-800"
+      case "Pending":
+        return "bg-yellow-100 text-yellow-800"
+      case "Changed":
+        return "bg-blue-100 text-blue-800"
+      case "Cancel":
+        return "bg-red-100 text-red-800"
       default:
         return "bg-gray-100 text-gray-800"
     }
   }
 
-  const getServiceText = (type: string) => {
-    switch (type) {
-      case "screening_consultation":
-        return "Sàng lọc + Tư vấn"
-      case "initial_screening":
-        return "Sàng lọc ban đầu"
-      case "detailed_consultation":
-        return "Tư vấn chuyên sâu"
-      case "male_screening":
-        return "Sàng lọc nam giới"
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "Done":
+        return "Đã hoàn thành"
+      case "Pending":
+        return "Chờ khám"
+      case "Changed":
+        return "Đã thay đổi"
+      case "Cancel":
+        return "Đã hủy"
       default:
-        return type
+        return status
     }
   }
 
   // Statistics
   const totalAppointments = bookedAppointments.length
-  const todayAppointments = bookedAppointments.filter(
-    (apt) => apt.appointmentDate === new Date().toISOString().split("T")[0],
-  ).length
+  const todayAppointments = bookedAppointments.filter((apt) => {
+    const today = new Date().toLocaleDateString("en-GB").replace(/\//g, "-")
+    return apt.appointmentDatetime.split(" ")[0] === today
+  }).length
   const thisWeekAppointments = bookedAppointments.filter((apt) => {
-    const aptDate = new Date(apt.appointmentDate)
+    const aptDate = new Date(apt.appointmentDatetime.split(" ")[0].split("-").reverse().join("-"))
     const today = new Date()
     const weekStart = new Date(today.setDate(today.getDate() - today.getDay()))
     const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6))
@@ -219,7 +203,7 @@ export default function BookedAppointments() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Tìm kiếm bệnh nhân, SĐT, dịch vụ..."
+                placeholder="Tìm kiếm bệnh nhân, SĐT, giai đoạn..."
                 className="pl-10 w-80"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -247,16 +231,16 @@ export default function BookedAppointments() {
               />
             )}
 
-            <Select value={serviceFilter} onValueChange={setServiceFilter}>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Lọc theo dịch vụ" />
+                <SelectValue placeholder="Lọc theo trạng thái" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả dịch vụ</SelectItem>
-                <SelectItem value="screening_consultation">Sàng lọc + Tư vấn</SelectItem>
-                <SelectItem value="initial_screening">Sàng lọc ban đầu</SelectItem>
-                <SelectItem value="detailed_consultation">Tư vấn chuyên sâu</SelectItem>
-                <SelectItem value="male_screening">Sàng lọc nam giới</SelectItem>
+                <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                <SelectItem value="Pending">Chờ khám</SelectItem>
+                <SelectItem value="Done">Đã hoàn thành</SelectItem>
+                <SelectItem value="Changed">Đã thay đổi</SelectItem>
+                <SelectItem value="Cancel">Đã hủy</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -339,9 +323,9 @@ export default function BookedAppointments() {
                   <TableRow>
                     <TableHead>Ngày & Giờ hẹn</TableHead>
                     <TableHead>Bệnh nhân</TableHead>
-                    <TableHead>Dịch vụ</TableHead>
-                    <TableHead>Thời lượng</TableHead>
-                    <TableHead>Ngày đặt</TableHead>
+                    <TableHead>Giai đoạn điều trị</TableHead>
+                    <TableHead>Thời lượng dự kiến</TableHead>
+                    <TableHead>Trạng thái</TableHead>
                     <TableHead>Ghi chú</TableHead>
                     <TableHead className="text-right">Hành động</TableHead>
                   </TableRow>
@@ -353,11 +337,11 @@ export default function BookedAppointments() {
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span>{new Date(appointment.appointmentDate).toLocaleDateString("vi-VN")}</span>
+                            <span>{appointment.appointmentDatetime.split(" ")[0]}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-semibold">{appointment.time}</span>
+                            <span className="font-semibold">{appointment.appointmentDatetime.split(" ")[1]}</span>
                           </div>
                         </div>
                       </TableCell>
@@ -383,11 +367,9 @@ export default function BookedAppointments() {
                       </TableCell>
 
                       <TableCell>
-                        <div className="space-y-2">
-                          <Badge className={getServiceBadgeColor(appointment.type)}>
-                            {getServiceText(appointment.type)}
-                          </Badge>
-                          <div className="text-sm text-muted-foreground">{appointment.service}</div>
+                        <div className="space-y-1">
+                          <div className="font-medium">{appointment.treatmentPhase.title}</div>
+                          <div className="text-sm text-muted-foreground">{appointment.treatmentPhase.description}</div>
                         </div>
                       </TableCell>
 
@@ -396,10 +378,15 @@ export default function BookedAppointments() {
                           <Clock className="h-4 w-4 text-muted-foreground" />
                           <span>{appointment.duration} phút</span>
                         </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Dự kiến: {appointment.estimatedTime.split(" ")[1]}
+                        </div>
                       </TableCell>
 
                       <TableCell>
-                        <div className="text-sm">{new Date(appointment.bookingDate).toLocaleDateString("vi-VN")}</div>
+                        <Badge className={getStatusBadgeColor(appointment.status)}>
+                          {getStatusText(appointment.status)}
+                        </Badge>
                       </TableCell>
 
                       <TableCell>
@@ -437,10 +424,12 @@ export default function BookedAppointments() {
                               <MapPin className="mr-2 h-4 w-4" />
                               Xem địa chỉ
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Calendar className="mr-2 h-4 w-4" />
-                              Dời lịch hẹn
-                            </DropdownMenuItem>
+                            {appointment.status === "Pending" && (
+                              <DropdownMenuItem>
+                                <Calendar className="mr-2 h-4 w-4" />
+                                Dời lịch hẹn
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -455,7 +444,7 @@ export default function BookedAppointments() {
                 <CalendarCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-muted-foreground mb-2">Không có lịch hẹn nào</h3>
                 <p className="text-sm text-muted-foreground">
-                  {searchTerm || dateFilter !== "all" || serviceFilter !== "all"
+                  {searchTerm || dateFilter !== "all" || statusFilter !== "all"
                     ? "Thử thay đổi bộ lọc để xem thêm kết quả"
                     : "Chưa có lịch hẹn nào được đặt"}
                 </p>
@@ -468,30 +457,30 @@ export default function BookedAppointments() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Thống kê theo dịch vụ</CardTitle>
+              <CardTitle className="text-lg">Thống kê theo trạng thái</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {[
                   {
-                    type: "screening_consultation",
-                    count: bookedAppointments.filter((a) => a.type === "screening_consultation").length,
+                    status: "Done",
+                    count: bookedAppointments.filter((a) => a.status === "Done").length,
                   },
                   {
-                    type: "initial_screening",
-                    count: bookedAppointments.filter((a) => a.type === "initial_screening").length,
+                    status: "Pending",
+                    count: bookedAppointments.filter((a) => a.status === "Pending").length,
                   },
                   {
-                    type: "detailed_consultation",
-                    count: bookedAppointments.filter((a) => a.type === "detailed_consultation").length,
+                    status: "Changed",
+                    count: bookedAppointments.filter((a) => a.status === "Changed").length,
                   },
                   {
-                    type: "male_screening",
-                    count: bookedAppointments.filter((a) => a.type === "male_screening").length,
+                    status: "Cancel",
+                    count: bookedAppointments.filter((a) => a.status === "Cancel").length,
                   },
                 ].map((stat) => (
-                  <div key={stat.type} className="flex items-center justify-between">
-                    <Badge className={getServiceBadgeColor(stat.type)}>{getServiceText(stat.type)}</Badge>
+                  <div key={stat.status} className="flex items-center justify-between">
+                    <Badge className={getStatusBadgeColor(stat.status)}>{getStatusText(stat.status)}</Badge>
                     <span className="font-semibold">{stat.count} lịch</span>
                   </div>
                 ))}
@@ -508,22 +497,26 @@ export default function BookedAppointments() {
                 <div className="flex items-start gap-2">
                   <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-sm">Lịch tự động xác nhận</p>
-                    <p className="text-xs text-muted-foreground">Tất cả lịch đặt đều được xác nhận tự động</p>
+                    <p className="font-medium text-sm">Lịch hẹn theo giai đoạn</p>
+                    <p className="text-xs text-muted-foreground">Mỗi lịch hẹn thuộc về một giai đoạn điều trị cụ th���</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Users className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-sm">Khám lần đầu</p>
-                    <p className="text-xs text-muted-foreground">Tất cả đều là lịch khám sàng lọc + tư vấn offline</p>
+                    <p className="font-medium text-sm">Thời gian dự kiến</p>
+                    <p className="text-xs text-muted-foreground">
+                      Thời gian kết thúc được tính dựa trên thời lượng dự kiến
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-sm">Tại phòng khám</p>
-                    <p className="text-xs text-muted-foreground">Tất cả cuộc hẹn đều diễn ra trực tiếp</p>
+                    <p className="text-xs text-muted-foreground">
+                      Tất cả cuộc hẹn đều diễn ra trực tiếp tại phòng khám
+                    </p>
                   </div>
                 </div>
               </div>

@@ -21,10 +21,10 @@ import {
   AlertTriangle,
 } from "lucide-react"
 
-// Mock data - Chỉ hợp đồng đã được xác nhận
+// Mock data - Chỉ hợp đồng đã được xác nhận (aligned with ERD)
 const contracts = [
   {
-    id: 1,
+    id: "550e8400-e29b-41d4-a716-446655440001",
     contractNumber: "HD001-2024",
     patient: {
       name: "Nguyễn Thị Lan",
@@ -32,22 +32,21 @@ const contracts = [
       phone: "0901234567",
       email: "lan.nguyen@email.com",
     },
-    treatmentType: "IVF",
-    totalAmount: 85000000,
-    confirmedDate: "2024-01-10",
-    signingMethod: "Ký điện tử online",
-    treatmentStatus: "active",
+    treatment: {
+      id: "550e8400-e29b-41d4-a716-446655440011",
+      protocol: "IVF Protocol Standard",
+      status: "In Progress",
+      startDate: "10-01-2024",
+      diagnosis: "Vô sinh nguyên phát do tắc vòi trứng",
+    },
+    isSigned: true,
+    signDeadline: "15-01-2024",
+    contractUrl: "/contracts/HD001-2024.pdf",
     progress: 75,
     currentStage: "Giai đoạn 3: Lấy trứng và thụ tinh",
-    stages: [
-      { name: "Giai đoạn 1: Khám và tư vấn", status: "completed" },
-      { name: "Giai đoạn 2: Kích thích buồng trứng", status: "completed" },
-      { name: "Giai đoạn 3: Lấy trứng và thụ tinh", status: "in-progress" },
-      { name: "Giai đoạn 4: Chuyển phôi", status: "pending" },
-    ],
   },
   {
-    id: 2,
+    id: "550e8400-e29b-41d4-a716-446655440002",
     contractNumber: "HD002-2024",
     patient: {
       name: "Trần Văn Nam",
@@ -55,21 +54,21 @@ const contracts = [
       phone: "0912345678",
       email: "nam.tran@email.com",
     },
-    treatmentType: "IUI",
-    totalAmount: 25000000,
-    confirmedDate: "2024-01-08",
-    signingMethod: "Ký điện tử online",
-    treatmentStatus: "completed",
+    treatment: {
+      id: "550e8400-e29b-41d4-a716-446655440012",
+      protocol: "IUI Protocol Basic",
+      status: "Complete",
+      startDate: "08-01-2024",
+      diagnosis: "Vô sinh thứ phát do yếu tố nam giới nhẹ",
+    },
+    isSigned: true,
+    signDeadline: "12-01-2024",
+    contractUrl: "/contracts/HD002-2024.pdf",
     progress: 100,
     currentStage: "Hoàn thành - Thành công",
-    stages: [
-      { name: "Giai đoạn 1: Khám và tư vấn", status: "completed" },
-      { name: "Giai đoạn 2: Kích thích rụng trứng", status: "completed" },
-      { name: "Giai đoạn 3: Thụ tinh nhân tạo", status: "completed" },
-    ],
   },
   {
-    id: 3,
+    id: "550e8400-e29b-41d4-a716-446655440003",
     contractNumber: "HD003-2024",
     patient: {
       name: "Lê Thị Hoa",
@@ -77,22 +76,21 @@ const contracts = [
       phone: "0923456789",
       email: "hoa.le@email.com",
     },
-    treatmentType: "IVF",
-    totalAmount: 95000000,
-    confirmedDate: "2024-01-05",
-    signingMethod: "Ký điện tử online",
-    treatmentStatus: "active",
+    treatment: {
+      id: "550e8400-e29b-41d4-a716-446655440013",
+      protocol: "IVF Protocol Standard",
+      status: "In Progress",
+      startDate: "05-01-2024",
+      diagnosis: "Vô sinh nguyên phát do rối loạn phóng noãn",
+    },
+    isSigned: true,
+    signDeadline: "10-01-2024",
+    contractUrl: "/contracts/HD003-2024.pdf",
     progress: 25,
     currentStage: "Giai đoạn 1: Khám và tư vấn",
-    stages: [
-      { name: "Giai đoạn 1: Khám và tư vấn", status: "in-progress" },
-      { name: "Giai đoạn 2: Kích thích buồng trứng", status: "pending" },
-      { name: "Giai đoạn 3: Lấy trứng và thụ tinh", status: "pending" },
-      { name: "Giai đoạn 4: Chuyển phôi", status: "pending" },
-    ],
   },
   {
-    id: 4,
+    id: "550e8400-e29b-41d4-a716-446655440004",
     contractNumber: "HD004-2024",
     patient: {
       name: "Phạm Minh Tuấn",
@@ -100,75 +98,29 @@ const contracts = [
       phone: "0934567890",
       email: "tuan.pham@email.com",
     },
-    treatmentType: "IUI",
-    totalAmount: 30000000,
-    confirmedDate: "2024-01-03",
-    signingMethod: "Ký điện tử online",
-    treatmentStatus: "stopped",
+    treatment: {
+      id: "550e8400-e29b-41d4-a716-446655440014",
+      protocol: "IUI Protocol Basic",
+      status: "Cancel",
+      startDate: "03-01-2024",
+      diagnosis: "Vô sinh thứ phát do yếu tố nam giới",
+    },
+    isSigned: true,
+    signDeadline: "08-01-2024",
+    contractUrl: "/contracts/HD004-2024.pdf",
     progress: 50,
-    currentStage: "Đã dừng điều trị - Chờ xử lý hoàn tiền",
-    stages: [
-      { name: "Giai đoạn 1: Khám và tư vấn", status: "completed" },
-      { name: "Giai đoạn 2: Kích thích rụng trứng", status: "partially_completed" },
-      { name: "Giai đoạn 3: Thụ tinh nhân tạo", status: "cancelled" },
-    ],
-  },
-  {
-    id: 5,
-    contractNumber: "HD005-2024",
-    patient: {
-      name: "Võ Thị Mai",
-      age: 29,
-      phone: "0945678901",
-      email: "mai.vo@email.com",
-    },
-    treatmentType: "IVF",
-    totalAmount: 85000000,
-    confirmedDate: "2023-12-20",
-    signingMethod: "Ký điện tử online",
-    treatmentStatus: "completed",
-    progress: 100,
-    currentStage: "Hoàn thành - Có thai thành công",
-    stages: [
-      { name: "Giai đoạn 1: Khám và tư vấn", status: "completed" },
-      { name: "Giai đoạn 2: Kích thích buồng trứng", status: "completed" },
-      { name: "Giai đoạn 3: Lấy trứng và thụ tinh", status: "completed" },
-      { name: "Giai đoạn 4: Chuyển phôi", status: "completed" },
-    ],
-  },
-  {
-    id: 6,
-    contractNumber: "HD006-2024",
-    patient: {
-      name: "Hoàng Thị Bình",
-      age: 31,
-      phone: "0956789012",
-      email: "binh.hoang@email.com",
-    },
-    treatmentType: "IVF",
-    totalAmount: 90000000,
-    confirmedDate: "2024-01-12",
-    signingMethod: "Ký điện tử online",
-    treatmentStatus: "active",
-    progress: 60,
-    currentStage: "Giai đoạn 2: Kích thích buồng trứng",
-    stages: [
-      { name: "Giai đoạn 1: Khám và tư vấn", status: "completed" },
-      { name: "Giai đoạn 2: Kích thích buồng trứng", status: "in-progress" },
-      { name: "Giai đoạn 3: Lấy trứng và thụ tinh", status: "pending" },
-      { name: "Giai đoạn 4: Chuyển phôi", status: "pending" },
-    ],
+    currentStage: "Đã dừng điều trị theo yêu cầu bệnh nhân",
   },
 ]
 
 export default function ViewContracts() {
   const getTreatmentStatusColor = (status: string) => {
     switch (status) {
-      case "active":
+      case "In Progress":
         return "bg-green-100 text-green-800"
-      case "completed":
+      case "Complete":
         return "bg-blue-100 text-blue-800"
-      case "stopped":
+      case "Cancel":
         return "bg-red-100 text-red-800"
       default:
         return "bg-gray-100 text-gray-800"
@@ -177,12 +129,12 @@ export default function ViewContracts() {
 
   const getTreatmentStatusText = (status: string) => {
     switch (status) {
-      case "active":
+      case "In Progress":
         return "Đang điều trị"
-      case "completed":
+      case "Complete":
         return "Hoàn thành"
-      case "stopped":
-        return "Đã dừng"
+      case "Cancel":
+        return "Đã hủy"
       default:
         return status
     }
@@ -190,31 +142,24 @@ export default function ViewContracts() {
 
   const getTreatmentStatusIcon = (status: string) => {
     switch (status) {
-      case "active":
+      case "In Progress":
         return <Activity className="h-4 w-4 text-green-600" />
-      case "completed":
+      case "Complete":
         return <CheckCircle className="h-4 w-4 text-blue-600" />
-      case "stopped":
+      case "Cancel":
         return <XCircle className="h-4 w-4 text-red-600" />
       default:
         return <Clock className="h-4 w-4 text-gray-600" />
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount)
-  }
-
   const breadcrumbs = [{ label: "Trang chủ", path: "/doctor/dashboard" }, { label: "Hợp đồng điều trị" }]
 
   // Tính toán thống kê
   const totalContracts = contracts.length
-  const activeContracts = contracts.filter((c) => c.treatmentStatus === "active").length
-  const completedContracts = contracts.filter((c) => c.treatmentStatus === "completed").length
-  const stoppedContracts = contracts.filter((c) => c.treatmentStatus === "stopped").length
+  const activeContracts = contracts.filter((c) => c.treatment.status === "In Progress").length
+  const completedContracts = contracts.filter((c) => c.treatment.status === "Complete").length
+  const cancelledContracts = contracts.filter((c) => c.treatment.status === "Cancel").length
 
   return (
     <DoctorLayout title="Hợp đồng điều trị" breadcrumbs={breadcrumbs}>
@@ -232,14 +177,14 @@ export default function ViewContracts() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="active">Đang điều trị</SelectItem>
-                <SelectItem value="completed">Hoàn thành</SelectItem>
-                <SelectItem value="stopped">Đã dừng</SelectItem>
+                <SelectItem value="In Progress">Đang điều trị</SelectItem>
+                <SelectItem value="Complete">Hoàn thành</SelectItem>
+                <SelectItem value="Cancel">Đã hủy</SelectItem>
               </SelectContent>
             </Select>
             <Select>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Lọc theo loại điều trị" />
+                <SelectValue placeholder="Lọc theo phác đồ" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tất cả</SelectItem>
@@ -289,8 +234,8 @@ export default function ViewContracts() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Đã dừng</p>
-                  <p className="text-2xl font-bold text-red-600">{stoppedContracts}</p>
+                  <p className="text-sm text-muted-foreground">Đã hủy</p>
+                  <p className="text-2xl font-bold text-red-600">{cancelledContracts}</p>
                 </div>
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
@@ -310,11 +255,11 @@ export default function ViewContracts() {
                   <TableRow>
                     <TableHead>Hợp đồng</TableHead>
                     <TableHead>Bệnh nhân</TableHead>
-                    <TableHead>Loại điều trị</TableHead>
+                    <TableHead>Phác đồ điều trị</TableHead>
                     <TableHead>Trạng thái điều trị</TableHead>
                     <TableHead>Tiến độ điều trị</TableHead>
                     <TableHead>Giai đoạn hiện tại</TableHead>
-                    <TableHead>Ngày xác nhận</TableHead>
+                    <TableHead>Ngày bắt đầu</TableHead>
                     <TableHead className="text-right">Hành động</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -326,7 +271,9 @@ export default function ViewContracts() {
                           <FileText className="h-4 w-4 text-muted-foreground" />
                           <div>
                             <div className="font-medium">{contract.contractNumber}</div>
-                            <div className="text-xs text-muted-foreground">{contract.signingMethod}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {contract.isSigned ? "Đã ký" : "Chưa ký"}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -345,13 +292,14 @@ export default function ViewContracts() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{contract.treatmentType}</Badge>
+                        <Badge variant="outline">{contract.treatment.protocol}</Badge>
+                        <div className="text-xs text-muted-foreground mt-1">{contract.treatment.diagnosis}</div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {getTreatmentStatusIcon(contract.treatmentStatus)}
-                          <Badge className={getTreatmentStatusColor(contract.treatmentStatus)}>
-                            {getTreatmentStatusText(contract.treatmentStatus)}
+                          {getTreatmentStatusIcon(contract.treatment.status)}
+                          <Badge className={getTreatmentStatusColor(contract.treatment.status)}>
+                            {getTreatmentStatusText(contract.treatment.status)}
                           </Badge>
                         </div>
                       </TableCell>
@@ -360,9 +308,9 @@ export default function ViewContracts() {
                           <div className="w-16 bg-gray-200 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${
-                                contract.treatmentStatus === "completed"
+                                contract.treatment.status === "Complete"
                                   ? "bg-blue-600"
-                                  : contract.treatmentStatus === "stopped"
+                                  : contract.treatment.status === "Cancel"
                                     ? "bg-red-600"
                                     : "bg-green-600"
                               }`}
@@ -374,17 +322,17 @@ export default function ViewContracts() {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">{contract.currentStage}</div>
-                        {contract.treatmentStatus === "stopped" && (
+                        {contract.treatment.status === "Cancel" && (
                           <div className="flex items-center gap-1 mt-1">
                             <AlertTriangle className="h-3 w-3 text-orange-500" />
-                            <span className="text-xs text-orange-600">Chờ xử lý hoàn tiền</span>
+                            <span className="text-xs text-orange-600">Đã dừng điều trị</span>
                           </div>
                         )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2 text-sm">
                           <Calendar className="h-3 w-3" />
-                          {contract.confirmedDate}
+                          {contract.treatment.startDate}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -411,7 +359,7 @@ export default function ViewContracts() {
                               <User className="mr-2 h-4 w-4" />
                               Xem hồ sơ bệnh nhân
                             </DropdownMenuItem>
-                            {contract.treatmentStatus === "active" && (
+                            {contract.treatment.status === "In Progress" && (
                               <DropdownMenuItem className="text-red-600">
                                 <XCircle className="mr-2 h-4 w-4" />
                                 Dừng điều trị

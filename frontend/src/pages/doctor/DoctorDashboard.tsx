@@ -7,7 +7,7 @@ import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
 import ContractCard from "@/components/doctor/dashboard/ContractCard"
 import QuickActions from "@/components/doctor/dashboard/QuickActions"
 
-// Mock data - Đơn giản hóa, bỏ payment và refund
+// Mock data - Removed all payment-related content
 const todayStats = {
   appointments: 8,
   completedAppointments: 5,
@@ -17,7 +17,7 @@ const todayStats = {
   totalContracts: 6,
   activeContracts: 3,
   completedContracts: 2,
-  stoppedContracts: 1,
+  cancelledContracts: 1,
 }
 
 const todayAppointments = [
@@ -72,7 +72,7 @@ const recentContracts = [
     treatmentStatus: "active",
     progress: 75,
     currentStage: "Giai đoạn 3: Lấy trứng và thụ tinh",
-    confirmedDate: "2024-01-10",
+    confirmedDate: "10-01-2024",
   },
   {
     id: 2,
@@ -82,7 +82,7 @@ const recentContracts = [
     treatmentStatus: "active",
     progress: 25,
     currentStage: "Giai đoạn 1: Khám và tư vấn",
-    confirmedDate: "2024-01-05",
+    confirmedDate: "05-01-2024",
   },
   {
     id: 3,
@@ -92,7 +92,7 @@ const recentContracts = [
     treatmentStatus: "completed",
     progress: 100,
     currentStage: "Hoàn thành - Thành công",
-    confirmedDate: "2024-01-08",
+    confirmedDate: "08-01-2024",
   },
 ]
 
@@ -101,14 +101,14 @@ const recentConfirmations = [
     id: 1,
     contractNumber: "HD001-2024",
     patient: "Nguyễn Thị Lan",
-    confirmedDate: "2024-01-10",
+    confirmedDate: "10-01-2024",
     confirmedTime: "14:30",
   },
   {
     id: 2,
     contractNumber: "HD002-2024",
     patient: "Trần Văn Nam",
-    confirmedDate: "2024-01-08",
+    confirmedDate: "08-01-2024",
     confirmedTime: "09:15",
   },
 ]
@@ -146,7 +146,7 @@ export default function DoctorDashboard() {
         return "bg-green-100 text-green-800"
       case "completed":
         return "bg-blue-100 text-blue-800"
-      case "stopped":
+      case "cancelled":
         return "bg-red-100 text-red-800"
       default:
         return "bg-gray-100 text-gray-800"
@@ -159,8 +159,8 @@ export default function DoctorDashboard() {
         return "Đang điều trị"
       case "completed":
         return "Hoàn thành"
-      case "stopped":
-        return "Đã dừng"
+      case "cancelled":
+        return "Đã hủy"
       default:
         return status
     }
@@ -290,7 +290,7 @@ export default function DoctorDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">{contract.patient}</p>
-                      <p className="text-sm text-green-600">Đã xác nhận hợp đồng online</p>
+                      <p className="text-sm text-green-600">Đã xác nhận hợp đồng</p>
                       <p className="text-xs text-muted-foreground">
                         {contract.confirmedDate} lúc {contract.confirmedTime}
                       </p>

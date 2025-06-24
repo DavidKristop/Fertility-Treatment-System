@@ -164,10 +164,6 @@ const router = createBrowserRouter([
             index: true,
             element: <PatientList />,
           },
-          {
-            path: "search",
-            element: <PatientList />, 
-          },
         ],
       },
       // Contract routes
