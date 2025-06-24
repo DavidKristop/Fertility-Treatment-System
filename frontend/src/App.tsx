@@ -18,6 +18,7 @@ import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
+import RequestAppointment from "./pages/patient/RequestAppointment"
 import PatientList from "./pages/doctor/patients/PatientList"
 import PatientDashboard from "./pages/patient/PatientDashboard"
 import ManagerDashboard from "./pages/manager/ManagerDashboard"
@@ -156,8 +157,8 @@ const router = createBrowserRouter([
         element: <PatientDashboard />,
       },
       {
-        path: "appointments/today",
-        element: <TodayAppointments />,
+        path: "appointments/schedule",
+        element: <RequestAppointment />,
       },
       {
         path: "patients",

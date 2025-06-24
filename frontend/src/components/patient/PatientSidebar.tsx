@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import {
@@ -19,6 +18,7 @@ import {
   Activity,
   MessageSquare,
   User,
+  CalendarPlus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -39,8 +39,6 @@ interface SidebarItem {
   }[]
 }
 
-// giữ nguyên phần import như cũ, chỉ cần đổi tên file và title
-
 const sidebarItems: SidebarItem[] = [
   {
     id: "dashboard",
@@ -54,6 +52,12 @@ const sidebarItems: SidebarItem[] = [
     icon: Calendar,
     badge: 2,
     children: [
+      {
+        id: "schedule-appointment",
+        label: "Lên lịch khám",
+        icon: CalendarPlus,
+        path: "/patient/appointments/schedule",
+      },
       {
         id: "upcoming-appointments",
         label: "Cuộc hẹn sắp tới",
@@ -121,12 +125,11 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     id: "profile",
-    label: "Hồ sơ & Cài đặt",
+    label: "Hồ sơ & Cài đặt",
     icon: User,
     path: "/patient/profile",
   },
 ]
-
 
 interface PatientSidebarProps {
   isCollapsed: boolean
