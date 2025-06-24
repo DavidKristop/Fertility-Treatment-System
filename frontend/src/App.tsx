@@ -25,11 +25,14 @@ import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
+import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
+import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
 
 // layouts
 import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
+
 
 const router = createBrowserRouter([
   {
@@ -154,6 +157,10 @@ const router = createBrowserRouter([
             path: "calendar",
             element: <Calendar />,
           },
+          {
+            path: "pending",
+            element: <PendingApprovals />,
+          },
         ],
       },
       // Patient routes
@@ -180,12 +187,8 @@ const router = createBrowserRouter([
             element: <TreatmentPlans />,
           },
           {
-            path: "active",
-            element: <TreatmentPlans />,
-          },
-          {
-            path: "progress",
-            element: <TreatmentPlans />,
+            path: "create-plans",
+            element: <CreateTreatmentPlans />,
           },
         ],
       },

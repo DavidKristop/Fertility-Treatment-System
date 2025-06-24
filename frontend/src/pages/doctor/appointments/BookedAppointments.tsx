@@ -1,5 +1,3 @@
-"use client"
-
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -250,10 +248,7 @@ export default function BookedAppointments() {
               <Calendar className="h-4 w-4 mr-2" />
               Xem lịch
             </Button>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Bộ lọc nâng cao
-            </Button>
+            
           </div>
         </div>
 

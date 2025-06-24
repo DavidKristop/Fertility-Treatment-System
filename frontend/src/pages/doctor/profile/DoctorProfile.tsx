@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

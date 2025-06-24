@@ -7,7 +7,7 @@ import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
 import ContractCard from "@/components/doctor/dashboard/ContractCard"
 import QuickActions from "@/components/doctor/dashboard/QuickActions"
 
-// Mock data - Removed all payment-related content
+// Mock data với định dạng ngày Việt Nam
 const todayStats = {
   appointments: 8,
   completedAppointments: 5,
@@ -68,7 +68,7 @@ const recentContracts = [
     id: 1,
     contractNumber: "HD001-2024",
     patient: "Nguyễn Thị Lan",
-    treatmentType: "IVF",
+    treatmentType: "IVF Long Protocol",
     treatmentStatus: "active",
     progress: 75,
     currentStage: "Giai đoạn 3: Lấy trứng và thụ tinh",
@@ -78,7 +78,7 @@ const recentContracts = [
     id: 2,
     contractNumber: "HD002-2024",
     patient: "Lê Thị Hoa",
-    treatmentType: "IVF",
+    treatmentType: "IVF Short Protocol",
     treatmentStatus: "active",
     progress: 25,
     currentStage: "Giai đoạn 1: Khám và tư vấn",
@@ -88,7 +88,7 @@ const recentContracts = [
     id: 3,
     contractNumber: "HD003-2024",
     patient: "Trần Văn Nam",
-    treatmentType: "IUI",
+    treatmentType: "IUI Natural Protocol",
     treatmentStatus: "completed",
     progress: 100,
     currentStage: "Hoàn thành - Thành công",
@@ -263,52 +263,7 @@ export default function DoctorDashboard() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Recent Confirmations */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              Hợp đồng được xác nhận gần đây
-            </CardTitle>
-            <Button variant="outline" size="sm">
-              <Eye className="h-4 w-4 mr-2" />
-              Xem tất cả
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {recentConfirmations.map((contract) => (
-                <div
-                  key={contract.id}
-                  className="flex items-center justify-between p-3 border border-green-200 rounded-lg bg-green-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex flex-col items-center">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-xs font-medium">{contract.contractNumber}</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">{contract.patient}</p>
-                      <p className="text-sm text-green-600">Đã xác nhận hợp đồng</p>
-                      <p className="text-xs text-muted-foreground">
-                        {contract.confirmedDate} lúc {contract.confirmedTime}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Tải PDF
-                    </Button>
-                    <Button size="sm">Chi tiết</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
+        
         {/* Quick Actions */}
         <QuickActions />
       </div>

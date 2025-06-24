@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Plus, Save, User, FileText, Calendar } from "lucide-react"
 import { useState } from "react"
+// import { convertFromInputDate } from "@/lib/date-utils"
 
 interface TreatmentProtocol {
   id: string
@@ -38,28 +39,10 @@ export default function TreatmentPlanForm({ onSubmit, onCancel, availableProtoco
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
-    // Format date to dd-mm-yyyy
-    const formattedData = {
-      ...formData,
-      startDate: formData.startDate ? formatDateToDDMMYYYY(formData.startDate) : "",
-    }
-
-    onSubmit(formattedData)
-  }
-
-  const formatDateToDDMMYYYY = (dateString: string) => {
-    const date = new Date(dateString)
-    const day = date.getDate().toString().padStart(2, "0")
-    const month = (date.getMonth() + 1).toString().padStart(2, "0")
-    const year = date.getFullYear()
-    return `${day}-${month}-${year}`
+    onSubmit(formData)
   }
 
   const selectedProtocol = availableProtocols.find((p) => p.id === formData.protocolId)
-  const filteredProtocols = formData.treatmentType
-    ? availableProtocols.filter((p) => p.type === formData.treatmentType)
-    : []
 
   return (
     <Card>

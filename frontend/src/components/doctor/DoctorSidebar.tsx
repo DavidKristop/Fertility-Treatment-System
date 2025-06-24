@@ -19,13 +19,12 @@ import {
   CalendarDays,
   Search,
   Activity,
-  Stethoscope,
   MessageSquare,
   Inbox,
   Eye,
   CalendarCheck,
   TestTube,
-  Plus,
+  ClipboardList,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -60,6 +59,13 @@ const sidebarItems: SidebarItem[] = [
     badge: 5,
     children: [
       {
+        id: "pending-approvals",
+        label: "Chờ duyệt",
+        icon: ClipboardList,
+        path: "/doctor/appointments/pending",
+        badge: 8,
+      },
+      {
         id: "today-appointments",
         label: "Lịch khám hôm nay",
         icon: Clock,
@@ -91,6 +97,12 @@ const sidebarItems: SidebarItem[] = [
         icon: Users,
         path: "/doctor/patients",
       },
+      {
+        id: "search-patients",
+        label: "Tìm kiếm bệnh nhân",
+        icon: Search,
+        path: "/doctor/patients/search",
+      },
     ],
   },
   {
@@ -103,26 +115,7 @@ const sidebarItems: SidebarItem[] = [
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
-    children: [
-      {
-        id: "active-plans",
-        label: "Kế hoạch đang hoạt động",
-        icon: Stethoscope,
-        path: "/doctor/treatment-plans/active",
-      },
-      {
-        id: "create-plan",
-        label: "Tạo kế hoạch mới",
-        icon: Plus,
-        path: "/doctor/treatment-plans",
-      },
-      {
-        id: "stages-progress",
-        label: "Giai đoạn & tiến độ",
-        icon: Activity,
-        path: "/doctor/treatment-plans/progress",
-      },
-    ],
+    path: "/doctor/treatment-plans",
   },
   {
     id: "results",

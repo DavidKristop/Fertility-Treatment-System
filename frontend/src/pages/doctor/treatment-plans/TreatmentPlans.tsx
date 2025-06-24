@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Stethoscope, Eye, Calendar, FileText } from "lucide-react"
 import { useState } from "react"
-import TreatmentPlanForm from "@/components/doctor/treatment/TreatmentPlanForm"
+import { Link } from "react-router-dom"
 
 // Mock data aligned with ERD - Treatment table with correct protocols
 const treatments = [
@@ -208,52 +208,9 @@ const treatments = [
   },
 ]
 
-// Available treatment protocols - Only correct protocols
-const availableProtocols = [
-  {
-    id: "550e8400-e29b-41d4-a716-446655440021",
-    title: "IVF Long Protocol",
-    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích",
-    type: "IVF",
-    subtype: "long",
-    isActive: true,
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440023",
-    title: "IVF Short Protocol",
-    description: "Phác đồ IVF ngắn với kích thích trực tiếp",
-    type: "IVF",
-    subtype: "short",
-    isActive: true,
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440022",
-    title: "IUI Natural Protocol",
-    description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
-    type: "IUI",
-    subtype: "natural",
-    isActive: true,
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440024",
-    title: "IUI Stimulated Protocol",
-    description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
-    type: "IUI",
-    subtype: "stimulated",
-    isActive: true,
-  },
-]
-
 export default function TreatmentPlans() {
-  const [showCreateForm, setShowCreateForm] = useState(false)
   const [statusFilter, setStatusFilter] = useState("all")
-  const [protocolFilter, setProtocolFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
-
-  const handleCreatePlan = (data: any) => {
-    console.log("Creating treatment plan:", data)
-    setShowCreateForm(false)
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -299,9 +256,8 @@ export default function TreatmentPlans() {
 
   const filteredTreatments = treatments.filter((treatment) => {
     const matchesStatus = statusFilter === "all" || treatment.status === statusFilter
-    const matchesProtocol = protocolFilter === "all" || treatment.protocol.id === protocolFilter
     const matchesType = typeFilter === "all" || treatment.protocol.type === typeFilter
-    return matchesStatus && matchesProtocol && matchesType
+    return matchesStatus && matchesType
   })
 
   const breadcrumbs = [{ label: "Trang chủ", path: "/doctor/dashboard" }, { label: "Kế hoạch điều trị" }]
@@ -337,34 +293,14 @@ export default function TreatmentPlans() {
                 <SelectItem value="Cancel">Đã hủy</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={protocolFilter} onValueChange={setProtocolFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Phác đồ" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả phác đồ</SelectItem>
-                {availableProtocols.map((protocol) => (
-                  <SelectItem key={protocol.id} value={protocol.id}>
-                    {protocol.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
-          <Button onClick={() => setShowCreateForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Tạo kế hoạch mới
-          </Button>
+          <Link to="/doctor/treatment-plans/create-plans">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Tạo kế hoạch mới
+            </Button>
+          </Link>
         </div>
-
-        {/* Create Treatment Plan Form */}
-        {showCreateForm && (
-          <TreatmentPlanForm
-            onSubmit={handleCreatePlan}
-            onCancel={() => setShowCreateForm(false)}
-            availableProtocols={availableProtocols}
-          />
-        )}
 
         {/* Treatment Plans List */}
         <div className="grid grid-cols-1 gap-6">
