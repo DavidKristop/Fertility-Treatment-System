@@ -1,8 +1,12 @@
+"use client"
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Clock, MoreHorizontal, CheckCircle, Calendar, X } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 interface Appointment {
   id: number
@@ -77,10 +81,47 @@ export default function AppointmentTable({ appointments, getStatusColor, getStat
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <CheckCircle className="mr-2 h-4 w-4" />
-                      Xem chi tiết
-                    </DropdownMenuItem>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Xem chi tiết
+                        </DropdownMenuItem>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Chi tiết lịch khám</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className="font-semibold">Bệnh nhân:</Label>
+                              <p>{appointment.patient.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {appointment.patient.age} tuổi • {appointment.patient.phone}
+                              </p>
+                            </div>
+                            <div>
+                              <Label className="font-semibold">Thời gian:</Label>
+                              <p>{appointment.time}</p>
+                              <p className="text-sm text-muted-foreground">Thời lượng: {appointment.duration} phút</p>
+                            </div>
+                          </div>
+
+                          <div>
+                            <Label className="font-semibold">Lý do khám:</Label>
+                            <p className="mt-1 p-3 bg-gray-50 rounded">{appointment.reason}</p>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Label className="font-semibold">Trạng thái:</Label>
+                            <Badge className={getStatusColor(appointment.status)}>
+                              {getStatusText(appointment.status)}
+                            </Badge>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                     {appointment.status === "pending" && (
                       <DropdownMenuItem>
                         <CheckCircle className="mr-2 h-4 w-4" />

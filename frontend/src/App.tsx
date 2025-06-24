@@ -1,19 +1,19 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 // pages
-import Home from './pages/Home'
-import Company from './pages/about/Company'
-import Team from './pages/about/Team'
-import Services from './pages/pricing/Services'
-import Insurance from './pages/pricing/Insurance'
-import Financing from './pages/pricing/Financing'
-import Iui from './pages/services/iui'
-import Ivf from './pages/services/ivf'
-import DoctorListPage from './pages/doctorList/DoctorListPage'
-import DoctorDetailPage from './pages/doctorList/DoctorDetailPage'
-import LoginPage from './pages/authorization/LoginPage'
-import RegisterPage from './pages/authorization/RegisterPage'
-import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
+import Home from "./pages/Home"
+import Company from "./pages/about/Company"
+import Team from "./pages/about/Team"
+import Services from "./pages/pricing/Services"
+import Insurance from "./pages/pricing/Insurance"
+import Financing from "./pages/pricing/Financing"
+import Iui from "./pages/services/iui"
+import Ivf from "./pages/services/ivf"
+import DoctorListPage from "./pages/doctorList/DoctorListPage"
+import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage"
+import LoginPage from "./pages/authorization/LoginPage"
+import RegisterPage from "./pages/authorization/RegisterPage"
+import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
@@ -27,11 +27,16 @@ import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
 import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
+import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
+import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
+import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
+import Inbox from "./pages/doctor/notifications/Inbox"
+import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 
 // layouts
-import RootLayout from './pages/RootLayout'
-import BlogPage from './pages/blog/page'
-import BlogPostPage from './pages/blog/[id]/page'
+import RootLayout from "./pages/RootLayout"
+import BlogPage from "./pages/blog/page"
+import BlogPostPage from "./pages/blog/[id]/page"
 
 
 const router = createBrowserRouter([
@@ -128,8 +133,8 @@ const router = createBrowserRouter([
           {
             path: "forgot-password",
             element: <ForgotPasswordPage />,
-          }
-        ]
+          },
+        ],
       },
     ],
   },
@@ -207,13 +212,45 @@ const router = createBrowserRouter([
         path: "profile",
         element: <DoctorProfile />,
       },
-      
+      // Prescription routes
+      {
+        path: "prescriptions",
+        children: [
+          {
+            path: "active",
+            element: <ActivePrescriptions />,
+          },
+          {
+            path: "new",
+            element: <CreatePrescription />,
+          },
+        ],
+      },
+      // Notification routes
+      {
+        path: "notifications",
+        children: [
+          {
+            path: "reminders",
+            element: <ReminderHistory />,
+          },
+          {
+            path: "inbox",
+            element: <Inbox />,
+          },
+        ],
+      },
+      // Blog routes
+      {
+        path: "blog",
+        element: <DoctorBlog />,
+      },
     ],
   },
 ])
 
 function App() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />
 }
 
-export default App;
+export default App

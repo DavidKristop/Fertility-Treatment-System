@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
   Users,
@@ -180,6 +180,7 @@ interface DoctorSidebarProps {
 export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false }: DoctorSidebarProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const location = useLocation()
+  const navigate = useNavigate()
 
   // Tự động mở rộng menu chứa trang hiện tại
   useEffect(() => {
@@ -311,7 +312,13 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
 
       {/* Logout */}
       <div className="p-2 border-t border-gray-200">
-        <div className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors">
+        <div
+          className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
+          onClick={() => {
+            localStorage.removeItem("token")
+            navigate("/authorization/login")
+          }}
+        >
           <LogOut className="h-5 w-5 flex-shrink-0" />
           {(!isCollapsed || isMobile) && <span className="text-sm font-medium">Đăng xuất</span>}
         </div>

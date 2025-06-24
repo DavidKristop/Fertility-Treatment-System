@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { FileText, Save, Upload, User, TestTube, Activity } from "lucide-react"
 import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 export default function RecordResults() {
   const [selectedPatient, setSelectedPatient] = useState("")
@@ -175,16 +176,30 @@ export default function RecordResults() {
             <div className="space-y-4">
               {[
                 {
+                  id: "1",
                   patient: "Nguyễn Thị Lan",
                   type: "Xét nghiệm máu",
                   date: "2024-01-15",
                   status: "normal",
+                  details: {
+                    hcg: "150 mIU/mL",
+                    estradiol: "200 pg/mL",
+                    progesterone: "15 ng/mL",
+                    notes: "Kết quả trong giới hạn bình thường. Tiếp tục theo dõi.",
+                  },
                 },
                 {
+                  id: "2",
                   patient: "Trần Văn Nam",
                   type: "Phân tích tinh trùng",
                   date: "2024-01-14",
                   status: "abnormal",
+                  details: {
+                    concentration: "10 million/mL",
+                    motility: "30%",
+                    morphology: "2%",
+                    notes: "Nồng độ tinh trùng thấp, cần điều trị bổ sung.",
+                  },
                 },
               ].map((result, index) => (
                 <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
@@ -202,9 +217,59 @@ export default function RecordResults() {
                       {result.status === "normal" ? "Bình thường" : "Bất thường"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">{result.date}</span>
-                    <Button variant="outline" size="sm">
-                      Xem
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          Xem chi tiết
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Chi tiết kết quả - {result.patient}</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className="font-semibold">Loại xét nghiệm:</Label>
+                              <p>{result.type}</p>
+                            </div>
+                            <div>
+                              <Label className="font-semibold">Ngày thực hiện:</Label>
+                              <p>{result.date}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-3">
+                            <Label className="font-semibold">Kết quả chi tiết:</Label>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {Object.entries(result.details)
+                                .filter(([key]) => key !== "notes")
+                                .map(([key, value]) => (
+                                  <div key={key} className="flex justify-between p-2 bg-gray-50 rounded">
+                                    <span className="capitalize">{key}:</span>
+                                    <span className="font-medium">{value}</span>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <Label className="font-semibold">Ghi chú:</Label>
+                            <p className="mt-1 p-3 bg-gray-50 rounded">{result.details.notes}</p>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <Badge
+                              className={
+                                result.status === "normal" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                              }
+                            >
+                              {result.status === "normal" ? "Bình thường" : "Bất thường"}
+                            </Badge>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               ))}
