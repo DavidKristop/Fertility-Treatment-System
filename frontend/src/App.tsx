@@ -32,6 +32,10 @@ import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import Inbox from "./pages/doctor/notifications/Inbox"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
+import PatientDetail from "./pages/doctor/patients/PatientDetail"
+import ContractDetail from "./pages/doctor/contracts/ContractDetail"
+import ResultsHistory from "./pages/doctor/results/ResultsHistory"
+import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
 
 // layouts
 import RootLayout from "./pages/RootLayout"
@@ -166,6 +170,10 @@ const router = createBrowserRouter([
             path: "pending",
             element: <PendingApprovals />,
           },
+          {
+            path: "create",
+            element: <CreateAppointment />,
+          },
         ],
       },
       // Patient routes
@@ -176,12 +184,25 @@ const router = createBrowserRouter([
             index: true,
             element: <PatientList />,
           },
+          {
+            path: ":id",
+            element: <PatientDetail />,
+          }
         ],
       },
       // Contract routes
       {
         path: "contracts",
-        element: <ViewContracts />,
+        children: [
+          {
+            index: true,
+            element: <ViewContracts />,
+          },
+          {
+            path: ":id",
+            element: <ContractDetail />,
+          },
+        ],
       },
       // Treatment Plan routes
       {
@@ -205,6 +226,10 @@ const router = createBrowserRouter([
             path: "record",
             element: <RecordResults />,
           },
+          {
+            path: "history",
+            element: <ResultsHistory />,
+          }
         ],
       },
       // Profile routes

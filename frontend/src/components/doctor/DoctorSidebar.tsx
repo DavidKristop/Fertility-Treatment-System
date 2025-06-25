@@ -10,20 +10,14 @@ import {
   FileText,
   Pill,
   Bell,
-  BookOpen,
   LogOut,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
   Clock,
   CalendarDays,
-  Search,
   Activity,
   MessageSquare,
-  Inbox,
-  Eye,
-  CalendarCheck,
-  TestTube,
   ClipboardList,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -78,12 +72,6 @@ const sidebarItems: SidebarItem[] = [
         icon: CalendarDays,
         path: "/doctor/appointments/calendar",
       },
-      {
-        id: "booked-appointments",
-        label: "Lịch đã đặt",
-        icon: CalendarCheck,
-        path: "/doctor/appointments/booked",
-      },
     ],
   },
   {
@@ -100,22 +88,10 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
-    id: "contracts",
-    label: "Hợp đồng điều trị",
-    icon: Eye,
-    path: "/doctor/contracts",
-  },
-  {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
     path: "/doctor/treatment-plans",
-  },
-  {
-    id: "results",
-    label: "Ghi nhận kết quả",
-    icon: TestTube,
-    path: "/doctor/results/record",
   },
   {
     id: "prescriptions",
@@ -148,20 +124,7 @@ const sidebarItems: SidebarItem[] = [
         icon: MessageSquare,
         path: "/doctor/notifications/reminders",
       },
-      {
-        id: "inbox",
-        label: "Hộp thư đến",
-        icon: Inbox,
-        path: "/doctor/notifications/inbox",
-        badge: 7,
-      },
     ],
-  },
-  {
-    id: "blog",
-    label: "Blog",
-    icon: BookOpen,
-    path: "/doctor/blog",
   },
 ]
 
