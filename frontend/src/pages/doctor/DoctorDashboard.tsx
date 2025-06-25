@@ -1,86 +1,151 @@
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Users, Clock, AlertCircle, DollarSign, Activity, Plus, Search, Pill } from "lucide-react"
+import { Users, Calendar, FileText, Activity, CheckCircle, Download, Eye } from "lucide-react"
+import StatsCard from "@/components/doctor/dashboard/StatsCard"
+import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
+import ContractCard from "@/components/doctor/dashboard/ContractCard"
+import QuickActions from "@/components/doctor/dashboard/QuickActions"
 
-// Mock data
+// Mock data với định dạng ngày Việt Nam
+const todayStats = {
+  appointments: 8,
+  completedAppointments: 5,
+  pendingAppointments: 3,
+  totalPatients: 156,
+  newPatients: 3,
+  totalContracts: 6,
+  activeContracts: 3,
+  completedContracts: 2,
+  cancelledContracts: 1,
+}
+
 const todayAppointments = [
   {
     id: 1,
-    time: "09:00",
+    time: "08:00",
     patient: "Nguyễn Thị Lan",
     type: "Tái khám",
-    status: "confirmed",
+    status: "completed",
+    phone: "0901234567",
   },
   {
     id: 2,
-    time: "10:30",
+    time: "09:30",
     patient: "Trần Văn Nam",
-    type: "Khám đầu",
-    status: "pending",
+    type: "Khám đầu tiên",
+    status: "completed",
+    phone: "0912345678",
   },
   {
     id: 3,
-    time: "14:00",
+    time: "10:15",
     patient: "Lê Thị Hoa",
-    type: "Tư vấn online",
-    status: "confirmed",
+    type: "Theo dõi điều trị",
+    status: "in-progress",
+    phone: "0923456789",
   },
   {
     id: 4,
-    time: "15:30",
+    time: "11:00",
     patient: "Phạm Minh Tuấn",
-    type: "Theo dõi",
-    status: "confirmed",
+    type: "Tư vấn",
+    status: "pending",
+    phone: "0934567890",
+  },
+  {
+    id: 5,
+    time: "14:00",
+    patient: "Võ Thị Mai",
+    type: "Khám đầu tiên",
+    status: "pending",
+    phone: "0945678901",
   },
 ]
 
-const recentNotifications = [
+const recentContracts = [
   {
     id: 1,
-    message: "Bệnh nhân Nguyễn Thị Lan đã thanh toán giai đoạn 2",
-    time: "10 phút trước",
-    type: "payment",
+    contractNumber: "HD001-2024",
+    patient: "Nguyễn Thị Lan",
+    treatmentType: "IVF Long Protocol",
+    treatmentStatus: "active",
+    progress: 75,
+    currentStage: "Giai đoạn 3: Lấy trứng và thụ tinh",
+    confirmedDate: "10-01-2024",
   },
   {
     id: 2,
-    message: "Nhắc nhở: Cuộc hẹn với Trần Văn Nam lúc 10:30",
-    time: "30 phút trước",
-    type: "reminder",
+    contractNumber: "HD002-2024",
+    patient: "Lê Thị Hoa",
+    treatmentType: "IVF Short Protocol",
+    treatmentStatus: "active",
+    progress: 25,
+    currentStage: "Giai đoạn 1: Khám và tư vấn",
+    confirmedDate: "05-01-2024",
   },
   {
     id: 3,
-    message: "Yêu cầu hoàn tiền từ Lê Thị Mai",
-    time: "1 giờ trước",
-    type: "refund",
+    contractNumber: "HD003-2024",
+    patient: "Trần Văn Nam",
+    treatmentType: "IUI Natural Protocol",
+    treatmentStatus: "completed",
+    progress: 100,
+    currentStage: "Hoàn thành - Thành công",
+    confirmedDate: "08-01-2024",
   },
 ]
 
-const upcomingStages = [
+const recentConfirmations = [
   {
     id: 1,
+    contractNumber: "HD001-2024",
     patient: "Nguyễn Thị Lan",
-    stage: "Giai đoạn 3: Chuyển phôi",
-    dueDate: "2024-01-15",
-    status: "upcoming",
+    confirmedDate: "10-01-2024",
+    confirmedTime: "14:30",
   },
   {
     id: 2,
+    contractNumber: "HD002-2024",
     patient: "Trần Văn Nam",
-    stage: "Giai đoạn 2: Kích thích buồng trứng",
-    dueDate: "2024-01-12",
-    status: "overdue",
+    confirmedDate: "08-01-2024",
+    confirmedTime: "09:15",
   },
 ]
 
 export default function DoctorDashboard() {
-  const getStatusColor = (status: string) => {
+  const getAppointmentStatusColor = (status: string) => {
     switch (status) {
-      case "confirmed":
+      case "completed":
         return "bg-green-100 text-green-800"
+      case "in-progress":
+        return "bg-blue-100 text-blue-800"
       case "pending":
         return "bg-yellow-100 text-yellow-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const getAppointmentStatusText = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "Hoàn thành"
+      case "in-progress":
+        return "Đang khám"
+      case "pending":
+        return "Chờ khám"
+      default:
+        return status
+    }
+  }
+
+  const getTreatmentStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800"
+      case "completed":
+        return "bg-blue-100 text-blue-800"
       case "cancelled":
         return "bg-red-100 text-red-800"
       default:
@@ -88,12 +153,12 @@ export default function DoctorDashboard() {
     }
   }
 
-  const getStatusText = (status: string) => {
+  const getTreatmentStatusText = (status: string) => {
     switch (status) {
-      case "confirmed":
-        return "Đã xác nhận"
-      case "pending":
-        return "Chờ xác nhận"
+      case "active":
+        return "Đang điều trị"
+      case "completed":
+        return "Hoàn thành"
       case "cancelled":
         return "Đã hủy"
       default:
@@ -101,163 +166,106 @@ export default function DoctorDashboard() {
     }
   }
 
+  const breadcrumbs = [{ label: "Trang chủ" }]
+
+  const statsData = [
+    {
+      title: "Lịch hôm nay",
+      value: todayStats.appointments,
+      subtitle: `${todayStats.completedAppointments} hoàn thành`,
+      icon: Calendar,
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Tổng bệnh nhân",
+      value: todayStats.totalPatients,
+      subtitle: `+${todayStats.newPatients} mới hôm nay`,
+      icon: Users,
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Hợp đồng",
+      value: todayStats.totalContracts,
+      subtitle: `${todayStats.activeContracts} đang điều trị`,
+      icon: FileText,
+      iconColor: "text-purple-600",
+    },
+    {
+      title: "Đang điều trị",
+      value: todayStats.activeContracts,
+      subtitle: "Hợp đồng hoạt động",
+      icon: Activity,
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Hoàn thành",
+      value: todayStats.completedContracts,
+      subtitle: "Điều trị thành công",
+      icon: CheckCircle,
+      iconColor: "text-blue-600",
+    },
+  ]
+
   return (
-    <DoctorLayout title="Bảng điều khiển" breadcrumbs={[{ label: "Trang chủ" }]}>
+    <DoctorLayout title="Tổng quan" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Cuộc hẹn hôm nay</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">4</div>
-              <p className="text-xs text-muted-foreground">+2 so với hôm qua</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Bệnh nhân đang điều trị</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">23</div>
-              <p className="text-xs text-muted-foreground">+3 bệnh nhân mới tuần này</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Thanh toán chờ</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">8</div>
-              <p className="text-xs text-muted-foreground">Tổng: 45.000.000 VNĐ</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Giai đoạn sắp đến hạn</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">5</div>
-              <p className="text-xs text-muted-foreground">2 giai đoạn quá hạn</p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {statsData.map((stat, index) => (
+            <StatsCard key={index} {...stat} />
+          ))}
         </div>
-
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Tác vụ nhanh</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Button className="h-20 flex flex-col gap-2">
-                <Plus className="h-6 w-6" />
-                <span>Tạo cuộc hẹn</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2">
-                <Search className="h-6 w-6" />
-                <span>Tìm bệnh nhân</span>
-              </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2">
-                <Pill className="h-6 w-6" />
-                <span>Tạo đơn thuốc</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Today's Appointments */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Lịch hẹn hôm nay</CardTitle>
+              <CardTitle>Lịch khám hôm nay</CardTitle>
               <Button variant="outline" size="sm">
+                <Eye className="h-4 w-4 mr-2" />
                 Xem tất cả
               </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {todayAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">{appointment.time}</span>
-                      </div>
-                      <div>
-                        <div className="font-medium">{appointment.patient}</div>
-                        <div className="text-sm text-muted-foreground">{appointment.type}</div>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(appointment.status)}>{getStatusText(appointment.status)}</Badge>
-                  </div>
+                  <AppointmentCard
+                    key={appointment.id}
+                    appointment={appointment}
+                    getStatusColor={getAppointmentStatusColor}
+                    getStatusText={getAppointmentStatusText}
+                  />
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* Treatment Progress */}
+          {/* Recent Contracts */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Tiến độ điều trị</CardTitle>
+              <CardTitle>Hợp đồng điều trị gần đây</CardTitle>
               <Button variant="outline" size="sm">
-                Xem chi tiết
+                <Eye className="h-4 w-4 mr-2" />
+                Xem tất cả
               </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {upcomingStages.map((stage) => (
-                  <div key={stage.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <div className="font-medium">{stage.patient}</div>
-                      <div className="text-sm text-muted-foreground">{stage.stage}</div>
-                      <div className="text-xs text-muted-foreground">Đến hạn: {stage.dueDate}</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {stage.status === "overdue" && <AlertCircle className="h-4 w-4 text-red-500" />}
-                      <Badge
-                        className={stage.status === "overdue" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}
-                      >
-                        {stage.status === "overdue" ? "Quá hạn" : "Sắp đến"}
-                      </Badge>
-                    </div>
-                  </div>
+                {recentContracts.map((contract) => (
+                  <ContractCard
+                    key={contract.id}
+                    contract={contract}
+                    getTreatmentStatusColor={getTreatmentStatusColor}
+                    getTreatmentStatusText={getTreatmentStatusText}
+                  />
                 ))}
               </div>
             </CardContent>
           </Card>
         </div>
-
-        {/* Recent Notifications */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Thông báo gần đây</CardTitle>
-            <Button variant="outline" size="sm">
-              Xem tất cả
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentNotifications.map((notification) => (
-                <div key={notification.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <div className="flex-1">
-                    <div className="text-sm">{notification.message}</div>
-                    <div className="text-xs text-muted-foreground">{notification.time}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        
+        {/* Quick Actions */}
+        <QuickActions />
       </div>
     </DoctorLayout>
   )

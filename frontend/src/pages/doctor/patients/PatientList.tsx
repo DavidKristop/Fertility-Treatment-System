@@ -1,12 +1,11 @@
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, MoreHorizontal, User, Calendar, FileText, Phone, Mail, MapPin, Plus } from "lucide-react"
+import { Search, Plus, User } from "lucide-react"
+import StatsCard from "@/components/doctor/dashboard/StatsCard"
+import PatientTable from "@/components/doctor/patients/PatientTable"
 
 // Mock data
 const patients = [
@@ -109,6 +108,33 @@ export default function PatientList() {
     { label: "Tất cả bệnh nhân" },
   ]
 
+  const statsData = [
+    {
+      title: "Tổng bệnh nhân",
+      value: 23,
+      icon: User,
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Đang điều trị",
+      value: 15,
+      icon: User,
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Bệnh nhân mới",
+      value: 3,
+      icon: User,
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Hoàn thành",
+      value: 5,
+      icon: User,
+      iconColor: "text-gray-600",
+    },
+  ]
+
   return (
     <DoctorLayout title="Danh sách bệnh nhân" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
@@ -140,50 +166,9 @@ export default function PatientList() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tổng bệnh nhân</p>
-                  <p className="text-2xl font-bold">23</p>
-                </div>
-                <User className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Đang điều trị</p>
-                  <p className="text-2xl font-bold text-green-600">15</p>
-                </div>
-                <User className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Bệnh nhân mới</p>
-                  <p className="text-2xl font-bold text-blue-600">3</p>
-                </div>
-                <User className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hoàn thành</p>
-                  <p className="text-2xl font-bold text-gray-600">5</p>
-                </div>
-                <User className="h-8 w-8 text-gray-600" />
-              </div>
-            </CardContent>
-          </Card>
+          {statsData.map((stat, index) => (
+            <StatsCard key={index} {...stat} />
+          ))}
         </div>
 
         {/* Patients Table */}
@@ -192,105 +177,7 @@ export default function PatientList() {
             <CardTitle>Danh sách bệnh nhân</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Bệnh nhân</TableHead>
-                    <TableHead>Liên hệ</TableHead>
-                    <TableHead>Kế hoạch điều trị</TableHead>
-                    <TableHead>Trạng thái</TableHead>
-                    <TableHead>Lần khám cuối</TableHead>
-                    <TableHead>Cuộc hẹn tiếp theo</TableHead>
-                    <TableHead className="text-right">Hành động</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {patients.map((patient) => (
-                    <TableRow key={patient.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium">{patient.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <div className="font-medium">{patient.name}</div>
-                            <div className="text-sm text-muted-foreground">{patient.age} tuổi</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Phone className="h-3 w-3" />
-                            {patient.phone}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <Mail className="h-3 w-3" />
-                            {patient.email}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            {patient.address}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-xs">
-                          <p className="text-sm font-medium">{patient.treatmentPlan}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(patient.status)}>{getStatusText(patient.status)}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="h-3 w-3" />
-                          {patient.lastVisit}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {patient.nextAppointment ? (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="h-3 w-3" />
-                            {patient.nextAppointment}
-                          </div>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">Chưa có</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <User className="mr-2 h-4 w-4" />
-                              Xem hồ sơ
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Calendar className="mr-2 h-4 w-4" />
-                              Đặt lịch hẹn
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <FileText className="mr-2 h-4 w-4" />
-                              Xem kế hoạch điều trị
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Phone className="mr-2 h-4 w-4" />
-                              Gọi điện
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <PatientTable patients={patients} getStatusColor={getStatusColor} getStatusText={getStatusText} />
           </CardContent>
         </Card>
       </div>

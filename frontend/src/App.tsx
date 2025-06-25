@@ -1,23 +1,24 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 // pages
-import Home from './pages/Home'
-import Company from './pages/about/Company'
-import Team from './pages/about/Team'
-import Services from './pages/pricing/Services'
-import Insurance from './pages/pricing/Insurance'
-import Financing from './pages/pricing/Financing'
-import Iui from './pages/services/iui'
-import Ivf from './pages/services/ivf'
-import DoctorListPage from './pages/doctorList/DoctorListPage'
-import DoctorDetailPage from './pages/doctorList/DoctorDetailPage'
-import LoginPage from './pages/authorization/LoginPage'
-import RegisterPage from './pages/authorization/RegisterPage'
-import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage'
+import Home from "./pages/Home"
+import Company from "./pages/about/Company"
+import Team from "./pages/about/Team"
+import Services from "./pages/pricing/Services"
+import Insurance from "./pages/pricing/Insurance"
+import Financing from "./pages/pricing/Financing"
+import Iui from "./pages/services/iui"
+import Ivf from "./pages/services/ivf"
+import DoctorListPage from "./pages/doctorList/DoctorListPage"
+import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage"
+import LoginPage from "./pages/authorization/LoginPage"
+import RegisterPage from "./pages/authorization/RegisterPage"
+import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
+<<<<<<< HEAD
 import RequestAppointment from "./pages/patient/RequestAppointment"
 import PatientList from "./pages/doctor/patients/PatientList"
 import PatientDashboard from "./pages/patient/PatientDashboard"
@@ -30,6 +31,28 @@ import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
 import AdminDashboard from "./pages/admin/AdminDashboard"
+=======
+import Calendar from "./pages/doctor/appointments/Calendar"
+import PatientList from "./pages/doctor/patients/PatientList"
+import ViewContracts from "./pages/doctor/contracts/ViewContracts"
+import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
+import RecordResults from "./pages/doctor/results/RecordResults"
+import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
+import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
+import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
+import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
+import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
+import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
+import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
+import Inbox from "./pages/doctor/notifications/Inbox"
+import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
+
+// layouts
+import RootLayout from "./pages/RootLayout"
+import BlogPage from "./pages/blog/page"
+import BlogPostPage from "./pages/blog/[id]/page"
+
+>>>>>>> 92a5d4a39110881547eda5b01c135f41f314a862
 
 const router = createBrowserRouter([
   {
@@ -125,8 +148,8 @@ const router = createBrowserRouter([
           {
             path: "forgot-password",
             element: <ForgotPasswordPage />,
-          }
-        ]
+          },
+        ],
       },
     ],
   },
@@ -138,13 +161,104 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <DoctorDashboard />,
       },
+      // Appointments routes
       {
-        path: "appointments/today",
-        element: <TodayAppointments />,
+        path: "appointments",
+        children: [
+          {
+            path: "today",
+            element: <TodayAppointments />,
+          },
+          {
+            path: "booked",
+            element: <BookedAppointments />,
+          },
+          {
+            path: "calendar",
+            element: <Calendar />,
+          },
+          {
+            path: "pending",
+            element: <PendingApprovals />,
+          },
+        ],
       },
+      // Patient routes
       {
         path: "patients",
-        element: <PatientList />,
+        children: [
+          {
+            index: true,
+            element: <PatientList />,
+          },
+        ],
+      },
+      // Contract routes
+      {
+        path: "contracts",
+        element: <ViewContracts />,
+      },
+      // Treatment Plan routes
+      {
+        path: "treatment-plans",
+        children: [
+          {
+            index: true,
+            element: <TreatmentPlans />,
+          },
+          {
+            path: "create-plans",
+            element: <CreateTreatmentPlans />,
+          },
+        ],
+      },
+      // Results routes
+      {
+        path: "results",
+        children: [
+          {
+            path: "record",
+            element: <RecordResults />,
+          },
+        ],
+      },
+      // Profile routes
+      {
+        path: "profile",
+        element: <DoctorProfile />,
+      },
+      // Prescription routes
+      {
+        path: "prescriptions",
+        children: [
+          {
+            path: "active",
+            element: <ActivePrescriptions />,
+          },
+          {
+            path: "new",
+            element: <CreatePrescription />,
+          },
+        ],
+      },
+      // Notification routes
+      {
+        path: "notifications",
+        children: [
+          {
+            path: "reminders",
+            element: <ReminderHistory />,
+          },
+          {
+            path: "inbox",
+            element: <Inbox />,
+          },
+        ],
+      },
+      // Blog routes
+      {
+        path: "blog",
+        element: <DoctorBlog />,
       },
     ],
   },
@@ -205,7 +319,7 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />
 }
 
-export default App;
+export default App
