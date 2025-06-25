@@ -1,24 +1,9 @@
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, Calendar, FileText, Activity, CheckCircle, Download, Eye } from "lucide-react"
-import StatsCard from "@/components/doctor/dashboard/StatsCard"
+import { Eye } from "lucide-react"
 import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
-import ContractCard from "@/components/doctor/dashboard/ContractCard"
 import QuickActions from "@/components/doctor/dashboard/QuickActions"
-
-// Mock data với định dạng ngày Việt Nam
-const todayStats = {
-  appointments: 8,
-  completedAppointments: 5,
-  pendingAppointments: 3,
-  totalPatients: 156,
-  newPatients: 3,
-  totalContracts: 6,
-  activeContracts: 3,
-  completedContracts: 2,
-  cancelledContracts: 1,
-}
 
 const todayAppointments = [
   {
@@ -63,56 +48,6 @@ const todayAppointments = [
   },
 ]
 
-const recentContracts = [
-  {
-    id: 1,
-    contractNumber: "HD001-2024",
-    patient: "Nguyễn Thị Lan",
-    treatmentType: "IVF Long Protocol",
-    treatmentStatus: "active",
-    progress: 75,
-    currentStage: "Giai đoạn 3: Lấy trứng và thụ tinh",
-    confirmedDate: "10-01-2024",
-  },
-  {
-    id: 2,
-    contractNumber: "HD002-2024",
-    patient: "Lê Thị Hoa",
-    treatmentType: "IVF Short Protocol",
-    treatmentStatus: "active",
-    progress: 25,
-    currentStage: "Giai đoạn 1: Khám và tư vấn",
-    confirmedDate: "05-01-2024",
-  },
-  {
-    id: 3,
-    contractNumber: "HD003-2024",
-    patient: "Trần Văn Nam",
-    treatmentType: "IUI Natural Protocol",
-    treatmentStatus: "completed",
-    progress: 100,
-    currentStage: "Hoàn thành - Thành công",
-    confirmedDate: "08-01-2024",
-  },
-]
-
-const recentConfirmations = [
-  {
-    id: 1,
-    contractNumber: "HD001-2024",
-    patient: "Nguyễn Thị Lan",
-    confirmedDate: "10-01-2024",
-    confirmedTime: "14:30",
-  },
-  {
-    id: 2,
-    contractNumber: "HD002-2024",
-    patient: "Trần Văn Nam",
-    confirmedDate: "08-01-2024",
-    confirmedTime: "09:15",
-  },
-]
-
 export default function DoctorDashboard() {
   const getAppointmentStatusColor = (status: string) => {
     switch (status) {
@@ -140,81 +75,12 @@ export default function DoctorDashboard() {
     }
   }
 
-  const getTreatmentStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800"
-      case "completed":
-        return "bg-blue-100 text-blue-800"
-      case "cancelled":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getTreatmentStatusText = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Đang điều trị"
-      case "completed":
-        return "Hoàn thành"
-      case "cancelled":
-        return "Đã hủy"
-      default:
-        return status
-    }
-  }
-
   const breadcrumbs = [{ label: "Trang chủ" }]
 
-  const statsData = [
-    {
-      title: "Lịch hôm nay",
-      value: todayStats.appointments,
-      subtitle: `${todayStats.completedAppointments} hoàn thành`,
-      icon: Calendar,
-      iconColor: "text-blue-600",
-    },
-    {
-      title: "Tổng bệnh nhân",
-      value: todayStats.totalPatients,
-      subtitle: `+${todayStats.newPatients} mới hôm nay`,
-      icon: Users,
-      iconColor: "text-green-600",
-    },
-    {
-      title: "Hợp đồng",
-      value: todayStats.totalContracts,
-      subtitle: `${todayStats.activeContracts} đang điều trị`,
-      icon: FileText,
-      iconColor: "text-purple-600",
-    },
-    {
-      title: "Đang điều trị",
-      value: todayStats.activeContracts,
-      subtitle: "Hợp đồng hoạt động",
-      icon: Activity,
-      iconColor: "text-green-600",
-    },
-    {
-      title: "Hoàn thành",
-      value: todayStats.completedContracts,
-      subtitle: "Điều trị thành công",
-      icon: CheckCircle,
-      iconColor: "text-blue-600",
-    },
-  ]
 
   return (
     <DoctorLayout title="Tổng quan" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {statsData.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
-          ))}
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Today's Appointments */}
@@ -234,29 +100,6 @@ export default function DoctorDashboard() {
                     appointment={appointment}
                     getStatusColor={getAppointmentStatusColor}
                     getStatusText={getAppointmentStatusText}
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Contracts */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Hợp đồng điều trị gần đây</CardTitle>
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                Xem tất cả
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentContracts.map((contract) => (
-                  <ContractCard
-                    key={contract.id}
-                    contract={contract}
-                    getTreatmentStatusColor={getTreatmentStatusColor}
-                    getTreatmentStatusText={getTreatmentStatusText}
                   />
                 ))}
               </div>
