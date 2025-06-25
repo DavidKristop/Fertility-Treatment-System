@@ -30,7 +30,7 @@ export default function QuickActions() {
       title: "Kế hoạch điều trị",
       description: "Tạo kế hoạch điều trị mới",
       icon: Activity,
-      href: "/doctor/treatment-plans",
+      href: "/doctor/treatment-plans/create-plans",
       color: "bg-orange-500",
     },
   ]

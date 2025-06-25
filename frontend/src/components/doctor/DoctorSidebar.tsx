@@ -97,12 +97,6 @@ const sidebarItems: SidebarItem[] = [
         icon: Users,
         path: "/doctor/patients",
       },
-      {
-        id: "search-patients",
-        label: "Tìm kiếm bệnh nhân",
-        icon: Search,
-        path: "/doctor/patients/search",
-      },
     ],
   },
   {

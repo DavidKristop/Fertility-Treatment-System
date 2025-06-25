@@ -1,128 +1,57 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, User, Calendar, FileText, Phone, Mail, MapPin } from "lucide-react"
+import type React from "react"
+import { Link } from "react-router-dom"
 
 interface Patient {
   id: number
   name: string
   age: number
-  phone: string
-  email: string
-  address: string
-  treatmentPlan: string
-  status: string
-  lastVisit: string
-  nextAppointment: string | null
+  gender: string
+  // Add more patient properties as needed
 }
 
 interface PatientTableProps {
   patients: Patient[]
-  getStatusColor: (status: string) => string
-  getStatusText: (status: string) => string
 }
 
-export default function PatientTable({ patients, getStatusColor, getStatusText }: PatientTableProps) {
+const PatientTable: React.FC<PatientTableProps> = ({ patients }) => {
   return (
     <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Bệnh nhân</TableHead>
-            <TableHead>Liên hệ</TableHead>
-            <TableHead>Kế hoạch điều trị</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead>Lần khám cuối</TableHead>
-            <TableHead>Cuộc hẹn tiếp theo</TableHead>
-            <TableHead className="text-right">Hành động</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Name
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Age
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Gender
+            </th>
+            <th scope="col" className="relative px-6 py-3">
+              <span className="sr-only">Edit</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
           {patients.map((patient) => (
-            <TableRow key={patient.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium">{patient.name.charAt(0)}</span>
-                  </div>
-                  <div>
-                    <div className="font-medium">{patient.name}</div>
-                    <div className="text-sm text-muted-foreground">{patient.age} tuổi</div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-3 w-3" />
-                    {patient.phone}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-3 w-3" />
-                    {patient.email}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-3 w-3" />
-                    {patient.address}
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="max-w-xs">
-                  <p className="text-sm font-medium">{patient.treatmentPlan}</p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge className={getStatusColor(patient.status)}>{getStatusText(patient.status)}</Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-3 w-3" />
-                  {patient.lastVisit}
-                </div>
-              </TableCell>
-              <TableCell>
-                {patient.nextAppointment ? (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-3 w-3" />
-                    {patient.nextAppointment}
-                  </div>
-                ) : (
-                  <span className="text-sm text-muted-foreground">Chưa có</span>
-                )}
-              </TableCell>
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      Xem hồ sơ
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Đặt lịch hẹn
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Xem kế hoạch điều trị
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Phone className="mr-2 h-4 w-4" />
-                      Gọi điện
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+            <Link to={`/doctor/patients/${patient.id}`} key={patient.id}>
+              <tr className="hover:bg-gray-100 cursor-pointer">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{patient.age}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{patient.gender}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" className="text-indigo-600 hover:text-indigo-900">
+                    Edit
+                  </a>
+                </td>
+              </tr>
+            </Link>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   )
 }
+
+export default PatientTable
