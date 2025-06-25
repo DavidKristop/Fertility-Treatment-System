@@ -20,7 +20,7 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
 import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
-import ViewContracts from "./pages/doctor/contracts/ViewContracts"
+// Contract routes removed
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
@@ -33,7 +33,7 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import Inbox from "./pages/doctor/notifications/Inbox"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
-import ContractDetail from "./pages/doctor/contracts/ContractDetail"
+// Contract detail routes removed
 import ResultsHistory from "./pages/doctor/results/ResultsHistory"
 import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
 
@@ -190,20 +190,7 @@ const router = createBrowserRouter([
           }
         ],
       },
-      // Contract routes
-      {
-        path: "contracts",
-        children: [
-          {
-            index: true,
-            element: <ViewContracts />,
-          },
-          {
-            path: ":id",
-            element: <ContractDetail />,
-          },
-        ],
-      },
+      // Contract routes removed
       // Treatment Plan routes
       {
         path: "treatment-plans",
