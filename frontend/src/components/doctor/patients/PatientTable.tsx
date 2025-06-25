@@ -9,11 +9,13 @@ interface Patient {
   // Add more patient properties as needed
 }
 
-interface PatientTableProps {
+type PatientTableProps = {
   patients: Patient[]
+  getStatusColor: (status: string) => string
+  getStatusText: (status: string) => string
 }
 
-const PatientTable: React.FC<PatientTableProps> = ({ patients }) => {
+const PatientTable: React.FC<PatientTableProps> = ({ patients, getStatusColor, getStatusText }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">

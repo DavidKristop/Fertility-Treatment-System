@@ -30,7 +30,6 @@ import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatment
 import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
 import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
-import Inbox from "./pages/doctor/notifications/Inbox"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
 // Contract detail routes removed
@@ -245,10 +244,6 @@ const router = createBrowserRouter([
           {
             path: "reminders",
             element: <ReminderHistory />,
-          },
-          {
-            path: "inbox",
-            element: <Inbox />,
           },
         ],
       },

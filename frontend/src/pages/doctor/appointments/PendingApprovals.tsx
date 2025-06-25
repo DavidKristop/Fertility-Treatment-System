@@ -33,7 +33,6 @@ import {
   Calendar,
   Clock,
   Search,
-  Filter,
   Eye,
   Phone,
   Mail,
@@ -41,7 +40,6 @@ import {
   XCircle,
   FileText,
   User,
-  CalendarDays,
   ThumbsUp,
   ThumbsDown,
   ClipboardList,
@@ -278,11 +276,6 @@ export default function PendingApprovals({
     }
   }
 
-  // Statistics
-  const totalPending = appointments.length
-  const todayRequests = appointments.filter((apt) => apt.appointmentDate === "16-01-2024").length
-  const tomorrowRequests = appointments.filter((apt) => apt.appointmentDate === "17-01-2024").length
-
   // Selection handlers
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -447,45 +440,6 @@ export default function PendingApprovals({
             ) : null}
             
           </div>
-        </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tổng chờ duyệt</p>
-                  <p className="text-2xl font-bold text-orange-600">{totalPending}</p>
-                </div>
-                <ClipboardList className="h-8 w-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hẹn hôm nay</p>
-                  <p className="text-2xl font-bold text-green-600">{todayRequests}</p>
-                </div>
-                <Calendar className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hẹn ngày mai</p>
-                  <p className="text-2xl font-bold text-blue-600">{tomorrowRequests}</p>
-                </div>
-                <CalendarDays className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Appointments Table */}
