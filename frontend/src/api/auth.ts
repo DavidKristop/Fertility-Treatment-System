@@ -1,5 +1,5 @@
-import { fetchWrapper } from '.';
-import type { AuthResponse, LoginRequest, RegisterRequest } from './types';
+import { fetchWrapper } from '.'
+import type { AuthResponse, LoginRequest, RegisterRequest } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await fetchWrapper('auth/login', {

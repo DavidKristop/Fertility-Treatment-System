@@ -5,7 +5,7 @@ export default function Services() {
   return (
     <section className="py-16 px-4 bg-white">
       {/* Tiêu đề */}
-      <h2 className="text-center text-3xl font-bold text-[#004c77] mb-12 relative inline-block ml-170 after:absolute after:bottom-[-8px] after:left-1/2 after:-translate-x-1/2 after:w-10 after:h-[3px] after:bg-[#004c77]">
+      <h2 className="text-center text-3xl font-bold text-[#004c77] mb-12 relative after:absolute after:bottom-[-8px] after:left-1/2 after:-translate-x-1/2 after:w-10 after:h-[3px] after:bg-[#004c77]">
         DỊCH VỤ
       </h2>
 

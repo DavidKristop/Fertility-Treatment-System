@@ -19,7 +19,6 @@ export default function Home() {
         <ExpertSlider />
         <Quotes />
         <FollowGallery />
-
     </div>
   )
 }

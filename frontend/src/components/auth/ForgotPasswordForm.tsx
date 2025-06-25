@@ -1,7 +1,7 @@
-import { type FormikProps } from 'formik';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import type { ForgotPasswordFormValues } from '@/lib/validations/auth';
+import { type FormikProps } from 'formik'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import type { ForgotPasswordFormValues } from '@/lib/validations/auth'
 
 interface ForgotPasswordFormProps {
   formik: FormikProps<ForgotPasswordFormValues>;
