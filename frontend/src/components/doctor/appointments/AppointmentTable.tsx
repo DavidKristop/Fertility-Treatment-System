@@ -130,10 +130,6 @@ export default function AppointmentTable({ appointments, getStatusColor, getStat
                     )}
                     {appointment.status !== "completed" && appointment.status !== "cancelled" && (
                       <>
-                        <DropdownMenuItem>
-                          <Calendar className="mr-2 h-4 w-4" />
-                          Dời lịch
-                        </DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600">
                           <X className="mr-2 h-4 w-4" />
                           Hủy cuộc hẹn
