@@ -2,7 +2,7 @@ import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ChevronLeft, ChevronRight, CalendarIcon, Clock, Plus, MapPin } from "lucide-react"
+import { ChevronLeft, ChevronRight, CalendarIcon, Plus, MapPin } from "lucide-react"
 import { useState } from "react"
 
 // Mock data cho appointments - chỉ khám trực tiếp
@@ -334,56 +334,6 @@ export default function Calendar() {
               Tạo cuộc hẹn
             </Button>
           </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hôm nay</p>
-                  <p className="text-2xl font-bold">{getAppointmentsForDate(new Date()).length}</p>
-                </div>
-                <CalendarIcon className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tuần này</p>
-                  <p className="text-2xl font-bold">
-                    {
-                      appointments.filter((apt) => {
-                        const aptDate = new Date(apt.date)
-                        const weekStart = new Date(currentDate)
-                        weekStart.setDate(currentDate.getDate() - currentDate.getDay())
-                        const weekEnd = new Date(weekStart)
-                        weekEnd.setDate(weekStart.getDate() + 6)
-                        return aptDate >= weekStart && aptDate <= weekEnd
-                      }).length
-                    }
-                  </p>
-                </div>
-                <Clock className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tổng số cuộc hẹn</p>
-                  <p className="text-2xl font-bold text-green-600">{appointments.length}</p>
-                </div>
-                <MapPin className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Calendar View */}

@@ -1,12 +1,21 @@
 import type React from "react"
 import { Link } from "react-router-dom"
+import { Eye, Edit } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface Patient {
   id: number
   name: string
   age: number
   gender: string
-  // Add more patient properties as needed
+  phone?: string
+  email?: string
+  address?: string
+  treatmentPlan?: string
+  status?: string
+  lastVisit?: string
+  nextAppointment?: string | null
 }
 
 type PatientTableProps = {
@@ -18,37 +27,68 @@ type PatientTableProps = {
 const PatientTable: React.FC<PatientTableProps> = ({ patients, getStatusColor, getStatusText }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-gray-50">
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Họ và tên
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Age
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Tuổi
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Gender
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Giới tính
             </th>
-            <th scope="col" className="relative px-6 py-3">
-              <span className="sr-only">Edit</span>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Kế hoạch điều trị
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Trạng thái
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-right border-b">
+              Hành động
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white">
           {patients.map((patient) => (
-            <Link to={`/doctor/patients/${patient.id}`} key={patient.id}>
-              <tr className="hover:bg-gray-100 cursor-pointer">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{patient.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{patient.age}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{patient.gender}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                    Edit
-                  </a>
-                </td>
-              </tr>
-            </Link>
+            <tr key={patient.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm font-medium text-gray-900">{patient.name}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm text-gray-500">{patient.age}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm text-gray-500">{patient.gender}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm text-gray-700">{patient.treatmentPlan || "-"}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                {patient.status && (
+                  <Badge className={`${getStatusColor(patient.status)} font-normal`}>
+                    {getStatusText(patient.status)}
+                  </Badge>
+                )}
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap text-right">
+                <div className="flex justify-end space-x-2">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                    <Link to={`/doctor/patients/${patient.id}`}>
+                      <span className="sr-only">View</span>
+                      <Eye className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                    <Link to={`/doctor/patients/${patient.id}/edit`}>
+                      <span className="sr-only">Edit</span>
+                      <Edit className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>

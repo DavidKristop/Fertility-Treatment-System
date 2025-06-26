@@ -2,7 +2,6 @@ import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Plus } from "lucide-react"
 import PatientTable from "@/components/doctor/patients/PatientTable"
 
@@ -106,34 +105,14 @@ export default function PatientList() {
     }
   }
 
-  const breadcrumbs = [
-    { label: "Trang chủ", path: "/doctor/dashboard" },
-    { label: "Bệnh nhân" },
-    { label: "Tất cả bệnh nhân" },
-  ]
-
   return (
-    <DoctorLayout title="Danh sách bệnh nhân" breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
+    <DoctorLayout title="Danh sách bệnh nhân">
+      <div className="space-y-4">
         {/* Header Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input placeholder="Tìm kiếm bệnh nhân..." className="pl-10 w-80" />
-            </div>
-            <Select>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Lọc theo trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="active">Đang điều trị</SelectItem>
-                <SelectItem value="new">Bệnh nhân mới</SelectItem>
-                <SelectItem value="completed">Hoàn thành</SelectItem>
-                <SelectItem value="paused">Tạm dừng</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input placeholder="Tìm kiếm bệnh nhân..." className="pl-10" />
           </div>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -142,11 +121,16 @@ export default function PatientList() {
         </div>
 
         {/* Patients Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Danh sách bệnh nhân</CardTitle>
+        <Card className="border rounded-lg shadow-sm">
+          <CardHeader className="bg-white py-4 px-6 border-b">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium">Danh sách bệnh nhân</CardTitle>
+              <div className="text-sm text-gray-500">
+                {patients.length} bệnh nhân
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <PatientTable patients={patients} getStatusColor={getStatusColor} getStatusText={getStatusText} />
           </CardContent>
         </Card>

@@ -167,7 +167,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col h-screen ${sidebarWidth}`}
+      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col h-screen overflow-hidden ${sidebarWidth}`}
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -185,7 +185,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-2 space-y-1 overflow-y-auto custom-scrollbar">
         {sidebarItems.map((item) => (
           <div key={item.id}>
             {/* Main Item */}
@@ -268,7 +268,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       </nav>
 
       {/* Logout */}
-      <div className="p-2 border-t border-gray-200">
+      <div className="p-2 border-t border-gray-200 mt-auto">
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
