@@ -2,6 +2,7 @@ import { Bell, Search, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,9 +71,11 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                Hồ sơ cá nhân
+              <DropdownMenuItem asChild>
+                <Link to="/patient/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  Hồ sơ cá nhân
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell className="mr-2 h-4 w-4" />
