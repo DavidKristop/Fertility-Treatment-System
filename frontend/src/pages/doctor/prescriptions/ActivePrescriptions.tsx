@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Pill, Search, Eye, Edit, Trash2, User, Calendar, Clock } from "lucide-react"
+import { Search, Eye, Edit, Trash2, User, Calendar } from "lucide-react"
 import { useState } from "react"
 
 interface ActivePrescription {
@@ -153,51 +153,6 @@ export default function ActivePrescriptions() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Pill className="h-6 w-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{prescriptions.filter((p) => p.status === "active").length}</p>
-                  <p className="text-sm text-muted-foreground">Đơn đang dùng</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Clock className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{prescriptions.filter((p) => p.status === "completed").length}</p>
-                  <p className="text-sm text-muted-foreground">Đã hoàn thành</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Trash2 className="h-6 w-6 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {prescriptions.filter((p) => p.status === "discontinued").length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Đã ngừng</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Prescriptions Table */}
         <Card>

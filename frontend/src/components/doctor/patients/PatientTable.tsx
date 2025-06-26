@@ -1,128 +1,99 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+import type React from "react"
+import { Link } from "react-router-dom"
+import { Eye, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, User, Calendar, FileText, Phone, Mail, MapPin } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 interface Patient {
   id: number
   name: string
   age: number
-  phone: string
-  email: string
-  address: string
-  treatmentPlan: string
-  status: string
-  lastVisit: string
-  nextAppointment: string | null
+  gender: string
+  phone?: string
+  email?: string
+  address?: string
+  treatmentPlan?: string
+  status?: string
+  lastVisit?: string
+  nextAppointment?: string | null
 }
 
-interface PatientTableProps {
+type PatientTableProps = {
   patients: Patient[]
   getStatusColor: (status: string) => string
   getStatusText: (status: string) => string
 }
 
-export default function PatientTable({ patients, getStatusColor, getStatusText }: PatientTableProps) {
+const PatientTable: React.FC<PatientTableProps> = ({ patients, getStatusColor, getStatusText }) => {
   return (
     <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Bệnh nhân</TableHead>
-            <TableHead>Liên hệ</TableHead>
-            <TableHead>Kế hoạch điều trị</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead>Lần khám cuối</TableHead>
-            <TableHead>Cuộc hẹn tiếp theo</TableHead>
-            <TableHead className="text-right">Hành động</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-gray-50">
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Họ và tên
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Tuổi
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Giới tính
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Kế hoạch điều trị
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-left border-b">
+              Trạng thái
+            </th>
+            <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-right border-b">
+              Hành động
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white">
           {patients.map((patient) => (
-            <TableRow key={patient.id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium">{patient.name.charAt(0)}</span>
-                  </div>
-                  <div>
-                    <div className="font-medium">{patient.name}</div>
-                    <div className="text-sm text-muted-foreground">{patient.age} tuổi</div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-3 w-3" />
-                    {patient.phone}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-3 w-3" />
-                    {patient.email}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-3 w-3" />
-                    {patient.address}
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="max-w-xs">
-                  <p className="text-sm font-medium">{patient.treatmentPlan}</p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge className={getStatusColor(patient.status)}>{getStatusText(patient.status)}</Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-3 w-3" />
-                  {patient.lastVisit}
-                </div>
-              </TableCell>
-              <TableCell>
-                {patient.nextAppointment ? (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-3 w-3" />
-                    {patient.nextAppointment}
-                  </div>
-                ) : (
-                  <span className="text-sm text-muted-foreground">Chưa có</span>
+            <tr key={patient.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm font-medium text-gray-900">{patient.name}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm text-gray-500">{patient.age}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm text-gray-500">{patient.gender}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                <div className="text-sm text-gray-700">{patient.treatmentPlan || "-"}</div>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap">
+                {patient.status && (
+                  <Badge className={`${getStatusColor(patient.status)} font-normal`}>
+                    {getStatusText(patient.status)}
+                  </Badge>
                 )}
-              </TableCell>
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      Xem hồ sơ
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Đặt lịch hẹn
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Xem kế hoạch điều trị
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Phone className="mr-2 h-4 w-4" />
-                      Gọi điện
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+              </td>
+              <td className="py-3 px-4 whitespace-nowrap text-right">
+                <div className="flex justify-end space-x-2">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                    <Link to={`/doctor/patients/${patient.id}`}>
+                      <span className="sr-only">View</span>
+                      <Eye className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                    <Link to={`/doctor/patients/${patient.id}/edit`}>
+                      <span className="sr-only">Edit</span>
+                      <Edit className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   )
 }
+
+export default PatientTable

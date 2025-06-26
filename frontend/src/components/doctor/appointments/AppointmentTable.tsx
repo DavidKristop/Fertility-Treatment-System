@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Clock, MoreHorizontal, CheckCircle, Calendar, X } from "lucide-react"
+import { Clock, MoreHorizontal, CheckCircle, X } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
@@ -130,10 +130,6 @@ export default function AppointmentTable({ appointments, getStatusColor, getStat
                     )}
                     {appointment.status !== "completed" && appointment.status !== "cancelled" && (
                       <>
-                        <DropdownMenuItem>
-                          <Calendar className="mr-2 h-4 w-4" />
-                          Dời lịch
-                        </DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600">
                           <X className="mr-2 h-4 w-4" />
                           Hủy cuộc hẹn

@@ -2,8 +2,7 @@ import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, CheckCircle, Calendar, Clock } from "lucide-react"
-import StatsCard from "@/components/doctor/dashboard/StatsCard"
+import { Search, Calendar, Clock } from "lucide-react"
 import AppointmentTable from "@/components/doctor/appointments/AppointmentTable"
 
 // Mock data - chỉ khám trực tiếp
@@ -112,33 +111,6 @@ export default function TodayAppointments() {
     { label: "Danh sách hôm nay" },
   ]
 
-  const statsData = [
-    {
-      title: "Tổng cuộc hẹn",
-      value: 5,
-      icon: Clock,
-      iconColor: "text-blue-600",
-    },
-    {
-      title: "Đã xác nhận",
-      value: 2,
-      icon: CheckCircle,
-      iconColor: "text-green-600",
-    },
-    {
-      title: "Chờ xác nhận",
-      value: 1,
-      icon: Clock,
-      iconColor: "text-yellow-600",
-    },
-    {
-      title: "Đã hoàn thành",
-      value: 1,
-      icon: CheckCircle,
-      iconColor: "text-blue-600",
-    },
-  ]
-
   return (
     <DoctorLayout title="Cuộc hẹn hôm nay" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
@@ -160,13 +132,6 @@ export default function TodayAppointments() {
               Tạo cuộc hẹn
             </Button>
           </div>
-        </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {statsData.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
-          ))}
         </div>
 
         {/* Appointments Table */}

@@ -1,16 +1,17 @@
 "use client"
 
 import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, Stethoscope, Eye, Calendar, FileText } from "lucide-react"
+import { Plus, Search, Stethoscope, Eye, Calendar, FileText, ChevronDown, ChevronRight } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
-// Mock data aligned with ERD - Treatment table with correct protocols
+// Simplified treatment data - minimal view
 const treatments = [
   {
     id: "550e8400-e29b-41d4-a716-446655440001",
@@ -21,23 +22,14 @@ const treatments = [
       phone: "0901234567",
     },
     protocol: {
-      id: "550e8400-e29b-41d4-a716-446655440021",
       title: "IVF Long Protocol",
-      description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích",
       type: "IVF",
-      subtype: "long",
     },
     startDate: "10-01-2024",
-    endDate: null,
     diagnosis: "Vô sinh nguyên phát do tắc vòi trứng",
     status: "In Progress",
-    currentPhase: {
-      id: "550e8400-e29b-41d4-a716-446655440031",
-      title: "Giai đoạn 2: Kích thích buồng trứng",
-      description: "Sử dụng thuốc kích thích để phát triển nhiều nang trứng",
-      position: 2,
-      isComplete: false,
-    },
+    currentPhase: "Giai đoạn 2: Kích thích buồng trứng",
+    progress: 75,
     phases: [
       {
         id: "550e8400-e29b-41d4-a716-446655440030",
@@ -78,23 +70,14 @@ const treatments = [
       phone: "0912345678",
     },
     protocol: {
-      id: "550e8400-e29b-41d4-a716-446655440022",
       title: "IUI Natural Protocol",
-      description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
       type: "IUI",
-      subtype: "natural",
     },
     startDate: "15-01-2024",
-    endDate: null,
     diagnosis: "Vô sinh thứ phát do yếu tố nam giới nhẹ",
     status: "In Progress",
-    currentPhase: {
-      id: "550e8400-e29b-41d4-a716-446655440041",
-      title: "Giai đoạn 1: Theo dõi chu kỳ tự nhiên",
-      description: "Theo dõi chu kỳ kinh nguyệt và chuẩn bị tinh trùng",
-      position: 1,
-      isComplete: false,
-    },
+    currentPhase: "Giai đoạn 1: Theo dõi chu kỳ tự nhiên",
+    progress: 50,
     phases: [
       {
         id: "550e8400-e29b-41d4-a716-446655440041",
@@ -121,17 +104,14 @@ const treatments = [
       phone: "0923456789",
     },
     protocol: {
-      id: "550e8400-e29b-41d4-a716-446655440023",
       title: "IVF Short Protocol",
-      description: "Phác đồ IVF ngắn với kích thích trực tiếp",
       type: "IVF",
-      subtype: "short",
     },
     startDate: "05-01-2024",
-    endDate: "28-02-2024",
     diagnosis: "Vô sinh nguyên phát do rối loạn phóng noãn",
     status: "Complete",
-    currentPhase: null,
+    currentPhase: "Hoàn thành",
+    progress: 100,
     phases: [
       {
         id: "550e8400-e29b-41d4-a716-446655440050",
@@ -163,54 +143,18 @@ const treatments = [
       },
     ],
   },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440004",
-    patient: {
-      id: "550e8400-e29b-41d4-a716-446655440014",
-      name: "Phạm Thị Mai",
-      age: 30,
-      phone: "0934567890",
-    },
-    protocol: {
-      id: "550e8400-e29b-41d4-a716-446655440024",
-      title: "IUI Stimulated Protocol",
-      description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
-      type: "IUI",
-      subtype: "stimulated",
-    },
-    startDate: "20-01-2024",
-    endDate: null,
-    diagnosis: "Vô sinh thứ phát do rối loạn phóng noãn nhẹ",
-    status: "In Progress",
-    currentPhase: {
-      id: "550e8400-e29b-41d4-a716-446655440061",
-      title: "Giai đoạn 1: Kích thích nhẹ",
-      description: "Kích thích buồng trứng nhẹ và theo dõi nang trứng",
-      position: 1,
-      isComplete: false,
-    },
-    phases: [
-      {
-        id: "550e8400-e29b-41d4-a716-446655440061",
-        title: "Giai đoạn 1: Kích thích nhẹ",
-        description: "Kích thích buồng trứng nhẹ và theo dõi nang trứng",
-        position: 1,
-        isComplete: false,
-      },
-      {
-        id: "550e8400-e29b-41d4-a716-446655440062",
-        title: "Giai đoạn 2: Thụ tinh nhân tạo",
-        description: "Thực hiện thụ tinh nhân tạo trong tử cung",
-        position: 2,
-        isComplete: false,
-      },
-    ],
-  },
 ]
 
 export default function TreatmentPlans() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
+  const [expandedTreatments, setExpandedTreatments] = useState<string[]>([])
+
+  const toggleExpanded = (treatmentId: string) => {
+    setExpandedTreatments((prev) =>
+      prev.includes(treatmentId) ? prev.filter((id) => id !== treatmentId) : [...prev, treatmentId],
+    )
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -247,11 +191,6 @@ export default function TreatmentPlans() {
       default:
         return "bg-gray-100 text-gray-800"
     }
-  }
-
-  const calculateProgress = (phases: any[]) => {
-    const completedPhases = phases.filter((phase) => phase.isComplete).length
-    return Math.round((completedPhases / phases.length) * 100)
   }
 
   const filteredTreatments = treatments.filter((treatment) => {
@@ -302,136 +241,149 @@ export default function TreatmentPlans() {
           </Link>
         </div>
 
-        {/* Treatment Plans List */}
-        <div className="grid grid-cols-1 gap-6">
+        {/* Minimized Treatment Plans List */}
+        <div className="space-y-4">
           {filteredTreatments.map((treatment) => (
             <Card key={treatment.id}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Stethoscope className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">{treatment.patient.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {treatment.patient.age} tuổi • {treatment.patient.phone}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge className={getProtocolBadgeColor(treatment.protocol.type)}>
-                          {treatment.protocol.type}
-                        </Badge>
-                        <Badge variant="outline">
-                          {treatment.protocol.subtype === "long" && "Long Protocol"}
-                          {treatment.protocol.subtype === "short" && "Short Protocol"}
-                          {treatment.protocol.subtype === "natural" && "Natural"}
-                          {treatment.protocol.subtype === "stimulated" && "Stimulated"}
-                        </Badge>
-                        <Badge className={getStatusColor(treatment.status)}>{getStatusText(treatment.status)}</Badge>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${
-                            treatment.status === "Complete"
-                              ? "bg-green-600"
-                              : treatment.status === "Cancel"
-                                ? "bg-red-600"
-                                : "bg-blue-600"
-                          }`}
-                          style={{ width: `${calculateProgress(treatment.phases)}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm font-medium">{calculateProgress(treatment.phases)}%</span>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4 mr-2" />
-                      Xem chi tiết
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Treatment Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>Ngày bắt đầu:</span>
-                    </div>
-                    <p className="font-medium">{treatment.startDate}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>Ngày kết thúc:</span>
-                    </div>
-                    <p className="font-medium">{treatment.endDate || "Chưa xác định"}</p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                      <FileText className="h-4 w-4" />
-                      <span>Chẩn đoán:</span>
-                    </div>
-                    <p className="font-medium">{treatment.diagnosis}</p>
-                  </div>
-                </div>
-
-                {/* Current Phase */}
-                {treatment.currentPhase && (
-                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">Giai đoạn hiện tại</h4>
-                    <p className="font-medium text-blue-800">{treatment.currentPhase.title}</p>
-                    <p className="text-sm text-blue-700">{treatment.currentPhase.description}</p>
-                  </div>
-                )}
-
-                {/* Treatment Phases */}
-                <div>
-                  <h4 className="font-semibold mb-3">Các giai đoạn điều trị</h4>
-                  <div className="space-y-2">
-                    {treatment.phases.map((phase, index) => (
-                      <div
-                        key={phase.id}
-                        className={`flex items-center gap-3 p-3 rounded-lg border ${
-                          phase.isComplete
-                            ? "bg-green-50 border-green-200"
-                            : treatment.currentPhase?.id === phase.id
-                              ? "bg-blue-50 border-blue-200"
-                              : "bg-gray-50 border-gray-200"
-                        }`}
-                      >
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                            phase.isComplete
-                              ? "bg-green-600 text-white"
-                              : treatment.currentPhase?.id === phase.id
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-300 text-gray-600"
-                          }`}
-                        >
-                          {phase.position}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">{phase.title}</p>
-                          <p className="text-sm text-muted-foreground">{phase.description}</p>
+              <Collapsible
+                open={expandedTreatments.includes(treatment.id)}
+                onOpenChange={() => toggleExpanded(treatment.id)}
+              >
+                <CollapsibleTrigger asChild>
+                  <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <Stethoscope className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          {phase.isComplete ? (
-                            <Badge className="bg-green-100 text-green-800">Hoàn thành</Badge>
-                          ) : treatment.currentPhase?.id === phase.id ? (
-                            <Badge className="bg-blue-100 text-blue-800">Đang thực hiện</Badge>
-                          ) : (
-                            <Badge variant="outline">Chờ thực hiện</Badge>
-                          )}
+                          <CardTitle className="text-lg">{treatment.patient.name}</CardTitle>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge className={getProtocolBadgeColor(treatment.protocol.type)}>
+                              {treatment.protocol.type}
+                            </Badge>
+                            <Badge className={getStatusColor(treatment.status)}>
+                              {getStatusText(treatment.status)}
+                            </Badge>
+                            <span className="text-sm text-muted-foreground">
+                              {treatment.patient.age} tuổi • {treatment.startDate}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-20 bg-gray-200 rounded-full h-2">
+                              <div
+                                className={`h-2 rounded-full ${
+                                  treatment.status === "Complete"
+                                    ? "bg-green-600"
+                                    : treatment.status === "Cancel"
+                                      ? "bg-red-600"
+                                      : "bg-blue-600"
+                                }`}
+                                style={{ width: `${treatment.progress}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium">{treatment.progress}%</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{treatment.currentPhase}</p>
+                        </div>
+                        {expandedTreatments.includes(treatment.id) ? (
+                          <ChevronDown className="h-5 w-5" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5" />
+                        )}
+                      </div>
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <div className="space-y-4">
+                      {/* Treatment Information */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                        <div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                            <Calendar className="h-4 w-4" />
+                            <span>Ngày bắt đầu:</span>
+                          </div>
+                          <p className="font-medium">{treatment.startDate}</p>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                            <FileText className="h-4 w-4" />
+                            <span>Chẩn đoán:</span>
+                          </div>
+                          <p className="font-medium">{treatment.diagnosis}</p>
+                        </div>
+                      </div>
+
+                      {/* Treatment Phases */}
+                      <div>
+                        <h4 className="font-semibold mb-3">Các giai đoạn điều trị</h4>
+                        <div className="space-y-2">
+                          {treatment.phases.map((phase) => (
+                            <div
+                              key={phase.id}
+                              className={`flex items-center gap-3 p-3 rounded-lg border ${
+                                phase.isComplete
+                                  ? "bg-green-50 border-green-200"
+                                  : treatment.currentPhase.includes(phase.title.split(":")[0])
+                                    ? "bg-blue-50 border-blue-200"
+                                    : "bg-gray-50 border-gray-200"
+                              }`}
+                            >
+                              <div
+                                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                                  phase.isComplete
+                                    ? "bg-green-600 text-white"
+                                    : treatment.currentPhase.includes(phase.title.split(":")[0])
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-gray-300 text-gray-600"
+                                }`}
+                              >
+                                {phase.position}
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-medium">{phase.title}</p>
+                                <p className="text-sm text-muted-foreground">{phase.description}</p>
+                              </div>
+                              <div>
+                                {phase.isComplete ? (
+                                  <Badge className="bg-green-100 text-green-800">Hoàn thành</Badge>
+                                ) : treatment.currentPhase.includes(phase.title.split(":")[0]) ? (
+                                  <Badge className="bg-blue-100 text-blue-800">Đang thực hiện</Badge>
+                                ) : (
+                                  <Badge variant="outline">Chờ thực hiện</Badge>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-4 border-t">
+                        <Button variant="outline" size="sm">
+                          <Eye className="h-4 w-4 mr-2" />
+                          Xem chi tiết
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Tạo lịch hẹn
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Xem hợp đồng
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Collapsible>
             </Card>
           ))}
         </div>

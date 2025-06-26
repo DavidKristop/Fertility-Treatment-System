@@ -15,33 +15,40 @@ import LoginPage from "./pages/authorization/LoginPage"
 import RegisterPage from "./pages/authorization/RegisterPage"
 import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 
+// Patient pages
+import RequestAppointment from "./pages/patient/RequestAppointment"
+import PatientDashboard from "./pages/patient/PatientDashboard"
+import PatientProfile from "./pages/patient/profile/PatientProfile"
+
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
 import Calendar from "./pages/doctor/appointments/Calendar"
-import ViewContracts from "./pages/doctor/contracts/ViewContracts"
+import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
-import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
 import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
 import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
 import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
-import Inbox from "./pages/doctor/notifications/Inbox"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
-import RequestAppointment from "./pages/patient/RequestAppointment"
-import PatientList from "./pages/doctor/patients/PatientList"
-import PatientDashboard from "./pages/patient/PatientDashboard"
+import PatientDetail from "./pages/doctor/patients/PatientDetail"
+import ResultsHistory from "./pages/doctor/results/ResultsHistory"
+import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
+
+// Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard"
 
-// layouts
-import RootLayout from "./pages/RootLayout"
-import BlogPage from "./pages/blog/page"
-import BlogPostPage from "./pages/blog/[id]/page"
+//Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard"
-import PatientProfile from "./pages/patient/profile/PatientProfile"
+
+// layouts
+import RootLayout from './pages/RootLayout'
+import BlogPage from './pages/blog/page'
+import BlogPostPage from './pages/blog/[id]/page'
+
 
 const router = createBrowserRouter([
   {
@@ -159,16 +166,16 @@ const router = createBrowserRouter([
             element: <TodayAppointments />,
           },
           {
-            path: "booked",
-            element: <BookedAppointments />,
-          },
-          {
             path: "calendar",
             element: <Calendar />,
           },
           {
             path: "pending",
             element: <PendingApprovals />,
+          },
+          {
+            path: "create",
+            element: <CreateAppointment />,
           },
         ],
       },
@@ -180,13 +187,13 @@ const router = createBrowserRouter([
             index: true,
             element: <PatientList />,
           },
+          {
+            path: ":id",
+            element: <PatientDetail />,
+          }
         ],
       },
-      // Contract routes
-      {
-        path: "contracts",
-        element: <ViewContracts />,
-      },
+      // Contract routes removed
       // Treatment Plan routes
       {
         path: "treatment-plans",
@@ -209,6 +216,10 @@ const router = createBrowserRouter([
             path: "record",
             element: <RecordResults />,
           },
+          {
+            path: "history",
+            element: <ResultsHistory />,
+          }
         ],
       },
       // Profile routes
@@ -237,10 +248,6 @@ const router = createBrowserRouter([
           {
             path: "reminders",
             element: <ReminderHistory />,
-          },
-          {
-            path: "inbox",
-            element: <Inbox />,
           },
         ],
       },
@@ -315,4 +322,4 @@ function App() {
   return <RouterProvider router={router} />
 }
 
-export default App
+export default App;

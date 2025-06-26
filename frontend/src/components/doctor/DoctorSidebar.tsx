@@ -10,20 +10,14 @@ import {
   FileText,
   Pill,
   Bell,
-  BookOpen,
   LogOut,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
   Clock,
   CalendarDays,
-  Search,
   Activity,
   MessageSquare,
-  Inbox,
-  Eye,
-  CalendarCheck,
-  TestTube,
   ClipboardList,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -78,12 +72,6 @@ const sidebarItems: SidebarItem[] = [
         icon: CalendarDays,
         path: "/doctor/appointments/calendar",
       },
-      {
-        id: "booked-appointments",
-        label: "Lịch đã đặt",
-        icon: CalendarCheck,
-        path: "/doctor/appointments/booked",
-      },
     ],
   },
   {
@@ -97,31 +85,13 @@ const sidebarItems: SidebarItem[] = [
         icon: Users,
         path: "/doctor/patients",
       },
-      {
-        id: "search-patients",
-        label: "Tìm kiếm bệnh nhân",
-        icon: Search,
-        path: "/doctor/patients/search",
-      },
     ],
-  },
-  {
-    id: "contracts",
-    label: "Hợp đồng điều trị",
-    icon: Eye,
-    path: "/doctor/contracts",
   },
   {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
     path: "/doctor/treatment-plans",
-  },
-  {
-    id: "results",
-    label: "Ghi nhận kết quả",
-    icon: TestTube,
-    path: "/doctor/results/record",
   },
   {
     id: "prescriptions",
@@ -154,20 +124,7 @@ const sidebarItems: SidebarItem[] = [
         icon: MessageSquare,
         path: "/doctor/notifications/reminders",
       },
-      {
-        id: "inbox",
-        label: "Hộp thư đến",
-        icon: Inbox,
-        path: "/doctor/notifications/inbox",
-        badge: 7,
-      },
     ],
-  },
-  {
-    id: "blog",
-    label: "Blog",
-    icon: BookOpen,
-    path: "/doctor/blog",
   },
 ]
 
@@ -210,7 +167,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col h-screen ${sidebarWidth}`}
+      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col h-screen overflow-hidden ${sidebarWidth}`}
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -228,7 +185,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-2 space-y-1 overflow-y-auto custom-scrollbar">
         {sidebarItems.map((item) => (
           <div key={item.id}>
             {/* Main Item */}
@@ -311,7 +268,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       </nav>
 
       {/* Logout */}
-      <div className="p-2 border-t border-gray-200">
+      <div className="p-2 border-t border-gray-200 mt-auto">
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {

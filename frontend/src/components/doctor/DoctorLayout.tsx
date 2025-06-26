@@ -55,11 +55,11 @@ export default function DoctorLayout({ children, title, breadcrumbs }: DoctorLay
       {/* Sidebar */}
       <div
         className={`
-        ${isMobile ? "fixed" : "relative"} 
+        ${isMobile ? "fixed" : "sticky"} 
         ${isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"}
-        ${isMobile ? "z-50" : "z-10"}
+        ${isMobile ? "z-50" : "z-30"}
         transition-transform duration-300 ease-in-out
-        lg:translate-x-0
+        lg:translate-x-0 top-0 h-screen
       `}
       >
         <DoctorSidebar isCollapsed={!isMobile && sidebarCollapsed} onToggle={handleSidebarToggle} isMobile={isMobile} />
