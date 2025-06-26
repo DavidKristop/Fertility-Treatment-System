@@ -18,22 +18,7 @@ import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
-<<<<<<< HEAD
-import RequestAppointment from "./pages/patient/RequestAppointment"
-import PatientList from "./pages/doctor/patients/PatientList"
-import PatientDashboard from "./pages/patient/PatientDashboard"
-import ManagerDashboard from "./pages/manager/ManagerDashboard"
-
-
-
-// layouts
-import RootLayout from './pages/RootLayout'
-import BlogPage from './pages/blog/page'
-import BlogPostPage from './pages/blog/[id]/page'
-import AdminDashboard from "./pages/admin/AdminDashboard"
-=======
 import Calendar from "./pages/doctor/appointments/Calendar"
-import PatientList from "./pages/doctor/patients/PatientList"
 import ViewContracts from "./pages/doctor/contracts/ViewContracts"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
@@ -46,13 +31,17 @@ import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import Inbox from "./pages/doctor/notifications/Inbox"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
+import RequestAppointment from "./pages/patient/RequestAppointment"
+import PatientList from "./pages/doctor/patients/PatientList"
+import PatientDashboard from "./pages/patient/PatientDashboard"
+import ManagerDashboard from "./pages/manager/ManagerDashboard"
 
 // layouts
 import RootLayout from "./pages/RootLayout"
 import BlogPage from "./pages/blog/page"
 import BlogPostPage from "./pages/blog/[id]/page"
-
->>>>>>> 92a5d4a39110881547eda5b01c135f41f314a862
+import AdminDashboard from "./pages/admin/AdminDashboard"
+import PatientProfile from "./pages/patient/profile/PatientProfile"
 
 const router = createBrowserRouter([
   {
@@ -277,6 +266,10 @@ const router = createBrowserRouter([
       {
         path: "patients",
         element: <PatientList />,
+      },
+      {
+        path: "profile",
+        element: <PatientProfile />,
       },
     ],
   },
