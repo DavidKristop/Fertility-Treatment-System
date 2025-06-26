@@ -77,17 +77,8 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
               <DropdownMenuItem asChild>
                 <Link to="/patient/profile">
                   <User className="mr-2 h-4 w-4" />
-<<<<<<< HEAD
-                  Hồ sơ cá nhân
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell className="mr-2 h-4 w-4" />
-                Thông báo
-=======
                   Hồ sơ cá nhân
                 </Link>
->>>>>>> 4d96de8fdc7259c27b53343b430ec557258d84ae
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>
