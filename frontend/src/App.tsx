@@ -24,7 +24,6 @@ import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
-import BookedAppointments from "./pages/doctor/appointments/BookedAppointments"
 import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
 import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
@@ -156,10 +155,6 @@ const router = createBrowserRouter([
           {
             path: "today",
             element: <TodayAppointments />,
-          },
-          {
-            path: "booked",
-            element: <BookedAppointments />,
           },
           {
             path: "calendar",

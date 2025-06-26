@@ -81,31 +81,28 @@ export default function DoctorDashboard() {
   return (
     <DoctorLayout title="Tổng quan" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Today's Appointments */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Lịch khám hôm nay</CardTitle>
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                Xem tất cả
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {todayAppointments.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    appointment={appointment}
-                    getStatusColor={getAppointmentStatusColor}
-                    getStatusText={getAppointmentStatusText}
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Today's Appointments */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Lịch khám hôm nay</CardTitle>
+            <Button variant="outline" size="sm">
+              <Eye className="h-4 w-4 mr-2" />
+              Xem tất cả
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {todayAppointments.map((appointment) => (
+                <AppointmentCard
+                  key={appointment.id}
+                  appointment={appointment}
+                  getStatusColor={getAppointmentStatusColor}
+                  getStatusText={getAppointmentStatusText}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
         
         {/* Quick Actions */}
         <QuickActions />
