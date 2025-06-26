@@ -15,15 +15,39 @@ import LoginPage from "./pages/authorization/LoginPage"
 import RegisterPage from "./pages/authorization/RegisterPage"
 import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 
+// Patient pages
+import RequestAppointment from "./pages/patient/RequestAppointment"
+import PatientDashboard from "./pages/patient/PatientDashboard"
+
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
+import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
+import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
+import RecordResults from "./pages/doctor/results/RecordResults"
+import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
+import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
+import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
+import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
+import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
+import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
+import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
+import PatientDetail from "./pages/doctor/patients/PatientDetail"
+import ResultsHistory from "./pages/doctor/results/ResultsHistory"
+import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
+
+// Manager pages
+import ManagerDashboard from "./pages/manager/ManagerDashboard"
+
+//Admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard"
 
 // layouts
 import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
+
 
 const router = createBrowserRouter([
   {
