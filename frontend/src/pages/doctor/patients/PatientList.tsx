@@ -1,12 +1,9 @@
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, MoreHorizontal, User, Calendar, FileText, Phone, Mail, MapPin, Plus } from "lucide-react"
+import { Search, Plus } from "lucide-react"
+import PatientTable from "@/components/doctor/patients/PatientTable"
 
 // Mock data
 const patients = [
@@ -14,6 +11,7 @@ const patients = [
     id: 1,
     name: "Nguyễn Thị Lan",
     age: 32,
+    gender: "Nữ",
     phone: "0901234567",
     email: "lan.nguyen@email.com",
     address: "Quận 1, TP.HCM",
@@ -26,6 +24,7 @@ const patients = [
     id: 2,
     name: "Trần Văn Nam",
     age: 35,
+    gender: "Nam",
     phone: "0912345678",
     email: "nam.tran@email.com",
     address: "Quận 3, TP.HCM",
@@ -38,6 +37,7 @@ const patients = [
     id: 3,
     name: "Lê Thị Hoa",
     age: 28,
+    gender: "Nữ",
     phone: "0923456789",
     email: "hoa.le@email.com",
     address: "Quận 7, TP.HCM",
@@ -50,6 +50,7 @@ const patients = [
     id: 4,
     name: "Phạm Minh Tuấn",
     age: 40,
+    gender: "Nam",
     phone: "0934567890",
     email: "tuan.pham@email.com",
     address: "Quận 2, TP.HCM",
@@ -62,6 +63,7 @@ const patients = [
     id: 5,
     name: "Võ Thị Mai",
     age: 29,
+    gender: "Nữ",
     phone: "0945678901",
     email: "mai.vo@email.com",
     address: "Quận 5, TP.HCM",
@@ -103,34 +105,14 @@ export default function PatientList() {
     }
   }
 
-  const breadcrumbs = [
-    { label: "Trang chủ", path: "/doctor/dashboard" },
-    { label: "Bệnh nhân" },
-    { label: "Tất cả bệnh nhân" },
-  ]
-
   return (
-    <DoctorLayout title="Danh sách bệnh nhân" breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
+    <DoctorLayout title="Danh sách bệnh nhân">
+      <div className="space-y-4">
         {/* Header Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input placeholder="Tìm kiếm bệnh nhân..." className="pl-10 w-80" />
-            </div>
-            <Select>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Lọc theo trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="active">Đang điều trị</SelectItem>
-                <SelectItem value="new">Bệnh nhân mới</SelectItem>
-                <SelectItem value="completed">Hoàn thành</SelectItem>
-                <SelectItem value="paused">Tạm dừng</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input placeholder="Tìm kiếm bệnh nhân..." className="pl-10" />
           </div>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -138,159 +120,18 @@ export default function PatientList() {
           </Button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tổng bệnh nhân</p>
-                  <p className="text-2xl font-bold">23</p>
-                </div>
-                <User className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Đang điều trị</p>
-                  <p className="text-2xl font-bold text-green-600">15</p>
-                </div>
-                <User className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Bệnh nhân mới</p>
-                  <p className="text-2xl font-bold text-blue-600">3</p>
-                </div>
-                <User className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Hoàn thành</p>
-                  <p className="text-2xl font-bold text-gray-600">5</p>
-                </div>
-                <User className="h-8 w-8 text-gray-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Patients Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Danh sách bệnh nhân</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Bệnh nhân</TableHead>
-                    <TableHead>Liên hệ</TableHead>
-                    <TableHead>Kế hoạch điều trị</TableHead>
-                    <TableHead>Trạng thái</TableHead>
-                    <TableHead>Lần khám cuối</TableHead>
-                    <TableHead>Cuộc hẹn tiếp theo</TableHead>
-                    <TableHead className="text-right">Hành động</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {patients.map((patient) => (
-                    <TableRow key={patient.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium">{patient.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <div className="font-medium">{patient.name}</div>
-                            <div className="text-sm text-muted-foreground">{patient.age} tuổi</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Phone className="h-3 w-3" />
-                            {patient.phone}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <Mail className="h-3 w-3" />
-                            {patient.email}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            {patient.address}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-xs">
-                          <p className="text-sm font-medium">{patient.treatmentPlan}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(patient.status)}>{getStatusText(patient.status)}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="h-3 w-3" />
-                          {patient.lastVisit}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {patient.nextAppointment ? (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="h-3 w-3" />
-                            {patient.nextAppointment}
-                          </div>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">Chưa có</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <User className="mr-2 h-4 w-4" />
-                              Xem hồ sơ
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Calendar className="mr-2 h-4 w-4" />
-                              Đặt lịch hẹn
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <FileText className="mr-2 h-4 w-4" />
-                              Xem kế hoạch điều trị
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Phone className="mr-2 h-4 w-4" />
-                              Gọi điện
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+        <Card className="border rounded-lg shadow-sm">
+          <CardHeader className="bg-white py-4 px-6 border-b">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium">Danh sách bệnh nhân</CardTitle>
+              <div className="text-sm text-gray-500">
+                {patients.length} bệnh nhân
+              </div>
             </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <PatientTable patients={patients} getStatusColor={getStatusColor} getStatusText={getStatusText} />
           </CardContent>
         </Card>
       </div>
