@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import {
   User,
   Mail,
@@ -19,8 +18,6 @@ import {
   Save,
   X,
   Camera,
-  Shield,
-  Key,
 } from "lucide-react"
 
 // Mock data dựa trên ERD
@@ -48,7 +45,6 @@ const doctorData = {
 
 export default function DoctorProfile() {
   const [isEditing, setIsEditing] = useState(false)
-  const [showPasswordForm, setShowPasswordForm] = useState(false)
   const [formData, setFormData] = useState(doctorData)
 
   const handleInputChange = (field: string, value: string) => {
