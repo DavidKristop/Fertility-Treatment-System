@@ -18,28 +18,12 @@ import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
-import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
-// Contract routes removed
-import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
-import RecordResults from "./pages/doctor/results/RecordResults"
-import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
-import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
-import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
-import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
-import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
-import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
-import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
-import PatientDetail from "./pages/doctor/patients/PatientDetail"
-// Contract detail routes removed
-import ResultsHistory from "./pages/doctor/results/ResultsHistory"
-import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
 
 // layouts
-import RootLayout from "./pages/RootLayout"
-import BlogPage from "./pages/blog/page"
-import BlogPostPage from "./pages/blog/[id]/page"
-
+import RootLayout from './pages/RootLayout'
+import BlogPage from './pages/blog/page'
+import BlogPostPage from './pages/blog/[id]/page'
 
 const router = createBrowserRouter([
   {
@@ -249,10 +233,64 @@ const router = createBrowserRouter([
       },
     ],
   },
+    // Patient Dashboard Routes
+  {
+    path: "patient",
+    children: [
+      {
+        path: "dashboard",
+        element: <PatientDashboard />,
+      },
+      {
+        path: "appointments/schedule",
+        element: <RequestAppointment />,
+      },
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+    ],
+  },
+      // Manager Dashboard Routes
+  {
+    path: "manager",
+    children: [
+      {
+        path: "dashboard",
+        element: <ManagerDashboard />,
+      },
+      {
+        path: "appointments/today",
+        element: <TodayAppointments />,
+      },
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+    ],
+  },
+        // Admin Dashboard Routes
+  {
+    path: "admin",
+    children: [
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "appointments/today",
+        element: <TodayAppointments />,
+      },
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+    ],
+  },
 ])
 
 function App() {
   return <RouterProvider router={router} />
 }
 
-export default App
+export default App;

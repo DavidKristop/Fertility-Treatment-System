@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import demo_hospital from "src/assets/iui.png"
+import demo_hospital from "@/assets/doctor1.jpg"
 import { Calendar, Stethoscope, TestTube, Phone, CheckCircle, Clock } from "lucide-react"
 
 export default function Iui() {

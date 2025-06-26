@@ -4,19 +4,18 @@ import {
   Linkedin,
   X as TwitterX
 } from "lucide-react"
-import logo from "@/assets/logo.png"
 
 export default function Footer() {
   return (
     <footer className="bg-[#004c77] text-white pt-16 pb-8 px-6">
-      <div className="max-w-280 mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-8">
         {/* Liên hệ */}
-        <div className="col-span-1 lg:col-span-1 space-y-2">
+        <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-semibold text-lg">Liên hệ chúng tôi</h4>
           <p>Giữ liên lạc với Ucare:</p>
           <p>0903 123 1234</p>
           <p>info@ucare.vn</p>
-          <div className="flex gap-4 pt-2">
+          <div className="flex justify-center sm:justify-start gap-4 pt-2">
             <Facebook className="w-5 h-5" />
             <Instagram className="w-5 h-5" />
             <TwitterX className="w-5 h-5" />
@@ -25,7 +24,7 @@ export default function Footer() {
         </div>
 
         {/* Giới thiệu */}
-        <div className="col-span-1 space-y-2">
+        <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-semibold text-lg">Giới thiệu</h4>
           <ul className="space-y-1 text-sm">
             <li>Giới thiệu chung</li>
@@ -41,7 +40,7 @@ export default function Footer() {
         </div>
 
         {/* Chi phí */}
-        <div className="col-span-1 space-y-2">
+        <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-semibold text-lg">Chi phí</h4>
           <ul className="space-y-1 text-sm">
             <li>Dịch vụ & Bảng giá</li>
@@ -51,17 +50,16 @@ export default function Footer() {
         </div>
 
         {/* Dịch vụ */}
-        <div className="col-span-1 space-y-2">
+        <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-semibold text-lg">Dịch vụ</h4>
           <ul className="space-y-1 text-sm">
             <li>Dịch vụ IUI</li>
             <li>Dịch vụ IVF</li>
           </ul>
-          <img src={logo} className="w-40"></img>
         </div>
 
         {/* Địa điểm */}
-        <div className="col-span-1 space-y-2">
+        <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-semibold text-lg">Địa điểm</h4>
           <ul className="space-y-1 text-sm">
             <li>TP. Hồ Chí Minh</li>
@@ -73,9 +71,9 @@ export default function Footer() {
       </div>
 
       {/* Gạch chia */}
-      <div className="border-t border-white/70 mt-12 pt-4 text-sm flex flex-col sm:flex-row justify-between max-w-6xl mx-auto">
+      <div className="border-t border-white/70 mt-12 pt-4 text-sm flex flex-col sm:flex-row justify-between items-center gap-y-2 max-w-6xl mx-auto text-center sm:text-left">
         <p>© 2025 Ucare</p>
-        <div className="flex gap-6 mt-2 sm:mt-0">
+        <div className="flex gap-6">
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Use</a>
           <a href="#">SMS Terms</a>
