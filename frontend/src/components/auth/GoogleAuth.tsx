@@ -1,12 +1,12 @@
-import { GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google'
+import { useNavigate } from 'react-router-dom'
 
 interface GoogleButtonProps {
   text: string;
   mode: 'login' | 'register';
 }
 
-export default function GoogleAuth({ text, mode }: GoogleButtonProps) {
+export default function GoogleAuth({ mode }: GoogleButtonProps) {
   const navigate = useNavigate();
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
