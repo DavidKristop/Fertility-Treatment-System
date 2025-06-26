@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
   FileText,
@@ -133,13 +133,14 @@ const sidebarItems: SidebarItem[] = [
 
 interface PatientSidebarProps {
   isCollapsed: boolean
+  isMobile?: boolean
   onToggle: () => void
 }
 
-export default function PatientSidebar({ isCollapsed, onToggle }: PatientSidebarProps) {
+export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false }: PatientSidebarProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>(["appointments"])
   const location = useLocation()
-
+  const navigate = useNavigate()
   const toggleExpanded = (itemId: string) => {
     setExpandedItems((prev) => (prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]))
   }
@@ -258,9 +259,15 @@ export default function PatientSidebar({ isCollapsed, onToggle }: PatientSidebar
 
       {/* Logout */}
       <div className="p-2 border-t border-gray-200">
-        <div className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors">
+        <div
+          className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
+          onClick={() => {
+            localStorage.removeItem("token")
+            navigate("/authorization/login")
+          }}
+        >
           <LogOut className="h-5 w-5 flex-shrink-0" />
-          {!isCollapsed && <span className="text-sm font-medium">Đăng xuất</span>}
+          {(!isCollapsed || isMobile) && <span className="text-sm font-medium">Đăng xuất</span>}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { Bell, Search, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,10 +51,13 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
 
           {/* Notifications */}
           <div className="relative">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">3</Badge>
-            </Button>
+            <Link to="/patient/notifications">
+              <Button variant="ghost" size="icon" className="relative">
+                <Bell className="h-5 w-5" />
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">3</Badge>
+              </Button>           
+            </Link>
+
           </div>
 
           {/* Profile Dropdown */}
@@ -70,13 +74,11 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                Hồ sơ cá nhân
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell className="mr-2 h-4 w-4" />
-                Thông báo
+              <DropdownMenuItem asChild>
+                <Link to="/patient/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  Hồ sơ cá nhân
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>
