@@ -3,6 +3,7 @@
 import { useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import TreatmentPlanForm from "@/components/doctor/treatment/TreatmentPlanForm"
+import { createTreatmentPlan } from "@/api/treatment"
 
 export default function CreateTreatmentPlans() {
   const navigate = useNavigate()
@@ -15,12 +16,11 @@ export default function CreateTreatmentPlans() {
 
   const handleSubmit = async (data: any) => {
     try {
-      console.log("Creating treatment plan:", data)
-      // Here you would call your API
-      // await createTreatmentPlan(data)
+      await createTreatmentPlan(data)
       navigate("/doctor/treatment-plans")
     } catch (error) {
-      console.error("Error creating treatment plan:", error)
+      console.error("Failed to create treatment plan:", error)
+      throw error
     }
   }
 
