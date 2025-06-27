@@ -36,6 +36,7 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
 import ResultsHistory from "./pages/doctor/results/ResultsHistory"
+import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail"
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard"
@@ -198,8 +199,12 @@ const router = createBrowserRouter([
             element: <TreatmentPlans />,
           },
           {
-            path: "create-plans",
+            path: "create",
             element: <CreateTreatmentPlans />,
+          },
+          {
+            path: "treatment-details/:id",
+            element: <TreatmentDetail />, 
           },
         ],
       },
