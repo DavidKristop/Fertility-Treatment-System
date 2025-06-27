@@ -10,7 +10,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, User, Phone, Mail, CalendarIcon, Plus, X } from "lucide-react"
-import { getTreatmentPlan, type TreatmentPlan } from "@/api/treatment"
+
+interface Protocol {
+  id: string
+  title: string
+  description: string
+  isActive: boolean
+}
+
+interface TreatmentPlan {
+  id: string
+  patient_id: string
+  patient_name: string
+  patient_email: string
+  protocol_id: string
+  protocol_name: string
+  diagnosis: string
+  description: string
+  start_date: string
+  status: "In Progress" | "Completed" | "Paused" | "Cancelled"
+  current_phase: string
+  progress: number
+  next_appointment?: string
+  created_at: string
+  updated_at: string
+}
 
 interface Schedule {
   id: string
@@ -43,6 +67,52 @@ interface Drug {
   protocols: string[]
 }
 
+// Mock data
+const mockProtocols: Protocol[] = [
+  {
+    id: "1",
+    title: "IVF Long Protocol",
+    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích buồng trứng",
+    isActive: true,
+  },
+  {
+    id: "2",
+    title: "IVF Short Protocol",
+    description: "Phác đồ IVF ngắn với kích thích buồng trứng trực tiếp",
+    isActive: true,
+  },
+  {
+    id: "3",
+    title: "IUI Natural Protocol",
+    description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
+    isActive: true,
+  },
+  {
+    id: "4",
+    title: "IUI Stimulated Protocol",
+    description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
+    isActive: true,
+  },
+]
+
+const mockTreatmentPlan: TreatmentPlan = {
+  id: "tp-001",
+  patient_id: "p-001",
+  patient_name: "Nguyễn Thị Lan",
+  patient_email: "lan.nguyen@email.com",
+  protocol_id: "1", // IVF Long Protocol
+  protocol_name: "IVF Long Protocol",
+  diagnosis: "Vô sinh nguyên phát do tắc vòi trứng",
+  description: "Kế hoạch điều trị IVF với phác đồ dài hạn, bao gồm kích thích buồng trứng và chuyển phôi",
+  start_date: "2024-01-15",
+  status: "In Progress",
+  current_phase: "Kích thích buồng trứng",
+  progress: 45,
+  next_appointment: "2024-02-10",
+  created_at: "2024-01-10T08:00:00Z",
+  updated_at: "2024-02-05T10:30:00Z",
+}
+
 // Protocol-specific services and drugs
 const allServices: Service[] = [
   { id: "1", name: "Siêu âm theo dõi nang trứng", protocols: ["1", "2", "3", "4"] },
@@ -55,6 +125,8 @@ const allServices: Service[] = [
   { id: "8", name: "Theo dõi chu kỳ tự nhiên", protocols: ["3"] }, // Only IUI Natural
   { id: "9", name: "Kích thích buồng trứng nhẹ", protocols: ["4"] }, // Only IUI Stimulated
   { id: "10", name: "Nuôi cấy phôi", protocols: ["1", "2"] }, // Only IVF protocols
+  { id: "11", name: "Đánh giá nội mạc tử cung", protocols: ["1", "2", "3", "4"] },
+  { id: "12", name: "Tư vấn dinh dưỡng", protocols: ["1", "2", "3", "4"] },
 ]
 
 const allDrugs: Drug[] = [
@@ -68,6 +140,8 @@ const allDrugs: Drug[] = [
   { id: "8", name: "Progesterone", protocols: ["1", "2", "3", "4"] }, // All protocols
   { id: "9", name: "Estradiol", protocols: ["1", "2"] }, // Only IVF protocols
   { id: "10", name: "Folic Acid", protocols: ["1", "2", "3", "4"] }, // All protocols
+  { id: "11", name: "Menopur", protocols: ["1", "2"] }, // Only IVF protocols
+  { id: "12", name: "Ovidrel (hCG)", protocols: ["1", "2", "3", "4"] }, // All protocols
 ]
 
 export default function TreatmentDetail() {
@@ -108,6 +182,14 @@ export default function TreatmentDetail() {
       time: "08:00 - 08:30",
       status: "completed",
     },
+    {
+      id: "3",
+      type: "service",
+      name: "Ức chế GnRH",
+      date: "2024-02-12",
+      time: "10:00 - 10:30",
+      status: "completed",
+    },
   ])
 
   const [drugAssignments, setDrugAssignments] = useState<DrugAssignment[]>([
@@ -120,6 +202,15 @@ export default function TreatmentDetail() {
       instructions: "Tiêm dưới da vào buổi tối, cùng giờ mỗi ngày",
       status: "active",
     },
+    {
+      id: "2",
+      name: "Lupron (GnRH Agonist)",
+      startDate: "2024-02-01",
+      endDate: "2024-02-15",
+      dosage: "0.5ml/ngày",
+      instructions: "Tiêm dưới da vào buổi sáng",
+      status: "completed",
+    },
   ])
 
   const breadcrumbs = [
@@ -129,12 +220,12 @@ export default function TreatmentDetail() {
   ]
 
   useEffect(() => {
+    // Simulate API call with mock data
     const fetchTreatmentPlan = async () => {
-      if (!id) return
-
       try {
-        const plan = await getTreatmentPlan(id)
-        setTreatmentPlan(plan)
+        // Simulate loading delay
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        setTreatmentPlan(mockTreatmentPlan)
       } catch (error) {
         console.error("Failed to fetch treatment plan:", error)
       } finally {
@@ -151,11 +242,13 @@ export default function TreatmentDetail() {
       const protocolId = treatmentPlan.protocol_id
 
       const filteredServices = allServices.filter((service) => service.protocols.includes(protocolId))
-
       const filteredDrugs = allDrugs.filter((drug) => drug.protocols.includes(protocolId))
 
       setAvailableServices(filteredServices)
       setAvailableDrugs(filteredDrugs)
+
+      console.log(`Protocol ${protocolId} - Available services:`, filteredServices.length)
+      console.log(`Protocol ${protocolId} - Available drugs:`, filteredDrugs.length)
     }
   }, [treatmentPlan])
 
@@ -171,6 +264,12 @@ export default function TreatmentDetail() {
     if (scheduleType === "service") {
       if (selectedServices.length === 0 || !selectedDate || !timeFrom || !timeTo) {
         setError("Vui lòng chọn dịch vụ, ngày và thời gian")
+        return
+      }
+
+      // Validate time
+      if (timeFrom >= timeTo) {
+        setError("Thời gian kết thúc phải sau thời gian bắt đầu")
         return
       }
 
@@ -195,6 +294,12 @@ export default function TreatmentDetail() {
     } else {
       if (!selectedDrug || !drugStartDate || !drugEndDate || !dosage || !instructions) {
         setError("Vui lòng điền đầy đủ thông tin thuốc")
+        return
+      }
+
+      // Validate dates
+      if (new Date(drugStartDate) >= new Date(drugEndDate)) {
+        setError("Ngày kết thúc phải sau ngày bắt đầu")
         return
       }
 
@@ -267,13 +372,19 @@ export default function TreatmentDetail() {
   }
 
   const getProtocolInfo = (protocolId: string) => {
-    const protocolMap: Record<string, { name: string; color: string }> = {
-      "1": { name: "IVF Long Protocol", color: "bg-purple-100 text-purple-800" },
-      "2": { name: "IVF Short Protocol", color: "bg-blue-100 text-blue-800" },
-      "3": { name: "IUI Natural Protocol", color: "bg-green-100 text-green-800" },
-      "4": { name: "IUI Stimulated Protocol", color: "bg-orange-100 text-orange-800" },
+    const protocol = mockProtocols.find((p) => p.id === protocolId)
+    const protocolColorMap: Record<string, string> = {
+      "1": "bg-purple-100 text-purple-800", // IVF Long
+      "2": "bg-blue-100 text-blue-800", // IVF Short
+      "3": "bg-green-100 text-green-800", // IUI Natural
+      "4": "bg-orange-100 text-orange-800", // IUI Stimulated
     }
-    return protocolMap[protocolId] || { name: "Unknown Protocol", color: "bg-gray-100 text-gray-800" }
+
+    return {
+      name: protocol?.title || "Unknown Protocol",
+      color: protocolColorMap[protocolId] || "bg-gray-100 text-gray-800",
+      description: protocol?.description || "",
+    }
   }
 
   if (loading) {
@@ -345,6 +456,10 @@ export default function TreatmentDetail() {
                 <h4 className="font-medium text-sm text-gray-700 mb-1">Chẩn đoán</h4>
                 <p className="text-sm">{treatmentPlan.diagnosis}</p>
               </div>
+              <div>
+                <h4 className="font-medium text-sm text-gray-700 mb-1">Mô tả kế hoạch</h4>
+                <p className="text-sm text-gray-600">{treatmentPlan.description}</p>
+              </div>
               <div className="flex items-center gap-4">
                 <div>
                   <h4 className="font-medium text-sm text-gray-700 mb-1">Giao thức điều trị</h4>
@@ -366,7 +481,13 @@ export default function TreatmentDetail() {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Dịch vụ khả dụng cho giao thức này</h4>
+                  <h4 className="font-medium text-sm text-gray-700 mb-1">Mô tả giao thức</h4>
+                  <p className="text-sm text-gray-600">{protocolInfo.description}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-gray-700 mb-2">
+                    Dịch vụ khả dụng ({availableServices.length} dịch vụ)
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {availableServices.map((service) => (
                       <Badge key={service.id} variant="outline" className="text-xs">
@@ -376,7 +497,9 @@ export default function TreatmentDetail() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">Thuốc khả dụng cho giao thức này</h4>
+                  <h4 className="font-medium text-sm text-gray-700 mb-2">
+                    Thuốc khả dụng ({availableDrugs.length} loại thuốc)
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {availableDrugs.map((drug) => (
                       <Badge key={drug.id} variant="outline" className="text-xs">
