@@ -35,7 +35,6 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
 import ResultsHistory from "./pages/doctor/results/ResultsHistory"
-import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard"
@@ -171,10 +170,6 @@ const router = createBrowserRouter([
           {
             path: "pending",
             element: <PendingApprovals />,
-          },
-          {
-            path: "create",
-            element: <CreateAppointment />,
           },
         ],
       },
