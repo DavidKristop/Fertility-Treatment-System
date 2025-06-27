@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { DateRange } from "react-day-picker" 
-import { DateRangePicker } from "@/components/ui/date-range-picker"
+import { CustomCalendarPicker } from "@/components/ui/custom-calendar-picker"
 
 interface Service {
   id: string
@@ -43,9 +43,23 @@ export default function ServiceSelectionDialog({
   phaseType
 }: ServiceSelectionDialogProps) {
   const [selectedService, setSelectedService] = useState<string>("")
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
+  const [startDate, setStartDate] = useState<string | null>(null)
+  const [endDate, setEndDate] = useState<string | null>(null)
   const [quantity, setQuantity] = useState<number>(1)
+  const [selectedCalendar, setSelectedCalendar] = useState<"start" | "end">("start")
   const selectedServiceData = availableServices.find(s => s.id === selectedService)
+  
+  // Update dates when date is selected
+  const updateDateRange = (date: string, type: "start" | "end") => {
+    if (type === "start") {
+      setStartDate(date)
+      if (!endDate) {
+        setSelectedCalendar("end")
+      }
+    } else {
+      setEndDate(date)
+    }
+  }
 
   // Filter services based on the phase type
   const filteredServices = availableServices.filter(service => {
@@ -75,18 +89,25 @@ export default function ServiceSelectionDialog({
   }
 
   const handleSave = () => {
-    if (!selectedService || !dateRange) return
+    if (!selectedService || !startDate || !endDate) return
+
+    const formattedDateRange: DateRange = {
+      from: new Date(startDate),
+      to: new Date(endDate)
+    }
 
     onSave({
       serviceId: selectedService,
-      dateRange,
+      dateRange: formattedDateRange,
       quantity
     })
 
     // Reset form
     setSelectedService("")
-    setDateRange(undefined)
+    setStartDate(null)
+    setEndDate(null)
     setQuantity(1)
+    setSelectedCalendar("start")
     onOpenChange(false)
   }
 
@@ -102,11 +123,48 @@ export default function ServiceSelectionDialog({
         
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="service">1. Chọn lịch thực hiện</Label>
-            <DateRangePicker 
-              value={dateRange} 
-              onChange={setDateRange}
-            />
+            <div className="flex flex-row justify-between items-center">
+              <Label htmlFor="service">1. Chọn lịch thực hiện</Label>
+              <div className="flex space-x-2">
+                <Button 
+                  variant={selectedCalendar === "start" ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => setSelectedCalendar("start")}
+                >
+                  Ngày bắt đầu
+                </Button>
+                <Button 
+                  variant={selectedCalendar === "end" ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => setSelectedCalendar("end")}
+                >
+                  Ngày kết thúc
+                </Button>
+              </div>
+            </div>
+            
+            {selectedCalendar === "start" ? (
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Ngày bắt đầu: {startDate ? new Date(startDate).toLocaleDateString('vi-VN') : 'Chưa chọn'}
+                </p>
+                <CustomCalendarPicker
+                  value={startDate}
+                  onChange={(date) => updateDateRange(date, "start")}
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Ngày kết thúc: {endDate ? new Date(endDate).toLocaleDateString('vi-VN') : 'Chưa chọn'}
+                </p>
+                <CustomCalendarPicker
+                  value={endDate}
+                  onChange={(date) => updateDateRange(date, "end")}
+                  initialDate={startDate ? new Date(startDate) : undefined}
+                />
+              </div>
+            )}
           </div>
           
           <div className="grid gap-2">
@@ -155,7 +213,7 @@ export default function ServiceSelectionDialog({
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Hủy
           </Button>
-          <Button type="button" onClick={handleSave} disabled={!selectedService || !dateRange}>
+          <Button type="button" onClick={handleSave} disabled={!selectedService || !startDate || !endDate}>
             Lưu
           </Button>
         </DialogFooter>
