@@ -27,7 +27,7 @@ export default function Hero() {
             <div className="mt-4 flex justify-center">
               <Link to="/authorization/login">
                 <Button
-                    className="text-[#004c77] bg-white text-2xl font-bold px-12 py-8 rounded-full uppercase hover:bg-[#004c77] hover:text-white"
+                    className="text-[#004c77] bg-white text-2xl font-bold px-12 py-8 rounded-full uppercase hover:bg-[#004c77] hover:text-white cursor-pointer"
                     >
                     Lên lịch
                 </Button>

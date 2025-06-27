@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/ucarelogo.png";
@@ -25,9 +25,18 @@ export default function Navbar() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [isMobileMenuOpen]);
+
   return (
-    <header className="flex flex-wrap items-center justify-between px-6 py-0 bg-white border-b sticky top-0 z-50">
-      <div className="flex items-center gap-2 ml-0 md:ml-37">
+    <header className="flex items-center justify-between px-6 py-0 bg-white border-b sticky top-0 z-50">
+      <div className="flex items-center gap-2 ml-0 lg:ml-37">
         <Link to="/">
           <img src={logo} alt="UCare" className="h-15 cursor-pointer" />
         </Link>
@@ -38,51 +47,53 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center text-[#004c77] ml-0 md:ml-40">
-        <Link to="/" className={navItemClass}>
-          Trang Chủ
-        </Link>
+      <div className="hidden custom:flex items-center gap-10 mr-20">
+        <nav className="flex items-center text-[#004c77]">
+          <Link to="/" className={navItemClass}>
+            Trang Chủ
+          </Link>
 
-        <Dropdown label="Giới thiệu">
-          <DropdownMenuItem>Về UCare</DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="/doctors">Đội ngũ bác sĩ</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Câu chuyện thương hiệu</DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="/blog">Blog</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="blog/:id">Post blog</Link>
-          </DropdownMenuItem>
-        </Dropdown>
+          <Dropdown label="Giới thiệu">
+            <Link to="/about/company">
+              <DropdownMenuItem className="cursor-pointer">Về UCare</DropdownMenuItem>
+            </Link>
+            <Link to="/doctors">
+              <DropdownMenuItem className="cursor-pointer">Đội ngũ bác sĩ</DropdownMenuItem>
+            </Link>
+            <Link to="/about/story">
+              <DropdownMenuItem className="cursor-pointer">Câu chuyện thương hiệu</DropdownMenuItem>
+            </Link>
+            <Link to="/blog">
+              <DropdownMenuItem className="cursor-pointer">Blog</DropdownMenuItem>
+            </Link>
+            <Link to="blog/:id">
+              <DropdownMenuItem className="cursor-pointer">Post blog</DropdownMenuItem>
+            </Link>
+          </Dropdown>
 
-        <Dropdown label="Bảng giá">
-          <DropdownMenuItem>Khám tổng quát</DropdownMenuItem>
-          <DropdownMenuItem>Xét nghiệm</DropdownMenuItem>
-        </Dropdown>
+          <Dropdown label="Bảng giá">
+            <DropdownMenuItem>Khám tổng quát</DropdownMenuItem>
+            <DropdownMenuItem>Xét nghiệm</DropdownMenuItem>
+          </Dropdown>
 
-        <Dropdown label="Dịch vụ">
-          <DropdownMenuItem>Khám bệnh</DropdownMenuItem>
-          <DropdownMenuItem>Điều trị tại nhà</DropdownMenuItem>
-          <DropdownMenuItem>Tiêm ngừa</DropdownMenuItem>
-        </Dropdown>
+          <Dropdown label="Dịch vụ">
+            <DropdownMenuItem>Khám bệnh</DropdownMenuItem>
+            <DropdownMenuItem>Điều trị tại nhà</DropdownMenuItem>
+            <DropdownMenuItem>Tiêm ngừa</DropdownMenuItem>
+          </Dropdown>
 
-        <Dropdown label="Địa điểm">
-          <DropdownMenuItem>Cơ sở Quận 1</DropdownMenuItem>
-          <DropdownMenuItem>Cơ sở Thủ Đức</DropdownMenuItem>
-        </Dropdown>
-      </nav>
+          <Dropdown label="Địa điểm">
+            <DropdownMenuItem>Cơ sở Quận 1</DropdownMenuItem>
+            <DropdownMenuItem>Cơ sở Thủ Đức</DropdownMenuItem>
+          </Dropdown>
+        </nav>
 
-      {/* Desktop Login Button */}
-      <div className="hidden md:flex items-center gap-4 mr-0 md:mr-20">
         <Link to="/authorization/login">
           <Button
             variant="outline"
-            className="text-base font-semibold px-6 py-2 border-[#004c77] text-[#004c77] hover:bg-[#004c77] hover:text-white transition-colors"
+            className="text-[20px] font-semibold px-6 h-12 rounded-xl border-2 border-[#004c77] text-[#004c77] hover:bg-[#004c77] hover:text-white transition-colors cursor-pointer shadow-md flex items-center justify-center"
           >
-            Đăng nhập | Đăng ký
+            Đăng nhập
           </Button>
         </Link>
       </div>
@@ -91,7 +102,7 @@ export default function Navbar() {
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden"
+        className="custom:hidden border-2 border-[#004c77] bg-[#e6f2fa] hover:bg-[#004c77] hover:text-white transition-colors shadow-md"
         onClick={toggleMobileMenu}
       >
         {isMobileMenuOpen ? (
@@ -105,7 +116,7 @@ export default function Navbar() {
       <div
         className={`fixed inset-y-0 right-0 w-full bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        } md:hidden`}
+        } custom:hidden`}
       >
         <div className="flex justify-between items-center p-4 border-b">
           <span className="text-[24px] font-bold text-[#417a9b]">UCARE</span>
@@ -261,7 +272,7 @@ export default function Navbar() {
       {/* Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed"
+          className="fixed inset-0 z-40"
           onClick={toggleMobileMenu}
         ></div>
       )}

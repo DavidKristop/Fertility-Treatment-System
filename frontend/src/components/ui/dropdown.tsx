@@ -31,7 +31,7 @@ export function Dropdown({ label, children }: DropdownProps) {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="mt-2"
+        className=""
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
