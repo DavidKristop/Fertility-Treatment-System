@@ -263,7 +263,7 @@ export default function TreatmentPlanForm({
             </div>
 
             {/* Payment Method */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="paymentMethod">Hình thức thanh toán</Label>
               <Select
                 value={formData.paymentMethod}
@@ -278,7 +278,7 @@ export default function TreatmentPlanForm({
                   <SelectItem value="insurance">Bảo hiểm y tế</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 pt-6">
