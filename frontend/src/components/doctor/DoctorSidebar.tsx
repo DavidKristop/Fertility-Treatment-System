@@ -46,25 +46,18 @@ const sidebarItems: SidebarItem[] = [
     icon: LayoutDashboard,
     path: "/doctor/dashboard",
   },
+
   {
     id: "appointments",
     label: "Lịch khám",
     icon: Calendar,
-    badge: 5,
     children: [
-      {
-        id: "pending-approvals",
-        label: "Chờ duyệt",
-        icon: ClipboardList,
-        path: "/doctor/appointments/pending",
-        badge: 8,
-      },
+      
       {
         id: "today-appointments",
         label: "Lịch khám hôm nay",
         icon: Clock,
         path: "/doctor/appointments/today",
-        badge: 3,
       },
       {
         id: "calendar",
@@ -74,25 +67,26 @@ const sidebarItems: SidebarItem[] = [
       },
     ],
   },
+
+  {
+        id: "pending-approvals",
+        label: "Chờ duyệt",
+        icon: ClipboardList,
+        path: "/doctor/appointments/pending",
+  },
+
   {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
     path: "/doctor/treatment-plans",
   },
+
   {
     id: "notifications",
     label: "Nhắc nhở & Thông báo",
     icon: Bell,
-    badge: 7,
-    children: [
-      {
-        id: "reminder-history",
-        label: "Lịch sử nhắc nhở",
-        icon: MessageSquare,
-        path: "/doctor/notifications/reminders",
-      },
-    ],
+    path: "/doctor/notifications/reminders",
   },
 ]
 
