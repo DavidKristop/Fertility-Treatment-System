@@ -1,46 +1,29 @@
-import PatientLayout from "@/components/patient/PatientLayout"
+import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CalendarIcon, ChevronLeft, ChevronRight, MapPin} from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ChevronLeft, ChevronRight, CalendarIcon, Plus, MapPin } from "lucide-react"
 import { useState } from "react"
-import { SelectTrigger, SelectValue, SelectContent, SelectItem, Select } from "@radix-ui/react-select"
-
-
-// Mock data
-const patientName = "Nguyễn Thị Lan"
-const hasActiveTreatment = true
-const treatmentProgress = {
-  currentStage: "Giai đoạn 2: Kích thích buồng trứng",
-  completed: 2,
-  total: 5,
-  phases: [
-    { name: "Khám sơ bộ", status: "completed" },
-    { name: "Kích thích buồng trứng", status: "current" },
-    { name: "Thu thập trứng", status: "pending" },
-    { name: "Thụ tinh", status: "pending" },
-    { name: "Chuyển phôi", status: "pending" },
-  ],
-}
 
 // Mock data cho appointments - chỉ khám trực tiếp
 const appointments = [
   {
     id: 1,
-    date: "2025-05-31",
+    date: "2024-01-15",
     time: "09:00",
     duration: 30,
-    patient: "Đơn thuốc ABC",
+    patient: "Nguyễn Thị Lan",
     reason: "Tái khám IVF - Giai đoạn 2",
-    status: "drug",
+    status: "confirmed",
   },
   {
     id: 2,
-    date: "2025-06-01",
+    date: "2024-01-15",
     time: "10:30",
     duration: 20,
-    patient: "BS. Trần Văn Nam",
+    patient: "Trần Văn Nam",
     reason: "Tư vấn kết quả xét nghiệm",
-    status: "appointment",
+    status: "pending",
   },
   {
     id: 3,
@@ -80,18 +63,15 @@ const appointments = [
   },
 ]
 
-export default function PatientDashboard() {
+export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
-  const getPhaseStatus = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-500"
-      case "current":
-        return "bg-blue-500"
-      default:
-        return "bg-gray-300"
-    }
+
+  const breadcrumbs = [{ label: "Trang chủ", path: "/doctor/dashboard" }, { label: "Cuộc hẹn" }, { label: "Xem lịch" }]
+
+  // Helper functions
+  const getMonthName = (date: Date) => {
+    return date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" })
   }
 
   const getDaysInMonth = (date: Date) => {
@@ -117,9 +97,19 @@ export default function PatientDashboard() {
     return days
   }
 
-  const isToday = (date: Date) => {
-    const today = new Date()
-    return date.toDateString() === today.toDateString()
+  const getWeekDays = (date: Date) => {
+    const startOfWeek = new Date(date)
+    const day = startOfWeek.getDay()
+    const diff = startOfWeek.getDate() - day
+    startOfWeek.setDate(diff)
+
+    const days = []
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startOfWeek)
+      day.setDate(startOfWeek.getDate() + i)
+      days.push(day)
+    }
+    return days
   }
 
   const getAppointmentsForDate = (date: Date) => {
@@ -128,27 +118,6 @@ export default function PatientDashboard() {
       return apt.date === dateString
     })
   }
-
-  const getMonthName = (date: Date) => {
-    return date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" })
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "drug":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "appointment":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
-
-  const getTypeIcon = () => {
-    return <MapPin className="h-3 w-3 text-green-600" />
-  }
-
-
 
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(currentDate)
@@ -168,6 +137,28 @@ export default function PatientDashboard() {
       newDate.setDate(newDate.getDate() + 7)
     }
     setCurrentDate(newDate)
+  }
+
+  const isToday = (date: Date) => {
+    const today = new Date()
+    return date.toDateString() === today.toDateString()
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "confirmed":
+        return "bg-green-100 text-green-800 border-green-200"
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200"
+      case "cancelled":
+        return "bg-red-100 text-red-800 border-red-200"
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200"
+    }
+  }
+
+  const getTypeIcon = () => {
+    return <MapPin className="h-3 w-3 text-green-600" />
   }
 
   const renderMonthView = () => {
@@ -228,69 +219,67 @@ export default function PatientDashboard() {
     )
   }
 
+  const renderWeekView = () => {
+    const weekDays = getWeekDays(currentDate)
+    const weekDayNames = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"]
 
-  return (
-    <PatientLayout title="Trang tổng quan" breadcrumbs={[{ label: "Trang tổng quan" }]}>
-      <div className="space-y-6">
-        {/* Welcome */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <h1 className="text-2xl font-bold text-gray-900">Chào bệnh nhân {patientName}</h1>
+    return (
+      <div className="bg-white rounded-lg border">
+        {/* Header */}
+        <div className="grid grid-cols-8 border-b">
+          <div className="p-4 border-r font-medium text-gray-500">Thời gian</div>
+          {weekDays.map((day, index) => (
+            <div key={index} className="p-4 text-center border-r last:border-r-0">
+              <div className="font-medium text-gray-900">{weekDayNames[day.getDay()]}</div>
+              <div className={`text-sm ${isToday(day) ? "text-blue-600 font-bold" : "text-gray-500"}`}>
+                {day.getDate()}/{day.getMonth() + 1}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Treatments */}
-        <Card className="p-6">
-            <CardContent className="p-0">
-              {hasActiveTreatment ? (
-                <div className="text-center">
-                  <h2 className="text-lg font-medium mb-4">Điều trị hiện tại của bạn và các giai đoạn</h2>
-
-                  <div className="mb-6">
-                    <div className="text-sm text-gray-600 mb-2">Tiến độ điều trị</div>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      {treatmentProgress.phases.map((phase, index) => (
-                        <div key={index} className="flex items-center">
-                          <div className={`w-3 h-3 rounded-full ${getPhaseStatus(phase.status)}`} />
-                          {index < treatmentProgress.phases.length - 1 && (
-                            <div className="w-8 h-0.5 bg-gray-300 mx-1" />
-                          )}
+        {/* Time slots */}
+        <div className="max-h-[600px] overflow-y-auto">
+          {Array.from({ length: 12 }, (_, i) => {
+            const hour = i + 8 // Start from 8 AM
+            return (
+              <div key={hour} className="grid grid-cols-8 border-b min-h-[60px]">
+                <div className="p-2 border-r text-sm text-gray-500 font-medium">
+                  {hour.toString().padStart(2, "0")}:00
+                </div>
+                {weekDays.map((day, dayIndex) => (
+                  <div key={dayIndex} className="p-1 border-r last:border-r-0 relative">
+                    {getAppointmentsForDate(day)
+                      .filter((apt) => {
+                        const aptHour = Number.parseInt(apt.time.split(":")[0])
+                        return aptHour === hour
+                      })
+                      .map((apt) => (
+                        <div
+                          key={apt.id}
+                          className={`text-xs p-2 rounded border cursor-pointer hover:shadow-sm ${getStatusColor(apt.status)}`}
+                        >
+                          <div className="flex items-center gap-1 mb-1">
+                            {getTypeIcon()}
+                            <span className="font-medium">{apt.time}</span>
+                          </div>
+                          <div className="font-medium truncate">{apt.patient}</div>
+                          <div className="text-xs opacity-75 truncate">{apt.reason}</div>
                         </div>
                       ))}
-                    </div>
-                    <div className="text-sm font-medium">{treatmentProgress.currentStage}</div>
-                    <div className="text-sm text-gray-500">
-                      Giai đoạn {treatmentProgress.completed}/{treatmentProgress.total}
-                    </div>
                   </div>
+                ))}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    {treatmentProgress.phases.map((phase, index) => (
-                      <div
-                        key={index}
-                        className={`p-3 rounded-lg border ${
-                          phase.status === "completed"
-                            ? "bg-green-50 border-green-200"
-                            : phase.status === "current"
-                              ? "bg-blue-50 border-blue-200"
-                              : "bg-gray-50 border-gray-200"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${getPhaseStatus(phase.status)}`} />
-                          <span className="font-medium">{phase.name}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">Bạn chưa có điều trị nào đang diễn ra</p>
-                  <Button>Đặt lịch hẹn</Button>
-                </div>
-              )}
-            </CardContent>
-        </Card>
-
+  return (
+    <DoctorLayout title="Lịch làm việc" breadcrumbs={breadcrumbs}>
+      <div className="space-y-6">
         {/* Header Controls */}
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
           <div className="flex items-center gap-4">
@@ -338,21 +327,27 @@ export default function PatientDashboard() {
                 <SelectItem value="week">Tuần</SelectItem>
               </SelectContent>
             </Select>
+
+            {/* Add appointment */}
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Tạo cuộc hẹn
+            </Button>
           </div>
         </div>
-        
-        {/* Calendar */}
+
+        {/* Calendar View */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
-              Lịch bệnh nhân {patientName}
+              Lịch làm việc - {viewMode === "month" ? "Xem theo tháng" : "Xem theo tuần"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">{renderMonthView()}</CardContent>
+          <CardContent className="p-0">{viewMode === "month" ? renderMonthView() : renderWeekView()}</CardContent>
         </Card>
-        
-        {/* Prescriptions */}
+
+        {/* Legend */}
         <Card>
           <CardHeader>
             <CardTitle>Chú thích</CardTitle>
@@ -361,16 +356,24 @@ export default function PatientDashboard() {
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                <span className="text-sm">Ngày uống thuốc</span>
+                <span className="text-sm">Đã xác nhận</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                <span className="text-sm">Ngày có hẹn với bác sĩ</span>
+                <span className="text-sm">Chờ xác nhận</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+                <span className="text-sm">Đã hủy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-green-600" />
+                <span className="text-sm">Tại phòng</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-    </PatientLayout>
+    </DoctorLayout>
   )
 }

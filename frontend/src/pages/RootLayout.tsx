@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export default function RootLayout() {
   return (
@@ -12,6 +13,7 @@ export default function RootLayout() {
       </header>
 
       <main className="flex-grow">
+        <ScrollToTop />
         <Outlet />
       </main>
 
