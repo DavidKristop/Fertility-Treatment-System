@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, Plus, Eye, Calendar, User, FileText } from "lucide-react"
+import { Search, Plus, Eye } from "lucide-react"
 
 interface TreatmentPlan {
   id: string
@@ -98,7 +98,7 @@ export default function TreatmentPlans() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans)
+  const [treatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans)
 
   const filteredPlans = treatmentPlans.filter((plan) => {
     const matchesSearch =
