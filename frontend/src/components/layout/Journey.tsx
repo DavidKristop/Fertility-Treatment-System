@@ -3,12 +3,12 @@ export default function Journey() {
     <section className="bg-[#004c77] text-white py-16 px-4">
       {/* Tiêu đề với đường kẻ */}
       <div className="flex items-center justify-center mb-12 relative">
-        <div className="w-1/5 h-[2px] bg-white hidden sm:block absolute left-40"></div>
+        <div className="w-1/5 h-[2px] bg-white hidden custom:block absolute left-40"></div>
         
         <h2 className="text-2xl sm:text-3xl font-bold px-6 text-center">
           Hành trình làm cha mẹ bắt đầu từ đây
         </h2>
-        <div className="w-1/5 h-[2px] bg-white hidden sm:block absolute right-40"></div>
+        <div className="w-1/5 h-[2px] bg-white hidden custom:block absolute right-40"></div>
       </div>
 
       {/* 3 cột */}

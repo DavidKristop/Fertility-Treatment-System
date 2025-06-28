@@ -45,6 +45,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard"
 import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
+import Story from "./pages/about/Story"
 
 
 const router = createBrowserRouter([
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
           {
             path: "team",
             element: <Team />,
+          },
+          {
+            path: "story",
+            element: <Story />,
           },
         ],
       },

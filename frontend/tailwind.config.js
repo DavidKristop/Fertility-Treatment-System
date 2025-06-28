@@ -32,5 +32,9 @@ module.exports = {
         'close-menu': 'close-menu 0.2s ease-in-out forwards', 
       },
     },
+    screens: {
+      'custom': '1393px',
+      'custom2': '1129px',
+    },
   },
 };
