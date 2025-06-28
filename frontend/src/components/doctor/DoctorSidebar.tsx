@@ -72,7 +72,7 @@ const sidebarItems: SidebarItem[] = [
         id: "pending-approvals",
         label: "Chờ duyệt",
         icon: ClipboardList,
-        path: "/doctor/appointments/pending",
+        path: "/doctor/pending",
   },
 
   {

@@ -28,7 +28,7 @@ import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
-import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
+import PendingApprovals from "./pages/doctor/pending/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
@@ -171,11 +171,13 @@ const router = createBrowserRouter([
             path: "calendar",
             element: <Calendar />,
           },
-          {
-            path: "pending",
-            element: <PendingApprovals />,
-          },
+          
         ],
+      },
+      // Pending Approvals routes
+      {
+          path: "pending",
+          element: <PendingApprovals />,
       },
       // Patient routes
       {
