@@ -276,22 +276,22 @@ export default function PendingApprovals({
     }
   }
 
-  // Selection handlers
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedAppointments(filteredAppointments.map((apt) => apt.id))
-    } else {
-      setSelectedAppointments([])
-    }
-  }
+  // // Selection handlers
+  // const handleSelectAll = (checked: boolean) => {
+  //   if (checked) {
+  //     setSelectedAppointments(filteredAppointments.map((apt) => apt.id))
+  //   } else {
+  //     setSelectedAppointments([])
+  //   }
+  // }
 
-  const handleSelectAppointment = (appointmentId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedAppointments([...selectedAppointments, appointmentId])
-    } else {
-      setSelectedAppointments(selectedAppointments.filter((id) => id !== appointmentId))
-    }
-  }
+  // const handleSelectAppointment = (appointmentId: string, checked: boolean) => {
+  //   if (checked) {
+  //     setSelectedAppointments([...selectedAppointments, appointmentId])
+  //   } else {
+  //     setSelectedAppointments(selectedAppointments.filter((id) => id !== appointmentId))
+  //   }
+  // }
 
   // Action handlers
   const handleApprove = (appointmentId: string, note?: string) => {
@@ -455,14 +455,14 @@ export default function PendingApprovals({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-12">
+                    {/* <TableHead className="w-12">
                       <Checkbox
                         checked={
                           selectedAppointments.length === filteredAppointments.length && filteredAppointments.length > 0
                         }
                         onCheckedChange={handleSelectAll}
                       />
-                    </TableHead>
+                    </TableHead> */}
                     <TableHead>Thông tin yêu cầu</TableHead>
                     <TableHead>Bệnh nhân</TableHead>
                     <TableHead>Dịch vụ & Lý do</TableHead>
@@ -474,12 +474,12 @@ export default function PendingApprovals({
                 <TableBody>
                   {filteredAppointments.map((appointment) => (
                     <TableRow key={appointment.id} className="hover:bg-gray-50">
-                      <TableCell>
+                      {/* <TableCell>
                         <Checkbox
                           checked={selectedAppointments.includes(appointment.id)}
                           onCheckedChange={(checked) => handleSelectAppointment(appointment.id, checked as boolean)}
                         />
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell>
                         <div className="space-y-1">
