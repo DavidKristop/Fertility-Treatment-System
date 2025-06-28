@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react"
 import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
-import QuickActions from "@/components/doctor/dashboard/QuickActions"
 
 const todayAppointments = [
   {
@@ -104,8 +103,6 @@ export default function DoctorDashboard() {
           </CardContent>
         </Card>
         
-        {/* Quick Actions */}
-        <QuickActions />
       </div>
     </DoctorLayout>
   )
