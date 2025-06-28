@@ -704,45 +704,16 @@ export default function PendingApprovals({
               <Button variant="outline" onClick={() => setShowDetailDialog(false)}>
                 Đóng
               </Button>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Duyệt lịch hẹn
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Duyệt lịch hẹn</DialogTitle>
-                    <DialogDescription>
-                      Xác nhận duyệt lịch hẹn cho bệnh nhân {selectedAppointment?.patient.name}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">Ghi chú cho bệnh nhân (tùy chọn)</label>
-                      <Textarea
-                        placeholder="Ghi chú thêm cho bệnh nhân..."
-                        value={approvalNote}
-                        onChange={(e) => setApprovalNote(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline">Hủy</Button>
-                    <Button
-                      onClick={() => {
-                        handleApprove(selectedAppointment?.id, approvalNote)
-                        setShowDetailDialog(false)
-                      }}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      Xác nhận duyệt
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Button 
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => {
+                  handleApprove(selectedAppointment?.id);
+                  setShowDetailDialog(false);
+                }}
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Duyệt lịch hẹn
+              </Button>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
