@@ -328,11 +328,6 @@ export default function Calendar() {
               </SelectContent>
             </Select>
 
-            {/* Add appointment */}
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Tạo cuộc hẹn
-            </Button>
           </div>
         </div>
 
