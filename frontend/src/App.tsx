@@ -30,8 +30,6 @@ import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
-import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
-import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
@@ -189,7 +187,6 @@ const router = createBrowserRouter([
           }
         ],
       },
-      // Contract routes removed
       // Treatment Plan routes
       {
         path: "treatment-plans",
@@ -226,20 +223,6 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <DoctorProfile />,
-      },
-      // Prescription routes
-      {
-        path: "prescriptions",
-        children: [
-          {
-            path: "active",
-            element: <ActivePrescriptions />,
-          },
-          {
-            path: "new",
-            element: <CreatePrescription />,
-          },
-        ],
       },
       // Notification routes
       {

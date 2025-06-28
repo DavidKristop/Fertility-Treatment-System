@@ -5,18 +5,24 @@ import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar } from "@/components/ui/calendar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowLeft, User, Phone, Mail, CalendarIcon, Plus, X } from "lucide-react"
-
-interface Protocol {
-  id: string
-  title: string
-  description: string
-  isActive: boolean
-}
+import { ArrowLeft, User, Phone, Mail, Plus, X, ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  format,
+  addMonths,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameDay,
+  isSameMonth,
+  isWeekend,
+} from "date-fns"
+import { vi } from "date-fns/locale"
 
 interface TreatmentPlan {
   id: string
@@ -68,39 +74,12 @@ interface Drug {
 }
 
 // Mock data
-const mockProtocols: Protocol[] = [
-  {
-    id: "1",
-    title: "IVF Long Protocol",
-    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích buồng trứng",
-    isActive: true,
-  },
-  {
-    id: "2",
-    title: "IVF Short Protocol",
-    description: "Phác đồ IVF ngắn với kích thích buồng trứng trực tiếp",
-    isActive: true,
-  },
-  {
-    id: "3",
-    title: "IUI Natural Protocol",
-    description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
-    isActive: true,
-  },
-  {
-    id: "4",
-    title: "IUI Stimulated Protocol",
-    description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
-    isActive: true,
-  },
-]
-
 const mockTreatmentPlan: TreatmentPlan = {
   id: "tp-001",
   patient_id: "p-001",
   patient_name: "Nguyễn Thị Lan",
   patient_email: "lan.nguyen@email.com",
-  protocol_id: "1", // IVF Long Protocol
+  protocol_id: "1",
   protocol_name: "IVF Long Protocol",
   diagnosis: "Vô sinh nguyên phát do tắc vòi trứng",
   description: "Kế hoạch điều trị IVF với phác đồ dài hạn, bao gồm kích thích buồng trứng và chuyển phôi",
@@ -113,55 +92,53 @@ const mockTreatmentPlan: TreatmentPlan = {
   updated_at: "2024-02-05T10:30:00Z",
 }
 
-// Protocol-specific services and drugs
 const allServices: Service[] = [
   { id: "1", name: "Siêu âm theo dõi nang trứng", protocols: ["1", "2", "3", "4"] },
   { id: "2", name: "Xét nghiệm hormone FSH, LH", protocols: ["1", "2", "3", "4"] },
-  { id: "3", name: "Chọc hút trứng", protocols: ["1", "2"] }, // Only IVF protocols
-  { id: "4", name: "Chuyển phôi", protocols: ["1", "2"] }, // Only IVF protocols
+  { id: "3", name: "Chọc hút trứng", protocols: ["1", "2"] },
+  { id: "4", name: "Chuyển phôi", protocols: ["1", "2"] },
   { id: "5", name: "Xét nghiệm Beta HCG", protocols: ["1", "2", "3", "4"] },
-  { id: "6", name: "Thụ tinh nhân tạo (IUI)", protocols: ["3", "4"] }, // Only IUI protocols
-  { id: "7", name: "Ức chế GnRH", protocols: ["1"] }, // Only IVF Long Protocol
-  { id: "8", name: "Theo dõi chu kỳ tự nhiên", protocols: ["3"] }, // Only IUI Natural
-  { id: "9", name: "Kích thích buồng trứng nhẹ", protocols: ["4"] }, // Only IUI Stimulated
-  { id: "10", name: "Nuôi cấy phôi", protocols: ["1", "2"] }, // Only IVF protocols
-  { id: "11", name: "Đánh giá nội mạc tử cung", protocols: ["1", "2", "3", "4"] },
-  { id: "12", name: "Tư vấn dinh dưỡng", protocols: ["1", "2", "3", "4"] },
+  { id: "6", name: "Thụ tinh nhân tạo (IUI)", protocols: ["3", "4"] },
+  { id: "7", name: "Ức chế GnRH", protocols: ["1"] },
+  { id: "8", name: "Theo dõi chu kỳ tự nhiên", protocols: ["3"] },
+  { id: "9", name: "Kích thích buồng trứng nhẹ", protocols: ["4"] },
+  { id: "10", name: "Nuôi cấy phôi", protocols: ["1", "2"] },
 ]
 
 const allDrugs: Drug[] = [
-  { id: "1", name: "Gonal-F 450IU", protocols: ["1", "2", "4"] }, // IVF + IUI Stimulated
-  { id: "2", name: "Puregon 300IU", protocols: ["1", "2", "4"] }, // IVF + IUI Stimulated
-  { id: "3", name: "Cetrotide 0.25mg", protocols: ["1", "2"] }, // Only IVF protocols
-  { id: "4", name: "Duphaston 10mg", protocols: ["1", "2", "3", "4"] }, // All protocols
-  { id: "5", name: "Lupron (GnRH Agonist)", protocols: ["1"] }, // Only IVF Long Protocol
-  { id: "6", name: "Clomiphene Citrate", protocols: ["4"] }, // Only IUI Stimulated
-  { id: "7", name: "Letrozole", protocols: ["4"] }, // Only IUI Stimulated
-  { id: "8", name: "Progesterone", protocols: ["1", "2", "3", "4"] }, // All protocols
-  { id: "9", name: "Estradiol", protocols: ["1", "2"] }, // Only IVF protocols
-  { id: "10", name: "Folic Acid", protocols: ["1", "2", "3", "4"] }, // All protocols
-  { id: "11", name: "Menopur", protocols: ["1", "2"] }, // Only IVF protocols
-  { id: "12", name: "Ovidrel (hCG)", protocols: ["1", "2", "3", "4"] }, // All protocols
+  { id: "1", name: "Gonal-F 450IU", protocols: ["1", "2", "4"] },
+  { id: "2", name: "Puregon 300IU", protocols: ["1", "2", "4"] },
+  { id: "3", name: "Cetrotide 0.25mg", protocols: ["1", "2"] },
+  { id: "4", name: "Duphaston 10mg", protocols: ["1", "2", "3", "4"] },
+  { id: "5", name: "Lupron (GnRH Agonist)", protocols: ["1"] },
+  { id: "6", name: "Clomiphene Citrate", protocols: ["4"] },
+  { id: "7", name: "Letrozole", protocols: ["4"] },
+  { id: "8", name: "Progesterone", protocols: ["1", "2", "3", "4"] },
 ]
+
+const timeSlots = {
+  morning: ["08:00", "09:00", "10:00", "11:00"],
+  afternoon: ["13:00", "14:00", "15:00", "16:00"],
+  evening: ["18:00", "19:00", "20:00"],
+}
 
 export default function TreatmentDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [treatmentPlan, setTreatmentPlan] = useState<TreatmentPlan | null>(null)
   const [loading, setLoading] = useState(true)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [scheduleType, setScheduleType] = useState<"service" | "drug">("service")
   const [selectedServices, setSelectedServices] = useState<string[]>([])
   const [selectedDrug, setSelectedDrug] = useState("")
-  const [timeFrom, setTimeFrom] = useState("")
-  const [timeTo, setTimeTo] = useState("")
+  const [selectedTime, setSelectedTime] = useState("")
   const [drugStartDate, setDrugStartDate] = useState("")
   const [drugEndDate, setDrugEndDate] = useState("")
   const [dosage, setDosage] = useState("")
   const [instructions, setInstructions] = useState("")
   const [error, setError] = useState("")
 
-  // Filtered services and drugs based on protocol
   const [availableServices, setAvailableServices] = useState<Service[]>([])
   const [availableDrugs, setAvailableDrugs] = useState<Drug[]>([])
 
@@ -171,7 +148,7 @@ export default function TreatmentDetail() {
       type: "service",
       name: "Siêu âm theo dõi nang trứng",
       date: "2024-02-15",
-      time: "09:00 - 09:30",
+      time: "09:00",
       status: "scheduled",
     },
     {
@@ -179,15 +156,7 @@ export default function TreatmentDetail() {
       type: "service",
       name: "Xét nghiệm hormone FSH, LH",
       date: "2024-02-20",
-      time: "08:00 - 08:30",
-      status: "completed",
-    },
-    {
-      id: "3",
-      type: "service",
-      name: "Ức chế GnRH",
-      date: "2024-02-12",
-      time: "10:00 - 10:30",
+      time: "08:00",
       status: "completed",
     },
   ])
@@ -202,15 +171,6 @@ export default function TreatmentDetail() {
       instructions: "Tiêm dưới da vào buổi tối, cùng giờ mỗi ngày",
       status: "active",
     },
-    {
-      id: "2",
-      name: "Lupron (GnRH Agonist)",
-      startDate: "2024-02-01",
-      endDate: "2024-02-15",
-      dosage: "0.5ml/ngày",
-      instructions: "Tiêm dưới da vào buổi sáng",
-      status: "completed",
-    },
   ])
 
   const breadcrumbs = [
@@ -220,10 +180,8 @@ export default function TreatmentDetail() {
   ]
 
   useEffect(() => {
-    // Simulate API call with mock data
     const fetchTreatmentPlan = async () => {
       try {
-        // Simulate loading delay
         await new Promise((resolve) => setTimeout(resolve, 1000))
         setTreatmentPlan(mockTreatmentPlan)
       } catch (error) {
@@ -236,19 +194,13 @@ export default function TreatmentDetail() {
     fetchTreatmentPlan()
   }, [id])
 
-  // Filter services and drugs based on treatment protocol
   useEffect(() => {
     if (treatmentPlan?.protocol_id) {
       const protocolId = treatmentPlan.protocol_id
-
       const filteredServices = allServices.filter((service) => service.protocols.includes(protocolId))
       const filteredDrugs = allDrugs.filter((drug) => drug.protocols.includes(protocolId))
-
       setAvailableServices(filteredServices)
       setAvailableDrugs(filteredDrugs)
-
-      console.log(`Protocol ${protocolId} - Available services:`, filteredServices.length)
-      console.log(`Protocol ${protocolId} - Available drugs:`, filteredDrugs.length)
     }
   }, [treatmentPlan])
 
@@ -262,14 +214,8 @@ export default function TreatmentDetail() {
     setError("")
 
     if (scheduleType === "service") {
-      if (selectedServices.length === 0 || !selectedDate || !timeFrom || !timeTo) {
+      if (selectedServices.length === 0 || !selectedDate || !selectedTime) {
         setError("Vui lòng chọn dịch vụ, ngày và thời gian")
-        return
-      }
-
-      // Validate time
-      if (timeFrom >= timeTo) {
-        setError("Thời gian kết thúc phải sau thời gian bắt đầu")
         return
       }
 
@@ -281,7 +227,7 @@ export default function TreatmentDetail() {
             type: "service",
             name: service.name,
             date: selectedDate.toISOString().split("T")[0],
-            time: `${timeFrom} - ${timeTo}`,
+            time: selectedTime,
             status: "scheduled",
           }
           setSchedules((prev) => [...prev, newSchedule])
@@ -289,15 +235,13 @@ export default function TreatmentDetail() {
       })
 
       setSelectedServices([])
-      setTimeFrom("")
-      setTimeTo("")
+      setSelectedTime("")
     } else {
       if (!selectedDrug || !drugStartDate || !drugEndDate || !dosage || !instructions) {
         setError("Vui lòng điền đầy đủ thông tin thuốc")
         return
       }
 
-      // Validate dates
       if (new Date(drugStartDate) >= new Date(drugEndDate)) {
         setError("Ngày kết thúc phải sau ngày bắt đầu")
         return
@@ -371,20 +315,152 @@ export default function TreatmentDetail() {
     }
   }
 
-  const getProtocolInfo = (protocolId: string) => {
-    const protocol = mockProtocols.find((p) => p.id === protocolId)
-    const protocolColorMap: Record<string, string> = {
-      "1": "bg-purple-100 text-purple-800", // IVF Long
-      "2": "bg-blue-100 text-blue-800", // IVF Short
-      "3": "bg-green-100 text-green-800", // IUI Natural
-      "4": "bg-orange-100 text-orange-800", // IUI Stimulated
-    }
+  const renderCalendar = () => {
+    const monthStart = startOfMonth(currentMonth)
+    const monthEnd = endOfMonth(currentMonth)
+    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }) // Start on Sunday
+    const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 })
 
-    return {
-      name: protocol?.title || "Unknown Protocol",
-      color: protocolColorMap[protocolId] || "bg-gray-100 text-gray-800",
-      description: protocol?.description || "",
-    }
+    const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
+    const weekDays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
+
+    return (
+      <div className="bg-white rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+            className="p-2 hover:bg-gray-100"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <h3 className="text-lg font-semibold text-gray-900">{format(currentMonth, "MMMM yyyy", { locale: vi })}</h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+            className="p-2 hover:bg-gray-100"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Weekday headers */}
+        <div className="grid grid-cols-7 gap-1 mb-3">
+          {weekDays.map((day) => (
+            <div key={day} className="h-10 flex items-center justify-center">
+              <span className="text-sm font-medium text-gray-600">{day}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {days.map((day) => {
+            const isSelected = selectedDate && isSameDay(day, selectedDate)
+            const isCurrentMonth = isSameMonth(day, currentMonth)
+            const isDisabled = isWeekend(day) || day < new Date() || !isCurrentMonth
+            const hasSchedule = schedules.some(
+              (schedule) => isSameDay(new Date(schedule.date), day) && schedule.status !== "cancelled",
+            )
+
+            return (
+              <div key={day.toISOString()} className="h-10 flex items-center justify-center">
+                <button
+                  onClick={() => !isDisabled && setSelectedDate(day)}
+                  disabled={isDisabled}
+                  className={`
+                    h-8 w-8 rounded-full text-sm font-medium transition-all duration-200 flex items-center justify-center
+                    ${
+                      isSelected
+                        ? "bg-blue-500 text-white shadow-md"
+                        : hasSchedule && isCurrentMonth
+                          ? "bg-yellow-200 text-yellow-800 hover:bg-yellow-300"
+                          : isDisabled
+                            ? "text-gray-300 cursor-not-allowed"
+                            : isCurrentMonth
+                              ? "text-gray-700 hover:bg-gray-100"
+                              : "text-gray-300"
+                    }
+                  `}
+                >
+                  {format(day, "d")}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Selected date display */}
+        {selectedDate && (
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm font-medium text-blue-800">
+              Ngày đã chọn: {format(selectedDate, "dd/MM/yyyy", { locale: vi })}
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const renderTimeSlots = () => {
+    if (!selectedDate) return null
+
+    return (
+      <div className="space-y-4">
+        <div>
+          <h4 className="font-medium text-sm text-gray-700 mb-3">Buổi sáng</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {timeSlots.morning.map((time) => (
+              <Button
+                key={time}
+                variant={selectedTime === time ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedTime(time)}
+                className="text-sm h-9"
+              >
+                {time}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium text-sm text-gray-700 mb-3">Buổi chiều</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {timeSlots.afternoon.map((time) => (
+              <Button
+                key={time}
+                variant={selectedTime === time ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedTime(time)}
+                className="text-sm h-9"
+              >
+                {time}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium text-sm text-gray-700 mb-3">Buổi tối</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {timeSlots.evening.map((time) => (
+              <Button
+                key={time}
+                variant={selectedTime === time ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedTime(time)}
+                className="text-sm h-9"
+              >
+                {time}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (loading) {
@@ -415,336 +491,255 @@ export default function TreatmentDetail() {
     )
   }
 
-  const protocolInfo = getProtocolInfo(treatmentPlan.protocol_id)
-
   return (
     <DoctorLayout title="Chi tiết kế hoạch điều trị" breadcrumbs={breadcrumbs}>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Patient Info & Calendar */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate("/doctor/treatment-plans")} className="p-2">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{treatmentPlan.patient_name}</h1>
-              <p className="text-gray-600">{treatmentPlan.protocol_name}</p>
-            </div>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate("/doctor/treatment-plans")} className="p-2">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{treatmentPlan.patient_name}</h1>
+            <p className="text-gray-600">Lập lịch điều trị</p>
           </div>
+        </div>
 
-          {/* Patient Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                Thông tin bệnh nhân
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">{treatmentPlan.patient_email}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Patient Info & Calendar */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Patient Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Thông tin bệnh nhân
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm">{treatmentPlan.patient_email}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm">0901234567</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">0901234567</span>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-medium text-sm text-gray-700 mb-1">Chẩn đoán</h4>
-                <p className="text-sm">{treatmentPlan.diagnosis}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-sm text-gray-700 mb-1">Mô tả kế hoạch</h4>
-                <p className="text-sm text-gray-600">{treatmentPlan.description}</p>
-              </div>
-              <div className="flex items-center gap-4">
                 <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-1">Giao thức điều trị</h4>
-                  <Badge className={protocolInfo.color}>{protocolInfo.name}</Badge>
+                  <h4 className="font-medium text-sm text-gray-700 mb-1">Chẩn đoán</h4>
+                  <p className="text-sm">{treatmentPlan.diagnosis}</p>
                 </div>
                 <div>
                   <h4 className="font-medium text-sm text-gray-700 mb-1">Giai đoạn hiện tại</h4>
                   <Badge className="bg-blue-100 text-blue-800">{treatmentPlan.current_phase}</Badge>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Protocol-specific Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Thông tin giao thức điều trị</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            {/* Calendar */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center text-lg">Thời gian và ngày nào phù hợp với bạn?</CardTitle>
+              </CardHeader>
+              <CardContent className="px-2">{renderCalendar()}</CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Schedule Controls */}
+          <div className="space-y-6">
+            {/* Schedule Type Selector */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Lập lịch điều trị</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-1">Mô tả giao thức</h4>
-                  <p className="text-sm text-gray-600">{protocolInfo.description}</p>
+                  <Label>Loại lịch hẹn</Label>
+                  <Select value={scheduleType} onValueChange={(value: "service" | "drug") => setScheduleType(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="service">Dịch vụ</SelectItem>
+                      <SelectItem value="drug">Thuốc</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">
-                    Dịch vụ khả dụng ({availableServices.length} dịch vụ)
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {availableServices.map((service) => (
-                      <Badge key={service.id} variant="outline" className="text-xs">
-                        {service.name}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-medium text-sm text-gray-700 mb-2">
-                    Thuốc khả dụng ({availableDrugs.length} loại thuốc)
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {availableDrugs.map((drug) => (
-                      <Badge key={drug.id} variant="outline" className="text-xs">
-                        {drug.name}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Calendar */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5" />
-                Lịch điều trị
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column - Schedule Controls */}
-        <div className="space-y-6">
-          {/* Schedule Type Selector */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Lập lịch điều trị</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Loại lịch hẹn</Label>
-                <Select value={scheduleType} onValueChange={(value: "service" | "drug") => setScheduleType(value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="service">Dịch vụ</SelectItem>
-                    <SelectItem value="drug">Thuốc</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {scheduleType === "service" ? (
-                <>
-                  <div>
-                    <Label>Chọn dịch vụ (Phù hợp với {protocolInfo.name})</Label>
-                    <div className="space-y-2 mt-2 max-h-32 overflow-y-auto">
-                      {availableServices.map((service) => (
-                        <div key={service.id} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id={service.id}
-                            checked={selectedServices.includes(service.id)}
-                            onChange={() => handleServiceToggle(service.id)}
-                            className="rounded border-gray-300"
-                          />
-                          <label htmlFor={service.id} className="text-sm">
-                            {service.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    {availableServices.length === 0 && (
-                      <p className="text-sm text-gray-500 mt-2">Không có dịch vụ nào khả dụng cho giao thức này</p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
+                {scheduleType === "service" ? (
+                  <>
                     <div>
-                      <Label htmlFor="timeFrom">Từ</Label>
-                      <Input id="timeFrom" type="time" value={timeFrom} onChange={(e) => setTimeFrom(e.target.value)} />
-                    </div>
-                    <div>
-                      <Label htmlFor="timeTo">Đến</Label>
-                      <Input id="timeTo" type="time" value={timeTo} onChange={(e) => setTimeTo(e.target.value)} />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <Label>Chọn thuốc (Phù hợp với {protocolInfo.name})</Label>
-                    <Select value={selectedDrug} onValueChange={setSelectedDrug}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn thuốc..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableDrugs.map((drug) => (
-                          <SelectItem key={drug.id} value={drug.id}>
-                            {drug.name}
-                          </SelectItem>
+                      <Label>Chọn dịch vụ</Label>
+                      <div className="space-y-2 mt-2 max-h-32 overflow-y-auto">
+                        {availableServices.map((service) => (
+                          <div key={service.id} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={service.id}
+                              checked={selectedServices.includes(service.id)}
+                              onChange={() => handleServiceToggle(service.id)}
+                              className="rounded border-gray-300"
+                            />
+                            <label htmlFor={service.id} className="text-sm">
+                              {service.name}
+                            </label>
+                          </div>
                         ))}
-                      </SelectContent>
-                    </Select>
-                    {availableDrugs.length === 0 && (
-                      <p className="text-sm text-gray-500 mt-2">Không có thuốc nào khả dụng cho giao thức này</p>
-                    )}
-                  </div>
+                      </div>
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                    {selectedDate && renderTimeSlots()}
+                  </>
+                ) : (
+                  <>
                     <div>
-                      <Label htmlFor="drugStartDate">Ngày bắt đầu</Label>
+                      <Label>Chọn thuốc</Label>
+                      <Select value={selectedDrug} onValueChange={setSelectedDrug}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn thuốc..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableDrugs.map((drug) => (
+                            <SelectItem key={drug.id} value={drug.id}>
+                              {drug.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label htmlFor="drugStartDate">Ngày bắt đầu</Label>
+                        <Input
+                          id="drugStartDate"
+                          type="date"
+                          value={drugStartDate}
+                          onChange={(e) => setDrugStartDate(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="drugEndDate">Ngày kết thúc</Label>
+                        <Input
+                          id="drugEndDate"
+                          type="date"
+                          value={drugEndDate}
+                          onChange={(e) => setDrugEndDate(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="dosage">Liều lượng</Label>
                       <Input
-                        id="drugStartDate"
-                        type="date"
-                        value={drugStartDate}
-                        onChange={(e) => setDrugStartDate(e.target.value)}
+                        id="dosage"
+                        placeholder="Ví dụ: 150IU/ngày"
+                        value={dosage}
+                        onChange={(e) => setDosage(e.target.value)}
                       />
                     </div>
+
                     <div>
-                      <Label htmlFor="drugEndDate">Ngày kết thúc</Label>
+                      <Label htmlFor="instructions">Hướng dẫn sử dụng</Label>
                       <Input
-                        id="drugEndDate"
-                        type="date"
-                        value={drugEndDate}
-                        onChange={(e) => setDrugEndDate(e.target.value)}
+                        id="instructions"
+                        placeholder="Ví dụ: Tiêm dưới da vào buổi tối"
+                        value={instructions}
+                        onChange={(e) => setInstructions(e.target.value)}
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="dosage">Liều lượng</Label>
-                    <Input
-                      id="dosage"
-                      placeholder="Ví dụ: 150IU/ngày"
-                      value={dosage}
-                      onChange={(e) => setDosage(e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="instructions">Hướng dẫn sử dụng</Label>
-                    <Input
-                      id="instructions"
-                      placeholder="Ví dụ: Tiêm dưới da vào buổi tối"
-                      value={instructions}
-                      onChange={(e) => setInstructions(e.target.value)}
-                    />
-                  </div>
-                </>
-              )}
-
-              {error && <p className="text-sm text-red-600">{error}</p>}
-
-              <Button
-                onClick={handleAddSchedule}
-                className="w-full"
-                disabled={
-                  (scheduleType === "service" && availableServices.length === 0) ||
-                  (scheduleType === "drug" && availableDrugs.length === 0)
-                }
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Thêm {scheduleType === "service" ? "lịch hẹn" : "thuốc"}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Current Schedules */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Lịch hẹn hiện tại</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {schedules.map((schedule) => (
-                  <div key={schedule.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{schedule.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {formatDate(schedule.date)} {schedule.time && `• ${schedule.time}`}
-                      </p>
-                      <Badge className={`${getStatusColor(schedule.status)} text-xs mt-1`}>
-                        {getStatusLabel(schedule.status)}
-                      </Badge>
-                    </div>
-                    {schedule.status === "scheduled" && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleCancelSchedule(schedule.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                {schedules.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center py-4">Chưa có lịch hẹn nào</p>
+                  </>
                 )}
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Drug Assignments */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Thuốc đang sử dụng</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {drugAssignments.map((assignment) => (
-                  <div key={assignment.id} className="p-3 border rounded-lg">
-                    <div className="flex items-start justify-between">
+                {error && <p className="text-sm text-red-600">{error}</p>}
+
+                <Button onClick={handleAddSchedule} className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Thêm {scheduleType === "service" ? "lịch hẹn" : "thuốc"}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Current Schedules */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Lịch hẹn hiện tại</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {schedules.map((schedule) => (
+                    <div key={schedule.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <p className="font-medium text-sm">{assignment.name}</p>
+                        <p className="font-medium text-sm">{schedule.name}</p>
                         <p className="text-xs text-gray-500">
-                          {formatDate(assignment.startDate)} - {formatDate(assignment.endDate)}
+                          {formatDate(schedule.date)} {schedule.time && `• ${schedule.time}`}
                         </p>
-                        <p className="text-xs text-gray-600 mt-1">
-                          <strong>Liều:</strong> {assignment.dosage}
-                        </p>
-                        <p className="text-xs text-gray-600">{assignment.instructions}</p>
-                        <Badge className={`${getStatusColor(assignment.status)} text-xs mt-1`}>
-                          {getStatusLabel(assignment.status)}
+                        <Badge className={`${getStatusColor(schedule.status)} text-xs mt-1`}>
+                          {getStatusLabel(schedule.status)}
                         </Badge>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveDrugAssignment(assignment.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                      {schedule.status === "scheduled" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCancelSchedule(schedule.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                  </div>
-                ))}
-                {drugAssignments.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center py-4">Chưa có thuốc nào được kê</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                  {schedules.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-4">Chưa có lịch hẹn nào</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Drug Assignments */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Thuốc đang sử dụng</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {drugAssignments.map((assignment) => (
+                    <div key={assignment.id} className="p-3 border rounded-lg">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{assignment.name}</p>
+                          <p className="text-xs text-gray-500">
+                            {formatDate(assignment.startDate)} - {formatDate(assignment.endDate)}
+                          </p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            <strong>Liều:</strong> {assignment.dosage}
+                          </p>
+                          <p className="text-xs text-gray-600">{assignment.instructions}</p>
+                          <Badge className={`${getStatusColor(assignment.status)} text-xs mt-1`}>
+                            {getStatusLabel(assignment.status)}
+                          </Badge>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveDrugAssignment(assignment.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {drugAssignments.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-4">Chưa có thuốc nào được kê</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </DoctorLayout>

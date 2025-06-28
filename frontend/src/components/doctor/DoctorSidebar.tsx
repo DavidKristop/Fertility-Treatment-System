@@ -75,42 +75,10 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
-    id: "patients",
-    label: "Bệnh nhân",
-    icon: Users,
-    children: [
-      {
-        id: "all-patients",
-        label: "Tất cả bệnh nhân",
-        icon: Users,
-        path: "/doctor/patients",
-      },
-    ],
-  },
-  {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
     path: "/doctor/treatment-plans",
-  },
-  {
-    id: "prescriptions",
-    label: "Đơn thuốc",
-    icon: Pill,
-    children: [
-      {
-        id: "active-prescriptions",
-        label: "Đơn đang dùng",
-        icon: Pill,
-        path: "/doctor/prescriptions/active",
-      },
-      {
-        id: "new-prescription",
-        label: "Tạo đơn mới",
-        icon: FileText,
-        path: "/doctor/prescriptions/new",
-      },
-    ],
   },
   {
     id: "notifications",
