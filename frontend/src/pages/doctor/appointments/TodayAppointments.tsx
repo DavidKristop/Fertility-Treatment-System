@@ -30,7 +30,7 @@ const appointments = [
       avatar: "",
     },
     reason: "Tư vấn kết quả xét nghiệm",
-    status: "pending",
+    status: "confirmed",
     duration: 20,
   },
   {
