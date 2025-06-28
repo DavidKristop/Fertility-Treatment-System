@@ -31,7 +31,6 @@ import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
-import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
 import ResultsHistory from "./pages/doctor/results/ResultsHistory"
 import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail"
@@ -233,11 +232,6 @@ const router = createBrowserRouter([
             element: <ReminderHistory />,
           },
         ],
-      },
-      // Blog routes
-      {
-        path: "blog",
-        element: <DoctorBlog />,
       },
     ],
   },

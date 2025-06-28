@@ -127,10 +127,6 @@ export default function TodayAppointments() {
               <Calendar className="h-4 w-4 mr-2" />
               Xem lịch
             </Button>
-            <Button>
-              <Clock className="h-4 w-4 mr-2" />
-              Tạo cuộc hẹn
-            </Button>
           </div>
         </div>
 
