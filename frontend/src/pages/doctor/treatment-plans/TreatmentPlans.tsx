@@ -98,7 +98,7 @@ export default function TreatmentPlans() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [treatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans)
+  const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(mockTreatmentPlans)
 
   const filteredPlans = treatmentPlans.filter((plan) => {
     const matchesSearch =

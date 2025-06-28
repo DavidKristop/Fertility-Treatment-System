@@ -1,19 +1,11 @@
 "use client"
-
 import { useState } from "react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { Save, X } from "lucide-react"
 
 interface Drug {
   id: string
@@ -25,11 +17,7 @@ interface Drug {
 interface DrugSelectionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (drugData: {
-    drugId: string
-    dosage: string
-    quantity: number
-  }) => void
+  onSave: (data: { drugId: string; dosage: string; quantity: number }) => void
   availableDrugs: Drug[]
   phaseType: string
 }
@@ -39,48 +27,33 @@ export default function DrugSelectionDialog({
   onOpenChange,
   onSave,
   availableDrugs,
-  phaseType
+  phaseType,
 }: DrugSelectionDialogProps) {
-  const [selectedDrug, setSelectedDrug] = useState<string>("")
-  const [dosage, setDosage] = useState<string>("")
-  const [quantity, setQuantity] = useState<number>(1)
-  const selectedDrugData = availableDrugs.find(d => d.id === selectedDrug)
+  const [selectedDrugId, setSelectedDrugId] = useState("")
+  const [dosage, setDosage] = useState("")
+  const [quantity, setQuantity] = useState(1)
 
-  // Filter drugs based on the phase type
-  const filteredDrugs = availableDrugs.filter(drug => {
-    // In a real app, you would have a more sophisticated matching logic
-    // based on your specific requirements
-    if (phaseType.includes("Ức chế buồng trứng")) {
-      return drug.name.includes("GnRH")
-    }
-    if (phaseType.includes("Kích thích")) {
-      return drug.name.includes("FSH") || drug.name.includes("Clomiphene")
-    }
-    if (phaseType.includes("Chuyển phôi")) {
-      return drug.name.includes("Progesterone")
-    }
-    if (phaseType.includes("Thu hoạch trứng")) {
-      return drug.name.includes("hCG")
-    }
-    return true
-  })
-
-  const calculateTotal = () => {
-    if (!selectedDrugData) return 0
-    return selectedDrugData.price * quantity
-  }
+  const selectedDrug = availableDrugs.find((d) => d.id === selectedDrugId)
 
   const handleSave = () => {
-    if (!selectedDrug || !dosage) return
+    if (!selectedDrugId || !dosage) return
 
     onSave({
-      drugId: selectedDrug,
+      drugId: selectedDrugId,
       dosage,
-      quantity
+      quantity,
     })
 
     // Reset form
-    setSelectedDrug("")
+    setSelectedDrugId("")
+    setDosage("")
+    setQuantity(1)
+    onOpenChange(false)
+  }
+
+  const handleCancel = () => {
+    // Reset form
+    setSelectedDrugId("")
     setDosage("")
     setQuantity(1)
     onOpenChange(false)
@@ -88,75 +61,81 @@ export default function DrugSelectionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Thêm thuốc mới</DialogTitle>
-          <DialogDescription>
-            Chọn thuốc và liều lượng cho giai đoạn điều trị này.
-          </DialogDescription>
+          <DialogTitle>Thêm thuốc - {phaseType}</DialogTitle>
         </DialogHeader>
-        
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="drug">1. Chọn thuốc</Label>
-            <Select value={selectedDrug} onValueChange={setSelectedDrug}>
+
+        <div className="space-y-4">
+          {/* Drug Selection */}
+          <div>
+            <Label htmlFor="drug">Chọn thuốc</Label>
+            <Select value={selectedDrugId} onValueChange={setSelectedDrugId}>
               <SelectTrigger>
-                <SelectValue placeholder="Chọn thuốc" />
+                <SelectValue placeholder="Chọn thuốc..." />
               </SelectTrigger>
               <SelectContent>
-                {filteredDrugs.map((drug) => (
+                {availableDrugs.map((drug) => (
                   <SelectItem key={drug.id} value={drug.id}>
-                    {drug.name} - {new Intl.NumberFormat('vi-VN').format(drug.price)}đ/{drug.unit}
+                    <div className="flex flex-col">
+                      <span>{drug.name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {new Intl.NumberFormat("vi-VN").format(drug.price)} ₫/{drug.unit}
+                      </span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="dosage">2. Liều lượng</Label>
-            <Textarea
+
+          {/* Dosage */}
+          <div>
+            <Label htmlFor="dosage">Liều lượng</Label>
+            <Input
               id="dosage"
-              placeholder="Ví dụ: 150 IU/ngày, uống 1 viên/ngày..."
+              placeholder="Ví dụ: 2 viên/ngày, 1ml/lần..."
               value={dosage}
               onChange={(e) => setDosage(e.target.value)}
             />
           </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="quantity">3. Số lượng</Label>
+
+          {/* Quantity */}
+          <div>
+            <Label htmlFor="quantity">Số lượng</Label>
             <Input
               id="quantity"
               type="number"
-              min={1}
+              min="1"
               value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
+              onChange={(e) => setQuantity(Number.parseInt(e.target.value) || 1)}
             />
+            {selectedDrug && <p className="text-sm text-muted-foreground mt-1">Đơn vị: {selectedDrug.unit}</p>}
           </div>
-          
-          {selectedDrugData && (
-            <div className="border-t pt-3 mt-2">
-              <div className="flex justify-between">
-                <span className="font-medium">Thành tiền:</span>
-                <span className="font-bold">
-                  {new Intl.NumberFormat('vi-VN').format(calculateTotal())}đ
+
+          {/* Price Preview */}
+          {selectedDrug && (
+            <div className="p-3 bg-gray-50 rounded-md">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Tổng chi phí:</span>
+                <span className="font-medium">
+                  {new Intl.NumberFormat("vi-VN").format(selectedDrug.price * quantity)} ₫
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {selectedDrugData.price.toLocaleString('vi-VN')}đ x {quantity} {selectedDrugData.unit}
-              </p>
             </div>
           )}
         </div>
-        
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+
+        <div className="flex gap-2 mt-6">
+          <Button onClick={handleSave} disabled={!selectedDrugId || !dosage} className="flex-1">
+            <Save className="h-4 w-4 mr-2" />
+            Thêm thuốc
+          </Button>
+          <Button variant="outline" onClick={handleCancel}>
+            <X className="h-4 w-4 mr-2" />
             Hủy
           </Button>
-          <Button type="button" onClick={handleSave} disabled={!selectedDrug || !dosage}>
-            Lưu
-          </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   )
