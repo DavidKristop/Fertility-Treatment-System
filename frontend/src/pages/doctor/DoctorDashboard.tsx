@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -47,7 +48,44 @@ const todayAppointments = [
   },
 ]
 
+// Mock user data for testing
+const mockDoctorData = {
+  id: "doc123",
+  fullName: "Bác sĩ Nguyễn Văn A",
+  email: "doctor@example.com",
+  roles: ["ROLE_DOCTOR"],
+  specialty: "Sản phụ khoa",
+  licenseNumber: "MD12345"
+};
+
+// Function to set mock data in localStorage
+const setMockUserData = () => {
+  if (!localStorage.getItem("user")) {
+    localStorage.setItem("user", JSON.stringify(mockDoctorData));
+    console.log("Mock doctor data set in localStorage");
+  }
+};
+
 export default function DoctorDashboard() {
+  const [doctorName, setDoctorName] = useState("Bác sĩ")
+
+  useEffect(() => {
+    // Set mock user data for testing
+    setMockUserData();
+    // Get user data from localStorage
+    const userDataString = localStorage.getItem("user")
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString)
+        if (userData.fullName) {
+          setDoctorName(userData.fullName)
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error)
+      }
+    }
+  }, [])
+
   const getAppointmentStatusColor = (status: string) => {
     switch (status) {
       case "completed":
@@ -76,9 +114,8 @@ export default function DoctorDashboard() {
 
   const breadcrumbs = [{ label: "Trang chủ" }]
 
-
   return (
-    <DoctorLayout title="Tổng quan" breadcrumbs={breadcrumbs}>
+    <DoctorLayout title={`Xin chào, ${doctorName}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Today's Appointments */}
         <Card>
@@ -102,7 +139,6 @@ export default function DoctorDashboard() {
             </div>
           </CardContent>
         </Card>
-        
       </div>
     </DoctorLayout>
   )
