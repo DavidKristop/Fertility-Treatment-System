@@ -1,32 +1,13 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import {
-  Calendar,
-  Clock,
-  User,
-  Phone,
-  Mail,
-  FileText,
-  Upload,
-  Save,
-  ArrowLeft,
-  Stethoscope,
-  Pill,
-  ClipboardList,
-  Heart,
-} from "lucide-react"
+import { Calendar, Clock, User, Phone, Mail, FileText, Save, ArrowLeft, ClipboardList } from "lucide-react"
 import {
   getScheduleById,
   getScheduleResult,
@@ -35,6 +16,13 @@ import {
   type ScheduleResult,
   type ScheduleResultRequest,
 } from "@/api/schedule"
+import FormSection from "@/components/doctor/common/FormSection"
+import MedicalHistoryCard from "@/components/doctor/common/MedicalHistoryCard"
+import ServiceCard from "@/components/doctor/common/ServiceCard"
+import DrugCard from "@/components/doctor/common/DrugCard"
+import VitalSignsForm from "@/components/doctor/common/VitalSignsForm"
+import FileUpload from "@/components/doctor/common/FileUpload"
+import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge"
 
 // Mock patient medical history data
 const mockMedicalHistory = {
@@ -129,43 +117,6 @@ export default function DoctorScheduleResult() {
     }
   }
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files) {
-      setAttachments(Array.from(files))
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Done":
-        return "bg-green-100 text-green-800"
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "Changed":
-        return "bg-blue-100 text-blue-800"
-      case "Cancel":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "Done":
-        return "Đã hoàn thành"
-      case "Pending":
-        return "Chờ xác nhận"
-      case "Changed":
-        return "Đã thay đổi"
-      case "Cancel":
-        return "Đã hủy"
-      default:
-        return status
-    }
-  }
-
   if (loading) {
     return (
       <DoctorLayout title="Chi tiết lịch hẹn" breadcrumbs={[]}>
@@ -192,6 +143,13 @@ export default function DoctorScheduleResult() {
     { label: "Chi tiết lịch hẹn" },
   ]
 
+  const patientInfo = {
+    id: schedule.patient?.id || "",
+    name: schedule.patient?.name || "Bệnh nhân",
+    phone: schedule.patient?.phone || "",
+    email: schedule.patient?.email || "",
+  }
+
   return (
     <DoctorLayout title="Chi tiết lịch hẹn" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
@@ -208,267 +166,79 @@ export default function DoctorScheduleResult() {
         </div>
 
         {/* Appointment Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Thông tin cuộc hẹn
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <User className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="font-medium">{schedule.patient?.name}</p>
-                    <p className="text-sm text-gray-600">Bệnh nhân</p>
-                  </div>
+        <FormSection title="Thông tin cuộc hẹn" icon={Calendar}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <User className="h-5 w-5 text-gray-500" />
+                <div>
+                  <p className="font-medium">{schedule.patient?.name}</p>
+                  <p className="text-sm text-gray-600">Bệnh nhân</p>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <Phone className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="font-medium">{schedule.patient?.phone}</p>
-                    <p className="text-sm text-gray-600">Số điện thoại</p>
-                  </div>
-                </div>
-
-                {schedule.patient?.email && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="font-medium">{schedule.patient.email}</p>
-                      <p className="text-sm text-gray-600">Email</p>
-                    </div>
-                  </div>
-                )}
               </div>
 
-              <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Phone className="h-5 w-5 text-gray-500" />
+                <div>
+                  <p className="font-medium">{schedule.patient?.phone}</p>
+                  <p className="text-sm text-gray-600">Số điện thoại</p>
+                </div>
+              </div>
+
+              {schedule.patient?.email && (
                 <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-gray-500" />
+                  <Mail className="h-5 w-5 text-gray-500" />
                   <div>
-                    <p className="font-medium">
-                      {new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                    <p className="text-sm text-gray-600">Thời gian hẹn</p>
+                    <p className="font-medium">{schedule.patient.email}</p>
+                    <p className="text-sm text-gray-600">Email</p>
                   </div>
                 </div>
+              )}
+            </div>
 
-                <div className="flex items-center gap-3">
-                  <FileText className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="font-medium">{schedule.reason}</p>
-                    <p className="text-sm text-gray-600">Lý do khám</p>
-                  </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-gray-500" />
+                <div>
+                  <p className="font-medium">
+                    {new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                  <p className="text-sm text-gray-600">Thời gian hẹn</p>
                 </div>
+              </div>
 
-                <div className="flex items-center gap-3">
-                  <Badge className={getStatusColor(schedule.status)}>{getStatusText(schedule.status)}</Badge>
+              <div className="flex items-center gap-3">
+                <FileText className="h-5 w-5 text-gray-500" />
+                <div>
+                  <p className="font-medium">{schedule.reason}</p>
+                  <p className="text-sm text-gray-600">Lý do khám</p>
                 </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <AppointmentStatusBadge status={schedule.status} />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </FormSection>
 
         {/* Medical History */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Heart className="h-5 w-5" />
-              Tiền sử bệnh án
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label className="font-semibold text-red-600">Dị ứng</Label>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {mockMedicalHistory.allergies.map((allergy, index) => (
-                      <Badge key={index} variant="destructive" className="text-xs">
-                        {allergy}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="font-semibold">Bệnh mãn tính</Label>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {mockMedicalHistory.chronicConditions.map((condition, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {condition}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="font-semibold">Phẫu thuật trước đây</Label>
-                  <div className="mt-1 space-y-1">
-                    {mockMedicalHistory.previousSurgeries.map((surgery, index) => (
-                      <div key={index} className="text-sm">
-                        <span className="font-medium">{surgery.procedure}</span> - {surgery.date}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Label className="font-semibold">Thuốc đang sử dụng</Label>
-                  <div className="mt-1 space-y-1">
-                    {mockMedicalHistory.medications.map((med, index) => (
-                      <div key={index} className="text-sm">
-                        <span className="font-medium">{med.name}</span> - {med.dosage}, {med.frequency}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="font-semibold">Tiền sử gia đình</Label>
-                  <p className="mt-1 text-sm">{mockMedicalHistory.familyHistory}</p>
-                </div>
-
-                <div>
-                  <Label className="font-semibold">Ghi chú</Label>
-                  <p className="mt-1 text-sm">{mockMedicalHistory.notes}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <MedicalHistoryCard data={mockMedicalHistory} />
 
         {/* Services */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Stethoscope className="h-5 w-5" />
-              Dịch vụ
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {schedule.services?.map((service, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{service.name}</p>
-                    <p className="text-sm text-gray-600">{service.description}</p>
-                    {service.notes && <p className="text-xs text-gray-500 mt-1">Ghi chú: {service.notes}</p>}
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">{service.price.toLocaleString("vi-VN")} VNĐ</p>
-                    <p className="text-sm text-gray-600">/{service.unit}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {schedule.services && schedule.services.length > 0 && <ServiceCard services={schedule.services} />}
 
         {/* Drugs */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Pill className="h-5 w-5" />
-              Thuốc
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {schedule.drugs?.map((drug, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{drug.name}</p>
-                    <p className="text-sm text-gray-600">{drug.description}</p>
-                    <p className="text-sm text-blue-600 mt-1">
-                      <span className="font-medium">Liều dùng:</span> {drug.dosage}
-                    </p>
-                    <p className="text-sm text-green-600">
-                      <span className="font-medium">Hướng dẫn:</span> {drug.instructions}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      {drug.amount} {drug.unit}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {drug.price.toLocaleString("vi-VN")} VNĐ/{drug.unit}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {schedule.drugs && schedule.drugs.length > 0 && <DrugCard drugs={schedule.drugs} />}
 
         {/* Examination Results */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ClipboardList className="h-5 w-5" />
-              Kết quả khám
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <FormSection title="Kết quả khám" icon={ClipboardList}>
+          <div className="space-y-6">
             {/* Vital Signs */}
-            <div>
-              <Label className="text-base font-semibold">Sinh hiệu</Label>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3">
-                <div>
-                  <Label htmlFor="bloodPressure">Huyết áp</Label>
-                  <Input
-                    id="bloodPressure"
-                    placeholder="120/80"
-                    value={vitalSigns.bloodPressure}
-                    onChange={(e) => setVitalSigns((prev) => ({ ...prev, bloodPressure: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="heartRate">Nhịp tim</Label>
-                  <Input
-                    id="heartRate"
-                    placeholder="72 bpm"
-                    value={vitalSigns.heartRate}
-                    onChange={(e) => setVitalSigns((prev) => ({ ...prev, heartRate: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="temperature">Nhiệt độ</Label>
-                  <Input
-                    id="temperature"
-                    placeholder="36.5°C"
-                    value={vitalSigns.temperature}
-                    onChange={(e) => setVitalSigns((prev) => ({ ...prev, temperature: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="weight">Cân nặng</Label>
-                  <Input
-                    id="weight"
-                    placeholder="65 kg"
-                    value={vitalSigns.weight}
-                    onChange={(e) => setVitalSigns((prev) => ({ ...prev, weight: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="height">Chiều cao</Label>
-                  <Input
-                    id="height"
-                    placeholder="165 cm"
-                    value={vitalSigns.height}
-                    onChange={(e) => setVitalSigns((prev) => ({ ...prev, height: e.target.value }))}
-                  />
-                </div>
-              </div>
-            </div>
+            <VitalSignsForm vitalSigns={vitalSigns} onChange={setVitalSigns} />
 
             <Separator />
 
@@ -517,18 +287,12 @@ export default function DoctorScheduleResult() {
                 className="mt-2 min-h-[100px]"
               />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </FormSection>
 
         {/* Schedule Result */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Ghi chú của bác sĩ
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <FormSection title="Ghi chú của bác sĩ" icon={FileText}>
+          <div className="space-y-4">
             <div>
               <Label htmlFor="doctorsNote">Ghi chú chi tiết</Label>
               <Textarea
@@ -541,40 +305,7 @@ export default function DoctorScheduleResult() {
             </div>
 
             {/* File Upload */}
-            <div>
-              <Label htmlFor="attachments">Tải lên file đính kèm</Label>
-              <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-600 mb-2">Kéo thả file hoặc click để chọn</p>
-                <p className="text-xs text-gray-400 mb-4">PDF, JPG, PNG (tối đa 10MB mỗi file)</p>
-                <input
-                  type="file"
-                  id="attachments"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-                <Button type="button" variant="outline" onClick={() => document.getElementById("attachments")?.click()}>
-                  Chọn file
-                </Button>
-              </div>
-
-              {attachments.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-sm font-medium mb-2">File đã chọn:</p>
-                  <div className="space-y-1">
-                    {attachments.map((file, index) => (
-                      <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                        <FileText className="h-4 w-4" />
-                        <span>{file.name}</span>
-                        <span className="text-xs">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <FileUpload files={attachments} onFilesChange={setAttachments} />
 
             {/* Existing Result Display */}
             {existingResult && (
@@ -603,8 +334,8 @@ export default function DoctorScheduleResult() {
                 )}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </FormSection>
 
         {/* Action Buttons */}
         <div className="flex gap-4 justify-end">
