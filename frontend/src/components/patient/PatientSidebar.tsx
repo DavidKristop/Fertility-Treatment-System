@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
@@ -19,6 +19,7 @@ import {
   MessageSquare,
   User,
   CalendarPlus,
+  FileSignature,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -54,7 +55,7 @@ const sidebarItems: SidebarItem[] = [
     children: [
       {
         id: "schedule-appointment",
-        label: "Lên lịch khám",
+        label: "Đặt lịch hẹn",
         icon: CalendarPlus,
         path: "/patient/appointments/schedule",
       },
@@ -124,6 +125,12 @@ const sidebarItems: SidebarItem[] = [
     path: "/patient/support",
   },
   {
+    id: "contracts",
+    label: "Hợp đồng",
+    icon: FileSignature,
+    path: "/patient/contracts",
+  },
+  {
     id: "profile",
     label: "Hồ sơ & Cài đặt",
     icon: User,
@@ -138,7 +145,7 @@ interface PatientSidebarProps {
 }
 
 export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false }: PatientSidebarProps) {
-  const [expandedItems, setExpandedItems] = useState<string[]>(["appointments"])
+  const [expandedItems, setExpandedItems] = useState<string[]>([])
   const location = useLocation()
   const navigate = useNavigate()
   const toggleExpanded = (itemId: string) => {
@@ -155,6 +162,20 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
     return false
   }
 
+// Tự động mở rộng mục cha khi một mục con được chọn
+  useEffect(() => {
+    sidebarItems.forEach((item) => {
+      if (item.children && item.children.some((child) => isActive(child.path))) {
+        setExpandedItems((prev) => {
+          if (!prev.includes(item.id)) {
+            return [...prev, item.id];
+          }
+          return prev;
+        });
+      }
+    });
+  }, [location.pathname]); // Chạy lại khi location.pathname thay đổi
+
   return (
     <div
       className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col ${
@@ -164,8 +185,8 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         {!isCollapsed && (
-          <div className="flex items-center gap-2">
-            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-8 w-8" />
+          <div className="flex items-center gap-1">
+            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-7" />
             <span className="font-bold text-[#004c77] text-lg">UCARE</span>
           </div>
         )}

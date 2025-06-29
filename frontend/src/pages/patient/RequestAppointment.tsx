@@ -191,13 +191,13 @@ export default function RequestAppointment() {
   }, [currentMonth, selectedDate])
 
   const breadcrumbs = [
-    { label: "Trang chủ", path: "/patient/dashboard" },
+    { label: "Trang tổng quan", path: "/patient/dashboard" },
     { label: "Lịch hẹn" },
-    { label: "Lên lịch khám" },
+    { label: "Đặt lịch hẹn" },
   ]
 
   return (
-    <PatientLayout title="Lên lịch khám" breadcrumbs={breadcrumbs}>
+    <PatientLayout title="Đặt lịch hẹn" breadcrumbs={breadcrumbs}>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-center mb-6">Thời gian và ngày nào phù hợp với bạn?</h1>
 

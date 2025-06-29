@@ -21,10 +21,31 @@ export default function LoginPage() {
         password: values.password
       };
       const response = await auth.login(loginData);
-      localStorage.setItem('token', response.token);
-      navigate('/home');
-    } catch (error) {
+      localStorage.setItem('token', response.payload.accessToken);
+      switch (response.payload.role) {
+        case 'ROLE_PATIENT':
+          navigate('/patient/dashboard');
+          break;
+        case 'ROLE_DOCTOR':
+          navigate('/doctor/dashboard');
+          break;
+        case 'ROLE_MANAGER':
+          navigate('/manager/dashboard');
+          break;
+        case 'ROLE_ADMIN':
+          navigate('/admin/dashboard');
+          break;
+        default:
+          navigate('/home'); // Trang mặc định nếu role không khớp
+      }
+    } catch (error: any) {
+      // Xử lý lỗi từ API
       console.error('Login failed:', error);
+      
+      if (error instanceof Error) {
+              // Đặt thông báo lỗi vào formik để hiển thị
+              formik.setErrors({ email: ' ', password: 'Nhập sai email hoặc mật khẩu' });
+            }
     }
   };
 
@@ -52,7 +73,7 @@ export default function LoginPage() {
         <CardContent className="pt-2">
           <div className="space-y-6">
             <LoginForm formik={formik} />
-            <Button onClick={()=>formik.handleSubmit()} type="submit" form="login-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black">
+            <Button onClick={() => formik.handleSubmit()} type="submit" form="login-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer">
               Đăng nhập
             </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng nhập với</div>

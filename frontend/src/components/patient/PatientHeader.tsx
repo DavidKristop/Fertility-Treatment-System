@@ -81,7 +81,10 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>
+              <Link to="/authorization/login">
+                <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>
+              </Link>
+              
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

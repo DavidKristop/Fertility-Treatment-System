@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { CalendarIcon, ChevronLeft, ChevronRight, MapPin} from "lucide-react"
 import { useState } from "react"
 import { SelectTrigger, SelectValue, SelectContent, SelectItem, Select } from "@radix-ui/react-select"
+import { Link } from "react-router-dom"
 
 
 // Mock data
@@ -285,7 +286,10 @@ export default function PatientDashboard() {
               ) : (
                 <div className="text-center py-8">
                   <p className="text-gray-600 mb-4">Bạn chưa có điều trị nào đang diễn ra</p>
-                  <Button>Đặt lịch hẹn</Button>
+                  <Link to="/patient/appointments/schedule">
+                    <Button className="cursor-pointer">Đặt lịch hẹn</Button>
+                  </Link>
+                  
                 </div>
               )}
             </CardContent>
