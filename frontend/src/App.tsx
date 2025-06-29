@@ -48,9 +48,6 @@ import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
 import Story from "./pages/about/Story"
 
-
-
-
 const router = createBrowserRouter([
   {
     path: "/",
