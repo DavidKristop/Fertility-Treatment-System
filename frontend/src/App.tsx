@@ -23,7 +23,6 @@ import PatientProfile from "./pages/patient/profile/PatientProfile"
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
-import Calendar from "./pages/doctor/appointments/Calendar"
 import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
@@ -167,11 +166,6 @@ const router = createBrowserRouter([
             path: "today",
             element: <TodayAppointments />,
           },
-          {
-            path: "calendar",
-            element: <Calendar />,
-          },
-          
         ],
       },
       // Pending Approvals routes

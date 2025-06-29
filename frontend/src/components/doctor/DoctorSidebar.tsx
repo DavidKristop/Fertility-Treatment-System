@@ -48,24 +48,10 @@ const sidebarItems: SidebarItem[] = [
   },
 
   {
-    id: "appointments",
+    id: "schedule",
     label: "Lịch khám",
     icon: Calendar,
-    children: [
-      
-      {
-        id: "today-appointments",
-        label: "Lịch khám hôm nay",
-        icon: Clock,
-        path: "/doctor/appointments/today",
-      },
-      {
-        id: "calendar",
-        label: "Xem lịch",
-        icon: CalendarDays,
-        path: "/doctor/appointments/calendar",
-      },
-    ],
+    path: "/doctor/schedule",
   },
 
   {
@@ -230,7 +216,8 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       </nav>
 
       {/* Logout */}
-      <div className="p-2 border-t border-gray-200 mt-auto">
+      {/* <div className="p-2 border-t border-gray-200 mt-auto"> */}
+      <div className="p-2 border-t border-gray-200">
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
