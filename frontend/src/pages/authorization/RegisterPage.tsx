@@ -17,13 +17,17 @@ export default function RegisterPage() {
   const handleRegister = async (values: RegisterFormValues) => {
     try {
       const registerData: RegisterRequest = {
+        username: values.username,
         email: values.email,
+        address: values.address,
+        phone: values.phone,
+        dateOfBirth: values.dateOfBirth,
         password: values.password,
         confirmPassword: values.confirmPassword
       };
       const response = await auth.register(registerData);
-      localStorage.setItem('token', response.token);
-      navigate('/home');
+      localStorage.setItem('token', response.payload.accessToken);
+      navigate('/authorization/login');
     } catch (error) {
       console.error('Registration failed:', error);
     }
@@ -31,7 +35,11 @@ export default function RegisterPage() {
 
   const formik = useFormik<RegisterFormValues>({
       initialValues: {
+        username:'',
         email: '',
+        phone: '',
+        address: '',
+        dateOfBirth: '',
         password: '',
         confirmPassword: '',
       },
@@ -57,7 +65,7 @@ export default function RegisterPage() {
         <CardContent className="pt-2">
           <div className="space-y-6">
             <RegisterForm formik={formik} />
-            <Button onClick={()=>formik.handleSubmit()} type="submit" form="register-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black">
+            <Button onClick={()=>formik.handleSubmit()} type="submit" form="register-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer">
               Đăng kí
             </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>

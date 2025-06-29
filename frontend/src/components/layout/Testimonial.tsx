@@ -6,8 +6,6 @@ export default function Testimonial() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
 
         {/* Text trái */}
-        <div className="w-[320px] h-[2px] bg-black hidden sm:block absolute left-3 rotate-90"></div>
-        <div className="w-[700px] h-[2px] bg-black hidden sm:block absolute left-8 mt-80 ml-35"></div>
         <div className="pl-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-[#004c77] mb-6">
             Trải nghiệm từ những gia đình đã thành công
