@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CalendarIcon, Clock, User, Phone, CalendarDays } from "lucide-react"
+import { CalendarDays, Calendar, Clock, User, Activity, TestTube } from "lucide-react"
 import { getTodaySchedules, type Schedule } from "@/api/schedule"
+import AppointmentCard from "@/components/doctor/common/AppointmentCard"
+import FormSection from "@/components/doctor/common/FormSection"
 
 // Mock user data for testing
 const mockDoctorData = {
@@ -65,35 +66,21 @@ export default function DoctorDashboard() {
     navigate(`/doctor/schedule-result/${scheduleId}`)
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Done":
-        return "bg-green-100 text-green-800"
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "Changed":
-        return "bg-blue-100 text-blue-800"
-      case "Cancel":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "Done":
-        return "Đã hoàn thành"
-      case "Pending":
-        return "Chờ xác nhận"
-      case "Changed":
-        return "Đã thay đổi"
-      case "Cancel":
-        return "Đã hủy"
-      default:
-        return status
-    }
-  }
+  // Transform schedule data for AppointmentCard
+  const appointmentCards = todaySchedules.map((schedule) => ({
+    id: schedule.id,
+    time: new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    patient: {
+      name: schedule.patient?.name || "Bệnh nhân",
+      phone: schedule.patient?.phone || "",
+    },
+    reason: schedule.reason,
+    status: schedule.status,
+    duration: schedule.duration,
+  }))
 
   const breadcrumbs = [{ label: "Trang chủ" }]
 
@@ -101,80 +88,40 @@ export default function DoctorDashboard() {
     <DoctorLayout title={`Welcome back, ${doctorName}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Today's Schedules */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5" />
-                Lịch hẹn hôm nay
-              </CardTitle>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate("/doctor/schedule")}
-              >
-                <CalendarDays className="h-4 w-4 mr-2" />
-                Xem lịch đầy đủ
-              </Button>
+        <FormSection
+          title="Lịch hẹn hôm nay"
+          icon={Calendar}
+          actions={
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/doctor/schedule")}
+              className="flex items-center gap-2"
+            >
+              <CalendarDays className="h-4 w-4" />
+              Xem lịch đầy đủ
+            </Button>
+          }
+        >
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-gray-500">Đang tải lịch hẹn...</div>
             </div>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="text-gray-500">Đang tải lịch hẹn...</div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {todaySchedules.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8">Không có lịch hẹn hôm nay</div>
-                ) : (
-                  todaySchedules.map((schedule) => (
-                    <div
-                      key={schedule.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                      onClick={() => handleScheduleClick(schedule.id)}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2 text-blue-600 font-medium">
-                            <Clock className="h-4 w-4" />
-                            {new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-gray-500" />
-                          <div>
-                            <div className="font-medium">{schedule.patient?.name}</div>
-                            <div className="text-sm text-gray-500">{schedule.reason}</div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-gray-500">
-                          <Phone className="h-4 w-4" />
-                          <span className="text-sm">{schedule.patient?.phone}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(schedule.status)}`}
-                        >
-                          {getStatusText(schedule.status)}
-                        </span>
-                        <span className="text-sm text-gray-500">{schedule.duration} phút</span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
+          ) : (
+            <div className="space-y-4">
+              {appointmentCards.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                  <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>Không có lịch hẹn hôm nay</p>
+                </div>
+              ) : (
+                appointmentCards.map((appointment) => (
+                  <AppointmentCard key={appointment.id} appointment={appointment} onClick={handleScheduleClick} />
+                ))
+              )}
+            </div>
+          )}
+        </FormSection>
       </div>
     </DoctorLayout>
   )
