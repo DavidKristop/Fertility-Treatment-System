@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, CalendarIcon, Clock, User, Phone } from "lucide-react"
+import { CalendarIcon, Clock, User, Phone, CalendarDays } from "lucide-react"
 import { getTodaySchedules, type Schedule } from "@/api/schedule"
-import Calendar from "@/components/doctor/appointments/Calendar" // Import Calendar component
 
 // Mock user data for testing
 const mockDoctorData = {
@@ -28,10 +27,8 @@ const setMockUserData = () => {
 
 export default function DoctorDashboard() {
   const [doctorName, setDoctorName] = useState("Doctor name")
-  const [currentDate, setCurrentDate] = useState(new Date())
   const [todaySchedules, setTodaySchedules] = useState<Schedule[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedView, setSelectedView] = useState<"list" | "calendar">("list")
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -86,19 +83,19 @@ export default function DoctorDashboard() {
   const getStatusText = (status: string) => {
     switch (status) {
       case "Done":
-        return "Completed"
+        return "Đã hoàn thành"
       case "Pending":
-        return "Pending"
+        return "Chờ xác nhận"
       case "Changed":
-        return "Changed"
+        return "Đã thay đổi"
       case "Cancel":
-        return "Cancelled"
+        return "Đã hủy"
       default:
         return status
     }
   }
 
-  const breadcrumbs = [{ label: "Overview" }]
+  const breadcrumbs = [{ label: "Trang chủ" }]
 
   return (
     <DoctorLayout title={`Welcome back, ${doctorName}`} breadcrumbs={breadcrumbs}>
@@ -109,35 +106,27 @@ export default function DoctorDashboard() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5" />
-                Today schedules
+                Lịch hẹn hôm nay
               </CardTitle>
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant={selectedView === "list" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setSelectedView("list")}
-                >
-                  Xem Danh Sách
-                </Button>
-                <Button 
-                  variant={selectedView === "calendar" ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setSelectedView("calendar")}
-                >
-                  Xem Lịch
-                </Button>
-              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate("/doctor/schedule")}
+              >
+                <CalendarDays className="h-4 w-4 mr-2" />
+                Xem lịch đầy đủ
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="flex items-center justify-center h-64">
-                <div className="text-gray-500">Loading schedules...</div>
+                <div className="text-gray-500">Đang tải lịch hẹn...</div>
               </div>
-            ) : selectedView === "list" ? (
+            ) : (
               <div className="space-y-4">
                 {todaySchedules.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8">No schedules for today</div>
+                  <div className="text-center text-gray-500 py-8">Không có lịch hẹn hôm nay</div>
                 ) : (
                   todaySchedules.map((schedule) => (
                     <div
@@ -146,13 +135,16 @@ export default function DoctorDashboard() {
                       onClick={() => handleScheduleClick(schedule.id)}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-blue-600 font-medium">
-                          <Clock className="h-4 w-4" />
-                          {new Date(schedule.appointment_datetime).toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2 text-blue-600 font-medium">
+                            <Clock className="h-4 w-4" />
+                            {new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
                         </div>
+                        
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4 text-gray-500" />
                           <div>
@@ -160,33 +152,29 @@ export default function DoctorDashboard() {
                             <div className="text-sm text-gray-500">{schedule.reason}</div>
                           </div>
                         </div>
+                        
                         <div className="flex items-center gap-2 text-gray-500">
                           <Phone className="h-4 w-4" />
                           <span className="text-sm">{schedule.patient?.phone}</span>
                         </div>
                       </div>
+                      
                       <div className="flex items-center gap-3">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(schedule.status)}`}
                         >
                           {getStatusText(schedule.status)}
                         </span>
-                        <span className="text-sm text-gray-500">{schedule.duration} min</span>
+                        <span className="text-sm text-gray-500">{schedule.duration} phút</span>
                       </div>
                     </div>
                   ))
                 )}
               </div>
-            ) : (
-              <Calendar
-                appointments={todaySchedules}
-                onAppointmentClick={handleScheduleClick}
-                currentDate={currentDate}
-                onChangeDate={setCurrentDate}
-              />
             )}
           </CardContent>
         </Card>
+
       </div>
     </DoctorLayout>
   )

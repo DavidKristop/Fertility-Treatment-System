@@ -83,6 +83,19 @@ interface PendingAppointment {
   notes: string
 }
 
+interface RequestAppointment {
+  id: string
+  patient: Patient
+  doctor_id?: string
+  requested_datetime: string
+  preferred_datetime: string
+  status: "Pending" | "Approved" | "Rejected"
+  treatment_type: string
+  reason: string
+  medical_history: string
+  previous_treatments: string
+}
+
 interface PendingApprovalsProps {
   appointments?: PendingAppointment[]
   onApprove?: (appointmentId: string, note?: string) => void
@@ -276,30 +289,19 @@ export default function PendingApprovals({
     }
   }
 
-  // // Selection handlers
-  // const handleSelectAll = (checked: boolean) => {
-  //   if (checked) {
-  //     setSelectedAppointments(filteredAppointments.map((apt) => apt.id))
-  //   } else {
-  //     setSelectedAppointments([])
-  //   }
-  // }
-
-  // const handleSelectAppointment = (appointmentId: string, checked: boolean) => {
-  //   if (checked) {
-  //     setSelectedAppointments([...selectedAppointments, appointmentId])
-  //   } else {
-  //     setSelectedAppointments(selectedAppointments.filter((id) => id !== appointmentId))
-  //   }
-  // }
-
   // Action handlers
-  const handleApprove = (appointmentId: string, note?: string) => {
-    if (onApprove) {
-      onApprove(appointmentId, note)
-    } else {
-      console.log("Approving appointment:", appointmentId, "with note:", note)
-      // Here you would call your API to approve the appointment
+  const handleApprove = async (requestId: string) => {
+    try {
+      // Gọi API để tạo Schedule mới từ RequestAppointment
+      // Cấu trúc tương tự như updateScheduleStatus
+      // ...
+
+      // Cập nhật status của RequestAppointment sang "Approved"
+      // ...
+
+      onApprove?.(requestId)
+    } catch (error) {
+      console.error("Error approving appointment:", error)
     }
     setApprovalNote("")
   }

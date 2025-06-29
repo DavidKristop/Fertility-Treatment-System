@@ -77,12 +77,12 @@ export default function Calendar({
   }
 
   const getAppointmentsForDate = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0]
-    return appointments.filter((apt) => {
-      const aptDate = new Date(apt.appointment_datetime).toISOString().split("T")[0]
-      return aptDate === dateString
-    })
-  }
+  const dateString = date.toISOString().split("T")[0]
+  return appointments.filter((apt) => {
+    const aptDate = new Date(apt.appointment_datetime).toISOString().split("T")[0]
+    return aptDate === dateString
+  })
+}
 
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(currentDate)

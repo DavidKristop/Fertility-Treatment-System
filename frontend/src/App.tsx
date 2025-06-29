@@ -22,7 +22,7 @@ import PatientProfile from "./pages/patient/profile/PatientProfile"
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
-import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
+import TodayAppointments from "./pages/doctor/appointments/Schedules"
 import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
@@ -45,6 +45,7 @@ import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
 import Story from "./pages/about/Story"
+import Schedules from "./pages/doctor/appointments/Schedules"
 
 
 const router = createBrowserRouter([
@@ -158,13 +159,13 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <DoctorDashboard />,
       },
-      // Appointments routes
+      // Schedule routes
       {
-        path: "appointments",
+        path: "schedule",
         children: [
           {
-            path: "today",
-            element: <TodayAppointments />,
+            index: true,
+            element: <Schedules />,
           },
         ],
       },
