@@ -1,43 +1,32 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
 import TreatmentPlanForm from "@/components/doctor/treatment/TreatmentPlanForm"
 
-// Available treatment protocols - Only correct protocols
-const availableProtocols = [
+const mockProtocols = [
   {
-    id: "550e8400-e29b-41d4-a716-446655440021",
+    id: "1",
     title: "IVF Long Protocol",
-    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích",
-    type: "IVF",
-    subtype: "long",
+    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích buồng trứng",
     isActive: true,
   },
   {
-    id: "550e8400-e29b-41d4-a716-446655440023",
+    id: "2",
     title: "IVF Short Protocol",
-    description: "Phác đồ IVF ngắn với kích thích trực tiếp",
-    type: "IVF",
-    subtype: "short",
+    description: "Phác đồ IVF ngắn với kích thích buồng trứng trực tiếp",
     isActive: true,
   },
   {
-    id: "550e8400-e29b-41d4-a716-446655440022",
+    id: "3",
     title: "IUI Natural Protocol",
     description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
-    type: "IUI",
-    subtype: "natural",
     isActive: true,
   },
   {
-    id: "550e8400-e29b-41d4-a716-446655440024",
+    id: "4",
     title: "IUI Stimulated Protocol",
     description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
-    type: "IUI",
-    subtype: "stimulated",
     isActive: true,
   },
 ]
@@ -45,42 +34,41 @@ const availableProtocols = [
 export default function CreateTreatmentPlans() {
   const navigate = useNavigate()
 
-  const handleCreatePlan = (data: any) => {
-    console.log("Creating treatment plan:", data)
-    // Here you would typically send the data to your API
-    // After successful creation, navigate back to treatment plans list
-    navigate("/doctor/treatment-plans")
+  const breadcrumbs = [
+    { label: "Dashboard", path: "/doctor/dashboard" },
+    { label: "Kế hoạch điều trị", path: "/doctor/treatment-plans" },
+    { label: "Tạo kế hoạch mới" },
+  ]
+
+  const handleSubmit = async (data: any) => {
+    try {
+      // Simulate API call
+      console.log("Creating treatment plan:", data)
+
+      // Show success message
+      alert("Tạo kế hoạch điều trị thành công!")
+
+      // Navigate back to treatment plans list
+      navigate("/doctor/treatment-plans")
+    } catch (error) {
+      console.error("Error creating treatment plan:", error)
+      alert("Có lỗi xảy ra khi tạo kế hoạch điều trị")
+    }
   }
 
   const handleCancel = () => {
     navigate("/doctor/treatment-plans")
   }
 
-  const breadcrumbs = [
-    { label: "Trang chủ", path: "/doctor/dashboard" },
-    { label: "Kế hoạch điều trị", path: "/doctor/treatment-plans" },
-    { label: "Tạo kế hoạch mới" },
-  ]
-
   return (
     <DoctorLayout title="Tạo kế hoạch điều trị mới" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Back Button */}
-        <div className="flex items-center gap-4">
-          <Link to="/doctor/treatment-plans">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Quay lại danh sách
-            </Button>
-          </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Tạo kế hoạch điều trị mới</h1>
+          <p className="text-gray-600 mt-1">Tạo kế hoạch điều trị cho bệnh nhân</p>
         </div>
 
-        {/* Reuse TreatmentPlanForm */}
-        <TreatmentPlanForm
-          onSubmit={handleCreatePlan}
-          onCancel={handleCancel}
-          availableProtocols={availableProtocols}
-        />
+        <TreatmentPlanForm onSubmit={handleSubmit} onCancel={handleCancel} availableProtocols={mockProtocols} />
       </div>
     </DoctorLayout>
   )

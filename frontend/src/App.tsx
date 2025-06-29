@@ -19,24 +19,22 @@ import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 import RequestAppointment from "./pages/patient/RequestAppointment"
 import PatientDashboard from "./pages/patient/PatientDashboard"
 import PatientProfile from "./pages/patient/profile/PatientProfile"
+import PatientContracts from "./pages/patient/contracts/PatientContracts"
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
-import TodayAppointments from "./pages/doctor/appointments/TodayAppointments"
-import Calendar from "./pages/doctor/appointments/Calendar"
+import Schedules from "./pages/doctor/appointments/Schedules"
 import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
-import PendingApprovals from "./pages/doctor/appointments/PendingApprovals"
+import PendingApprovals from "./pages/doctor/pending/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
-import ActivePrescriptions from "./pages/doctor/prescriptions/ActivePrescriptions"
-import CreatePrescription from "./pages/doctor/prescriptions/CreatePrescription"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
-import DoctorBlog from "./pages/doctor/blog/DoctorBlog"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
 import ResultsHistory from "./pages/doctor/results/ResultsHistory"
-import CreateAppointment from "./pages/doctor/appointments/CreateAppointment"
+import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail"
+import ScheduleResult from "./pages/doctor/appointments/ScheduleResult"
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard"
@@ -49,8 +47,6 @@ import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
 import Story from "./pages/about/Story"
-import PatientContracts from "./pages/patient/contracts/PatientContracts"
-
 
 const router = createBrowserRouter([
   {
@@ -163,27 +159,20 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <DoctorDashboard />,
       },
-      // Appointments routes
+      // Schedule routes
       {
-        path: "appointments",
-        children: [
-          {
-            path: "today",
-            element: <TodayAppointments />,
-          },
-          {
-            path: "calendar",
-            element: <Calendar />,
-          },
-          {
-            path: "pending",
-            element: <PendingApprovals />,
-          },
-          {
-            path: "create",
-            element: <CreateAppointment />,
-          },
-        ],
+        path: "schedule",
+        element: <Schedules />,
+      },
+      // Schedule Result routes
+      {
+        path: "schedule-result/:id",
+        element: <ScheduleResult />,
+      },
+      // Pending Approvals routes
+      {
+          path: "pending",
+          element: <PendingApprovals />,
       },
       // Patient routes
       {
@@ -199,7 +188,6 @@ const router = createBrowserRouter([
           }
         ],
       },
-      // Contract routes removed
       // Treatment Plan routes
       {
         path: "treatment-plans",
@@ -209,8 +197,12 @@ const router = createBrowserRouter([
             element: <TreatmentPlans />,
           },
           {
-            path: "create-plans",
+            path: "create",
             element: <CreateTreatmentPlans />,
+          },
+          {
+            path: "treatment-details/:id",
+            element: <TreatmentDetail />, 
           },
         ],
       },
@@ -233,20 +225,6 @@ const router = createBrowserRouter([
         path: "profile",
         element: <DoctorProfile />,
       },
-      // Prescription routes
-      {
-        path: "prescriptions",
-        children: [
-          {
-            path: "active",
-            element: <ActivePrescriptions />,
-          },
-          {
-            path: "new",
-            element: <CreatePrescription />,
-          },
-        ],
-      },
       // Notification routes
       {
         path: "notifications",
@@ -256,11 +234,6 @@ const router = createBrowserRouter([
             element: <ReminderHistory />,
           },
         ],
-      },
-      // Blog routes
-      {
-        path: "blog",
-        element: <DoctorBlog />,
       },
     ],
   },
@@ -294,10 +267,7 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <ManagerDashboard />,
       },
-      {
-        path: "appointments/today",
-        element: <TodayAppointments />,
-      },
+      
       {
         path: "patients",
         element: <PatientList />,
@@ -312,10 +282,7 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <AdminDashboard />,
       },
-      {
-        path: "appointments/today",
-        element: <TodayAppointments />,
-      },
+      
       {
         path: "patients",
         element: <PatientList />,

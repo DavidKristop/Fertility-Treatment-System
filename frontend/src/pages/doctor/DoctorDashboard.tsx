@@ -1,111 +1,127 @@
-import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Eye } from "lucide-react"
-import AppointmentCard from "@/components/doctor/dashboard/AppointmentCard"
-import QuickActions from "@/components/doctor/dashboard/QuickActions"
+"use client"
 
-const todayAppointments = [
-  {
-    id: 1,
-    time: "08:00",
-    patient: "Nguyễn Thị Lan",
-    type: "Tái khám",
-    status: "completed",
-    phone: "0901234567",
-  },
-  {
-    id: 2,
-    time: "09:30",
-    patient: "Trần Văn Nam",
-    type: "Khám đầu tiên",
-    status: "completed",
-    phone: "0912345678",
-  },
-  {
-    id: 3,
-    time: "10:15",
-    patient: "Lê Thị Hoa",
-    type: "Theo dõi điều trị",
-    status: "in-progress",
-    phone: "0923456789",
-  },
-  {
-    id: 4,
-    time: "11:00",
-    patient: "Phạm Minh Tuấn",
-    type: "Tư vấn",
-    status: "pending",
-    phone: "0934567890",
-  },
-  {
-    id: 5,
-    time: "14:00",
-    patient: "Võ Thị Mai",
-    type: "Khám đầu tiên",
-    status: "pending",
-    phone: "0945678901",
-  },
-]
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import DoctorLayout from "@/components/doctor/DoctorLayout"
+import { Button } from "@/components/ui/button"
+import { CalendarDays, Calendar, Clock, User, Activity, TestTube } from "lucide-react"
+import { getTodaySchedules, type Schedule } from "@/api/schedule"
+import AppointmentCard from "@/components/doctor/common/AppointmentCard"
+import FormSection from "@/components/doctor/common/FormSection"
+
+// Mock user data for testing
+const mockDoctorData = {
+  id: "doc123",
+  fullName: "Doctor name",
+  email: "doctor@example.com",
+  roles: ["ROLE_DOCTOR"],
+  specialty: "Sản phụ khoa",
+  licenseNumber: "MD12345",
+}
+
+// Function to set mock data in localStorage
+const setMockUserData = () => {
+  if (!localStorage.getItem("user")) {
+    localStorage.setItem("user", JSON.stringify(mockDoctorData))
+  }
+}
 
 export default function DoctorDashboard() {
-  const getAppointmentStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800"
-      case "in-progress":
-        return "bg-blue-100 text-blue-800"
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      default:
-        return "bg-gray-100 text-gray-800"
+  const [doctorName, setDoctorName] = useState("Doctor name")
+  const [todaySchedules, setTodaySchedules] = useState<Schedule[]>([])
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    setMockUserData()
+    const userDataString = localStorage.getItem("user")
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString)
+        if (userData.fullName) {
+          setDoctorName(userData.fullName)
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error)
+      }
     }
+
+    // Fetch today's schedules
+    const fetchSchedules = async () => {
+      try {
+        setLoading(true)
+        const schedules = await getTodaySchedules()
+        setTodaySchedules(schedules)
+      } catch (error) {
+        console.error("Error fetching schedules:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSchedules()
+  }, [])
+
+  const handleScheduleClick = (scheduleId: string) => {
+    navigate(`/doctor/schedule-result/${scheduleId}`)
   }
 
-  const getAppointmentStatusText = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "Hoàn thành"
-      case "in-progress":
-        return "Đang khám"
-      case "pending":
-        return "Chờ khám"
-      default:
-        return status
-    }
-  }
+  // Transform schedule data for AppointmentCard
+  const appointmentCards = todaySchedules.map((schedule) => ({
+    id: schedule.id,
+    time: new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    patient: {
+      name: schedule.patient?.name || "Bệnh nhân",
+      phone: schedule.patient?.phone || "",
+    },
+    reason: schedule.reason,
+    status: schedule.status,
+    duration: schedule.duration,
+  }))
 
   const breadcrumbs = [{ label: "Trang chủ" }]
 
-
   return (
-    <DoctorLayout title="Tổng quan" breadcrumbs={breadcrumbs}>
+    <DoctorLayout title={`Welcome back, ${doctorName}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Today's Appointments */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Lịch khám hôm nay</CardTitle>
-            <Button variant="outline" size="sm">
-              <Eye className="h-4 w-4 mr-2" />
-              Xem tất cả
+        {/* Today's Schedules */}
+        <FormSection
+          title="Lịch hẹn hôm nay"
+          icon={Calendar}
+          actions={
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/doctor/schedule")}
+              className="flex items-center gap-2"
+            >
+              <CalendarDays className="h-4 w-4" />
+              Xem lịch đầy đủ
             </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {todayAppointments.map((appointment) => (
-                <AppointmentCard
-                  key={appointment.id}
-                  appointment={appointment}
-                  getStatusColor={getAppointmentStatusColor}
-                  getStatusText={getAppointmentStatusText}
-                />
-              ))}
+          }
+        >
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-gray-500">Đang tải lịch hẹn...</div>
             </div>
-          </CardContent>
-        </Card>
-        
-        {/* Quick Actions */}
-        <QuickActions />
+          ) : (
+            <div className="space-y-4">
+              {appointmentCards.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                  <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>Không có lịch hẹn hôm nay</p>
+                </div>
+              ) : (
+                appointmentCards.map((appointment) => (
+                  <AppointmentCard key={appointment.id} appointment={appointment} onClick={handleScheduleClick} />
+                ))
+              )}
+            </div>
+          )}
+        </FormSection>
       </div>
     </DoctorLayout>
   )

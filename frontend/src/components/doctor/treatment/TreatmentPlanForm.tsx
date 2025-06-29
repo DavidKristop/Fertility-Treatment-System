@@ -1,534 +1,297 @@
+"use client"
+
 import type React from "react"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Plus, Save, User, FileText, Calendar, ChevronDown, ChevronUp, PlusCircle, Trash2, Loader2 } from "lucide-react"
-import { useState, useEffect } from "react"
-import ServiceSelectionDialog from "./ServiceSelectionDialog"
-import DrugSelectionDialog from "./DrugSelectionDialog"
-import { getAvailableServices, getAvailableDrugs, getTreatmentProtocolPhases } from "@/api/treatment"
+import { Search, FileText } from "lucide-react"
 
-// Import DateRange type from react-day-picker
-import type { DateRange } from "react-day-picker"
-
-// Simple date formatter
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-interface TreatmentProtocol {
+interface Protocol {
   id: string
   title: string
   description: string
-  type: string
-  subtype: string
   isActive: boolean
 }
 
-interface Service {
+interface Patient {
   id: string
   name: string
-  dateRange?: DateRange
-  quantity: number
-  price: number
-}
-
-interface Drug {
-  id: string
-  name: string
-  dosage: string
-  quantity: number
-  price: number
-}
-
-interface PhaseData {
-  expanded: boolean
-  services?: Service[]
-  drugs?: Drug[]
-}
-
-interface PhaseCollection {
-  [key: string]: PhaseData
-}
-
-interface TreatmentPlanFormData {
-  patientId: string
-  protocolId: string
-  startDate: string
-  diagnosis: string
-  notes: string
-  phases: PhaseCollection
+  email: string
+  phone: string
+  age: number
 }
 
 interface TreatmentPlanFormProps {
   onSubmit: (data: any) => void
   onCancel: () => void
-  availableProtocols: TreatmentProtocol[]
+  availableProtocols?: Protocol[]
 }
 
-export default function TreatmentPlanForm({ onSubmit, onCancel, availableProtocols }: TreatmentPlanFormProps) {
-  // State for storing protocol phases and available services/drugs
-  const [protocolPhases, setProtocolPhases] = useState<Record<string, { id: string; title: string; description: string }[]>>({});
-  const [availableServices, setAvailableServices] = useState<{ id: string; name: string; price: number; unit: string }[]>([]);
-  const [availableDrugs, setAvailableDrugs] = useState<{ id: string; name: string; price: number; unit: string }[]>([]);
-  // State for loading indicators
-  const [loading, setLoading] = useState({
-    services: false,
-    drugs: false,
-    phases: false
-  });
-  
-  // Form data state
-  const [formData, setFormData] = useState<TreatmentPlanFormData>({
+const mockProtocols: Protocol[] = [
+  {
+    id: "1",
+    title: "IVF Long Protocol",
+    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích buồng trứng",
+    isActive: true,
+  },
+  {
+    id: "2",
+    title: "IVF Short Protocol",
+    description: "Phác đồ IVF ngắn với kích thích buồng trứng trực tiếp",
+    isActive: true,
+  },
+  {
+    id: "3",
+    title: "IUI Natural Protocol",
+    description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
+    isActive: true,
+  },
+  {
+    id: "4",
+    title: "IUI Stimulated Protocol",
+    description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
+    isActive: true,
+  },
+]
+
+const mockPatients: Patient[] = [
+  { id: "1", name: "Nguyễn Thị Lan", email: "lan.nguyen@email.com", phone: "0901234567", age: 32 },
+  { id: "2", name: "Trần Thị Hoa", email: "hoa.tran@email.com", phone: "0901234568", age: 28 },
+  { id: "3", name: "Lê Thị Mai", email: "mai.le@email.com", phone: "0901234569", age: 35 },
+  { id: "4", name: "Phạm Thị Thu", email: "thu.pham@email.com", phone: "0901234570", age: 30 },
+]
+
+export default function TreatmentPlanForm({
+  onSubmit,
+  onCancel,
+  availableProtocols = mockProtocols,
+}: TreatmentPlanFormProps) {
+  const [formData, setFormData] = useState({
     patientId: "",
     protocolId: "",
-    startDate: "",
     diagnosis: "",
-    notes: "",
-    phases: {} as PhaseCollection // Will store phase-specific data including services and drugs
-  });
+    description: "",
+    paymentMethod: "phase",
+  })
+  const [patientSearch, setPatientSearch] = useState("")
+  const [protocolSearch, setProtocolSearch] = useState("")
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(mockPatients)
+  const [filteredProtocols, setFilteredProtocols] = useState<Protocol[]>(availableProtocols)
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
+  const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(null)
+  const [showPatientDropdown, setShowPatientDropdown] = useState(false)
+  const [showProtocolDropdown, setShowProtocolDropdown] = useState(false)
 
-  // Dialogs state
-  const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
-  const [drugDialogOpen, setDrugDialogOpen] = useState(false);
-  const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
-  
-  // Fetch available services and drugs on component mount
+  // Filter patients based on search
   useEffect(() => {
-    const fetchServiceAndDrugData = async () => {
-      setLoading(prev => ({ ...prev, services: true, drugs: true }));
-      try {
-        const [services, drugs] = await Promise.all([
-          getAvailableServices(),
-          getAvailableDrugs()
-        ]);
-        setAvailableServices(services);
-        setAvailableDrugs(drugs);
-      } catch (error) {
-        console.error("Failed to fetch services or drugs:", error);
-      } finally {
-        setLoading(prev => ({ ...prev, services: false, drugs: false }));
-      }
-    };
-    
-    fetchServiceAndDrugData();
-  }, []);
-  
-  // Fetch protocol phases when protocol is selected
+    const filtered = mockPatients.filter(
+      (patient) =>
+        patient.name.toLowerCase().includes(patientSearch.toLowerCase()) ||
+        patient.email.toLowerCase().includes(patientSearch.toLowerCase()),
+    )
+    setFilteredPatients(filtered)
+  }, [patientSearch])
+
+  // Filter protocols based on search
   useEffect(() => {
-    if (!formData.protocolId) return;
-    
-    const fetchProtocolPhases = async () => {
-      setLoading(prev => ({ ...prev, phases: true }));
-      try {
-        const phases = await getTreatmentProtocolPhases(formData.protocolId);
-        setProtocolPhases(prev => ({ 
-          ...prev, 
-          [formData.protocolId]: phases 
-        }));
-      } catch (error) {
-        console.error("Failed to fetch protocol phases:", error);
-      } finally {
-        setLoading(prev => ({ ...prev, phases: false }));
-      }
-    };
-    
-    if (!protocolPhases[formData.protocolId]) {
-      fetchProtocolPhases();
-    }
-  }, [formData.protocolId, protocolPhases]);
+    const filtered = availableProtocols.filter(
+      (protocol) =>
+        protocol.title.toLowerCase().includes(protocolSearch.toLowerCase()) ||
+        protocol.description.toLowerCase().includes(protocolSearch.toLowerCase()),
+    )
+    setFilteredProtocols(filtered)
+  }, [protocolSearch, availableProtocols])
+
+  const handlePatientSelect = (patient: Patient) => {
+    setSelectedPatient(patient)
+    setFormData((prev) => ({ ...prev, patientId: patient.id }))
+    setPatientSearch(patient.name)
+    setShowPatientDropdown(false)
+  }
+
+  const handleProtocolSelect = (protocol: Protocol) => {
+    setSelectedProtocol(protocol)
+    setFormData((prev) => ({ ...prev, protocolId: protocol.id }))
+    setProtocolSearch(protocol.title)
+    setShowProtocolDropdown(false)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
+    e.preventDefault()
 
-  const openServiceDialog = (phaseId: string) => {
-    setActivePhaseId(phaseId);
-    setServiceDialogOpen(true);
-  };
-
-  const openDrugDialog = (phaseId: string) => {
-    setActivePhaseId(phaseId);
-    setDrugDialogOpen(true);
-  };
-
-  const handleServiceSave = (serviceData: { serviceId: string; dateRange: DateRange | undefined; quantity: number }) => {
-    if (!activePhaseId) return;
-    
-    const selectedService = availableServices.find(s => s.id === serviceData.serviceId);
-    if (!selectedService) return;
-    
-    // Create a new service entry
-    const newService: Service = {
-      id: serviceData.serviceId,
-      name: selectedService.name,
-      dateRange: serviceData.dateRange,
-      quantity: serviceData.quantity,
-      price: selectedService.price * serviceData.quantity
-    };
-    
-    // Update the phase services
-    const updatedPhases = { ...formData.phases };
-    if (!updatedPhases[activePhaseId].services) {
-      updatedPhases[activePhaseId].services = [];
+    if (!formData.patientId || !formData.protocolId || !formData.diagnosis || !formData.description) {
+      alert("Vui lòng điền đầy đủ thông tin")
+      return
     }
-    updatedPhases[activePhaseId].services = [...(updatedPhases[activePhaseId].services || []), newService];
-    
-    setFormData({ ...formData, phases: updatedPhases });
-  };
 
-  const handleDrugSave = (drugData: { drugId: string; dosage: string; quantity: number }) => {
-    if (!activePhaseId) return;
-    
-    const selectedDrug = availableDrugs.find(d => d.id === drugData.drugId);
-    if (!selectedDrug) return;
-    
-    // Create a new drug entry
-    const newDrug: Drug = {
-      id: drugData.drugId,
-      name: selectedDrug.name,
-      dosage: drugData.dosage,
-      quantity: drugData.quantity,
-      price: selectedDrug.price * drugData.quantity
-    };
-    
-    // Update the phase drugs
-    const updatedPhases = { ...formData.phases };
-    if (!updatedPhases[activePhaseId].drugs) {
-      updatedPhases[activePhaseId].drugs = [];
+    const submitData = {
+      ...formData,
+      patientName: selectedPatient?.name,
+      patientEmail: selectedPatient?.email,
+      protocolName: selectedProtocol?.title,
     }
-    updatedPhases[activePhaseId].drugs = [...(updatedPhases[activePhaseId].drugs || []), newDrug];
-    
-    setFormData({ ...formData, phases: updatedPhases });
-  };
 
-  const handleRemoveService = (phaseId: string, serviceId: string) => {
-    const updatedPhases = { ...formData.phases };
-    updatedPhases[phaseId].services = updatedPhases[phaseId].services?.filter(
-      service => service.id !== serviceId
-    );
-    setFormData({ ...formData, phases: updatedPhases });
-  };
-
-  const handleRemoveDrug = (phaseId: string, drugId: string) => {
-    const updatedPhases = { ...formData.phases };
-    updatedPhases[phaseId].drugs = updatedPhases[phaseId].drugs?.filter(
-      drug => drug.id !== drugId
-    );
-    setFormData({ ...formData, phases: updatedPhases });
-  };
-
-  const selectedProtocol = availableProtocols.find((p) => p.id === formData.protocolId);
+    onSubmit(submitData)
+  }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Plus className="h-5 w-5" />
-          Tạo kế hoạch điều trị mới
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="patient" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Bệnh nhân
+    <div className="max-w-4xl mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Thông tin kế hoạch điều trị
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Patient Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="patient">
+                Bệnh nhân <span className="text-red-500">*</span>
               </Label>
-              <Select
-                value={formData.patientId}
-                onValueChange={(value) => setFormData({ ...formData, patientId: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn bệnh nhân" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="550e8400-e29b-41d4-a716-446655440011">Nguyễn Thị Lan (32 tuổi)</SelectItem>
-                  <SelectItem value="550e8400-e29b-41d4-a716-446655440012">Trần Văn Nam (35 tuổi)</SelectItem>
-                  <SelectItem value="550e8400-e29b-41d4-a716-446655440013">Lê Thị Hoa (28 tuổi)</SelectItem>
-                  <SelectItem value="550e8400-e29b-41d4-a716-446655440014">Phạm Thị Mai (30 tuổi)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="startDate" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Ngày bắt đầu điều trị
-              </Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="protocol" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Phác đồ điều trị
-            </Label>
-            <Select
-              value={formData.protocolId}
-              onValueChange={(value) => setFormData({ ...formData, protocolId: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn phác đồ điều trị" />
-              </SelectTrigger>
-              <SelectContent>
-                {/* Show all available protocols directly */}
-                <SelectItem value="550e8400-e29b-41d4-a716-446655440021">IVF Long Protocol</SelectItem>
-                <SelectItem value="550e8400-e29b-41d4-a716-446655440023">IVF Short Protocol</SelectItem>
-                <SelectItem value="550e8400-e29b-41d4-a716-446655440022">IUI Natural Protocol</SelectItem>
-                <SelectItem value="550e8400-e29b-41d4-a716-446655440024">IUI Stimulated Protocol</SelectItem>
-              </SelectContent>
-            </Select>
-            {selectedProtocol && <p className="text-sm text-muted-foreground mt-2">{selectedProtocol.description}</p>}
-          </div>
-
-          <div>
-            <Label htmlFor="diagnosis">Chẩn đoán</Label>
-            <Textarea
-              id="diagnosis"
-              placeholder="Nhập chẩn đoán chi tiết..."
-              className="min-h-[80px]"
-              value={formData.diagnosis}
-              onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="notes">Ghi chú bổ sung</Label>
-            <Textarea
-              id="notes"
-              placeholder="Ghi chú về kế hoạch điều trị, lưu ý đặc biệt..."
-              className="min-h-[100px]"
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            />
-          </div>
-
-          {/* Protocol Phases */}
-          {formData.protocolId && (
-            <div className="mt-6 border rounded-lg p-4">
-              <h3 className="text-lg font-medium mb-4">Các giai đoạn điều trị</h3>
-              
-              {loading.phases ? (
-                <div className="text-center py-10">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-primary" />
-                  <p className="text-muted-foreground">Đang tải giai đoạn điều trị...</p>
+              <div className="relative">
+                <div className="relative">
+                  <Input
+                    id="patient"
+                    placeholder="Tìm kiếm và chọn bệnh nhân..."
+                    value={patientSearch}
+                    onChange={(e) => {
+                      setPatientSearch(e.target.value)
+                      setShowPatientDropdown(true)
+                    }}
+                    onFocus={() => setShowPatientDropdown(true)}
+                    className="pr-10"
+                  />
+                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {protocolPhases[formData.protocolId]?.map((phase, index) => (
-                  <div key={phase.id} className="border rounded-lg">
-                    <div 
-                      className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50"
-                      onClick={() => {
-                        // Toggle phase expansion here
-                        const updatedPhases = { ...formData.phases };
-                        updatedPhases[phase.id] = updatedPhases[phase.id] 
-                          ? { ...updatedPhases[phase.id], expanded: !updatedPhases[phase.id].expanded }
-                          : { expanded: true, services: [], drugs: [] };
-                        setFormData({ ...formData, phases: updatedPhases });
-                      }}
-                    >
-                      <div>
-                        <h4 className="font-medium">Giai đoạn {index + 1}: {phase.title}</h4>
-                        <p className="text-sm text-muted-foreground">{phase.description}</p>
-                      </div>
-                      {formData.phases[phase.id]?.expanded ? 
-                        <ChevronUp className="h-5 w-5" /> : 
-                        <ChevronDown className="h-5 w-5" />
-                      }
-                    </div>
-                    
-                    {formData.phases[phase.id]?.expanded && (
-                      <div className="p-4 border-t bg-gray-50">
-                        {/* Services & Drugs container */}
-                        <div className="space-y-4">
-                          {/* Service selection */}
-                          <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <h5 className="font-medium">Dịch vụ</h5>                                <Button 
-                                  type="button" 
-                                  size="sm" 
-                                  variant="outline"
-                                  className="flex items-center gap-1"
-                                  onClick={() => openServiceDialog(phase.id)}
-                                >
-                                  <PlusCircle className="h-4 w-4" />
-                                  <span>Thêm dịch vụ</span>
-                                </Button>
-                            </div>
-                            
-                            {formData.phases[phase.id]?.services?.length ? (
-                              <div className="border rounded-md overflow-hidden">
-                                <table className="w-full">
-                                  <thead className="bg-gray-100">
-                                    <tr>
-                                      <th className="p-2 text-left font-medium text-sm">Dịch vụ</th>
-                                      <th className="p-2 text-left font-medium text-sm">Lịch thực hiện</th>
-                                      <th className="p-2 text-left font-medium text-sm">Số lượng</th>
-                                      <th className="p-2 text-left font-medium text-sm">Thành tiền</th>
-                                      <th className="p-2 text-center font-medium text-sm">Thao tác</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {formData.phases[phase.id]?.services?.map((service) => (
-                                      <tr key={service.id}>
-                                        <td className="p-2 border-t">{service.name}</td>
-                                        <td className="p-2 border-t">
-                                          {service.dateRange?.from && service.dateRange?.to
-                                            ? `${formatDate(service.dateRange.from)} - ${formatDate(service.dateRange.to)}`
-                                            : 'Chưa có lịch'}
-                                        </td>
-                                        <td className="p-2 border-t">{service.quantity} lần</td>
-                                        <td className="p-2 border-t">{new Intl.NumberFormat('vi-VN').format(service.price)} ₫</td>
-                                        <td className="p-2 border-t text-center">
-                                          <Button 
-                                            variant="ghost" 
-                                            size="sm"
-                                            onClick={() => handleRemoveService(phase.id, service.id)}
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        </td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            ) : (
-                              <div className="text-center py-8 border rounded-md bg-gray-50">
-                                <p className="text-muted-foreground">Chưa có dịch vụ nào được thêm</p>
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  size="sm" 
-                                  className="mt-2"
-                                  onClick={() => openServiceDialog(phase.id)}
-                                >
-                                  <PlusCircle className="h-4 w-4 mr-1" />
-                                  Thêm dịch vụ đầu tiên
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                          
-                          {/* Drug selection */}
-                          <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <h5 className="font-medium">Thuốc</h5>                                <Button 
-                                  type="button" 
-                                  size="sm" 
-                                  variant="outline"
-                                  className="flex items-center gap-1"
-                                  onClick={() => openDrugDialog(phase.id)}
-                                >
-                                  <PlusCircle className="h-4 w-4" />
-                                  <span>Thêm thuốc</span>
-                                </Button>
-                            </div>
-                            
-                            {formData.phases[phase.id]?.drugs?.length ? (
-                              <div className="border rounded-md overflow-hidden">
-                                <table className="w-full">
-                                  <thead className="bg-gray-100">
-                                    <tr>
-                                      <th className="p-2 text-left font-medium text-sm">Thuốc</th>
-                                      <th className="p-2 text-left font-medium text-sm">Liều lượng</th>
-                                      <th className="p-2 text-left font-medium text-sm">Số lượng</th>
-                                      <th className="p-2 text-left font-medium text-sm">Thành tiền</th>
-                                      <th className="p-2 text-center font-medium text-sm">Thao tác</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {formData.phases[phase.id]?.drugs?.map((drug) => (
-                                      <tr key={drug.id}>
-                                        <td className="p-2 border-t">{drug.name}</td>
-                                        <td className="p-2 border-t">{drug.dosage}</td>
-                                        <td className="p-2 border-t">{drug.quantity} {availableDrugs.find(d => d.id === drug.id)?.unit || 'liều'}</td>
-                                        <td className="p-2 border-t">{new Intl.NumberFormat('vi-VN').format(drug.price)} ₫</td>
-                                        <td className="p-2 border-t text-center">
-                                          <Button 
-                                            variant="ghost" 
-                                            size="sm"
-                                            onClick={() => handleRemoveDrug(phase.id, drug.id)}
-                                          >
-                                            <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                        </td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            ) : (
-                              <div className="text-center py-8 border rounded-md bg-gray-50">
-                                <p className="text-muted-foreground">Chưa có thuốc nào được thêm</p>
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  size="sm" 
-                                  className="mt-2"
-                                  onClick={() => openDrugDialog(phase.id)}
-                                >
-                                  <PlusCircle className="h-4 w-4 mr-1" />
-                                  Thêm thuốc đầu tiên
-                                </Button>
-                              </div>
-                            )}
-                          </div>
+
+                {showPatientDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {filteredPatients.map((patient) => (
+                      <div
+                        key={patient.id}
+                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                        onClick={() => handlePatientSelect(patient)}
+                      >
+                        <div className="font-medium text-gray-900">{patient.name}</div>
+                        <div className="text-sm text-gray-500">
+                          {patient.email} • {patient.age} tuổi
                         </div>
                       </div>
+                    ))}
+                    {filteredPatients.length === 0 && (
+                      <div className="px-4 py-3 text-gray-500 text-center">Không tìm thấy bệnh nhân nào</div>
                     )}
                   </div>
-                ))}
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          )}
 
-          <div className="flex gap-2">
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Tạo kế hoạch điều trị
-            </Button>
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Hủy
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-      
-      {/* Service Selection Dialog */}
-      <ServiceSelectionDialog
-        open={serviceDialogOpen}
-        onOpenChange={setServiceDialogOpen}
-        onSave={handleServiceSave}
-        availableServices={availableServices}
-        phaseType={activePhaseId && formData.protocolId ? 
-          protocolPhases[formData.protocolId]?.find((p) => p.id === activePhaseId)?.title || "" : ""}
-      />
-      
-      {/* Drug Selection Dialog */}
-      <DrugSelectionDialog
-        open={drugDialogOpen}
-        onOpenChange={setDrugDialogOpen}
-        onSave={handleDrugSave}
-        availableDrugs={availableDrugs}
-        phaseType={activePhaseId && formData.protocolId ? 
-          protocolPhases[formData.protocolId]?.find((p) => p.id === activePhaseId)?.title || "" : ""}
-      />
-    </Card>
+            {/* Protocol Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="protocol">
+                Giao thức điều trị <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <div className="relative">
+                  <Input
+                    id="protocol"
+                    placeholder="Tìm kiếm và chọn giao thức..."
+                    value={protocolSearch}
+                    onChange={(e) => {
+                      setProtocolSearch(e.target.value)
+                      setShowProtocolDropdown(true)
+                    }}
+                    onFocus={() => setShowProtocolDropdown(true)}
+                    className="pr-10"
+                  />
+                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                </div>
+
+                {showProtocolDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {filteredProtocols.map((protocol) => (
+                      <div
+                        key={protocol.id}
+                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                        onClick={() => handleProtocolSelect(protocol)}
+                      >
+                        <div className="font-medium text-gray-900">{protocol.title}</div>
+                        <div className="text-sm text-gray-500">{protocol.description}</div>
+                      </div>
+                    ))}
+                    {filteredProtocols.length === 0 && (
+                      <div className="px-4 py-3 text-gray-500 text-center">Không tìm thấy giao thức nào</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Diagnosis */}
+            <div className="space-y-2">
+              <Label htmlFor="diagnosis">
+                Chẩn đoán <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="diagnosis"
+                placeholder="Nhập chẩn đoán của bệnh nhân"
+                value={formData.diagnosis}
+                onChange={(e) => setFormData((prev) => ({ ...prev, diagnosis: e.target.value }))}
+                rows={3}
+              />
+            </div>
+
+            {/* Treatment Plan Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">
+                Mô tả kế hoạch điều trị <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="description"
+                placeholder="Mô tả chi tiết về kế hoạch điều trị, mục tiêu và các bước thực hiện..."
+                value={formData.description}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                rows={4}
+              />
+            </div>
+
+            {/* Payment Method */}
+            {/* <div className="space-y-2">
+              <Label htmlFor="paymentMethod">Hình thức thanh toán</Label>
+              <Select
+                value={formData.paymentMethod}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, paymentMethod: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="phase">Thanh toán theo giai đoạn</SelectItem>
+                  <SelectItem value="full">Thanh toán toàn bộ</SelectItem>
+                  <SelectItem value="insurance">Bảo hiểm y tế</SelectItem>
+                </SelectContent>
+              </Select>
+            </div> */}
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-4 pt-6">
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Hủy
+              </Button>
+              <Button type="submit" className="bg-[#004c77] hover:bg-[#003d61]">
+                Tạo kế hoạch điều trị
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

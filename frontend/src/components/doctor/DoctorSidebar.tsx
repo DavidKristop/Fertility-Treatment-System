@@ -46,85 +46,33 @@ const sidebarItems: SidebarItem[] = [
     icon: LayoutDashboard,
     path: "/doctor/dashboard",
   },
+
   {
-    id: "appointments",
+    id: "schedule",
     label: "Lịch khám",
     icon: Calendar,
-    badge: 5,
-    children: [
-      {
+    path: "/doctor/schedule",
+  },
+
+  {
         id: "pending-approvals",
         label: "Chờ duyệt",
         icon: ClipboardList,
-        path: "/doctor/appointments/pending",
-        badge: 8,
-      },
-      {
-        id: "today-appointments",
-        label: "Lịch khám hôm nay",
-        icon: Clock,
-        path: "/doctor/appointments/today",
-        badge: 3,
-      },
-      {
-        id: "calendar",
-        label: "Xem lịch",
-        icon: CalendarDays,
-        path: "/doctor/appointments/calendar",
-      },
-    ],
+        path: "/doctor/pending",
   },
-  {
-    id: "patients",
-    label: "Bệnh nhân",
-    icon: Users,
-    children: [
-      {
-        id: "all-patients",
-        label: "Tất cả bệnh nhân",
-        icon: Users,
-        path: "/doctor/patients",
-      },
-    ],
-  },
+
   {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
     path: "/doctor/treatment-plans",
   },
-  {
-    id: "prescriptions",
-    label: "Đơn thuốc",
-    icon: Pill,
-    children: [
-      {
-        id: "active-prescriptions",
-        label: "Đơn đang dùng",
-        icon: Pill,
-        path: "/doctor/prescriptions/active",
-      },
-      {
-        id: "new-prescription",
-        label: "Tạo đơn mới",
-        icon: FileText,
-        path: "/doctor/prescriptions/new",
-      },
-    ],
-  },
+
   {
     id: "notifications",
     label: "Nhắc nhở & Thông báo",
     icon: Bell,
-    badge: 7,
-    children: [
-      {
-        id: "reminder-history",
-        label: "Lịch sử nhắc nhở",
-        icon: MessageSquare,
-        path: "/doctor/notifications/reminders",
-      },
-    ],
+    path: "/doctor/notifications/reminders",
   },
 ]
 
@@ -268,7 +216,8 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       </nav>
 
       {/* Logout */}
-      <div className="p-2 border-t border-gray-200 mt-auto">
+      {/* <div className="p-2 border-t border-gray-200 mt-auto"> */}
+      <div className="p-2 border-t border-gray-200">
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {

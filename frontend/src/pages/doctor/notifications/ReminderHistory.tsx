@@ -23,7 +23,6 @@ interface Reminder {
   sentDate: string
   sentTime: string
   type: "appointment" | "medication" | "followup" | "general"
-  status: "sent" | "delivered" | "read"
 }
 
 const mockReminders: Reminder[] = [
@@ -36,10 +35,9 @@ const mockReminders: Reminder[] = [
       name: "Nguyễn Thị Lan",
       email: "lan.nguyen@email.com",
     },
-    sentDate: "2024-01-15",
+    sentDate: "15-01-2024",
     sentTime: "08:00",
     type: "appointment",
-    status: "read",
   },
   {
     id: "2",
@@ -50,10 +48,9 @@ const mockReminders: Reminder[] = [
       name: "Trần Văn Nam",
       email: "nam.tran@email.com",
     },
-    sentDate: "2024-01-15",
+    sentDate: "15-01-2024",
     sentTime: "19:00",
     type: "medication",
-    status: "delivered",
   },
   {
     id: "3",
@@ -64,10 +61,9 @@ const mockReminders: Reminder[] = [
       name: "Lê Thị Hoa",
       email: "hoa.le@email.com",
     },
-    sentDate: "2024-01-14",
+    sentDate: "14-01-2024",
     sentTime: "10:30",
     type: "followup",
-    status: "sent",
   },
 ]
 
@@ -118,32 +114,6 @@ export default function ReminderHistory() {
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "sent":
-        return "bg-yellow-100 text-yellow-800"
-      case "delivered":
-        return "bg-blue-100 text-blue-800"
-      case "read":
-        return "bg-green-100 text-green-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "sent":
-        return "Đã gửi"
-      case "delivered":
-        return "Đã nhận"
-      case "read":
-        return "Đã đọc"
-      default:
-        return "Không xác định"
-    }
-  }
-
   return (
     <DoctorLayout title="Lịch sử nhắc nhở" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
@@ -178,7 +148,6 @@ export default function ReminderHistory() {
                     <TableHead>Người nhận</TableHead>
                     <TableHead>Loại</TableHead>
                     <TableHead>Thời gian gửi</TableHead>
-                    <TableHead>Trạng thái</TableHead>
                     <TableHead className="text-right">Hành động</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -208,9 +177,6 @@ export default function ReminderHistory() {
                           <div>{reminder.sentDate}</div>
                           <div className="text-muted-foreground">{reminder.sentTime}</div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(reminder.status)}>{getStatusText(reminder.status)}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <Dialog>
@@ -254,14 +220,6 @@ export default function ReminderHistory() {
                                 <p className="mt-1 p-3 bg-gray-50 rounded">{reminder.content}</p>
                               </div>
 
-                              <div>
-                                <Label className="font-semibold">Trạng thái:</Label>
-                                <div className="mt-1">
-                                  <Badge className={getStatusColor(reminder.status)}>
-                                    {getStatusText(reminder.status)}
-                                  </Badge>
-                                </div>
-                              </div>
                             </div>
                           </DialogContent>
                         </Dialog>

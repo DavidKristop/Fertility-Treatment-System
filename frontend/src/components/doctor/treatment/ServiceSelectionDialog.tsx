@@ -1,20 +1,16 @@
 "use client"
-
 import { useState } from "react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { DateRange } from "react-day-picker" 
-import { DateRangePicker } from "@/components/ui/date-range-picker"
+import { Input } from "@/components/ui/input"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon, Save, X } from "lucide-react"
+import { format } from "date-fns"
+import { vi } from "date-fns/locale"
+import type { DateRange } from "react-day-picker"
 
 interface Service {
   id: string
@@ -26,11 +22,7 @@ interface Service {
 interface ServiceSelectionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (serviceData: {
-    serviceId: string
-    dateRange: DateRange | undefined
-    quantity: number
-  }) => void
+  onSave: (data: { serviceId: string; dateRange: DateRange | undefined; quantity: number }) => void
   availableServices: Service[]
   phaseType: string
 }
@@ -40,125 +32,133 @@ export default function ServiceSelectionDialog({
   onOpenChange,
   onSave,
   availableServices,
-  phaseType
+  phaseType,
 }: ServiceSelectionDialogProps) {
-  const [selectedService, setSelectedService] = useState<string>("")
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
-  const [quantity, setQuantity] = useState<number>(1)
-  const selectedServiceData = availableServices.find(s => s.id === selectedService)
+  const [selectedServiceId, setSelectedServiceId] = useState("")
+  const [dateRange, setDateRange] = useState<DateRange | undefined>()
+  const [quantity, setQuantity] = useState(1)
+  const [calendarOpen, setCalendarOpen] = useState(false)
 
-  // Filter services based on the phase type
-  const filteredServices = availableServices.filter(service => {
-    // In a real app, you would have a more sophisticated matching logic
-    // based on your specific requirements
-    if (phaseType.includes("Kích thích")) {
-      return ["Siêu âm theo dõi", "Xét nghiệm máu"].includes(service.name)
-    }
-    if (phaseType.includes("Thu hoạch trứng")) {
-      return service.name === "Chọc hút trứng"
-    }
-    if (phaseType.includes("Nuôi cấy")) {
-      return ["Thụ tinh trong ống nghiệm", "Nuôi cấy phôi"].includes(service.name)
-    }
-    if (phaseType.includes("Chuyển phôi")) {
-      return service.name === "Chuyển phôi"
-    }
-    if (phaseType.includes("Bơm tinh trùng")) {
-      return service.name === "Bơm tinh trùng"
-    }
-    return true
-  })
-
-  const calculateTotal = () => {
-    if (!selectedServiceData) return 0
-    return selectedServiceData.price * quantity
-  }
+  const selectedService = availableServices.find((s) => s.id === selectedServiceId)
 
   const handleSave = () => {
-    if (!selectedService || !dateRange) return
+    if (!selectedServiceId) return
 
     onSave({
-      serviceId: selectedService,
+      serviceId: selectedServiceId,
       dateRange,
-      quantity
+      quantity,
     })
 
     // Reset form
-    setSelectedService("")
+    setSelectedServiceId("")
     setDateRange(undefined)
     setQuantity(1)
     onOpenChange(false)
   }
 
+  const handleCancel = () => {
+    // Reset form
+    setSelectedServiceId("")
+    setDateRange(undefined)
+    setQuantity(1)
+    onOpenChange(false)
+  }
+
+  const formatDateRange = (range: DateRange | undefined) => {
+    if (!range?.from) return "Chọn khoảng thời gian"
+    if (!range.to) return format(range.from, "dd/MM/yyyy", { locale: vi })
+    return `${format(range.from, "dd/MM/yyyy", { locale: vi })} - ${format(range.to, "dd/MM/yyyy", { locale: vi })}`
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Thêm dịch vụ mới</DialogTitle>
-          <DialogDescription>
-            Chọn dịch vụ và lịch thực hiện cho giai đoạn điều trị này.
-          </DialogDescription>
+          <DialogTitle>Thêm dịch vụ - {phaseType}</DialogTitle>
         </DialogHeader>
-        
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="service">1. Chọn lịch thực hiện</Label>
-            <DateRangePicker 
-              value={dateRange} 
-              onChange={setDateRange}
-            />
-          </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="service">2. Chọn dịch vụ</Label>
-            <Select value={selectedService} onValueChange={setSelectedService}>
+
+        <div className="space-y-4">
+          {/* Service Selection */}
+          <div>
+            <Label htmlFor="service">Chọn dịch vụ</Label>
+            <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
               <SelectTrigger>
-                <SelectValue placeholder="Chọn dịch vụ" />
+                <SelectValue placeholder="Chọn dịch vụ..." />
               </SelectTrigger>
               <SelectContent>
-                {filteredServices.map((service) => (
+                {availableServices.map((service) => (
                   <SelectItem key={service.id} value={service.id}>
-                    {service.name} - {new Intl.NumberFormat('vi-VN').format(service.price)}đ/{service.unit}
+                    <div className="flex flex-col">
+                      <span>{service.name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {new Intl.NumberFormat("vi-VN").format(service.price)} ₫/{service.unit}
+                      </span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="quantity">3. Số lượng</Label>
+
+          {/* Date Range Selection */}
+          <div>
+            <Label>Khoảng thời gian thực hiện</Label>
+            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formatDateRange(dateRange)}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={dateRange?.from}
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* Quantity */}
+          <div>
+            <Label htmlFor="quantity">Số lượng</Label>
             <Input
               id="quantity"
               type="number"
-              min={1}
+              min="1"
               value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
+              onChange={(e) => setQuantity(Number.parseInt(e.target.value) || 1)}
             />
           </div>
-          
-          {selectedServiceData && (
-            <div className="border-t pt-3 mt-2">
-              <div className="flex justify-between">
-                <span className="font-medium">Thành tiền:</span>
-                <span className="font-bold">
-                  {new Intl.NumberFormat('vi-VN').format(calculateTotal())}đ
+
+          {/* Price Preview */}
+          {selectedService && (
+            <div className="p-3 bg-gray-50 rounded-md">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Tổng chi phí:</span>
+                <span className="font-medium">
+                  {new Intl.NumberFormat("vi-VN").format(selectedService.price * quantity)} ₫
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {selectedServiceData.price.toLocaleString('vi-VN')}đ x {quantity} {selectedServiceData.unit}
-              </p>
             </div>
           )}
         </div>
-        
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+
+        <div className="flex gap-2 mt-6">
+          <Button onClick={handleSave} disabled={!selectedServiceId} className="flex-1">
+            <Save className="h-4 w-4 mr-2" />
+            Thêm dịch vụ
+          </Button>
+          <Button variant="outline" onClick={handleCancel}>
+            <X className="h-4 w-4 mr-2" />
             Hủy
           </Button>
-          <Button type="button" onClick={handleSave} disabled={!selectedService || !dateRange}>
-            Lưu
-          </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   )

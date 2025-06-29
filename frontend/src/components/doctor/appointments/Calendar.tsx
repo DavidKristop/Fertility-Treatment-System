@@ -1,73 +1,37 @@
-import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ChevronLeft, ChevronRight, CalendarIcon, Plus, MapPin } from "lucide-react"
-import { useState } from "react"
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react"
+import { type Schedule } from "@/api/schedule"
 
-// Mock data cho appointments - chỉ khám trực tiếp
-const appointments = [
-  {
-    id: 1,
-    date: "2024-01-15",
-    time: "09:00",
-    duration: 30,
-    patient: "Nguyễn Thị Lan",
-    reason: "Tái khám IVF - Giai đoạn 2",
-    status: "confirmed",
-  },
-  {
-    id: 2,
-    date: "2024-01-15",
-    time: "10:30",
-    duration: 20,
-    patient: "Trần Văn Nam",
-    reason: "Tư vấn kết quả xét nghiệm",
-    status: "pending",
-  },
-  {
-    id: 3,
-    date: "2024-01-16",
-    time: "14:00",
-    duration: 45,
-    patient: "Lê Thị Hoa",
-    reason: "Khám đầu - Tư vấn IUI",
-    status: "confirmed",
-  },
-  {
-    id: 4,
-    date: "2024-01-17",
-    time: "15:30",
-    duration: 30,
-    patient: "Phạm Minh Tuấn",
-    reason: "Theo dõi sau chuyển phôi",
-    status: "confirmed",
-  },
-  {
-    id: 5,
-    date: "2024-01-18",
-    time: "09:30",
-    duration: 30,
-    patient: "Võ Thị Mai",
-    reason: "Tư vấn kế hoạch điều trị",
-    status: "confirmed",
-  },
-  {
-    id: 6,
-    date: "2024-01-19",
-    time: "11:00",
-    duration: 60,
-    patient: "Hoàng Văn Đức",
-    reason: "Khám tổng quát và tư vấn",
-    status: "pending",
-  },
-]
+interface CalendarProps {
+  appointments: Schedule[]
+  onAppointmentClick?: (appointmentId: string) => void
+  currentDate?: Date
+  onChangeDate?: (date: Date) => void
+}
 
-export default function Calendar() {
-  const [currentDate, setCurrentDate] = useState(new Date())
+export default function Calendar({
+  appointments = [],
+  onAppointmentClick,
+  currentDate: externalCurrentDate,
+  onChangeDate,
+}: CalendarProps) {
+  const [internalCurrentDate, setInternalCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
 
-  const breadcrumbs = [{ label: "Trang chủ", path: "/doctor/dashboard" }, { label: "Cuộc hẹn" }, { label: "Xem lịch" }]
+  // Use either external or internal state for current date
+  const currentDate = externalCurrentDate || internalCurrentDate
+  
+  // Update date state with appropriate handler
+  const updateCurrentDate = (newDate: Date) => {
+    if (onChangeDate) {
+      onChangeDate(newDate)
+    } else {
+      setInternalCurrentDate(newDate)
+    }
+  }
 
   // Helper functions
   const getMonthName = (date: Date) => {
@@ -113,11 +77,12 @@ export default function Calendar() {
   }
 
   const getAppointmentsForDate = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0]
-    return appointments.filter((apt) => {
-      return apt.date === dateString
-    })
-  }
+  const dateString = date.toISOString().split("T")[0]
+  return appointments.filter((apt) => {
+    const aptDate = new Date(apt.appointment_datetime).toISOString().split("T")[0]
+    return aptDate === dateString
+  })
+}
 
   const navigateMonth = (direction: "prev" | "next") => {
     const newDate = new Date(currentDate)
@@ -126,7 +91,7 @@ export default function Calendar() {
     } else {
       newDate.setMonth(newDate.getMonth() + 1)
     }
-    setCurrentDate(newDate)
+    updateCurrentDate(newDate)
   }
 
   const navigateWeek = (direction: "prev" | "next") => {
@@ -136,7 +101,7 @@ export default function Calendar() {
     } else {
       newDate.setDate(newDate.getDate() + 7)
     }
-    setCurrentDate(newDate)
+    updateCurrentDate(newDate)
   }
 
   const isToday = (date: Date) => {
@@ -146,12 +111,17 @@ export default function Calendar() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "Done":
       case "confirmed":
         return "bg-green-100 text-green-800 border-green-200"
+      case "Pending":
       case "pending":
         return "bg-yellow-100 text-yellow-800 border-yellow-200"
+      case "Cancel":
       case "cancelled":
         return "bg-red-100 text-red-800 border-red-200"
+      case "Changed":
+        return "bg-blue-100 text-blue-800 border-blue-200"
       default:
         return "bg-gray-100 text-gray-800 border-gray-200"
     }
@@ -159,6 +129,12 @@ export default function Calendar() {
 
   const getTypeIcon = () => {
     return <MapPin className="h-3 w-3 text-green-600" />
+  }
+
+  const handleAppointmentClick = (appointmentId: string) => {
+    if (onAppointmentClick) {
+      onAppointmentClick(appointmentId)
+    }
   }
 
   const renderMonthView = () => {
@@ -196,12 +172,16 @@ export default function Calendar() {
                         <div
                           key={apt.id}
                           className={`text-xs p-1 rounded border cursor-pointer hover:shadow-sm ${getStatusColor(apt.status)}`}
+                          onClick={() => handleAppointmentClick(apt.id)}
                         >
                           <div className="flex items-center gap-1 mb-1">
                             {getTypeIcon()}
-                            <span className="font-medium">{apt.time}</span>
+                            <span className="font-medium">{new Date(apt.appointment_datetime).toLocaleTimeString("vi-VN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}</span>
                           </div>
-                          <div className="truncate">{apt.patient}</div>
+                          <div className="truncate">{apt.patient?.name || "Bệnh nhân"}</div>
                         </div>
                       ))}
                     {getAppointmentsForDate(day).length > 3 && (
@@ -251,19 +231,23 @@ export default function Calendar() {
                   <div key={dayIndex} className="p-1 border-r last:border-r-0 relative">
                     {getAppointmentsForDate(day)
                       .filter((apt) => {
-                        const aptHour = Number.parseInt(apt.time.split(":")[0])
+                        const aptHour = new Date(apt.appointment_datetime).getHours()
                         return aptHour === hour
                       })
                       .map((apt) => (
                         <div
                           key={apt.id}
                           className={`text-xs p-2 rounded border cursor-pointer hover:shadow-sm ${getStatusColor(apt.status)}`}
+                          onClick={() => handleAppointmentClick(apt.id)}
                         >
                           <div className="flex items-center gap-1 mb-1">
                             {getTypeIcon()}
-                            <span className="font-medium">{apt.time}</span>
+                            <span className="font-medium">{new Date(apt.appointment_datetime).toLocaleTimeString("vi-VN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}</span>
                           </div>
-                          <div className="font-medium truncate">{apt.patient}</div>
+                          <div className="font-medium truncate">{apt.patient?.name || "Bệnh nhân"}</div>
                           <div className="text-xs opacity-75 truncate">{apt.reason}</div>
                         </div>
                       ))}
@@ -278,102 +262,77 @@ export default function Calendar() {
   }
 
   return (
-    <DoctorLayout title="Lịch làm việc" breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
-        {/* Header Controls */}
-        <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <div className="flex items-center gap-4">
-            {/* Navigation */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => (viewMode === "month" ? navigateMonth("prev") : navigateWeek("prev"))}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
+    <div className="space-y-4">
+      {/* Header Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="flex items-center gap-4">
+          {/* Navigation */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => (viewMode === "month" ? navigateMonth("prev") : navigateWeek("prev"))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
 
-              <div className="min-w-[200px] text-center">
-                <h2 className="text-lg font-semibold">
-                  {viewMode === "month"
-                    ? getMonthName(currentDate)
-                    : `Tuần ${Math.ceil(currentDate.getDate() / 7)} - ${getMonthName(currentDate)}`}
-                </h2>
-              </div>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => (viewMode === "month" ? navigateMonth("next") : navigateWeek("next"))}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+            <div className="min-w-[180px] text-center">
+              <h2 className="text-base font-semibold">
+                {viewMode === "month"
+                  ? getMonthName(currentDate)
+                  : `Tuần ${Math.ceil(currentDate.getDate() / 7)} - ${getMonthName(currentDate)}`}
+              </h2>
             </div>
 
-            {/* Today button */}
-            <Button variant="outline" onClick={() => setCurrentDate(new Date())} className="hidden sm:flex">
-              Hôm nay
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => (viewMode === "month" ? navigateMonth("next") : navigateWeek("next"))}
+            >
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* View mode toggle */}
-            <Select value={viewMode} onValueChange={(value: "month" | "week") => setViewMode(value)}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="month">Tháng</SelectItem>
-                <SelectItem value="week">Tuần</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Add appointment */}
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Tạo cuộc hẹn
-            </Button>
-          </div>
+          {/* Today button */}
+          <Button variant="outline" onClick={() => updateCurrentDate(new Date())} className="hidden sm:flex">
+            Hôm nay
+          </Button>
         </div>
 
-        {/* Calendar View */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5" />
-              Lịch làm việc - {viewMode === "month" ? "Xem theo tháng" : "Xem theo tuần"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">{viewMode === "month" ? renderMonthView() : renderWeekView()}</CardContent>
-        </Card>
-
-        {/* Legend */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Chú thích</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                <span className="text-sm">Đã xác nhận</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                <span className="text-sm">Chờ xác nhận</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                <span className="text-sm">Đã hủy</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-green-600" />
-                <span className="text-sm">Tại phòng</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center">
+          {/* View mode toggle */}
+          <Select value={viewMode} onValueChange={(value: "month" | "week") => setViewMode(value)}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="month">Tháng</SelectItem>
+              <SelectItem value="week">Tuần</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-    </DoctorLayout>
+
+      {/* Calendar View */}
+      <CardContent className="p-0">
+        {viewMode === "month" ? renderMonthView() : renderWeekView()}
+      </CardContent>
+
+      {/* Legend */}
+      <div className="flex flex-wrap gap-4 text-sm mt-2">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-green-100 border border-green-200 rounded"></div>
+          <span>Đã xác nhận</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-yellow-100 border border-yellow-200 rounded"></div>
+          <span>Chờ xác nhận</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
+          <span>Đã hủy</span>
+        </div>
+      </div>
+    </div>
   )
 }

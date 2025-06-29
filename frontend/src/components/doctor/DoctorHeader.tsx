@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Bell, Search, User, Menu } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { Bell, User, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -62,16 +61,6 @@ export default function DoctorHeader({
 
         {/* Right side - Search, Notifications, Profile */}
         <div className="flex items-center gap-2 lg:gap-4">
-          {/* Search - Hidden on small screens */}
-          <div className="relative hidden lg:block">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input placeholder="Tìm kiếm bệnh nhân, cuộc hẹn..." className="pl-10 w-60 xl:w-80" />
-          </div>
-
-          {/* Search button for mobile */}
-          <Button variant="ghost" size="icon" className="lg:hidden">
-            <Search className="h-5 w-5" />
-          </Button>
 
           {/* Notifications */}
           <div className="relative">
