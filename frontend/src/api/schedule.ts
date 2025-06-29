@@ -1,83 +1,62 @@
-// Schedule API for appointment management
+// Mock data and types for schedule management
 
-// Interfaces cập nhật theo ERD
 export interface Patient {
-  id: string // ERD: uuid
+  id: string
   name: string
-  age: number
-  phone: string
+  phone?: string
   email?: string
+  age?: number
   avatar?: string
 }
 
-export interface Doctor {
-  id: string // ERD: uuid
-  name: string
-  specialty: string
-  licenseNumber: string
-}
-
 export interface Service {
-  id: string // ERD: uuid
+  id: string
   name: string
+  description: string
   price: number
-  description: string // ERD: thêm description
-  unit: string // ERD: thêm unit
-  isActive: boolean // ERD: thêm isActive
+  unit: string
   notes?: string
 }
 
 export interface Drug {
-  id: string // ERD: uuid
+  id: string
   name: string
-  description: string // ERD: thêm description
-  price: number // ERD: thêm price
-  isActive: boolean // ERD: thêm isActive
-  unit: string // ERD: thêm unit
+  description: string
+  price: number
+  unit: string
   dosage: string
   instructions: string
   amount: number
 }
 
 export interface Schedule {
-  id: string // ERD: uuid
-  doctor_id: string // ERD: uuid
-  patient_id: string // ERD: uuid
-  treatment_phase_id: string // ERD: uuid
-  appointment_datetime: string // ERD: datetime
-  estimated_time: string // ERD: datetime
-  is_consultation: boolean // ERD: binary
-  status: "Pending" | "Changed" | "Done" | "Cancel" // ERD: varchar
-  payment_id?: string // ERD: uuid - optional relation
-  
-  // Các trường bổ sung để hiển thị trên UI (không có trong ERD)
-  patient: Patient
-  doctor: Doctor
-  services: Service[]
-  drugs: Drug[]
+  id: string
+  doctor_id: string
+  patient_id: string
+  treatment_phase_id?: string
+  appointment_datetime: string
+  estimated_time?: string
+  is_consultation?: boolean
+  status: string // Pending, Changed, Done, Cancel
+  payment_id?: string
   reason: string
   duration: number
+  patient?: Patient
+  services?: Service[]
+  drugs?: Drug[]
 }
 
 export interface ScheduleResult {
-  id: string // ERD: uuid
-  doctors_note: string // ERD: varchar
-  schedule_id: string // ERD: uuid
-  attachments?: ScheduleResultAttachment[] // ERD: quan hệ 1-n
+  id: string
+  doctors_note: string
+  schedule_id: string
+  attachments?: ScheduleResultAttachment[]
 }
 
-// Thêm interface mới từ ERD
 export interface ScheduleResultAttachment {
-  id: string // ERD: uuid
-  attachment_url: string // ERD: varchar
-  schedule_result_id: string // ERD: uuid
-}
-
-export interface ScheduleService {
-  id: string // ERD: uuid (thay vì int)
-  schedule_id: string // ERD: uuid (thay vì int)
-  service_id: string // ERD: uuid (thay vì int)
-  notes: string // ERD: varchar
+  id: string
+  attachment_url: string
+  schedule_result_id: string
 }
 
 export interface ScheduleResultRequest {
@@ -86,184 +65,186 @@ export interface ScheduleResultRequest {
   attachments?: File[]
 }
 
-// Mock data for today's appointments
+// Mock data
+const mockPatients: Patient[] = [
+  {
+    id: "1",
+    name: "Nguyễn Thị Lan",
+    phone: "0901234567",
+    email: "lan.nguyen@email.com",
+    age: 32,
+  },
+  {
+    id: "2",
+    name: "Trần Văn Nam",
+    phone: "0912345678",
+    email: "nam.tran@email.com",
+    age: 35,
+  },
+  {
+    id: "3",
+    name: "Lê Thị Hoa",
+    phone: "0923456789",
+    email: "hoa.le@email.com",
+    age: 28,
+  },
+]
+
+const mockServices: Service[] = [
+  {
+    id: "1",
+    name: "Siêu âm theo dõi nang trứng",
+    description: "Theo dõi sự phát triển của nang trứng trong quá trình kích thích",
+    price: 300000,
+    unit: "lần",
+    notes: "Thực hiện vào buổi sáng, nhịn ăn 4 tiếng trước",
+  },
+  {
+    id: "2",
+    name: "Xét nghiệm hormone FSH, LH",
+    description: "Xét nghiệm nồng độ hormone kích thích nang trứng",
+    price: 250000,
+    unit: "lần",
+  },
+  {
+    id: "3",
+    name: "Chọc hút trứng",
+    description: "Thu thập trứng từ buồng trứng",
+    price: 5000000,
+    unit: "lần",
+  },
+]
+
+const mockDrugs: Drug[] = [
+  {
+    id: "1",
+    name: "Gonal-F 450IU",
+    description: "Thuốc kích thích buồng trứng",
+    price: 1200000,
+    unit: "ống",
+    dosage: "150IU/ngày",
+    instructions: "Tiêm dưới da vào buổi tối, cùng giờ mỗi ngày",
+    amount: 1,
+  },
+  {
+    id: "2",
+    name: "Lupron (GnRH Agonist)",
+    description: "Thuốc ức chế hormone",
+    price: 800000,
+    unit: "ống",
+    dosage: "0.5ml/ngày",
+    instructions: "Tiêm dưới da vào buổi sáng",
+    amount: 1,
+  },
+]
+
 const mockSchedules: Schedule[] = [
   {
     id: "1",
-    doctor_id: "doc123",
-    patient_id: "pat001",
-    treatment_phase_id: "phase-001",
-    appointment_datetime: new Date().toISOString().split("T")[0] + "T09:00:00",
-    estimated_time: new Date().toISOString().split("T")[0] + "T09:30:00",
-    is_consultation: false,
-    status: "Pending",
-    patient: {
-      id: "pat001",
-      name: "Nguyễn Thị Lan",
-      age: 32,
-      phone: "0901234567",
-      email: "lan.nguyen@email.com",
-    },
-    doctor: {
-      id: "doc123",
-      name: "Bác sĩ Nguyễn Văn A",
-      specialty: "Sản phụ khoa",
-      licenseNumber: "MD12345",
-    },
-    services: [
-      {
-        id: "svc001",
-        name: "Tái khám IVF - Giai đoạn 2",
-        price: 500000,
-        description: "Kiểm tra quá trình IVF giai đoạn 2",
-        unit: "lần",
-        isActive: true,
-        notes: "Kiểm tra phát triển phôi thai",
-      },
-      {
-        id: "svc002",
-        name: "Siêu âm kiểm tra",
-        price: 200000,
-        description: "Siêu âm 4D để kiểm tra thai nhi",
-        unit: "lần", 
-        isActive: true,
-        notes: "Siêu âm 4D",
-      },
-    ],
-    drugs: [
-      {
-        id: "drug001",
-        name: "Folic Acid",
-        dosage: "5mg",
-        description: "Vitamin hỗ trợ phát triển thai nhi",
-        price: 50000,
-        unit: "viên",
-        isActive: true,
-        instructions: "Uống 1 viên mỗi ngày sau bữa sáng",
-        amount: 30,
-      },
-      {
-        id: "drug002",
-        name: "Vitamin D3",
-        dosage: "1000IU",
-        description: "Vitamin D hỗ trợ hấp thu canxi",
-        price: 60000,
-        unit: "viên",
-        isActive: true,
-        instructions: "Uống 1 viên mỗi ngày sau bữa tối",
-        amount: 60,
-      },
-    ],
-    reason: "Tái khám IVF - Giai đoạn 2",
-    duration: 30,
+    doctor_id: "doc1",
+    patient_id: "1",
+    appointment_datetime: "2024-01-15T09:00:00",
+    status: "Done",
+    reason: "Khám định kỳ và theo dõi kết quả điều trị",
+    duration: 60,
+    patient: mockPatients[0],
+    services: [mockServices[0], mockServices[1]],
+    drugs: [mockDrugs[0]],
   },
-  // Các mock data khác vẫn giữ nguyên, nhưng cần cập nhật theo format mới
-  // ... (giữ nguyên phần còn lại của mock data)
+  {
+    id: "2",
+    doctor_id: "doc1",
+    patient_id: "2",
+    appointment_datetime: "2024-01-20T14:00:00",
+    status: "Pending",
+    reason: "Tái khám và đánh giá tiến triển",
+    duration: 45,
+    patient: mockPatients[1],
+    services: [mockServices[1]],
+    drugs: [mockDrugs[1]],
+  },
+  {
+    id: "3",
+    doctor_id: "doc1",
+    patient_id: "3",
+    appointment_datetime: "2024-01-25T10:30:00",
+    status: "Changed",
+    reason: "Khám cấp cứu - tác dụng phụ thuốc",
+    duration: 30,
+    patient: mockPatients[2],
+    services: [mockServices[0]],
+    drugs: [],
+  },
 ]
 
-// API functions - cập nhật và bổ sung
-export const getScheduleById = async (id: string): Promise<Schedule | null> => {
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  const schedule = mockSchedules.find((s) => s.id === id)
-  return schedule || null
+const mockScheduleResults: ScheduleResult[] = [
+  {
+    id: "1",
+    doctors_note:
+      "Bệnh nhân phản ứng tốt với điều trị. Nang trứng phát triển bình thường. Tiếp tục theo dõi và điều chỉnh liều thuốc theo kết quả siêu âm.",
+    schedule_id: "1",
+    attachments: [
+      {
+        id: "1",
+        attachment_url: "/files/ultrasound-20240115.jpg",
+        schedule_result_id: "1",
+      },
+    ],
+  },
+]
+
+// API functions
+export const getSchedules = async (): Promise<Schedule[]> => {
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  return mockSchedules
 }
 
 export const getTodaySchedules = async (): Promise<Schedule[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  return mockSchedules
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  const today = new Date().toISOString().split("T")[0]
+  return mockSchedules.filter((schedule) => schedule.appointment_datetime.startsWith(today))
 }
 
-// Bổ sung API getSchedules theo ERD
-export const getSchedules = async (): Promise<Schedule[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  return mockSchedules
+export const getScheduleById = async (id: string): Promise<Schedule | null> => {
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  return mockSchedules.find((schedule) => schedule.id === id) || null
 }
 
-// Bổ sung API getSchedulesByDoctor
-export const getSchedulesByDoctor = async (doctorId: string): Promise<Schedule[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  return mockSchedules.filter(schedule => schedule.doctor_id === doctorId)
+export const getScheduleResult = async (scheduleId: string): Promise<ScheduleResult | null> => {
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  return mockScheduleResults.find((result) => result.schedule_id === scheduleId) || null
 }
 
-// Bổ sung API getSchedulesByPatient
-export const getSchedulesByPatient = async (patientId: string): Promise<Schedule[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  return mockSchedules.filter(schedule => schedule.patient_id === patientId)
-}
-
-// Bổ sung API getSchedulesByDateRange
-export const getSchedulesByDateRange = async (
-  startDate: string,
-  endDate: string
-): Promise<Schedule[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  return mockSchedules.filter(schedule => {
-    const appointmentDate = new Date(schedule.appointment_datetime)
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-    return appointmentDate >= start && appointmentDate <= end
-  })
-}
-
-// Cập nhật API createScheduleResult thêm attachments
 export const createScheduleResult = async (data: ScheduleResultRequest): Promise<ScheduleResult> => {
+  // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  const attachments = data.attachments?.map((file) => ({
-    id: `att_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-    attachment_url: `uploads/${file.name}`,
-    schedule_result_id: `result_${Date.now()}`
-  })) || []
-
-  const result: ScheduleResult = {
-    id: `result_${Date.now()}`,
+  const newResult: ScheduleResult = {
+    id: Date.now().toString(),
     doctors_note: data.doctors_note,
     schedule_id: data.schedule_id,
-    attachments: attachments
+    attachments:
+      data.attachments?.map((file, index) => ({
+        id: `${Date.now()}-${index}`,
+        attachment_url: `/files/${file.name}`,
+        schedule_result_id: Date.now().toString(),
+      })) || [],
   }
 
-  return result
+  mockScheduleResults.push(newResult)
+  return newResult
 }
 
-// Cập nhật API getScheduleResult để trả về đúng cấu trúc
-export const getScheduleResult = async (scheduleId: string): Promise<ScheduleResult | null> => {
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  
-  // Mẫu kết quả trả về
-  const result: ScheduleResult = {
-    id: `result_${scheduleId}`,
-    doctors_note: "Bệnh nhân có dấu hiệu phát triển tốt. Cần tiếp tục theo dõi.",
-    schedule_id: scheduleId,
-    attachments: [
-      {
-        id: `att_001_${scheduleId}`,
-        attachment_url: "uploads/sieu-am.jpg",
-        schedule_result_id: `result_${scheduleId}`
-      },
-      {
-        id: `att_002_${scheduleId}`,
-        attachment_url: "uploads/xet-nghiem.pdf",
-        schedule_result_id: `result_${scheduleId}`
-      }
-    ]
-  }
-  
-  return Math.random() > 0.3 ? result : null // 70% trả về kết quả, 30% trả về null
-}
-
-// Bổ sung API updateScheduleStatus
-export const updateScheduleStatus = async (
-  scheduleId: string, 
-  status: "Pending" | "Changed" | "Done" | "Cancel"
-): Promise<Schedule> => {
+export const updateScheduleStatus = async (scheduleId: string, status: string): Promise<void> => {
+  // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 500))
-  const index = mockSchedules.findIndex(s => s.id === scheduleId)
-  if (index === -1) throw new Error('Schedule not found')
-  
-  mockSchedules[index] = {
-    ...mockSchedules[index],
-    status
+
+  const schedule = mockSchedules.find((s) => s.id === scheduleId)
+  if (schedule) {
+    schedule.status = status
   }
-  
-  return mockSchedules[index]
 }
