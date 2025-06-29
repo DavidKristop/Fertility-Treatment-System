@@ -1,9 +1,12 @@
+"use client"
+
+import { useState } from "react"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Plus } from "lucide-react"
-import PatientTable from "@/components/doctor/patients/PatientTable"
+import { Plus, Users } from "lucide-react"
+import SearchAndFilter from "@/components/doctor/common/SearchAndFilter"
+import DataTable from "@/components/doctor/common/DataTable"
+import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge"
 
 // Mock data
 const patients = [
@@ -75,65 +78,104 @@ const patients = [
 ]
 
 export default function PatientList() {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800"
-      case "new":
-        return "bg-blue-100 text-blue-800"
-      case "completed":
-        return "bg-gray-100 text-gray-800"
-      case "paused":
-        return "bg-yellow-100 text-yellow-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Đang điều trị"
-      case "new":
-        return "Bệnh nhân mới"
-      case "completed":
-        return "Hoàn thành"
-      case "paused":
-        return "Tạm dừng"
-      default:
-        return status
-    }
-  }
+  const filteredPatients = patients.filter((patient) => {
+    const matchesSearch =
+      patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.phone.includes(searchTerm)
+    const matchesStatus = statusFilter === "all" || patient.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  const columns = [
+    {
+      key: "name",
+      label: "Bệnh nhân",
+      render: (patient: any) => (
+        <div>
+          <p className="font-medium">{patient.name}</p>
+          <p className="text-sm text-gray-500">{patient.email}</p>
+        </div>
+      ),
+    },
+    {
+      key: "age",
+      label: "Tuổi",
+      render: (patient: any) => `${patient.age} tuổi`,
+    },
+    {
+      key: "gender",
+      label: "Giới tính",
+    },
+    {
+      key: "treatmentPlan",
+      label: "Kế hoạch điều trị",
+    },
+    {
+      key: "status",
+      label: "Trạng thái",
+      render: (patient: any) => <AppointmentStatusBadge status={patient.status} />,
+    },
+    {
+      key: "actions",
+      label: "Thao tác",
+      className: "text-right",
+      render: (patient: any) => (
+        <div className="flex justify-end space-x-2">
+          <Button variant="ghost" size="sm">
+            Xem
+          </Button>
+          <Button variant="ghost" size="sm">
+            Sửa
+          </Button>
+        </div>
+      ),
+    },
+  ]
+
+  const filters = [
+    {
+      label: "Trạng thái",
+      value: statusFilter,
+      onChange: setStatusFilter,
+      options: [
+        { value: "all", label: "Tất cả trạng thái" },
+        { value: "active", label: "Đang điều trị" },
+        { value: "new", label: "Bệnh nhân mới" },
+        { value: "completed", label: "Hoàn thành" },
+        { value: "paused", label: "Tạm dừng" },
+      ],
+    },
+  ]
+
+  const actions = (
+    <Button>
+      <Plus className="h-4 w-4 mr-2" />
+      Thêm bệnh nhân
+    </Button>
+  )
 
   return (
     <DoctorLayout title="Danh sách bệnh nhân">
-      <div className="space-y-4">
-        {/* Header Actions */}
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input placeholder="Tìm kiếm bệnh nhân..." className="pl-10" />
-          </div>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Thêm bệnh nhân
-          </Button>
-        </div>
+      <div className="space-y-6">
+        <SearchAndFilter
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder="Tìm kiếm bệnh nhân..."
+          filters={filters}
+          actions={actions}
+        />
 
-        {/* Patients Table */}
-        <Card className="border rounded-lg shadow-sm">
-          <CardHeader className="bg-white py-4 px-6 border-b">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">Danh sách bệnh nhân</CardTitle>
-              <div className="text-sm text-gray-500">
-                {patients.length} bệnh nhân
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <PatientTable patients={patients} getStatusColor={getStatusColor} getStatusText={getStatusText} />
-          </CardContent>
-        </Card>
+        <DataTable
+          title={`Danh sách bệnh nhân (${filteredPatients.length} bệnh nhân)`}
+          data={filteredPatients}
+          columns={columns}
+          emptyMessage="Không tìm thấy bệnh nhân nào"
+          emptyIcon={Users}
+        />
       </div>
     </DoctorLayout>
   )
