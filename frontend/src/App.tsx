@@ -33,6 +33,7 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
 import ResultsHistory from "./pages/doctor/results/ResultsHistory"
 import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail"
+import ScheduleResult from "./pages/doctor/appointments/ScheduleResult"
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard"
@@ -162,12 +163,12 @@ const router = createBrowserRouter([
       // Schedule routes
       {
         path: "schedule",
-        children: [
-          {
-            index: true,
-            element: <Schedules />,
-          },
-        ],
+        element: <Schedules />,
+      },
+      // Schedule Result routes
+      {
+        path: "schedule-result/:id",
+        element: <ScheduleResult />,
       },
       // Pending Approvals routes
       {
