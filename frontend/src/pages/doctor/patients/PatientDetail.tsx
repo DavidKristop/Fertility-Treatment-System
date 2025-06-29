@@ -1,10 +1,14 @@
+"use client"
+
+import { useParams } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { User, Phone, Mail, MapPin, Calendar, Activity, TestTube, Pill, Heart, Edit, Plus } from "lucide-react"
-import { useParams } from "react-router-dom"
+import { Edit, Plus, Calendar, Activity, TestTube, Pill } from "lucide-react"
+import PatientInfoCard from "@/components/doctor/common/PatientInfoCard"
+import FormSection from "@/components/doctor/common/FormSection"
+import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge"
 
 // Mock patient data based on ERD
 const patientData = {
@@ -96,68 +100,30 @@ export default function PatientDetail() {
     { label: patient.user.fullName },
   ]
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "In Progress":
-        return "bg-blue-100 text-blue-800"
-      case "Complete":
-        return "bg-green-100 text-green-800"
-      case "Done":
-        return "bg-green-100 text-green-800"
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "Cancel":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
+  const patientInfo = {
+    id: patient.id,
+    name: patient.user.fullName,
+    phone: patient.user.phone,
+    email: patient.user.email,
+    address: patient.user.address,
+    dateOfBirth: patient.user.dateOfBirth,
   }
 
   return (
     <DoctorLayout title={`Hồ sơ bệnh nhân - ${patient.user.fullName}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Patient Header */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start gap-6">
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
-                <User className="h-10 w-10 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="text-2xl font-bold">{patient.user.fullName}</h1>
-                    <p className="text-muted-foreground">
-                      {new Date().getFullYear() - new Date(patient.user.dateOfBirth).getFullYear()} tuổi
-                    </p>
-                  </div>
-                  <Button>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Chỉnh sửa
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{patient.user.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{patient.user.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{patient.user.dateOfBirth}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{patient.user.address}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <PatientInfoCard
+          patient={patientInfo}
+          showMedicalHistory={true}
+          medicalHistory={patient.profile.medicalHistory}
+          actions={
+            <Button>
+              <Edit className="h-4 w-4 mr-2" />
+              Chỉnh sửa
+            </Button>
+          }
+        />
 
         {/* Patient Details Tabs */}
         <Tabs defaultValue="overview" className="space-y-4">
@@ -171,229 +137,187 @@ export default function PatientDetail() {
 
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Medical History */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart className="h-5 w-5" />
-                    Tiền sử bệnh
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-relaxed">{patient.profile.medicalHistory}</p>
-                </CardContent>
-              </Card>
-
               {/* Current Treatment */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5" />
-                    Điều trị hiện tại
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {patient.treatments.map((treatment) => (
-                    <div key={treatment.id} className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Badge className="bg-purple-100 text-purple-800">{treatment.protocol.type}</Badge>
-                        <Badge className={getStatusColor(treatment.status)}>
-                          {treatment.status === "In Progress" ? "Đang điều trị" : treatment.status}
-                        </Badge>
-                      </div>
-                      <div>
-                        <p className="font-medium">{treatment.protocol.title}</p>
-                        <p className="text-sm text-muted-foreground">{treatment.diagnosis}</p>
-                      </div>
-                      <div className="text-sm">
-                        <p>
-                          <strong>Giai đoạn hiện tại:</strong> {treatment.currentPhase.title}
-                        </p>
-                        <p>
-                          <strong>Ngày bắt đầu:</strong> {treatment.startDate}
-                        </p>
-                      </div>
+              <FormSection title="Điều trị hiện tại" icon={Activity}>
+                {patient.treatments.map((treatment) => (
+                  <div key={treatment.id} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge className="bg-purple-100 text-purple-800">{treatment.protocol.type}</Badge>
+                      <AppointmentStatusBadge status={treatment.status} />
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
+                    <div>
+                      <p className="font-medium">{treatment.protocol.title}</p>
+                      <p className="text-sm text-muted-foreground">{treatment.diagnosis}</p>
+                    </div>
+                    <div className="text-sm">
+                      <p>
+                        <strong>Giai đoạn hiện tại:</strong> {treatment.currentPhase.title}
+                      </p>
+                      <p>
+                        <strong>Ngày bắt đầu:</strong> {treatment.startDate}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </FormSection>
             </div>
           </TabsContent>
 
           <TabsContent value="treatments" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Lịch sử điều trị</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {patient.treatments.map((treatment) => (
-                    <div key={treatment.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="font-semibold">{treatment.protocol.title}</h3>
-                          <p className="text-sm text-muted-foreground">{treatment.diagnosis}</p>
-                        </div>
-                        <Badge className={getStatusColor(treatment.status)}>
-                          {treatment.status === "In Progress" ? "Đang điều trị" : treatment.status}
-                        </Badge>
+            <FormSection title="Lịch sử điều trị" icon={Activity}>
+              <div className="space-y-4">
+                {patient.treatments.map((treatment) => (
+                  <div key={treatment.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold">{treatment.protocol.title}</h3>
+                        <p className="text-sm text-muted-foreground">{treatment.diagnosis}</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium">Ngày bắt đầu:</span> {treatment.startDate}
-                        </div>
-                        <div>
-                          <span className="font-medium">Ngày kết thúc:</span> {treatment.endDate || "Chưa xác định"}
-                        </div>
-                      </div>
-                      {treatment.currentPhase && (
-                        <div className="mt-3 p-3 bg-blue-50 rounded">
-                          <p className="text-sm font-medium text-blue-900">
-                            Giai đoạn hiện tại: {treatment.currentPhase.title}
-                          </p>
-                        </div>
-                      )}
+                      <AppointmentStatusBadge status={treatment.status} />
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium">Ngày bắt đầu:</span> {treatment.startDate}
+                      </div>
+                      <div>
+                        <span className="font-medium">Ngày kết thúc:</span> {treatment.endDate || "Chưa xác định"}
+                      </div>
+                    </div>
+                    {treatment.currentPhase && (
+                      <div className="mt-3 p-3 bg-blue-50 rounded">
+                        <p className="text-sm font-medium text-blue-900">
+                          Giai đoạn hiện tại: {treatment.currentPhase.title}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </FormSection>
           </TabsContent>
 
           <TabsContent value="appointments" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Lịch hẹn</h3>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Tạo lịch hẹn
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-0">
-                <div className="space-y-0">
-                  {patient.schedules.map((schedule) => (
-                    <div key={schedule.id} className="border-b last:border-b-0 p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-medium">
-                              {new Date(schedule.appointmentDatetime).toLocaleString("vi-VN")}
-                            </span>
-                            <Badge className={getStatusColor(schedule.status)}>
-                              {schedule.status === "Done"
-                                ? "Hoàn thành"
-                                : schedule.status === "Pending"
-                                  ? "Chờ khám"
-                                  : schedule.status}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{schedule.treatmentPhase}</p>
-                          {schedule.doctorsNote && (
-                            <p className="text-sm bg-gray-50 p-2 rounded">{schedule.doctorsNote}</p>
-                          )}
+            <FormSection
+              title="Lịch hẹn"
+              icon={Calendar}
+              actions={
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Tạo lịch hẹn
+                </Button>
+              }
+            >
+              <div className="space-y-0">
+                {patient.schedules.map((schedule) => (
+                  <div key={schedule.id} className="border-b last:border-b-0 p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">
+                            {new Date(schedule.appointmentDatetime).toLocaleString("vi-VN")}
+                          </span>
+                          <AppointmentStatusBadge status={schedule.status} />
                         </div>
+                        <p className="text-sm text-muted-foreground">{schedule.treatmentPhase}</p>
+                        {schedule.doctorsNote && (
+                          <p className="text-sm bg-gray-50 p-2 rounded">{schedule.doctorsNote}</p>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                ))}
+              </div>
+            </FormSection>
           </TabsContent>
 
           <TabsContent value="prescriptions" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Đơn thuốc</h3>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Kê đơn mới
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-0">
-                <div className="space-y-0">
-                  {patient.prescriptions.map((prescription) => (
-                    <div key={prescription.id} className="border-b last:border-b-0 p-4">
-                      <div className="flex items-start gap-3">
-                        <Pill className="h-5 w-5 text-blue-600 mt-1" />
-                        <div className="flex-1">
-                          <h4 className="font-medium">{prescription.drug.name}</h4>
-                          <p className="text-sm text-muted-foreground">{prescription.drug.description}</p>
-                          <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
-                            <div>
-                              <strong>Liều dùng:</strong> {prescription.dosage}
-                            </div>
-                            <div>
-                              <strong>Số lượng:</strong> {prescription.amount}
-                            </div>
-                            <div>
-                              <strong>Từ:</strong> {prescription.startDate}
-                            </div>
-                            <div>
-                              <strong>Đến:</strong> {prescription.endDate}
-                            </div>
+            <FormSection
+              title="Đơn thuốc"
+              icon={Pill}
+              actions={
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Kê đơn mới
+                </Button>
+              }
+            >
+              <div className="space-y-0">
+                {patient.prescriptions.map((prescription) => (
+                  <div key={prescription.id} className="border-b last:border-b-0 p-4">
+                    <div className="flex items-start gap-3">
+                      <Pill className="h-5 w-5 text-blue-600 mt-1" />
+                      <div className="flex-1">
+                        <h4 className="font-medium">{prescription.drug.name}</h4>
+                        <p className="text-sm text-muted-foreground">{prescription.drug.description}</p>
+                        <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                          <div>
+                            <strong>Liều dùng:</strong> {prescription.dosage}
                           </div>
-                          <p className="text-sm mt-2 p-2 bg-yellow-50 rounded">
-                            <strong>Cách dùng:</strong> {prescription.usageInstructions}
-                          </p>
+                          <div>
+                            <strong>Số lượng:</strong> {prescription.amount}
+                          </div>
+                          <div>
+                            <strong>Từ:</strong> {prescription.startDate}
+                          </div>
+                          <div>
+                            <strong>Đến:</strong> {prescription.endDate}
+                          </div>
                         </div>
+                        <p className="text-sm mt-2 p-2 bg-yellow-50 rounded">
+                          <strong>Cách dùng:</strong> {prescription.usageInstructions}
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                ))}
+              </div>
+            </FormSection>
           </TabsContent>
 
           <TabsContent value="results" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Kết quả xét nghiệm</h3>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Thêm kết quả
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-0">
-                <div className="space-y-0">
-                  {patient.results.map((result) => (
-                    <div key={result.id} className="border-b last:border-b-0 p-4">
-                      <div className="flex items-start gap-3">
-                        <TestTube className="h-5 w-5 text-green-600 mt-1" />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium">{result.type}</h4>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                className={
-                                  result.status === "normal" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                                }
-                              >
-                                {result.status === "normal" ? "Bình thường" : "Bất thường"}
-                              </Badge>
-                              <span className="text-sm text-muted-foreground">{result.date}</span>
-                            </div>
+            <FormSection
+              title="Kết quả xét nghiệm"
+              icon={TestTube}
+              actions={
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Thêm kết quả
+                </Button>
+              }
+            >
+              <div className="space-y-0">
+                {patient.results.map((result) => (
+                  <div key={result.id} className="border-b last:border-b-0 p-4">
+                    <div className="flex items-start gap-3">
+                      <TestTube className="h-5 w-5 text-green-600 mt-1" />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium">{result.type}</h4>
+                          <div className="flex items-center gap-2">
+                            <AppointmentStatusBadge status={result.status} />
+                            <span className="text-sm text-muted-foreground">{result.date}</span>
                           </div>
-                          <div className="grid grid-cols-3 gap-3 text-sm">
-                            {Object.entries(result.details).map(([key, value]) => (
-                              <div key={key} className="bg-gray-50 p-2 rounded">
-                                <div className="font-medium capitalize">{key}</div>
-                                <div>{value}</div>
-                              </div>
-                            ))}
-                          </div>
-                          {result.notes && (
-                            <p className="text-sm mt-2 p-2 bg-blue-50 rounded">
-                              <strong>Ghi chú:</strong> {result.notes}
-                            </p>
-                          )}
                         </div>
+                        <div className="grid grid-cols-3 gap-3 text-sm">
+                          {Object.entries(result.details).map(([key, value]) => (
+                            <div key={key} className="bg-gray-50 p-2 rounded">
+                              <div className="font-medium capitalize">{key}</div>
+                              <div>{value}</div>
+                            </div>
+                          ))}
+                        </div>
+                        {result.notes && (
+                          <p className="text-sm mt-2 p-2 bg-blue-50 rounded">
+                            <strong>Ghi chú:</strong> {result.notes}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                ))}
+              </div>
+            </FormSection>
           </TabsContent>
         </Tabs>
       </div>
