@@ -10,6 +10,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
 import { auth } from '@/api';
 import { type RegisterRequest } from '@/api/types';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -27,9 +28,11 @@ export default function RegisterPage() {
       };
       const response = await auth.register(registerData);
       localStorage.setItem('token', response.payload.accessToken);
+      toast.success('Đăng ký thành công!');
       navigate('/authorization/login');
-    } catch (error) {
-      console.error('Registration failed:', error);
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.message || 'Email đã tồn tại!';
+        toast.error(errorMessage);
     }
   };
 
@@ -65,9 +68,15 @@ export default function RegisterPage() {
         <CardContent className="pt-2">
           <div className="space-y-6">
             <RegisterForm formik={formik} />
-            <Button onClick={()=>formik.handleSubmit()} type="submit" form="register-form" className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer">
-              Đăng kí
-            </Button>
+              <Button
+                onClick={() => formik.handleSubmit()}
+                type="submit"
+                form="register-form"
+                className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
+                disabled={formik.isSubmitting}
+              >
+                {formik.isSubmitting ? 'Đang đăng ký...' : 'Đăng ký'}
+              </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>
             <GoogleAuth text="Đăng kí Google" mode="register" />
           </div>

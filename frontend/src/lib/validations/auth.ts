@@ -19,6 +19,12 @@ const calculateAgeFromString = (dateStr: string): number => {
   return age;
 };
 
+// Hàm kiểm tra ký tự đặc biệt
+const hasSpecialCharacter = (password: string): boolean => {
+  const specialChars = /[!@#$%^&*?_]/;
+  return specialChars.test(password);
+};
+
 export const loginSchema = z.object({
   email: z.string({
     required_error: "Email là bắt buộc",
@@ -30,8 +36,11 @@ export const loginSchema = z.object({
     required_error: "Mật khẩu là bắt buộc",
   })
     .regex(passwordRegex, "Mật khẩu phải bắt đầu bằng chữ hoa")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .min(12, "Mật khẩu phải có ít nhất 12 ký tự")
     .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
+    .refine(hasSpecialCharacter, {
+      message: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (ví dụ: !, @, #, $, %, ^, &, *, ?, _)",
+    }),
 });
 
 export const registerSchema = loginSchema.extend({

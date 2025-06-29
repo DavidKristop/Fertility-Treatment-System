@@ -11,16 +11,6 @@ export interface RegisterRequest extends LoginRequest {
   confirmPassword: string;
 }
 
-export interface User {
-  id: number;
-  email: string;
-  username: string;
-  phone: string;
-  address: string;
-  dateOfBirth: string; // Định dạng YYYY-MM-DD
-  createdAt: string; // ISO 8601 date string
-}
-
 export interface AuthResponse {
   payload: {
     accessToken: string;
