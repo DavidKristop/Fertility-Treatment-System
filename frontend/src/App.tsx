@@ -19,10 +19,11 @@ import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 import RequestAppointment from "./pages/patient/RequestAppointment"
 import PatientDashboard from "./pages/patient/PatientDashboard"
 import PatientProfile from "./pages/patient/profile/PatientProfile"
+import PatientContracts from "./pages/patient/contracts/PatientContracts"
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard"
-import TodayAppointments from "./pages/doctor/appointments/Schedules"
+import Schedules from "./pages/doctor/appointments/Schedules"
 import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
 import RecordResults from "./pages/doctor/results/RecordResults"
@@ -46,7 +47,8 @@ import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
 import Story from "./pages/about/Story"
-import Schedules from "./pages/doctor/appointments/Schedules"
+
+
 
 
 const router = createBrowserRouter([
@@ -251,8 +253,8 @@ const router = createBrowserRouter([
         element: <RequestAppointment />,
       },
       {
-        path: "patients",
-        element: <PatientList />,
+        path: "contracts",
+        element: <PatientContracts />,
       },
       {
         path: "profile",
@@ -268,10 +270,7 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <ManagerDashboard />,
       },
-      {
-        path: "appointments/today",
-        element: <TodayAppointments />,
-      },
+      
       {
         path: "patients",
         element: <PatientList />,
@@ -286,10 +285,7 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <AdminDashboard />,
       },
-      {
-        path: "appointments/today",
-        element: <TodayAppointments />,
-      },
+      
       {
         path: "patients",
         element: <PatientList />,

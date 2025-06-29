@@ -2,7 +2,7 @@ import { fetchWrapper } from '.'
 import type { AuthResponse, LoginRequest, RegisterRequest } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await fetchWrapper('auth/login', {
+    const response = await fetchWrapper('auth/signin', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
 };
 
 export const register = async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await fetchWrapper('auth/register', {
+    const response = await fetchWrapper('auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

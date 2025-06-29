@@ -1,5 +1,3 @@
-import FertilityImage from '@/assets/0VkgqLXqGNQTndYGcB8l2CFaBA6HB0aUZP6wR5a6.jpg'
-
 interface AuthCardProps {
   children: React.ReactNode; // the <Card> contents (AuthHeader, AuthFormFields, GoogleLogin, etc.)
   bottomLink: React.ReactNode; // e.g. “Chưa có tài khoản? Đăng ký ngay!” or “Đã có tài khoản? Đăng nhập ngay!”
@@ -12,19 +10,10 @@ export default function AuthCard({
   //submitButtonText,
 }: AuthCardProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-gray-50">
-      <div className="max-w-3xl w-full bg-gray-200 rounded-xl shadow-lg overflow-hidden flex min-h-0">
-        {/* Left: Image */}
-        <div className="flex-1 min-h-0">
-          <img
-            src={FertilityImage}
-            alt="Chữa hiếm muộn"
-            className="h-full w-full object-cover hidden md:flex"
-          />
-        </div>
-
-        {/* Right: White card with form */}
-        <div className="w-full max-w-md">
+    <div className="min-h-145 flex flex-col items-center justify-center bg-gray-50 px-4 py-8">
+      <div className="max-w-md w-full bg-gray-200 rounded-xl shadow-lg overflow-hidden flex min-h-0">
+        {/* Chỉ giữ phần form, loại bỏ hình ảnh */}
+        <div className="w-full">
           {/* children will include <Card>…</Card> */}
           {children}
 
