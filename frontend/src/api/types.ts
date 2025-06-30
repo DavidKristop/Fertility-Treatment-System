@@ -43,3 +43,21 @@ export interface UserProfile {
   dateOfBirth?: string;
   // Other potential fields
 }
+
+// Add these interfaces to your existing types
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  payload?: T;
+}

@@ -85,6 +85,25 @@ export const forgotPasswordSchema = z.object({
     .email("Email không hợp lệ"),
 });
 
+export const resetPasswordSchema = z.object({
+  token: z.string({
+    required_error: "Token là bắt buộc",
+  }),
+  newPassword: z.string({
+    required_error: "Mật khẩu mới là bắt buộc",
+  })
+    .regex(passwordRegex, "Mật khẩu phải bắt đầu bằng chữ hoa")
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự"),
+  confirmPassword: z.string({
+    required_error: "Xác nhận mật khẩu là bắt buộc",
+  })
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Mật khẩu xác nhận không khớp",
+  path: ["confirmPassword"],
+});
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
