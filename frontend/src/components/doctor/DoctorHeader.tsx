@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client"
+
+import { Link } from "react-router-dom"
 import { Bell, User, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,24 +11,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react"
+import { getDoctorProfile } from "@/api/doctor"
+import type { DoctorProfile } from "@/api/types"
+//import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface DoctorHeaderProps {
   title: string
   breadcrumbs?: { label: string; path?: string }[]
   onMenuClick?: () => void
   showMenuButton?: boolean
-  doctorName?: string
-  specialty?: string
 }
 
-export default function DoctorHeader({
-  title,
-  breadcrumbs,
-  onMenuClick,
-  showMenuButton = false,
-  doctorName = "Dr. Nguyễn Văn A",
-  specialty = "Chuyên khoa Sản",
-}: DoctorHeaderProps) {
+export default function DoctorHeader({ title, breadcrumbs, onMenuClick, showMenuButton = false }: DoctorHeaderProps) {
+  const [doctorProfile, setDoctorProfile] = useState<DoctorProfile | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchDoctorProfile = async () => {
+      setIsLoading(true)
+      try {
+        const profile = await getDoctorProfile()
+        setDoctorProfile(profile)
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch doctor profile")
+        console.error("Error fetching doctor profile:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchDoctorProfile()
+  }, [])
+
+  const doctorName = doctorProfile?.fullName || "Dr. Nguyễn Văn A"
+  const specialty = doctorProfile?.specialty || "Chuyên khoa Sản"
+  const avatarUrl = doctorProfile?.avatarUrl
+
   return (
     <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
@@ -61,7 +83,6 @@ export default function DoctorHeader({
 
         {/* Right side - Search, Notifications, Profile */}
         <div className="flex items-center gap-2 lg:gap-4">
-
           {/* Notifications */}
           <div className="relative">
             <Button variant="ghost" size="icon" className="relative">
@@ -74,12 +95,24 @@ export default function DoctorHeader({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#004c77] rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
-                </div>
+                {/* <Avatar className="w-8 h-8">
+                  {avatarUrl ? (
+                    <AvatarImage src={avatarUrl || "/placeholder.svg"} alt={doctorName} />
+                  ) : (
+                    <AvatarFallback>{doctorName?.charAt(0)}</AvatarFallback>
+                  )}
+                </Avatar> */}
                 <div className="hidden lg:block text-left">
-                  <div className="text-sm font-medium">{doctorName}</div>
-                  <div className="text-xs text-gray-500">{specialty}</div>
+                  {isLoading ? (
+                    <div>Loading...</div>
+                  ) : error ? (
+                    <div>Error: {error}</div>
+                  ) : (
+                    <>
+                      <div className="text-sm font-medium">{doctorName}</div>
+                      <div className="text-xs text-gray-500">{specialty}</div>
+                    </>
+                  )}
                 </div>
               </Button>
             </DropdownMenuTrigger>

@@ -4,45 +4,71 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Button } from "@/components/ui/button"
-import { CalendarDays, Calendar, Clock, User, Activity, TestTube } from "lucide-react"
+import { CalendarDays, Calendar, Clock } from "lucide-react"
 import { getTodaySchedules, type Schedule } from "@/api/schedule"
+import { getDoctorProfile } from "@/api/doctor"
 import AppointmentCard from "@/components/doctor/common/AppointmentCard"
 import FormSection from "@/components/doctor/common/FormSection"
 
-// Mock user data for testing
-const mockDoctorData = {
-  id: "doc123",
-  fullName: "Doctor name",
-  email: "doctor@example.com",
-  roles: ["ROLE_DOCTOR"],
-  specialty: "Sản phụ khoa",
-  licenseNumber: "MD12345",
-}
-
-// Function to set mock data in localStorage
-const setMockUserData = () => {
-  if (!localStorage.getItem("user")) {
-    localStorage.setItem("user", JSON.stringify(mockDoctorData))
-  }
-}
-
 export default function DoctorDashboard() {
-  const [doctorName, setDoctorName] = useState("Doctor name")
+  const [doctorName, setDoctorName] = useState("Bác sĩ")
   const [todaySchedules, setTodaySchedules] = useState<Schedule[]>([])
   const [loading, setLoading] = useState(true)
+  const [profileLoading, setProfileLoading] = useState(true)
   const navigate = useNavigate()
 
   useEffect(() => {
-    setMockUserData()
-    const userDataString = localStorage.getItem("user")
-    if (userDataString) {
+    // Fetch doctor profile immediately after successful login
+    const fetchDoctorProfile = async () => {
       try {
-        const userData = JSON.parse(userDataString)
-        if (userData.fullName) {
-          setDoctorName(userData.fullName)
+        setProfileLoading(true)
+        const profile = await getDoctorProfile()
+
+        // Check if profile exists and has username or fullName
+        if (profile) {
+          // Try to get username from different possible fields based on API response
+          const name = profile.fullName || profile.email?.split("@")[0] || "Bác sĩ"
+
+          if (name) {
+            setDoctorName(name)
+            // Store in localStorage as fallback for future sessions
+            const userData = { fullName: name }
+            localStorage.setItem("user", JSON.stringify(userData))
+          }
         }
       } catch (error) {
-        console.error("Error parsing user data:", error)
+        console.error("Error fetching doctor profile:", error)
+
+        // Fallback to localStorage if API fails
+        const userDataString = localStorage.getItem("user")
+        if (userDataString) {
+          try {
+            const userData = JSON.parse(userDataString)
+            if (userData.fullName) {
+              setDoctorName(userData.fullName)
+            }
+          } catch (parseError) {
+            console.error("Error parsing user data:", parseError)
+          }
+        }
+
+        // If all else fails, try to get name from token payload or use default
+        const token = localStorage.getItem("token")
+        if (token) {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]))
+            if (payload.fullName) {
+              setDoctorName(payload.fullName)
+            } else if (payload.email) {
+              setDoctorName(payload.email.split("@")[0])
+            }
+          } catch (tokenError) {
+            console.error("Error parsing token:", tokenError)
+            // Keep default "Bác sĩ" name
+          }
+        }
+      } finally {
+        setProfileLoading(false)
       }
     }
 
@@ -54,11 +80,14 @@ export default function DoctorDashboard() {
         setTodaySchedules(schedules)
       } catch (error) {
         console.error("Error fetching schedules:", error)
+        // Set empty array on error to avoid showing loading state indefinitely
+        setTodaySchedules([])
       } finally {
         setLoading(false)
       }
     }
 
+    fetchDoctorProfile()
     fetchSchedules()
   }, [])
 
@@ -85,7 +114,7 @@ export default function DoctorDashboard() {
   const breadcrumbs = [{ label: "Trang chủ" }]
 
   return (
-    <DoctorLayout title={`Welcome back, ${doctorName}`} breadcrumbs={breadcrumbs}>
+    <DoctorLayout title={profileLoading ? "Đang tải..." : `Xin chào, ${doctorName}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Today's Schedules */}
         <FormSection
