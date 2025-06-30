@@ -6,7 +6,7 @@ import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, Calendar, Clock } from "lucide-react"
 import { getTodaySchedules, type Schedule } from "@/api/schedule"
-import { getDoctorProfile } from "@/api/doctor"
+import { getProfile } from "@/api/user"
 import AppointmentCard from "@/components/doctor/common/AppointmentCard"
 import FormSection from "@/components/doctor/common/FormSection"
 
@@ -22,13 +22,14 @@ export default function DoctorDashboard() {
     const fetchDoctorProfile = async () => {
       try {
         setProfileLoading(true)
-        const profile = await getDoctorProfile()
-
+        const profile = await getProfile()
+        
         // Check if profile exists and has username or fullName
         if (profile) {
           // Try to get username from different possible fields based on API response
-          const name = profile.fullName || profile.email?.split("@")[0] || "Bác sĩ"
-
+          const name = profile.fullName || profile.username || profile.fullName || 
+                      (profile.email ? profile.email.split('@')[0] : "")
+          
           if (name) {
             setDoctorName(name)
             // Store in localStorage as fallback for future sessions
@@ -38,7 +39,6 @@ export default function DoctorDashboard() {
         }
       } catch (error) {
         console.error("Error fetching doctor profile:", error)
-
         // Fallback to localStorage if API fails
         const userDataString = localStorage.getItem("user")
         if (userDataString) {
@@ -49,22 +49,6 @@ export default function DoctorDashboard() {
             }
           } catch (parseError) {
             console.error("Error parsing user data:", parseError)
-          }
-        }
-
-        // If all else fails, try to get name from token payload or use default
-        const token = localStorage.getItem("token")
-        if (token) {
-          try {
-            const payload = JSON.parse(atob(token.split(".")[1]))
-            if (payload.fullName) {
-              setDoctorName(payload.fullName)
-            } else if (payload.email) {
-              setDoctorName(payload.email.split("@")[0])
-            }
-          } catch (tokenError) {
-            console.error("Error parsing token:", tokenError)
-            // Keep default "Bác sĩ" name
           }
         }
       } finally {
@@ -80,8 +64,6 @@ export default function DoctorDashboard() {
         setTodaySchedules(schedules)
       } catch (error) {
         console.error("Error fetching schedules:", error)
-        // Set empty array on error to avoid showing loading state indefinitely
-        setTodaySchedules([])
       } finally {
         setLoading(false)
       }
@@ -114,7 +96,10 @@ export default function DoctorDashboard() {
   const breadcrumbs = [{ label: "Trang chủ" }]
 
   return (
-    <DoctorLayout title={profileLoading ? "Đang tải..." : `Xin chào, ${doctorName}`} breadcrumbs={breadcrumbs}>
+    <DoctorLayout 
+      title={profileLoading ? "Đang tải..." : `Xin chào, ${doctorName}`} 
+      breadcrumbs={breadcrumbs}
+    >
       <div className="space-y-6">
         {/* Today's Schedules */}
         <FormSection

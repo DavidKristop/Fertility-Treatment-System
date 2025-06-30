@@ -1,12 +1,9 @@
-"use client"
-
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   User,
   Mail,
@@ -21,120 +18,54 @@ import {
   Save,
   X,
   Camera,
-  AlertCircle,
 } from "lucide-react"
-import { getDoctorProfile, updateDoctorProfile } from "@/api/doctor"
-import type { DoctorProfile as DoctorProfileType } from "@/api/types"
 
-// Default/placeholder data for when profile doesn't exist
-const defaultDoctorData: DoctorProfileType = {
-  id: "",
-  email: "",
-  fullName: "",
-  phone: "",
-  dateOfBirth: "",
-  address: "",
+// Mock data dựa trên ERD
+const doctorData = {
+  // Từ bảng User
+  id: "123e4567-e89b-12d3-a456-426614174000",
+  email: "dr.nguyen@ucare.vn",
+  phone: "0901234567",
+  fullName: "BS. Nguyễn Văn An",
+  dateOfBirth: "1985-03-15",
+  address: "123 Đường Lê Lợi, Quận 1, TP.HCM",
   avatarUrl: "/placeholder.svg?height=150&width=150",
-  specialty: "",
-  degree: "",
-  yearOfExperience: 0,
-  licenseNumber: "",
+
+  // Từ bảng DoctorProfile
+  specialty: "Sản phụ khoa - Hỗ trợ sinh sản",
+  degree: "Tiến sĩ Y khoa (PhD)",
+  yearOfExperience: 12.5,
+  licenseNumber: "SP-12345-HCMC",
+
+  // Thông tin bổ sung
   workingHours: "Thứ 2 - Thứ 6: 8:00 - 17:00, Thứ 7: 8:00 - 12:00",
-  languages: ["Tiếng Việt"],
-  certifications: [],
+  languages: ["Tiếng Việt", "English", "中文"],
+  certifications: ["Chứng chỉ IVF quốc tế", "Chứng chỉ Siêu âm thai nhi", "Chứng chỉ Phẫu thuật nội soi"],
 }
 
 export default function DoctorProfile() {
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState<DoctorProfileType>(defaultDoctorData)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [profileExists, setProfileExists] = useState(true)
+  const [formData, setFormData] = useState(doctorData)
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const profile = await getDoctorProfile()
-
-        if (profile) {
-          // Merge with default data to ensure all fields have values
-          const mergedProfile = {
-            ...defaultDoctorData,
-            ...profile,
-            // Ensure arrays are properly handled
-            languages:
-              profile.languages && profile.languages.length > 0 ? profile.languages : defaultDoctorData.languages,
-            certifications: profile.certifications || defaultDoctorData.certifications,
-            // Ensure numeric fields have proper defaults
-            yearOfExperience: profile.yearOfExperience || 0,
-          }
-          setFormData(mergedProfile)
-          setProfileExists(true)
-        } else {
-          // Profile doesn't exist, use default data
-          setFormData(defaultDoctorData)
-          setProfileExists(false)
-        }
-      } catch (error: any) {
-        console.error("Error fetching doctor profile:", error)
-
-        // If it's a 404 or profile not found, use default data
-        if (error.message?.includes("404") || error.message?.includes("not found")) {
-          setFormData(defaultDoctorData)
-          setProfileExists(false)
-          setError(null) // Don't show error for missing profile
-        } else {
-          // For other errors, show error message but still use default data
-          setError("Không thể tải thông tin hồ sơ. Vui lòng thử lại sau.")
-          setFormData(defaultDoctorData)
-          setProfileExists(false)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProfile()
-  }, [])
-
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const handleSave = async () => {
-    try {
-      setSaving(true)
-      setError(null)
-
-      const updatedProfile = await updateDoctorProfile(formData)
-      setFormData(updatedProfile)
-      setProfileExists(true)
-      setIsEditing(false)
-    } catch (error: any) {
-      console.error("Error saving profile:", error)
-      setError("Không thể lưu thông tin hồ sơ. Vui lòng thử lại.")
-    } finally {
-      setSaving(false)
-    }
+  const handleSave = () => {
+    // TODO: API call to update profile
+    console.log("Saving profile data:", formData)
+    setIsEditing(false)
   }
 
   const handleCancel = () => {
-    // Reset to original data or default if profile doesn't exist
-    if (!profileExists) {
-      setFormData(defaultDoctorData)
-    }
+    setFormData(doctorData)
     setIsEditing(false)
-    setError(null)
   }
 
   const calculateAge = (dateOfBirth: string) => {
-    if (!dateOfBirth) return 0
     const today = new Date()
     const birthDate = new Date(dateOfBirth)
     let age = today.getFullYear() - birthDate.getFullYear()
@@ -146,7 +77,6 @@ export default function DoctorProfile() {
   }
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return "Chưa cập nhật"
     return new Date(dateString).toLocaleDateString("vi-VN", {
       day: "2-digit",
       month: "2-digit",
@@ -156,44 +86,16 @@ export default function DoctorProfile() {
 
   const breadcrumbs = [{ label: "Trang chủ", href: "/doctor/dashboard" }, { label: "Hồ sơ cá nhân" }]
 
-  if (loading) {
-    return (
-      <DoctorLayout title="Hồ sơ cá nhân" breadcrumbs={breadcrumbs}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Đang tải thông tin hồ sơ...</div>
-        </div>
-      </DoctorLayout>
-    )
-  }
-
   return (
     <DoctorLayout title="Hồ sơ cá nhân" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Error Alert */}
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {/* Profile Not Found Alert */}
-        {!profileExists && !error && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Hồ sơ của bạn chưa được tạo. Vui lòng cập nhật thông tin để hoàn thiện hồ sơ.
-            </AlertDescription>
-          </Alert>
-        )}
-
         {/* Header Card with Avatar */}
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="relative">
                 <img
-                  src={formData.avatarUrl || "/placeholder.svg?height=150&width=150"}
+                  src={formData.avatarUrl || "/placeholder.svg"}
                   alt="Avatar"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
@@ -209,21 +111,21 @@ export default function DoctorProfile() {
               </div>
 
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{formData.fullName || "Chưa cập nhật tên"}</h1>
-                <p className="text-lg text-blue-600 mb-3">{formData.specialty || "Chưa cập nhật chuyên khoa"}</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{formData.fullName}</h1>
+                <p className="text-lg text-blue-600 mb-3">{formData.specialty}</p>
 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600 mb-4">
                   <div className="flex items-center gap-1">
                     <GraduationCap className="h-4 w-4" />
-                    <span>{formData.degree || "Chưa cập nhật"}</span>
+                    <span>{formData.degree}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    <span>{formData.yearOfExperience || 0} năm kinh nghiệm</span>
+                    <span>{formData.yearOfExperience} năm kinh nghiệm</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Award className="h-4 w-4" />
-                    <span>Giấy phép: {formData.licenseNumber || "Chưa cập nhật"}</span>
+                    <span>Giấy phép: {formData.licenseNumber}</span>
                   </div>
                 </div>
               </div>
@@ -236,11 +138,11 @@ export default function DoctorProfile() {
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleSave} disabled={saving}>
+                    <Button onClick={handleSave}>
                       <Save className="h-4 w-4 mr-2" />
-                      {saving ? "Đang lưu..." : "Lưu"}
+                      Lưu
                     </Button>
-                    <Button variant="outline" onClick={handleCancel} disabled={saving}>
+                    <Button variant="outline" onClick={handleCancel}>
                       <X className="h-4 w-4 mr-2" />
                       Hủy
                     </Button>
@@ -269,10 +171,9 @@ export default function DoctorProfile() {
                       id="fullName"
                       value={formData.fullName}
                       onChange={(e) => handleInputChange("fullName", e.target.value)}
-                      placeholder="Nhập họ và tên"
                     />
                   ) : (
-                    <p className="text-sm text-gray-600 mt-1">{formData.fullName || "Chưa cập nhật"}</p>
+                    <p className="text-sm text-gray-600 mt-1">{formData.fullName}</p>
                   )}
                 </div>
 
@@ -287,10 +188,9 @@ export default function DoctorProfile() {
                         value={formData.email}
                         onChange={(e) => handleInputChange("email", e.target.value)}
                         className="flex-1"
-                        placeholder="Nhập email"
                       />
                     ) : (
-                      <span className="text-sm text-gray-600">{formData.email || "Chưa cập nhật"}</span>
+                      <span className="text-sm text-gray-600">{formData.email}</span>
                     )}
                   </div>
                 </div>
@@ -305,10 +205,9 @@ export default function DoctorProfile() {
                         value={formData.phone}
                         onChange={(e) => handleInputChange("phone", e.target.value)}
                         className="flex-1"
-                        placeholder="Nhập số điện thoại"
                       />
                     ) : (
-                      <span className="text-sm text-gray-600">{formData.phone || "Chưa cập nhật"}</span>
+                      <span className="text-sm text-gray-600">{formData.phone}</span>
                     )}
                   </div>
                 </div>
@@ -327,9 +226,7 @@ export default function DoctorProfile() {
                       />
                     ) : (
                       <span className="text-sm text-gray-600">
-                        {formData.dateOfBirth
-                          ? `${formatDate(formData.dateOfBirth)} (${calculateAge(formData.dateOfBirth)} tuổi)`
-                          : "Chưa cập nhật"}
+                        {formatDate(formData.dateOfBirth)} ({calculateAge(formData.dateOfBirth)} tuổi)
                       </span>
                     )}
                   </div>
@@ -345,10 +242,9 @@ export default function DoctorProfile() {
                         value={formData.address}
                         onChange={(e) => handleInputChange("address", e.target.value)}
                         className="flex-1"
-                        placeholder="Nhập địa chỉ"
                       />
                     ) : (
-                      <span className="text-sm text-gray-600">{formData.address || "Chưa cập nhật"}</span>
+                      <span className="text-sm text-gray-600">{formData.address}</span>
                     )}
                   </div>
                 </div>
@@ -372,10 +268,9 @@ export default function DoctorProfile() {
                     id="specialty"
                     value={formData.specialty}
                     onChange={(e) => handleInputChange("specialty", e.target.value)}
-                    placeholder="Nhập chuyên khoa"
                   />
                 ) : (
-                  <p className="text-sm text-gray-600 mt-1">{formData.specialty || "Chưa cập nhật"}</p>
+                  <p className="text-sm text-gray-600 mt-1">{formData.specialty}</p>
                 )}
               </div>
 
@@ -389,10 +284,9 @@ export default function DoctorProfile() {
                       value={formData.degree}
                       onChange={(e) => handleInputChange("degree", e.target.value)}
                       className="flex-1"
-                      placeholder="Nhập bằng cấp"
                     />
                   ) : (
-                    <span className="text-sm text-gray-600">{formData.degree || "Chưa cập nhật"}</span>
+                    <span className="text-sm text-gray-600">{formData.degree}</span>
                   )}
                 </div>
               </div>
@@ -407,12 +301,11 @@ export default function DoctorProfile() {
                       type="number"
                       step="0.5"
                       value={formData.yearOfExperience}
-                      onChange={(e) => handleInputChange("yearOfExperience", Number.parseFloat(e.target.value) || 0)}
+                      onChange={(e) => handleInputChange("yearOfExperience", e.target.value)}
                       className="flex-1"
-                      placeholder="Nhập số năm kinh nghiệm"
                     />
                   ) : (
-                    <span className="text-sm text-gray-600">{formData.yearOfExperience || 0} năm</span>
+                    <span className="text-sm text-gray-600">{formData.yearOfExperience} năm</span>
                   )}
                 </div>
               </div>
@@ -427,10 +320,9 @@ export default function DoctorProfile() {
                       value={formData.licenseNumber}
                       onChange={(e) => handleInputChange("licenseNumber", e.target.value)}
                       className="flex-1"
-                      placeholder="Nhập số giấy phép"
                     />
                   ) : (
-                    <span className="text-sm text-gray-600">{formData.licenseNumber || "Chưa cập nhật"}</span>
+                    <span className="text-sm text-gray-600">{formData.licenseNumber}</span>
                   )}
                 </div>
               </div>
@@ -452,22 +344,14 @@ export default function DoctorProfile() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {formData.certifications && formData.certifications.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {formData.certifications.map((cert, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
-                    <Award className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-800">{cert}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                <Award className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>Chưa có chứng chỉ nào được thêm</p>
-                {isEditing && <p className="text-sm mt-2">Bạn có thể thêm chứng chỉ sau khi lưu thông tin cơ bản</p>}
-              </div>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {formData.certifications.map((cert, index) => (
+                <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                  <Award className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">{cert}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
