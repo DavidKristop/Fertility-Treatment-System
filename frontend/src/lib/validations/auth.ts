@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const passwordRegex = /^[A-Z]/;
+const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,32}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 const usernameRegex = /^[a-zA-Z0-9_]+$/;
 const phoneRegex = /^[0-9]{10}$/;
@@ -29,7 +29,7 @@ export const loginSchema = z.object({
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
   })
-    .regex(passwordRegex, "Mật khẩu phải bắt đầu bằng chữ hoa")
+    .regex(passwordRegex, "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt và không chứa khoảng trắng")
     .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
     .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
 });
@@ -70,6 +70,13 @@ export const registerSchema = loginSchema.extend({
       message: "Bạn phải trên 18 tuổi",
     }), // Giữ nguyên chuỗi, không cần transform thêm
   
+  password: z.string({
+    required_error: "Mật khẩu là bắt buộc",
+  })
+    .regex(passwordRegex, "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt và không chứa khoảng trắng")
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự"),
+
   confirmPassword: z.string({
     required_error: "Xác nhận mật khẩu là bắt buộc",
   })
