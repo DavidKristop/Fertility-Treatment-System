@@ -14,6 +14,7 @@ import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage"
 import LoginPage from "./pages/authorization/LoginPage"
 import RegisterPage from "./pages/authorization/RegisterPage"
 import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
+import ResetPasswordPage from "./pages/authorization/ResetPasswordPage"
 
 // Patient pages
 import RequestAppointment from "./pages/patient/RequestAppointment"
@@ -148,6 +149,10 @@ const router = createBrowserRouter([
             element: <ForgotPasswordPage />,
           },
         ],
+      },
+      {
+        path: "reset-password",
+        element: <ResetPasswordPage />,
       },
     ],
   },

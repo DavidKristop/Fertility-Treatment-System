@@ -85,7 +85,7 @@ export default function DoctorDashboard() {
   const breadcrumbs = [{ label: "Trang chủ" }]
 
   return (
-    <DoctorLayout title={`Welcome back, ${doctorName}`} breadcrumbs={breadcrumbs}>
+    <DoctorLayout title={`Xin chào, ${doctorName}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Today's Schedules */}
         <FormSection
