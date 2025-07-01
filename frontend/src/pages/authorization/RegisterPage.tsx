@@ -27,9 +27,9 @@ export default function RegisterPage() {
         confirmPassword: values.confirmPassword
       };
       const response = await auth.register(registerData);
-      localStorage.setItem('token', response.payload.accessToken);
+      sessionStorage.setItem('token', response.payload.accessToken);
       toast.success('Đăng ký thành công!');
-      navigate('/authorization/login');
+      navigate('/patient/dashboard', { replace: true })
     } catch (error: any) {
         const errorMessage = error.response?.data?.message || 'Email đã tồn tại!';
         toast.error(errorMessage);

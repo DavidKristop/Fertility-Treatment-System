@@ -8,39 +8,15 @@ import AuthHeader from "@/components/auth/AuthHeader";
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "@/lib/validations/auth";
 import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
-<<<<<<< HEAD
-import { useState } from "react";
-import { auth } from "@/api"; // Assuming auth is an API client
-import type { ForgotPasswordRequest} from "@/api/types";
-
-export default function ForgotPasswordPage() {
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-=======
 import { auth } from '@/api';
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
->>>>>>> 882097d7949e5a1d2eb10fc89e98e55f8f59fd65
 
   const handleForgotPassword = async (values: ForgotPasswordFormValues) => {
-    setIsLoading(true);
-    setMessage(null);
-    setError(null);
     try {
-<<<<<<< HEAD
-      const forgotpasswordData: ForgotPasswordRequest = {
-              email: values.email,
-            };
-      const response = await auth.forgotpassword(forgotpasswordData);
-      setMessage(response.message || "Yêu cầu đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.");
-    } catch (error: any) {
-      console.error("Password reset failed:", error);
-      setError(error.message || "Đã có lỗi xảy ra. Vui lòng thử lại.");
-=======
       setIsLoading(true);
       setErrorMessage("");
       await auth.forgotPassword({ email: values.email });
@@ -48,7 +24,6 @@ export default function ForgotPasswordPage() {
     } catch (error: any) {
       console.error("Password reset failed:", error);
       setErrorMessage(error.message || "Có lỗi xảy ra khi gửi yêu cầu đặt lại mật khẩu");
->>>>>>> 882097d7949e5a1d2eb10fc89e98e55f8f59fd65
     } finally {
       setIsLoading(false);
     }
@@ -120,16 +95,6 @@ export default function ForgotPasswordPage() {
         <AuthHeader title="QUÊN MẬT KHẨU" />
         <CardContent className="pt-2">
           <div className="space-y-6">
-<<<<<<< HEAD
-            {message && <div className="text-green-600 text-center">{message}</div>}
-            {error && <div className="text-red-600 text-center">{error}</div>}
-            <ForgotPasswordForm formik={formik} />
-            <Button
-              onClick={() => formik.handleSubmit()}
-              type="submit"
-              className="w-full bg-gray-300 hover:bg-gray-400 text-black"
-              disabled={isLoading}
-=======
             <p className="text-gray-600 text-sm text-center">
               Nhập email của bạn để nhận liên kết đặt lại mật khẩu
             </p>
@@ -148,7 +113,6 @@ export default function ForgotPasswordPage() {
               type="submit" 
               className="w-full bg-gray-300 hover:bg-gray-400 text-black"
               disabled={isLoading || !formik.isValid}
->>>>>>> 882097d7949e5a1d2eb10fc89e98e55f8f59fd65
             >
               {isLoading ? "Đang gửi..." : "Gửi yêu cầu"}
             </Button>

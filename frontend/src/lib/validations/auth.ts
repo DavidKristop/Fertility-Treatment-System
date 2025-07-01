@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,32}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-const usernameRegex = /^[a-zA-Z0-9_]+$/;
+const usernameRegex = /^[a-zA-Z]+$/;
 const phoneRegex = /^[0-9]{10}$/;
 
 // Hàm kiểm tra định dạng YYYY-MM-DD và tính tuổi trực tiếp
@@ -36,7 +36,7 @@ export const loginSchema = z.object({
     required_error: "Mật khẩu là bắt buộc",
   })
     .regex(passwordRegex, "Mật khẩu phải bắt đầu bằng chữ hoa")
-    .min(12, "Mật khẩu phải có ít nhất 12 ký tự")
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
     .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
     .refine(hasSpecialCharacter, {
       message: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (ví dụ: !, @, #, $, %, ^, &, *, ?, _)",
@@ -48,8 +48,8 @@ export const registerSchema = loginSchema.extend({
     required_error: "Tên người dùng là bắt buộc",
   })
     .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
-    .max(20, "Tên người dùng không được quá 20 ký tự")
-    .regex(usernameRegex, "Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới"),
+    .max(20, "Tên người dùng không được quá 20 ký tự"),
+  
   
   phone: z.string({
     required_error: "Số điện thoại là bắt buộc",

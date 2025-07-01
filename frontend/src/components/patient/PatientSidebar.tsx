@@ -4,7 +4,6 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
-  Calendar,
   FileText,
   Pill,
   CreditCard,
@@ -13,8 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  Clock,
-  CalendarDays,
   Activity,
   MessageSquare,
   User,
@@ -49,31 +46,10 @@ const sidebarItems: SidebarItem[] = [
     path: "/patient/dashboard",
   },
   {
-    id: "appointments",
-    label: "Lịch hẹn",
-    icon: Calendar,
-    badge: 2,
-    children: [
-      {
-        id: "schedule-appointment",
-        label: "Đặt lịch hẹn",
-        icon: CalendarPlus,
-        path: "/patient/appointments/schedule",
-      },
-      {
-        id: "upcoming-appointments",
-        label: "Cuộc hẹn sắp tới",
-        icon: CalendarDays,
-        path: "/patient/appointments/upcoming",
-        badge: 2,
-      },
-      {
-        id: "appointment-history",
-        label: "Lịch sử hẹn",
-        icon: Clock,
-        path: "/patient/appointments/history",
-      },
-    ],
+    id: "schedule-appointment",
+    label: "Đặt lịch hẹn",
+    icon: CalendarPlus,
+    path: "/patient/appointments/schedule",
   },
   {
     id: "treatment",
@@ -168,7 +144,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
       // 2) Xóa token localStorage/sessionStorage
       sessionStorage.removeItem('token');
       // 3) Chuyển về trang login
-      navigate('/authorization/login', { replace: true });
+      navigate('/', { replace: true });
     }
   };
 

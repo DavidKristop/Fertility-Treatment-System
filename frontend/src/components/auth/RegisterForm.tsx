@@ -19,12 +19,12 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
       <div className="space-y-4">
         <div>
           <Label htmlFor="username" className="block text-sm font-medium text-gray-700">
-            Tên tài khoản
+            Họ và tên
           </Label>
           <Input
             id="username"
             type="text"
-            placeholder="johndoe123"
+            placeholder="Nguyễn Văn A"
             {...formik.getFieldProps('username')}
             className={`mt-1 w-full bg-gray-100 p-2 text-base sm:text-sm ${
               formik.touched.username && formik.errors.username ? 'border-red-500' : ''

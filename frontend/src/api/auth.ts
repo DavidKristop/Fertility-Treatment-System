@@ -7,7 +7,7 @@ import type {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ApiResponse,
-  LogoutResponse
+  LogoutResponse,
 } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
@@ -120,3 +120,25 @@ export const resetPassword = async (data: ResetPasswordRequest): Promise<ApiResp
 
     return response.json();
 };
+
+export const me = async (): Promise<AuthResponse['payload']> => {
+  // 1) Gọi endpoint với authRequired = true
+  const res = await fetchWrapper('auth/me', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  }, /* authRequired: */ true)
+
+  // 2) Nếu status không ok, ném lỗi để redirect về login
+  if (!res.ok) {
+    throw new Error('Unauthorized')
+  }
+
+  // 3) Parse JSON (chắc trả về AuthResponse)
+  const data = (await res.json()) as AuthResponse
+  if (!data.success) {
+    throw new Error(data.message)
+  }
+
+  // 4) Trả về phần payload
+  return data.payload
+}
