@@ -2,7 +2,7 @@ import { Bell, Search, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { auth } from "@/api";
 
 interface PatientHeaderProps {
   title: string
@@ -17,6 +18,21 @@ interface PatientHeaderProps {
 }
 
 export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps) {
+  const navigate = useNavigate()
+      const handleLogout = async () => {
+      try {
+        // 1) Gọi API logout nếu cần
+        await auth.logout; // giả sử logout() trả về Promise<LogoutResponse>
+      } catch (err) {
+        // Bạn có thể ghi log hoặc bỏ qua lỗi logout trên server
+        console.error('Logout API failed:', err);
+      } finally {
+        // 2) Xóa token localStorage/sessionStorage
+        sessionStorage.removeItem('token');
+        // 3) Chuyển về trang login
+        navigate('/authorization/login', { replace: true });
+      }
+    };
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -74,16 +90,17 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className="cursor-pointer">
                 <Link to="/patient/profile">
                   <User className="mr-2 h-4 w-4" />
                   Hồ sơ cá nhân
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <Link to="/authorization/login">
-                <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>
-              </Link>
+                <DropdownMenuItem onClick={(e) => {
+                  e.preventDefault();      // ngăn navigation mặc định
+                  handleLogout();          // gọi logout
+                }} className="text-red-600 cursor-pointer">Đăng xuất</DropdownMenuItem>
               
             </DropdownMenuContent>
           </DropdownMenu>

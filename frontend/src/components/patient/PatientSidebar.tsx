@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import logo from "@/assets/ucarelogo.png"
+import { auth } from "@/api"
 
 interface SidebarItem {
   id: string
@@ -162,6 +163,21 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
     return false
   }
 
+    const handleLogout = async () => {
+    try {
+      // 1) Gọi API logout nếu cần
+      await auth.logout; // giả sử logout() trả về Promise<LogoutResponse>
+    } catch (err) {
+      // Bạn có thể ghi log hoặc bỏ qua lỗi logout trên server
+      console.error('Logout API failed:', err);
+    } finally {
+      // 2) Xóa token localStorage/sessionStorage
+      sessionStorage.removeItem('token');
+      // 3) Chuyển về trang login
+      navigate('/authorization/login', { replace: true });
+    }
+  };
+
 // Tự động mở rộng mục cha khi một mục con được chọn
   useEffect(() => {
     sidebarItems.forEach((item) => {
@@ -282,10 +298,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
       <div className="p-2 border-t border-gray-200">
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
-          onClick={() => {
-            localStorage.removeItem("token")
-            navigate("/authorization/login")
-          }}
+          onClick={handleLogout}
         >
           <LogOut className="h-5 w-5 flex-shrink-0" />
           {(!isCollapsed || isMobile) && <span className="text-sm font-medium">Đăng xuất</span>}

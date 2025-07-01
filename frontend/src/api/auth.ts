@@ -1,5 +1,6 @@
+
 import { fetchWrapper } from '.'
-import type { AuthResponse, LoginRequest, RegisterRequest } from './types'
+import type { AuthResponse, LoginRequest, LogoutResponse, RegisterRequest} from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await fetchWrapper('auth/signin', {
@@ -12,6 +13,22 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
 
     if (!response.ok) {
         throw new Error('Login failed');
+    }
+
+    return response.json();
+};
+
+export const logout = async (data: LogoutResponse): Promise<AuthResponse> => {
+    const response = await fetchWrapper('auth/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        throw new Error('Logout failed');
     }
 
     return response.json();

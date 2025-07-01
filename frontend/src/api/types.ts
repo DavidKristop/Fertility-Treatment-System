@@ -3,6 +3,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
 export interface RegisterRequest extends LoginRequest {
   username: string;
   phone: string;
