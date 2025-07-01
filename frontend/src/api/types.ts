@@ -3,6 +3,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
 export interface RegisterRequest extends LoginRequest {
   username: string;
   phone: string;
@@ -11,21 +20,12 @@ export interface RegisterRequest extends LoginRequest {
   confirmPassword: string;
 }
 
-export interface User {
-  id: number;
-  email: string;
-  username: string;
-  phone: string;
-  address: string;
-  dateOfBirth: string; // Định dạng YYYY-MM-DD
-  createdAt: string; // ISO 8601 date string
-}
-
 export interface AuthResponse {
   payload: {
     accessToken: string;
     email: string;
     role: string;
+    fullName: string;
     userId: string;
   };
   message: string;
