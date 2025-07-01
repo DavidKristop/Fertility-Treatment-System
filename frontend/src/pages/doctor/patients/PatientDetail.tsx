@@ -117,12 +117,6 @@ export default function PatientDetail() {
           patient={patientInfo}
           showMedicalHistory={true}
           medicalHistory={patient.profile.medicalHistory}
-          actions={
-            <Button>
-              <Edit className="h-4 w-4 mr-2" />
-              Chỉnh sửa
-            </Button>
-          }
         />
 
         {/* Patient Details Tabs */}

@@ -101,12 +101,6 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
-    id: "results",
-    label: "Kết quả xét nghiệm",
-    icon: FileText,
-    path: "/patient/results",
-  },
-  {
     id: "payments",
     label: "Thanh toán & Hóa đơn",
     icon: CreditCard,

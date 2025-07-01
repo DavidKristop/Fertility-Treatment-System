@@ -1,6 +1,14 @@
 
 import { fetchWrapper } from '.'
-import type { AuthResponse, LoginRequest, LogoutResponse, RegisterRequest} from './types'
+import type { 
+  AuthResponse, 
+  LoginRequest, 
+  RegisterRequest, 
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  ApiResponse,
+  LogoutResponse
+} from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await fetchWrapper('auth/signin', {
@@ -61,6 +69,53 @@ export const loginWithGoogle = async (credential: string): Promise<AuthResponse>
 
     if (!response.ok) {
         throw new Error('Google login failed');
+    }
+
+    return response.json();
+};
+
+export const forgotPassword = async (data: ForgotPasswordRequest): Promise<ApiResponse> => {
+    const response = await fetchWrapper('auth/forgot-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Forgot password request failed');
+    }
+
+    return response.json();
+};
+
+export const validateResetToken = async (token: string): Promise<ApiResponse<boolean>> => {
+    const response = await fetchWrapper(`auth/validate-reset-token?token=${encodeURIComponent(token)}`, {
+        method: 'GET',
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Token validation failed');
+    }
+
+    return response.json();
+};
+
+export const resetPassword = async (data: ResetPasswordRequest): Promise<ApiResponse> => {
+    const response = await fetchWrapper('auth/reset-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Password reset failed');
     }
 
     return response.json();

@@ -11,24 +11,21 @@ import RootLayout from './pages/RootLayout';
 
 // Protected wrapper with role check
 import ProtectedRoute from './routes/ProtectedRoute';
-
-// Public pages
-import Home from './pages/Home';
-import Company from './pages/about/Company';
-import Team from './pages/about/Team';
-import Story from './pages/about/Story';
-import BlogPage from './pages/blog/page';
-import BlogPostPage from './pages/blog/[id]/page';
-import Services from './pages/pricing/Services';
-import Insurance from './pages/pricing/Insurance';
-import Financing from './pages/pricing/Financing';
-import Iui from './pages/services/iui';
-import Ivf from './pages/services/ivf';
-import DoctorListPage from './pages/doctorList/DoctorListPage';
-import DoctorDetailPage from './pages/doctorList/DoctorDetailPage';
-import LoginPage from './pages/authorization/LoginPage';
-import RegisterPage from './pages/authorization/RegisterPage';
-import ForgotPasswordPage from './pages/authorization/ForgotPasswordPage';
+// pages
+import Home from "./pages/Home"
+import Company from "./pages/about/Company"
+import Team from "./pages/about/Team"
+import Services from "./pages/pricing/Services"
+import Insurance from "./pages/pricing/Insurance"
+import Financing from "./pages/pricing/Financing"
+import Iui from "./pages/services/iui"
+import Ivf from "./pages/services/ivf"
+import DoctorListPage from "./pages/doctorList/DoctorListPage"
+import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage"
+import LoginPage from "./pages/authorization/LoginPage"
+import RegisterPage from "./pages/authorization/RegisterPage"
+import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
+import ResetPasswordPage from "./pages/authorization/ResetPasswordPage"
 
 // Patient pages
 import PatientDashboard from './pages/patient/PatientDashboard';
@@ -56,6 +53,9 @@ import ManagerDashboard from './pages/manager/ManagerDashboard';
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import Story from './pages/about/Story';
+import BlogPage from './pages/blog/page';
+import BlogPostPage from './pages/blog/[id]/page';
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -104,6 +104,10 @@ const router = createBrowserRouter([
           { path: 'register', element: <RegisterPage /> },
           { path: 'forgot-password', element: <ForgotPasswordPage /> },
         ],
+      },
+      {
+        path: "reset-password",
+        element: <ResetPasswordPage />,
       },
     ],
   },

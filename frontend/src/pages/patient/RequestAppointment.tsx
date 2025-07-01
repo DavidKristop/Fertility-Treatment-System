@@ -97,7 +97,6 @@ export default function RequestAppointment() {
   const navigate = useNavigate()
 
   const calendarDays = Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() }, (_, i) => i + 1)
-  const currentDate = new Date("2025-06-24T19:57:00+07:00") // Updated to current time
 
   const handleDateSelect = (day: number) => {
     const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
@@ -196,6 +195,29 @@ export default function RequestAppointment() {
     { label: "Đặt lịch hẹn" },
   ]
 
+  function renderDay(calendarDays: number[], currentMonth: Date, highlightedDates: number[]) {
+    const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), calendarDays[0]).getDay()
+    const dayElements = new Array(firstDay).fill(
+    <div
+      className={`p-2 rounded-full`}>
+      &nbsp;
+    </div>)
+    calendarDays.forEach((day) => {
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+      const isHighlighted = highlightedDates.includes(day)
+      dayElements.push(
+        <button
+          key={day}
+          onClick={() => handleDateSelect(day)}
+          className={`p-2 rounded-full ${selectedDate === date.toISOString().split("T")[0] ? "bg-blue-500 text-white" : isHighlighted ? "bg-yellow-200" : "hover:bg-gray-100"}`}
+        >
+          {day}
+        </button>
+      )
+    })
+    return dayElements
+  }
+
   return (
     <PatientLayout title="Đặt lịch hẹn" breadcrumbs={breadcrumbs}>
       <div className="max-w-4xl mx-auto">
@@ -219,19 +241,7 @@ export default function RequestAppointment() {
                   {day}
                 </div>
               ))}
-              {calendarDays.map((day) => {
-                const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-                const isHighlighted = highlightedDates.includes(day)
-                return (
-                  <button
-                    key={day}
-                    onClick={() => handleDateSelect(day)}
-                    className={`p-2 rounded-full ${selectedDate === date.toISOString().split("T")[0] ? "bg-blue-500 text-white" : isHighlighted ? "bg-yellow-200" : "hover:bg-gray-100"}`}
-                  >
-                    {day}
-                  </button>
-                )
-              })}
+              {renderDay(calendarDays, currentMonth, highlightedDates)}
             </div>
           </div>
 
