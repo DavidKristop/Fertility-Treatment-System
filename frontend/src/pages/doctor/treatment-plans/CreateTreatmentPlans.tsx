@@ -61,11 +61,10 @@ export default function CreateTreatmentPlans() {
   }
 
   return (
-    <DoctorLayout title="Tạo kế hoạch điều trị mới" breadcrumbs={breadcrumbs}>
+    <DoctorLayout title="Kế hoạch điều trị mới" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tạo kế hoạch điều trị mới</h1>
-          <p className="text-gray-600 mt-1">Tạo kế hoạch điều trị cho bệnh nhân</p>
         </div>
 
         <TreatmentPlanForm onSubmit={handleSubmit} onCancel={handleCancel} availableProtocols={mockProtocols} />
