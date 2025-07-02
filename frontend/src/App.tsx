@@ -48,6 +48,7 @@ import RootLayout from './pages/RootLayout'
 import BlogPage from './pages/blog/page'
 import BlogPostPage from './pages/blog/[id]/page'
 import Story from "./pages/about/Story"
+import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage"
 
 const router = createBrowserRouter([
   {
@@ -249,6 +250,10 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <PatientDashboard />,
+      },
+      {
+        path: "appointments/my-request",
+        element: <MyAppointmentRequests/>
       },
       {
         path: "appointments/schedule",

@@ -33,16 +33,37 @@ export interface AuthResponse {
 }
 
 export interface UserProfile {
-  id: number;
+  id: string;
   email: string;
   role: string;
-  username?: string; // Add this field
   fullName?: string; // Add this as fallback
   phone?: string;
   address?: string;
   dateOfBirth?: string;
+  avatarUrl?: string;
   // Other potential fields
 }
+
+export interface DoctorProfile extends UserProfile {
+  specialty: string;
+  degree: string;
+  yearsOfExperience: number;
+  licenseNumber: string;
+}
+
+export interface PatientProfile extends UserProfile {
+  medicalHistory: string;
+}
+
+export interface ScheduleResponse{
+  id: string;
+  doctor: DoctorProfile;
+  patient: PatientProfile;
+  rejectedReason: string;
+  appointmentDatetime: string; 
+  status: "PENDING" | "ACCEPTED" | "DENIED";
+}
+
 
 // Add these interfaces to your existing types
 
@@ -60,4 +81,18 @@ export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
   payload?: T;
+}
+
+export interface ApiPaginationResponse<T> {
+  success: boolean;
+  message: string;
+  payload: {
+    totalElements: number;
+    pageable:{
+      offset: 0;
+      pageNumber: number;
+    };
+    totalPages: number;
+    content: T[];
+  };
 }
