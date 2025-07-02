@@ -216,10 +216,6 @@ const router = createBrowserRouter([
         path: "results",
         children: [
           {
-            path: "record",
-            element: <RecordResults />,
-          },
-          {
             path: "history",
             element: <ResultsHistory />,
           }
