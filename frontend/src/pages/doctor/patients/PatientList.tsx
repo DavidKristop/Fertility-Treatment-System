@@ -128,9 +128,6 @@ export default function PatientList() {
           <Button variant="ghost" size="sm">
             Xem
           </Button>
-          <Button variant="ghost" size="sm">
-            Sửa
-          </Button>
         </div>
       ),
     },
@@ -151,13 +148,6 @@ export default function PatientList() {
     },
   ]
 
-  const actions = (
-    <Button>
-      <Plus className="h-4 w-4 mr-2" />
-      Thêm bệnh nhân
-    </Button>
-  )
-
   return (
     <DoctorLayout title="Danh sách bệnh nhân">
       <div className="space-y-6">
@@ -166,7 +156,6 @@ export default function PatientList() {
           onSearchChange={setSearchTerm}
           searchPlaceholder="Tìm kiếm bệnh nhân..."
           filters={filters}
-          actions={actions}
         />
 
         <DataTable
