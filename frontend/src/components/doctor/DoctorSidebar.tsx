@@ -62,6 +62,13 @@ const sidebarItems: SidebarItem[] = [
   },
 
   {
+    id: "patients",
+    label: "Bệnh nhân",
+    icon: Users,
+    path: "/doctor/patients",
+  },  
+
+  {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
