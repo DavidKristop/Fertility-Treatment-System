@@ -142,6 +142,8 @@ const router = createBrowserRouter([
         path: "profile",
         element: <PatientProfile />,
       },
+      // fallback for patient subpaths
+      { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
   },
 
@@ -234,6 +236,8 @@ const router = createBrowserRouter([
           },
         ],
       },
+      // fallback for doctor subpaths
+      { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
   },
 
@@ -255,6 +259,8 @@ const router = createBrowserRouter([
         path: "patients",
         element: <PatientList />,
       },
+      // fallback for manager subpaths
+      { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
   },
 
@@ -276,6 +282,8 @@ const router = createBrowserRouter([
         path: "patients",
         element: <PatientList />,
       },
+      // fallback for admin subpaths
+      { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
   },
 
