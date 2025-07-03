@@ -1,14 +1,15 @@
+import type { ApiPaginationResponse } from "@/api/types"
 import { useState, useEffect, useCallback } from "react"
 
 interface PaginationOptions<T> {
-  fetchFn: (page: number) => Promise<{ data: T[]; total: number; totalPages: number }>
+  fetchFn: (page: number) => Promise<ApiPaginationResponse<T>>
   dependencies?: any[]
   initialPage?: number
   onPageChange?: (page: number) => void
 }
 
 interface PaginationResult<T> {
-  data: { data: T[]; total: number; } | null
+  data: ApiPaginationResponse<T> | null
   currentPage: number
   totalPages: number
   isLoading: boolean
@@ -25,7 +26,7 @@ export function usePagination<T = any>({
   initialPage = 1,
   onPageChange,
 }: PaginationOptions<T>): PaginationResult<T> {
-  const [data, setData] = useState<{ data: T[]; total: number; totalPages: number } | null>(null)
+  const [data, setData] = useState<ApiPaginationResponse<T> | null>(null)
   const [currentPage, setCurrentPage] = useState(initialPage)
   const [totalPages, setTotalPages] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -40,7 +41,7 @@ export function usePagination<T = any>({
       try {
         const result = await fetchFn(page)
         setData(result)
-        setTotalPages(result.totalPages)
+        setTotalPages(result?.payload.totalPages || 0)
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred")
         setData(null)
