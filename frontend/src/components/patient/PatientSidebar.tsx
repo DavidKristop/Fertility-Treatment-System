@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
@@ -13,13 +11,12 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  Clock,
-  CalendarDays,
   Activity,
   MessageSquare,
   User,
   CalendarPlus,
   FileSignature,
+  CalendarCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -60,18 +57,11 @@ const sidebarItems: SidebarItem[] = [
         path: "/patient/appointments/schedule",
       },
       {
-        id: "upcoming-appointments",
-        label: "Cuộc hẹn sắp tới",
-        icon: CalendarDays,
-        path: "/patient/appointments/upcoming",
-        badge: 2,
-      },
-      {
-        id: "appointment-history",
-        label: "Lịch sử hẹn",
-        icon: Clock,
-        path: "/patient/appointments/history",
-      },
+        id: "my-requests",
+        label: "Xem lịch hẹn đặt",
+        icon: CalendarCheck,
+        path: "/patient/appointments/my-request"
+      }
     ],
   },
   {
@@ -111,12 +101,6 @@ const sidebarItems: SidebarItem[] = [
     icon: Bell,
     badge: 3,
     path: "/patient/notifications",
-  },
-  {
-    id: "support",
-    label: "Hỗ trợ & Tư vấn",
-    icon: MessageSquare,
-    path: "/patient/support",
   },
   {
     id: "contracts",
