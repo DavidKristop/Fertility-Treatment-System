@@ -112,7 +112,7 @@ export default function MyAppointmentRequests() {
                       <div className="text-sm text-gray-500 mb-1">Email bác sĩ: {req.doctor.email}</div>
                       <div className="text-sm">
                         <span className="font-medium">Thời gian: </span>
-                        {new Date(req.appointmentDatetime).toLocaleString("vi-VN")}
+                        {new Date(req.appointmentDatetime).toLocaleString("vi-VN") + " - " + new Date(new Date(req.appointmentDatetime).getTime() + 45 * 60 * 1000).toLocaleString("vi-VN")}
                       </div>
                       <div className="text-sm">
                         <span className="font-medium">Trạng thái: </span>

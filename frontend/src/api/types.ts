@@ -182,3 +182,36 @@ export interface PatientDashboardPayloadResponse {
   requestAppointment: RequestAppointmentResponse;
   treatment: Treatment;
 }
+
+export interface RefundResponse {
+  id: string;
+  amount: number;
+  refundDate: string;
+  refundMethod: string;
+  reason: string;
+  userId: string;
+  paymentId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaymentResponse {
+  id: string;
+  amount: number;
+  description: string;
+  paymentDate: string;
+  paymentDeadline: string;
+  paymentMethod: string;
+  status: string;
+  userId: string;
+  schedules: {
+    id: string;
+    appointmentDateTime: string;
+    estimatedTime: string;
+    services: ServiceReponse[];
+  }[];
+  assignDrugs: AssignDrugReponse[];
+  refunds: RefundResponse[];
+  createdAt: string;
+  updatedAt: string;
+}

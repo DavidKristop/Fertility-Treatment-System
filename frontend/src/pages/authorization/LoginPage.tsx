@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import AuthCard from "@/components/auth/AuthCard";
 import AuthHeader from "@/components/auth/AuthHeader";
@@ -12,6 +11,7 @@ import { auth } from '@/api';
 import { type LoginRequest } from '@/api/types';
 import { useEffect, useState } from "react";
 import { X, CheckCircle } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -62,9 +62,10 @@ export default function LoginPage() {
         default:
           navigate('/home');
       }
+      toast.success("Đăng nhập thành công!")
     } catch (error: any) {
-      console.error('Login failed:', error);
-      
+      console.error('Đăng nhập thất bại:', error);
+      toast.error("Đăng nhập thất bại")
       if (error instanceof Error) {
         formik.setErrors({ email: ' ', password: 'Nhập sai email hoặc mật khẩu' });
       }
@@ -124,15 +125,6 @@ export default function LoginPage() {
 
           <div className="space-y-6">
             <LoginForm formik={formik} />
-              <Button
-                onClick={() => formik.handleSubmit()}
-                type="submit"
-                form="login-form"
-                className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting ? 'Đang vào...' : 'Đăng nhập'}
-              </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng nhập với</div>
             <GoogleAuth text="Đăng nhập Google" mode="login" />
           </div>

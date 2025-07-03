@@ -11,18 +11,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { getDoctors } from "@/api/doctor-management"
 import type { DoctorProfile } from "@/api/types"
 import { getDoctorScheduleByDoctorId } from "@/api/schedule"
 import { Accordion } from "@/components/ui/accordion"
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@radix-ui/react-accordion"
-import { createRequestAppointment, getMyAppointmentRequests } from "@/api/request-appointment"
+import { createRequestAppointment } from "@/api/request-appointment"
 import { getPatientDashBoardData } from "@/api/patient-dashboard"
+import { DayPicker } from "react-day-picker"
+import "react-day-picker/style.css";
+import { vi } from "date-fns/locale"
+import { toast } from "react-toastify"
 
 
 export default function RequestAppointment() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null)
   const [timeSlots, setTimeSlots] = useState<{ [key: string]: string[] }>({
@@ -32,24 +35,23 @@ export default function RequestAppointment() {
   })
   const [doctors, setDoctors] = useState<DoctorProfile[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
-  const [submitStatus, setSubmitStatus] = useState<string | null>(null)
-  const [currentMonth, setCurrentMonth] = useState(new Date())
   const [hasPendingRequest, setHasPendingRequest] = useState(false)
   const [hasInProgressTreatment, setHasInProgressTreatment] = useState(false)
+  const [hasPendingRequestSchedule, setHasPendingRequestSchedule] = useState(false)
   const navigate = useNavigate()
 
   const fetchPatientDashBoardStatus = async()=>{
     setLoading(true)
-    setError(null)
+    
     try{
       const data = await getPatientDashBoardData()
-      console.log(data)
       setHasInProgressTreatment(data?.payload?.treatment!=null || false)
       setHasPendingRequest(data?.payload?.requestAppointment!=null || false)
+      setHasPendingRequestSchedule(data?.payload?.requestAppointment?.schedule!=null || false)
     }
     catch(err){
-      setError(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
+      console.log(err)
+      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
     }
     finally{
       setLoading(false)
@@ -58,7 +60,6 @@ export default function RequestAppointment() {
 
   const fetchAvailableSlots = async (date: Date, doctorId: string) => {
     setLoading(true)
-    setError(null)
     try {
       const data = await getDoctorScheduleByDoctorId(doctorId, date)
       setTimeSlots(
@@ -70,7 +71,7 @@ export default function RequestAppointment() {
         45
       ))
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
+      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
     } finally {
       setLoading(false)
     }
@@ -84,18 +85,17 @@ export default function RequestAppointment() {
       }
       setDoctors(data?.payload?.content || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải danh sách bác sĩ")
+      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải danh sách bác sĩ")
     }
   }
 
   const handleSubmit = async () => {
     if (!selectedDate || !selectedTime || !selectedDoctor) {
-      setSubmitStatus("Vui lòng chọn đầy đủ ngày, giờ và bác sĩ")
+
       return
     }
 
     setLoading(true)
-    setSubmitStatus(null)
     try {
       const [hour, minute] = selectedTime.split(" - ")[0]
       .split(":").slice(0, 2).map(Number);
@@ -116,15 +116,15 @@ export default function RequestAppointment() {
       if (!response.success) {
         throw new Error(response.message || "Đã xảy ra lỗi khi đặt lịch")
       }
-      setSubmitStatus(response.message)
+      toast.success(response.message)
       // Reset form sau khi đặt thành công
-      setSelectedDate(null)
+      setSelectedDate(undefined)
       setSelectedTime(null)
       setSelectedDoctor(null)
       setTimeSlots({ Morning: [], Afternoon: [], Evening: [] })
       setHasPendingRequest(true)
     } catch (err) {
-      setSubmitStatus(err instanceof Error ? err.message : "Đã xảy ra lỗi khi đặt lịch")
+      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi đặt lịch")
     } finally {
       setLoading(false)
     }
@@ -173,16 +173,6 @@ export default function RequestAppointment() {
     };
   }
 
-  const handlePreviousMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
-    setSelectedDate(null)
-  }
-
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
-    setSelectedDate(null)
-  }
-
   const handleBack = () => {
     navigate("/patient/dashboard")
   }
@@ -205,59 +195,6 @@ export default function RequestAppointment() {
     { label: "Đặt lịch hẹn" },
   ]
 
-  function renderDay(currentMonth: Date) {
-    // Clone to avoid mutating the original date
-    const month = currentMonth.getMonth();
-    const year = currentMonth.getFullYear();
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    const dayElements = [];
-
-    // Add empty slots for days before the 1st
-    for (let i = 0; i < firstDay; i++) {
-      dayElements.push(
-        <div key={`empty-${i}`} className="p-2 rounded-full">
-          &nbsp;
-        </div>
-      );
-    }
-
-    // Render each day of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const threeDayFromNow = new Date().getTime() + 2 * 24 * 60 * 60 * 1000;
-        const dayOfWeek = date.getDay();
-
-        if (dayOfWeek === 0 || dayOfWeek === 6 || date.getTime() < threeDayFromNow) {
-          dayElements.push(
-            <button
-              key={day}
-              className="p-2 rounded-full bg-gray-200"
-              disabled
-            >
-              {day}
-            </button>
-          );
-        } else {
-          dayElements.push(
-            <button
-              key={day}
-              onClick={() => setSelectedDate(date)}
-              className={`p-2 rounded-full cursor-pointer ${
-                selectedDate?.toDateString() === date.toDateString()
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              {day}
-            </button>
-          );
-      }
-    }
-    return dayElements;
-  }
-
   return (
     <PatientLayout title="Đặt lịch hẹn" breadcrumbs={breadcrumbs}>
       <div className="max-w-4xl mx-auto">
@@ -265,30 +202,26 @@ export default function RequestAppointment() {
 
         <div className="flex justify-center gap-8">
           {/* Calendar */}
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="flex justifyLeyf-between mb-2 items-center">
-              <Button variant="ghost" size="sm" onClick={handlePreviousMonth}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span>{currentMonth.toLocaleString("vi-VN", { month: "long", year: "numeric" })}</span>
-              <Button variant="ghost" size="sm" onClick={handleNextMonth}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day) => (
-                <div key={day} className="font-bold text-sm">
-                  {day}
-                </div>
-              ))}
-              {renderDay(currentMonth)}
-            </div>
-          </div>
+          <DayPicker
+            locale={vi}
+            disabled={[{dayOfWeek:[0,6]}, 
+            new Date(), 
+            new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+            new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
+            {before: new Date()}]}
+            navLayout="around"
+            animate
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+          />
 
           {/* Time Slots and Doctor Selection */}
           <div className="bg-white p-4 rounded-lg shadow w-64">
             { hasInProgressTreatment ? (
               <p className="text-center text-blue-500">Bạn đang trong một khóa điều trị.</p>
+            ): hasPendingRequestSchedule ? (
+              <p className="text-center text-blue-500">Bác sĩ bạn chọn đã chấp nhận yêu cầu tư vấn và khám tổng quán của bạn.</p>
             ) : hasPendingRequest ? (
               <p className="text-center text-blue-500">Bạn đã có một yêu cầu đang chờ xử lý. <Link className="text-red-500" to="/patient/appointments/my-request">Xem lịch hẹn đặt của bạn tại đây</Link></p>
             ) : !selectedDate ? (
@@ -312,8 +245,6 @@ export default function RequestAppointment() {
               </div>
               {loading ? (
                 <p className="text-center">Đang tải...</p>
-              ) : error ? (
-                <p className="text-center text-red-600">{error}</p>
               ) : !selectedDoctor ? (
                 <p className="text-center">Vui lòng chọn bác sĩ</p>
               ) : (
@@ -321,7 +252,6 @@ export default function RequestAppointment() {
                   type="single" 
                   collapsible 
                   className="border rounded-lg p-4 mb-4"
-                  defaultValue="Morning" 
                 >
                   {["Morning", "Afternoon", "Evening"].map((session) => (
                     <AccordionItem key={session} value={session} className="border-b my-2 last:border-b-0">
@@ -363,13 +293,6 @@ export default function RequestAppointment() {
             </>)}
           </div>
         </div>
-
-        {/* Thông báo trạng thái gửi lịch */}
-        {submitStatus && (
-          <div className={`text-center mt-4 ${submitStatus.includes("thành công") ? "text-green-600" : "text-red-600"}`}>
-            {submitStatus}
-          </div>
-        )}
 
         <div className="text-center mt-6 text-gray-600">
           Lưu ý: Nếu yêu cầu của bạn được chấp nhận, bạn sẽ phải <span className="text-red-500">trả phí 250.000 đ</span> cho phí siêu âm trong <span className="text-red-500">48h</span> kể từ khi bác sĩ đã chấp nhận yêu cầu của bạn.

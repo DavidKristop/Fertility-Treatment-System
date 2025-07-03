@@ -2,6 +2,7 @@ import { type FormikProps } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import type { RegisterFormValues } from '@/lib/validations/auth';
+import { Button } from '../ui/button';
 
 interface RegisterFormProps {
   formik: FormikProps<RegisterFormValues>;
@@ -144,6 +145,14 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
             <div className="text-red-500 text-xs sm:text-sm mt-1">{formik.errors.confirmPassword}</div>
           )}
         </div>
+        <Button
+          onClick={() => formik.handleSubmit()}
+          type="submit"
+          className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
+          disabled={formik.isSubmitting}
+        >
+          {formik.isSubmitting ? 'Đang đăng ký...' : 'Đăng ký'}
+        </Button>
       </div>
     </form>
   );

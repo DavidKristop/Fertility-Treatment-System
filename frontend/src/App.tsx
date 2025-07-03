@@ -56,18 +56,11 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import Story from './pages/about/Story';
 import BlogPage from './pages/blog/page';
 import BlogPostPage from './pages/blog/[id]/page';
+import MyAppointmentRequests from './pages/patient/MyAppointmentRequestsPage';
+import MyPaymentsPage from './pages/patient/PaymentRequestPage';
 
-<<<<<<< HEAD
-// layouts
-import RootLayout from './pages/RootLayout'
-import BlogPage from './pages/blog/page'
-import BlogPostPage from './pages/blog/[id]/page'
-import Story from "./pages/about/Story"
-import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage"
-=======
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
->>>>>>> 1d7fd53e4cb9aac09ee9dfecda1a5a5faa051756
 
 const router = createBrowserRouter([
   // Public routes under RootLayout
@@ -120,152 +113,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-<<<<<<< HEAD
-  // Doctor Dashboard Routes
-  {
-    path: "doctor",
-    children: [
-      {
-        path: "dashboard",
-        element: <DoctorDashboard />,
-      },
-      // Schedule routes
-      {
-        path: "schedule",
-        element: <Schedules />,
-      },
-      // Schedule Result routes
-      {
-        path: "schedule-result/:id",
-        element: <ScheduleResult />,
-      },
-      // Pending Approvals routes
-      {
-          path: "pending",
-          element: <PendingApprovals />,
-      },
-      // Patient routes
-      {
-        path: "patients",
-        children: [
-          {
-            index: true,
-            element: <PatientList />,
-          },
-          {
-            path: ":id",
-            element: <PatientDetail />,
-          }
-        ],
-      },
-      // Treatment Plan routes
-      {
-        path: "treatment-plans",
-        children: [
-          {
-            index: true,
-            element: <TreatmentPlans />,
-          },
-          {
-            path: "create",
-            element: <CreateTreatmentPlans />,
-          },
-          {
-            path: "treatment-details/:id",
-            element: <TreatmentDetail />, 
-          },
-        ],
-      },
-      // Results routes
-      {
-        path: "results",
-        children: [
-          {
-            path: "record",
-            element: <RecordResults />,
-          },
-          {
-            path: "history",
-            element: <ResultsHistory />,
-          }
-        ],
-      },
-      // Profile routes
-      {
-        path: "profile",
-        element: <DoctorProfile />,
-      },
-      // Notification routes
-      {
-        path: "notifications",
-        children: [
-          {
-            path: "reminders",
-            element: <ReminderHistory />,
-          },
-        ],
-      },
-    ],
-  },
-    // Patient Dashboard Routes
-  {
-    path: "patient",
-    children: [
-      {
-        path: "dashboard",
-        element: <PatientDashboard />,
-      },
-      {
-        path: "appointments/my-request",
-        element: <MyAppointmentRequests/>
-      },
-      {
-        path: "appointments/schedule",
-        element: <RequestAppointment />,
-      },
-      {
-        path: "contracts",
-        element: <PatientContracts />,
-      },
-      {
-        path: "profile",
-        element: <PatientProfile />,
-      },
-    ],
-  },
-      // Manager Dashboard Routes
-  {
-    path: "manager",
-    children: [
-      {
-        path: "dashboard",
-        element: <ManagerDashboard />,
-      },
-      
-      {
-        path: "patients",
-        element: <PatientList />,
-      },
-    ],
-  },
-        // Admin Dashboard Routes
-  {
-    path: "admin",
-    children: [
-      {
-        path: "dashboard",
-        element: <AdminDashboard />,
-      },
-      
-      {
-        path: "patients",
-        element: <PatientList />,
-      },
-    ],
-  },
-])
-=======
->>>>>>> 1d7fd53e4cb9aac09ee9dfecda1a5a5faa051756
 
   // Patient routes (ROLE_PATIENT only)
   {
@@ -279,6 +126,8 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <PatientDashboard /> },
       { path: 'appointments/schedule', element: <RequestAppointment /> },
+      { path: 'appointments/my-request', element: <MyAppointmentRequests/>},
+      { path: 'payments', element: <MyPaymentsPage/>},
       { path: 'contracts', element: <PatientContracts /> },
       { path: 'profile', element: <PatientProfile /> },
       // fallback for patient subpaths
