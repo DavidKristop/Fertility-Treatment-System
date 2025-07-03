@@ -1,3 +1,4 @@
+
 import { fetchWrapper } from '.'
 import type { 
   AuthResponse, 
@@ -5,7 +6,8 @@ import type {
   RegisterRequest, 
   ForgotPasswordRequest,
   ResetPasswordRequest,
-  ApiResponse
+  ApiResponse,
+  LogoutResponse,
 } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
@@ -19,6 +21,26 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
 
     if (!response.ok) {
         throw new Error('Login failed');
+    }
+
+    const result: AuthResponse = await response.json();
+
+    localStorage.setItem('access_token', result.payload.accessToken);
+
+    return result;
+};
+
+export const logout = async (data: LogoutResponse): Promise<AuthResponse> => {
+    const response = await fetchWrapper('auth/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        throw new Error('Logout failed');
     }
 
     return response.json();
@@ -73,19 +95,6 @@ export const forgotPassword = async (data: ForgotPasswordRequest): Promise<ApiRe
     return response.json();
 };
 
-export const validateResetToken = async (token: string): Promise<ApiResponse<boolean>> => {
-    const response = await fetchWrapper(`auth/validate-reset-token?token=${encodeURIComponent(token)}`, {
-        method: 'GET',
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Token validation failed');
-    }
-
-    return response.json();
-};
-
 export const resetPassword = async (data: ResetPasswordRequest): Promise<ApiResponse> => {
     const response = await fetchWrapper('auth/reset-password', {
         method: 'POST',
@@ -102,3 +111,25 @@ export const resetPassword = async (data: ResetPasswordRequest): Promise<ApiResp
 
     return response.json();
 };
+
+export const me = async (): Promise<AuthResponse['payload']> => {
+  // 1) Gọi endpoint với authRequired = true
+  const res = await fetchWrapper('auth/me', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  }, /* authRequired: */ true)
+
+  // 2) Nếu status không ok, ném lỗi để redirect về login
+  if (!res.ok) {
+    throw new Error('Unauthorized')
+  }
+
+  // 3) Parse JSON (chắc trả về AuthResponse)
+  const data = (await res.json()) as AuthResponse
+  if (!data.success) {
+    throw new Error(data.message)
+  }
+
+  // 4) Trả về phần payload
+  return data.payload
+}

@@ -1,5 +1,16 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
+} from 'react-router-dom';
+
+// Layouts
+import RootLayout from './pages/RootLayout';
+
+// Protected wrapper with role check
+import ProtectedRoute from './routes/ProtectedRoute';
 // pages
 import Home from "./pages/Home"
 import Company from "./pages/about/Company"
@@ -17,135 +28,82 @@ import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage"
 import ResetPasswordPage from "./pages/authorization/ResetPasswordPage"
 
 // Patient pages
-import RequestAppointment from "./pages/patient/RequestAppointment"
-import PatientDashboard from "./pages/patient/PatientDashboard"
-import PatientProfile from "./pages/patient/profile/PatientProfile"
-import PatientContracts from "./pages/patient/contracts/PatientContracts"
+import PatientDashboard from './pages/patient/PatientDashboard';
+import RequestAppointment from './pages/patient/RequestAppointment';
+import PatientContracts from './pages/patient/contracts/PatientContracts';
+import PatientProfile from './pages/patient/profile/PatientProfile';
 
 // Doctor pages
-import DoctorDashboard from "./pages/doctor/DoctorDashboard"
-import Schedules from "./pages/doctor/appointments/Schedules"
-import PatientList from "./pages/doctor/patients/PatientList"
-import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
-import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
-import PendingApprovals from "./pages/doctor/pending/PendingApprovals"
-import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
-import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
-import PatientDetail from "./pages/doctor/patients/PatientDetail"
-import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail"
-import ScheduleResult from "./pages/doctor/appointments/ScheduleResult"
+import DoctorDashboard from './pages/doctor/DoctorDashboard';
+import Schedules from './pages/doctor/appointments/Schedules';
+import ScheduleResult from './pages/doctor/appointments/ScheduleResult';
+import PendingApprovals from './pages/doctor/pending/PendingApprovals';
+import PatientList from './pages/doctor/patients/PatientList';
+import PatientDetail from './pages/doctor/patients/PatientDetail';
+import TreatmentPlans from './pages/doctor/treatment-plans/TreatmentPlans';
+import CreateTreatmentPlans from './pages/doctor/treatment-plans/CreateTreatmentPlans';
+import TreatmentDetail from './pages/doctor/treatment-plans/TreatmentDetail';
+import RecordResults from './pages/doctor/results/RecordResults';
+import ResultsHistory from './pages/doctor/results/ResultsHistory';
+import DoctorProfile from './pages/doctor/profile/DoctorProfile';
+import ReminderHistory from './pages/doctor/notifications/ReminderHistory';
 
 // Manager pages
-import ManagerDashboard from "./pages/manager/ManagerDashboard"
+import ManagerDashboard from './pages/manager/ManagerDashboard';
 
-//Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard"
+// Admin pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import Story from './pages/about/Story';
+import BlogPage from './pages/blog/page';
+import BlogPostPage from './pages/blog/[id]/page';
 
-// layouts
-import RootLayout from './pages/RootLayout'
-import BlogPage from './pages/blog/page'
-import BlogPostPage from './pages/blog/[id]/page'
-import Story from "./pages/about/Story"
+import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage"
+// Layout for authenticated dashboards (no header/footer)
+const DashboardLayout = () => <Outlet />;
 
 const router = createBrowserRouter([
+  // Public routes under RootLayout
   {
-    path: "/",
-    element: <RootLayout />,
+    path: '/',
+    element: <RootLayout />,  
     children: [
+      { index: true, element: <Home /> },
       {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "about",
+        path: 'about',
         children: [
-          {
-            index: true,
-            element: <Home />,
-          },
-          {
-            path: "company",
-            element: <Company />,
-          },
-          {
-            path: "team",
-            element: <Team />,
-          },
-          {
-            path: "story",
-            element: <Story />,
-          },
+          { index: true, element: <Home /> },
+          { path: 'company', element: <Company /> },
+          { path: 'team', element: <Team /> },
+          { path: 'story', element: <Story /> },
+        ],
+      },
+      { path: 'blog', element: <BlogPage /> },
+      { path: 'blog/:id', element: <BlogPostPage /> },
+      {
+        path: 'pricing',
+        children: [
+          { index: true, element: <Home /> },
+          { path: 'services', element: <Services /> },
+          { path: 'insurance', element: <Insurance /> },
+          { path: 'financing', element: <Financing /> },
         ],
       },
       {
-        path: "blog",
-        element: <BlogPage />,
-      },
-      {
-        path: "blog/:id",
-        element: <BlogPostPage />,
-      },
-      {
-        path: "pricing",
+        path: 'services',
         children: [
-          {
-            index: true,
-            element: <Home />,
-          },
-          {
-            path: "services",
-            element: <Services />,
-          },
-          {
-            path: "insurance",
-            element: <Insurance />,
-          },
-          {
-            path: "financing",
-            element: <Financing />,
-          },
+          { index: true, element: <Home /> },
+          { path: 'iui', element: <Iui /> },
+          { path: 'ivf', element: <Ivf /> },
         ],
       },
+      { path: 'doctors', element: <DoctorListPage /> },
+      { path: 'doctors/:id', element: <DoctorDetailPage /> },
       {
-        path: "services",
+        path: 'authorization',
         children: [
-          {
-            index: true,
-            element: <Home />,
-          },
-          {
-            path: "iui",
-            element: <Iui />,
-          },
-          {
-            path: "ivf",
-            element: <Ivf />,
-          },
-        ],
-      },
-      {
-        path: "doctors",
-        element: <DoctorListPage />,
-      },
-      {
-        path: "doctors/:id",
-        element: <DoctorDetailPage />,
-      },
-      {
-        path: "authorization",
-        children: [
-          {
-            path: "login",
-            element: <LoginPage />,
-          },
-          {
-            path: "register",
-            element: <RegisterPage />,
-          },
-          {
-            path: "forgot-password",
-            element: <ForgotPasswordPage />,
-          },
+          { path: 'login', element: <LoginPage /> },
+          { path: 'register', element: <RegisterPage /> },
+          { path: 'forgot-password', element: <ForgotPasswordPage /> },
         ],
       },
       {
@@ -154,9 +112,47 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // Doctor Dashboard Routes
+
+ // Patient routes (ROLE_PATIENT only)
   {
-    path: "doctor",
+    path: 'patient',
+    element: (
+      <ProtectedRoute allowedRoles={['ROLE_PATIENT']}>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "dashboard",
+        element: <PatientDashboard />,
+      },
+      {
+        path: "appointments/my-request",
+        element: <MyAppointmentRequests/>
+      },
+      {
+        path: "appointments/schedule",
+        element: <RequestAppointment />,
+      },
+      {
+        path: "contracts",
+        element: <PatientContracts />,
+      },
+      {
+        path: "profile",
+        element: <PatientProfile />,
+      },
+    ],
+  },
+
+  // Doctor routes (ROLE_DOCTOR only)
+  {
+    path: 'doctor',
+    element: (
+      <ProtectedRoute allowedRoles={['ROLE_DOCTOR']}>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "dashboard",
@@ -209,6 +205,20 @@ const router = createBrowserRouter([
           },
         ],
       },
+      // Results routes
+      {
+        path: "results",
+        children: [
+          {
+            path: "record",
+            element: <RecordResults />,
+          },
+          {
+            path: "history",
+            element: <ResultsHistory />,
+          }
+        ],
+      },
       // Profile routes
       {
         path: "profile",
@@ -226,31 +236,15 @@ const router = createBrowserRouter([
       },
     ],
   },
-    // Patient Dashboard Routes
+
+  // Manager routes (ROLE_MANAGER only)
   {
-    path: "patient",
-    children: [
-      {
-        path: "dashboard",
-        element: <PatientDashboard />,
-      },
-      {
-        path: "appointments/schedule",
-        element: <RequestAppointment />,
-      },
-      {
-        path: "contracts",
-        element: <PatientContracts />,
-      },
-      {
-        path: "profile",
-        element: <PatientProfile />,
-      },
-    ],
-  },
-      // Manager Dashboard Routes
-  {
-    path: "manager",
+    path: 'manager',
+    element: (
+      <ProtectedRoute allowedRoles={['ROLE_MANAGER']}>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "dashboard",
@@ -263,9 +257,15 @@ const router = createBrowserRouter([
       },
     ],
   },
-        // Admin Dashboard Routes
+
+  // Admin routes (ROLE_ADMIN only)
   {
-    path: "admin",
+    path: 'admin',
+    element: (
+      <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "dashboard",
@@ -278,10 +278,11 @@ const router = createBrowserRouter([
       },
     ],
   },
-])
 
-function App() {
-  return <RouterProvider router={router} />
+  // Global fallback
+  { path: '*', element: <Navigate to="/authorization/login" replace /> },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App;

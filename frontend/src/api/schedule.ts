@@ -1,5 +1,8 @@
 // Mock data and types for schedule management
 
+import { fetchWrapper } from "."
+import type { ApiResponse } from "./types"
+
 export interface Patient {
   id: string
   name: string
@@ -44,6 +47,13 @@ export interface Schedule {
   patient?: Patient
   services?: Service[]
   drugs?: Drug[]
+}
+
+export interface ScheduleResponse {
+  id: string,
+  appointmentDateTime: string,
+  estimatedTime: string,
+  status: string,
 }
 
 export interface ScheduleResult {
@@ -247,4 +257,16 @@ export const updateScheduleStatus = async (scheduleId: string, status: string): 
   if (schedule) {
     schedule.status = status
   }
+}
+
+
+export const getDoctorScheduleByDoctorId = async (doctorId: string, date: Date): Promise<ApiResponse<ScheduleResponse[]>> => {
+  const response = await fetchWrapper(`schedules/doctor-schedule/${doctorId}?day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`, {}, true)
+
+  if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch doctors');
+  }
+
+    return response.json();
 }
