@@ -91,19 +91,6 @@ export const forgotPassword = async (data: ForgotPasswordRequest): Promise<ApiRe
     return response.json();
 };
 
-export const validateResetToken = async (token: string): Promise<ApiResponse<boolean>> => {
-    const response = await fetchWrapper(`auth/validate-reset-token?token=${encodeURIComponent(token)}`, {
-        method: 'GET',
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Token validation failed');
-    }
-
-    return response.json();
-};
-
 export const resetPassword = async (data: ResetPasswordRequest): Promise<ApiResponse> => {
     const response = await fetchWrapper('auth/reset-password', {
         method: 'POST',
