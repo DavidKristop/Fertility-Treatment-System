@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
+import { acceptRequestAppointment, rejectRequestAppointment, getDoctorPendingAppointments } from "@/api/requestAppointment";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +45,7 @@ import {
   ThumbsDown,
   ClipboardList,
 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface Patient {
   id: string
@@ -105,143 +106,143 @@ interface PendingApprovalsProps {
 }
 
 // Mock data cho các lịch hẹn chờ duyệt
-const pendingAppointments: PendingAppointment[] = [
-  {
-    id: "550e8400-e29b-41d4-a716-446655440001",
-    requestDate: "14-01-2024",
-    requestTime: "08:30",
-    appointmentDate: "16-01-2024",
-    appointmentTime: "09:00",
-    duration: 60,
-    status: "Pending" as const, // Pending, Approved, Denied
-    patient: {
-      id: "550e8400-e29b-41d4-a716-446655440011",
-      name: "Nguyễn Thị Lan",
-      age: 32,
-      phone: "0901234567",
-      email: "lan.nguyen@email.com",
-      address: "123 Nguyễn Huệ, Q1, TP.HCM",
-      avatar: "",
-    },
-    treatmentType: "IVF" as const,
-    requestedService: "Tư vấn ban đầu và khám sàng lọc",
-    reason:
-      "Vợ chồng tôi đã cố gắng có con được 2 năm nhưng chưa thành công. Chúng tôi muốn được tư vấn về các phương pháp hỗ trợ sinh sản.",
-    medicalHistory: "Không có tiền sử bệnh lý đặc biệt. Đã làm xét nghiệm cơ bản tại bệnh viện địa phương.",
-    previousTreatments: "Chưa từng điều trị hiếm muộn ở đâu",
-    urgency: "Normal", // Normal, Urgent, Emergency
-    preferredDoctor: "Bất kỳ bác sĩ nào có kinh nghiệm",
-    notes: "Mong được tư vấn chi tiết về quy trình và chi phí",
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440002",
-    requestDate: "14-01-2024",
-    requestTime: "10:15",
-    appointmentDate: "17-01-2024",
-    appointmentTime: "14:00",
-    duration: 45,
-    status: "Pending" as const,
-    patient: {
-      id: "550e8400-e29b-41d4-a716-446655440012",
-      name: "Trần Văn Nam",
-      age: 35,
-      phone: "0912345678",
-      email: "nam.tran@email.com",
-      address: "456 Lê Lợi, Q3, TP.HCM",
-      avatar: "",
-    },
-    treatmentType: "IUI" as const,
-    requestedService: "Tái khám và theo dõi kết quả",
-    reason: "Đã thực hiện IUI lần 1 cách đây 2 tuần, cần tái khám để kiểm tra kết quả và lên kế hoạch tiếp theo.",
-    medicalHistory: "Đã điều trị hiếm muộn 6 tháng. Vợ có rối loạn nội tiết tố nhẹ.",
-    previousTreatments: "1 lần IUI tại phòng khám (14 ngày trước)",
-    urgency: "Normal",
-    preferredDoctor: "BS. Nguyễn Văn A (đã điều trị trước đó)",
-    notes: "Vợ có dấu hiệu mang thai nhưng chưa chắc chắn",
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440003",
-    requestDate: "15-01-2024",
-    requestTime: "09:45",
-    appointmentDate: "16-01-2024",
-    appointmentTime: "10:30",
-    duration: 30,
-    status: "Pending" as const,
-    patient: {
-      id: "550e8400-e29b-41d4-a716-446655440013",
-      name: "Lê Thị Hoa",
-      age: 28,
-      phone: "0923456789",
-      email: "hoa.le@email.com",
-      address: "789 Võ Văn Tần, Q3, TP.HCM",
-      avatar: "",
-    },
-    treatmentType: "IVF" as const,
-    requestedService: "Khám cấp cứu - tư vấn về tác dụng phụ thuốc",
-    reason: "Đang trong quá trình kích thích buồng trứng, xuất hiện đau bụng dữ dội và buồn nôn. Cần được khám ngay.",
-    medicalHistory: "Đang trong chu kỳ IVF lần 2. Lần 1 thất bại do chất lượng phôi không tốt.",
-    previousTreatments: "1 lần IVF thất bại (6 tháng trước), đang thực hiện IVF lần 2",
-    urgency: "Urgent",
-    preferredDoctor: "BS đang điều trị (BS. Trần Thị B)",
-    notes: "KHẨN CẤP - Cần được khám trong ngày",
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440004",
-    requestDate: "15-01-2024",
-    requestTime: "14:20",
-    appointmentDate: "18-01-2024",
-    appointmentTime: "15:30",
-    duration: 90,
-    status: "Pending" as const,
-    patient: {
-      id: "550e8400-e29b-41d4-a716-446655440014",
-      name: "Phạm Minh Tuấn",
-      age: 40,
-      phone: "0934567890",
-      email: "tuan.pham@email.com",
-      address: "321 Điện Biên Phủ, Q1, TP.HCM",
-      avatar: "",
-    },
-    treatmentType: "IVF" as const,
-    requestedService: "Tư vấn chuyển đổi phương pháp điều trị",
-    reason:
-      "Đã thất bại 3 lần IVF tại các phòng khám khác. Muốn được tư vấn về các phương pháp mới hoặc thay đổi chiến lược điều trị.",
-    medicalHistory: "Vợ 38 tuổi, AMH thấp (0.8). Chồng có tinh trùng yếu nhẹ. Đã điều trị 2 năm.",
-    previousTreatments: "3 lần IVF thất bại tại 2 phòng khám khác nhau trong 18 tháng qua",
-    urgency: "Normal",
-    preferredDoctor: "Bác sĩ có kinh nghiệm với các trường hợp khó",
-    notes: "Mong được tư vấn về khả năng thành công và các lựa chọn khác",
-  },
-  {
-    id: "550e8400-e29b-41d4-a716-446655440005",
-    requestDate: "15-01-2024",
-    requestTime: "16:00",
-    appointmentDate: "19-01-2024",
-    appointmentTime: "09:30",
-    duration: 45,
-    status: "Pending" as const,
-    patient: {
-      id: "550e8400-e29b-41d4-a716-446655440015",
-      name: "Võ Thị Mai",
-      age: 29,
-      phone: "0945678901",
-      email: "mai.vo@email.com",
-      address: "654 Nguyễn Trãi, Q5, TP.HCM",
-      avatar: "",
-    },
-    treatmentType: "IUI" as const,
-    requestedService: "Khám đầu và lập kế hoạch điều trị",
-    reason: "Cặp vợ chồng trẻ, kết hôn 1 năm, chưa có con. Muốn được khám và tư vấn về phương pháp phù hợp.",
-    medicalHistory: "Cả hai đều khỏe mạnh, chưa có tiền sử bệnh lý. Chưa từng khám hiếm muộn.",
-    previousTreatments: "Chưa từng điều trị hiếm muộn",
-    urgency: "Normal",
-    preferredDoctor: "Bác sĩ nữ (nếu có thể)",
-    notes: "Lần đầu đến khám, cần tư vấn cơ bản",
-  },
-]
+// const pendingAppointments: PendingAppointment[] = [
+//   {
+//     id: "550e8400-e29b-41d4-a716-446655440001",
+//     requestDate: "14-01-2024",
+//     requestTime: "08:30",
+//     appointmentDate: "16-01-2024",
+//     appointmentTime: "09:00",
+//     duration: 60,
+//     status: "Pending" as const, // Pending, Approved, Denied
+//     patient: {
+//       id: "550e8400-e29b-41d4-a716-446655440011",
+//       name: "Nguyễn Thị Lan",
+//       age: 32,
+//       phone: "0901234567",
+//       email: "lan.nguyen@email.com",
+//       address: "123 Nguyễn Huệ, Q1, TP.HCM",
+//       avatar: "",
+//     },
+//     treatmentType: "IVF" as const,
+//     requestedService: "Tư vấn ban đầu và khám sàng lọc",
+//     reason:
+//       "Vợ chồng tôi đã cố gắng có con được 2 năm nhưng chưa thành công. Chúng tôi muốn được tư vấn về các phương pháp hỗ trợ sinh sản.",
+//     medicalHistory: "Không có tiền sử bệnh lý đặc biệt. Đã làm xét nghiệm cơ bản tại bệnh viện địa phương.",
+//     previousTreatments: "Chưa từng điều trị hiếm muộn ở đâu",
+//     urgency: "Normal", // Normal, Urgent, Emergency
+//     preferredDoctor: "Bất kỳ bác sĩ nào có kinh nghiệm",
+//     notes: "Mong được tư vấn chi tiết về quy trình và chi phí",
+//   },
+//   {
+//     id: "550e8400-e29b-41d4-a716-446655440002",
+//     requestDate: "14-01-2024",
+//     requestTime: "10:15",
+//     appointmentDate: "17-01-2024",
+//     appointmentTime: "14:00",
+//     duration: 45,
+//     status: "Pending" as const,
+//     patient: {
+//       id: "550e8400-e29b-41d4-a716-446655440012",
+//       name: "Trần Văn Nam",
+//       age: 35,
+//       phone: "0912345678",
+//       email: "nam.tran@email.com",
+//       address: "456 Lê Lợi, Q3, TP.HCM",
+//       avatar: "",
+//     },
+//     treatmentType: "IUI" as const,
+//     requestedService: "Tái khám và theo dõi kết quả",
+//     reason: "Đã thực hiện IUI lần 1 cách đây 2 tuần, cần tái khám để kiểm tra kết quả và lên kế hoạch tiếp theo.",
+//     medicalHistory: "Đã điều trị hiếm muộn 6 tháng. Vợ có rối loạn nội tiết tố nhẹ.",
+//     previousTreatments: "1 lần IUI tại phòng khám (14 ngày trước)",
+//     urgency: "Normal",
+//     preferredDoctor: "BS. Nguyễn Văn A (đã điều trị trước đó)",
+//     notes: "Vợ có dấu hiệu mang thai nhưng chưa chắc chắn",
+//   },
+//   {
+//     id: "550e8400-e29b-41d4-a716-446655440003",
+//     requestDate: "15-01-2024",
+//     requestTime: "09:45",
+//     appointmentDate: "16-01-2024",
+//     appointmentTime: "10:30",
+//     duration: 30,
+//     status: "Pending" as const,
+//     patient: {
+//       id: "550e8400-e29b-41d4-a716-446655440013",
+//       name: "Lê Thị Hoa",
+//       age: 28,
+//       phone: "0923456789",
+//       email: "hoa.le@email.com",
+//       address: "789 Võ Văn Tần, Q3, TP.HCM",
+//       avatar: "",
+//     },
+//     treatmentType: "IVF" as const,
+//     requestedService: "Khám cấp cứu - tư vấn về tác dụng phụ thuốc",
+//     reason: "Đang trong quá trình kích thích buồng trứng, xuất hiện đau bụng dữ dội và buồn nôn. Cần được khám ngay.",
+//     medicalHistory: "Đang trong chu kỳ IVF lần 2. Lần 1 thất bại do chất lượng phôi không tốt.",
+//     previousTreatments: "1 lần IVF thất bại (6 tháng trước), đang thực hiện IVF lần 2",
+//     urgency: "Urgent",
+//     preferredDoctor: "BS đang điều trị (BS. Trần Thị B)",
+//     notes: "KHẨN CẤP - Cần được khám trong ngày",
+//   },
+//   {
+//     id: "550e8400-e29b-41d4-a716-446655440004",
+//     requestDate: "15-01-2024",
+//     requestTime: "14:20",
+//     appointmentDate: "18-01-2024",
+//     appointmentTime: "15:30",
+//     duration: 90,
+//     status: "Pending" as const,
+//     patient: {
+//       id: "550e8400-e29b-41d4-a716-446655440014",
+//       name: "Phạm Minh Tuấn",
+//       age: 40,
+//       phone: "0934567890",
+//       email: "tuan.pham@email.com",
+//       address: "321 Điện Biên Phủ, Q1, TP.HCM",
+//       avatar: "",
+//     },
+//     treatmentType: "IVF" as const,
+//     requestedService: "Tư vấn chuyển đổi phương pháp điều trị",
+//     reason:
+//       "Đã thất bại 3 lần IVF tại các phòng khám khác. Muốn được tư vấn về các phương pháp mới hoặc thay đổi chiến lược điều trị.",
+//     medicalHistory: "Vợ 38 tuổi, AMH thấp (0.8). Chồng có tinh trùng yếu nhẹ. Đã điều trị 2 năm.",
+//     previousTreatments: "3 lần IVF thất bại tại 2 phòng khám khác nhau trong 18 tháng qua",
+//     urgency: "Normal",
+//     preferredDoctor: "Bác sĩ có kinh nghiệm với các trường hợp khó",
+//     notes: "Mong được tư vấn về khả năng thành công và các lựa chọn khác",
+//   },
+//   {
+//     id: "550e8400-e29b-41d4-a716-446655440005",
+//     requestDate: "15-01-2024",
+//     requestTime: "16:00",
+//     appointmentDate: "19-01-2024",
+//     appointmentTime: "09:30",
+//     duration: 45,
+//     status: "Pending" as const,
+//     patient: {
+//       id: "550e8400-e29b-41d4-a716-446655440015",
+//       name: "Võ Thị Mai",
+//       age: 29,
+//       phone: "0945678901",
+//       email: "mai.vo@email.com",
+//       address: "654 Nguyễn Trãi, Q5, TP.HCM",
+//       avatar: "",
+//     },
+//     treatmentType: "IUI" as const,
+//     requestedService: "Khám đầu và lập kế hoạch điều trị",
+//     reason: "Cặp vợ chồng trẻ, kết hôn 1 năm, chưa có con. Muốn được khám và tư vấn về phương pháp phù hợp.",
+//     medicalHistory: "Cả hai đều khỏe mạnh, chưa có tiền sử bệnh lý. Chưa từng khám hiếm muộn.",
+//     previousTreatments: "Chưa từng điều trị hiếm muộn",
+//     urgency: "Normal",
+//     preferredDoctor: "Bác sĩ nữ (nếu có thể)",
+//     notes: "Lần đầu đến khám, cần tư vấn cơ bản",
+//   },
+// ]
 
 export default function PendingApprovals({
-  appointments = pendingAppointments,
+  // appointments = pendingAppointments,
   onApprove,
   onDeny,
   onBulkApprove,
@@ -257,26 +258,48 @@ export default function PendingApprovals({
   const [approvalNote, setApprovalNote] = useState("")
   const [denialReason, setDenialReason] = useState("")
 
+  const [appointments, setAppointments] = useState<PendingAppointment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDoctorPendingAppointments();
+        setAppointments(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách lịch hẹn:", error);
+      } 
+    };
+
+    fetchData();
+  }, []);
+
   const breadcrumbs = [{ label: "Trang chủ", path: "/doctor/dashboard" }, { label: "Cuộc hẹn" }, { label: "Chờ duyệt" }]
 
-  // Filter appointments
   const filteredAppointments = appointments.filter((appointment) => {
-    const matchesSearch =
-      appointment.patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.patient.phone.includes(searchTerm) ||
-      appointment.requestedService.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.reason.toLowerCase().includes(searchTerm.toLowerCase())
+  const name = appointment?.patient?.name?.toLowerCase() || '';
+  const phone = appointment?.patient?.phone || '';
+  const requestedService = appointment?.requestedService?.toLowerCase() || '';
+  const reason = appointment?.reason?.toLowerCase() || '';
+  const search = searchTerm?.toLowerCase() || '';
 
-    const matchesDate =
-      dateFilter === "all" ||
-      (dateFilter === "today" && appointment.appointmentDate === "16-01-2024") ||
-      (dateFilter === "tomorrow" && appointment.appointmentDate === "17-01-2024") ||
-      (dateFilter === "custom" && selectedDate && appointment.appointmentDate === selectedDate)
+  const matchesSearch =
+    name.includes(search) ||
+    phone.includes(search) ||
+    requestedService.includes(search) ||
+    reason.includes(search);
 
-    const matchesTreatment = treatmentFilter === "all" || appointment.treatmentType === treatmentFilter
+  const matchesDate =
+    dateFilter === "all" ||
+    (dateFilter === "today" && appointment.appointmentDate === "16-01-2024") ||
+    (dateFilter === "tomorrow" && appointment.appointmentDate === "17-01-2024") ||
+    (dateFilter === "custom" && selectedDate && appointment.appointmentDate === selectedDate);
 
-    return matchesSearch && matchesDate && matchesTreatment
-  })
+  const matchesTreatment =
+    treatmentFilter === "all" || appointment.treatmentType === treatmentFilter;
+
+  return matchesSearch && matchesDate && matchesTreatment;
+});
 
   const getTreatmentBadgeColor = (type: string) => {
     switch (type) {
@@ -292,28 +315,23 @@ export default function PendingApprovals({
   // Action handlers
   const handleApprove = async (requestId: string) => {
     try {
-      // Gọi API để tạo Schedule mới từ RequestAppointment
-      // Cấu trúc tương tự như updateScheduleStatus
-      // ...
-
-      // Cập nhật status của RequestAppointment sang "Approved"
-      // ...
-
+      await acceptRequestAppointment(requestId);
+      alert("Accept appointment success.")
       onApprove?.(requestId)
     } catch (error) {
       console.error("Error approving appointment:", error)
+      alert("Accept appointment fail.")
     }
     setApprovalNote("")
   }
 
-  const handleDeny = (appointmentId: string, reason: string) => {
-    if (onDeny) {
-      onDeny(appointmentId, reason)
-    } else {
-      console.log("Denying appointment:", appointmentId, "with reason:", reason)
-      // Here you would call your API to deny the appointment
+  const handleDeny = async (appointmentId: string, reason: string) => {
+  try {
+      await rejectRequestAppointment(appointmentId, reason);
+      onDeny?.(appointmentId, reason);
+    } catch (error) {
+      console.error("Lỗi từ chối:", error);
     }
-    setDenialReason("")
   }
 
   const handleBulkApprove = () => {
@@ -500,18 +518,18 @@ export default function PendingApprovals({
                       <TableCell>
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-sm font-medium">{appointment.patient.name.charAt(0)}</span>
+                            <span className="text-sm font-medium">{appointment?.patient?.name?.charAt(0)?.toUpperCase() || '?'}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="font-medium">{appointment.patient.name}</div>
-                            <div className="text-sm text-muted-foreground">{appointment.patient.age} tuổi</div>
+                            <div className="font-medium">{appointment?.patient?.name || 'Chưa rõ tên'}</div>
+                            <div className="text-sm text-muted-foreground">{appointment?.patient?.age ? `${appointment.patient.age} tuổi` : 'Tuổi không xác định'} tuổi</div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Phone className="h-3 w-3" />
-                              {appointment.patient.phone}
+                              {appointment?.patient?.phone || 'Không có số'}
                             </div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Mail className="h-3 w-3" />
-                              {appointment.patient.email}
+                              {appointment?.patient?.email || 'Không có email'}
                             </div>
                           </div>
                         </div>
