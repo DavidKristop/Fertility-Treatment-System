@@ -103,12 +103,6 @@ const sidebarItems: SidebarItem[] = [
     path: "/patient/notifications",
   },
   {
-    id: "support",
-    label: "Hỗ trợ & Tư vấn",
-    icon: MessageSquare,
-    path: "/patient/support",
-  },
-  {
     id: "contracts",
     label: "Hợp đồng",
     icon: FileSignature,

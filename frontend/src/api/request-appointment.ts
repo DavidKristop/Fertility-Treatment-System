@@ -19,14 +19,14 @@ export const createRequestAppointment = async ({doctorId, appointmentDatetime}: 
 }
 
 export const getMyAppointmentRequests = async ({ 
-    page = 0, size = 10, doctorEmail = "", status = "PENDING" 
+    page = 0, size = 10, doctorEmail = "", statuses = ["PENDING", "ACCEPTED", "DENIED"] 
 }: {
     page: number,
     size: number,
     doctorEmail: string,
-    status: "PENDING" | "ACCEPTED" | "DENIED"
+    statuses: ("PENDING" | "ACCEPTED" | "DENIED")[]
 }) : Promise<ApiPaginationResponse<ScheduleResponse>> => {
-    const response = await fetchWrapper(`request-appointments/my-request?page=${page}&size=${size}&doctorEmail=${doctorEmail}&status=${status}`, 
+    const response = await fetchWrapper(`request-appointments/my-request?page=${page}&size=${size}&doctorEmail=${doctorEmail}&status=${statuses.join('&status=')}`, 
         {}, true)
     
     if (!response.ok) {

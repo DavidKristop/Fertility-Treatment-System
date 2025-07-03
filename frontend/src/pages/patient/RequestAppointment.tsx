@@ -18,6 +18,7 @@ import { getDoctorScheduleByDoctorId } from "@/api/schedule"
 import { Accordion } from "@/components/ui/accordion"
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@radix-ui/react-accordion"
 import { createRequestAppointment, getMyAppointmentRequests } from "@/api/request-appointment"
+import { getPatientDashBoardData } from "@/api/patient-dashboard"
 
 
 export default function RequestAppointment() {
@@ -35,19 +36,17 @@ export default function RequestAppointment() {
   const [submitStatus, setSubmitStatus] = useState<string | null>(null)
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [hasPendingRequest, setHasPendingRequest] = useState(false)
+  const [hasInProgressTreatment, setHasInProgressTreatment] = useState(false)
   const navigate = useNavigate()
 
-  const fetchMyPendingRequest = async()=>{
+  const fetchPatientDashBoardStatus = async()=>{
     setLoading(true)
     setError(null)
     try{
-      const data = await getMyAppointmentRequests({ page: 0, size: 1, doctorEmail: "", status: "PENDING" })
+      const data = await getPatientDashBoardData()
       console.log(data)
-      if (data?.payload?.content?.length > 0) {
-        setHasPendingRequest(true)
-      } else {
-        setHasPendingRequest(false)
-      }
+      setHasInProgressTreatment(data?.payload?.treatment!=null || false)
+      setHasPendingRequest(data?.payload?.requestAppointment!=null || false)
     }
     catch(err){
       setError(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
@@ -197,7 +196,7 @@ export default function RequestAppointment() {
 
   useEffect(() => {
     fetchDoctors()
-    fetchMyPendingRequest()
+    fetchPatientDashBoardStatus()
   }, []) 
 
   const breadcrumbs = [
@@ -288,7 +287,9 @@ export default function RequestAppointment() {
 
           {/* Time Slots and Doctor Selection */}
           <div className="bg-white p-4 rounded-lg shadow w-64">
-            { hasPendingRequest ? (
+            { hasInProgressTreatment ? (
+              <p className="text-center text-blue-500">Bạn đang trong một khóa điều trị.</p>
+            ) : hasPendingRequest ? (
               <p className="text-center text-blue-500">Bạn đã có một yêu cầu đang chờ xử lý. <Link className="text-red-500" to="/patient/appointments/my-request">Xem lịch hẹn đặt của bạn tại đây</Link></p>
             ) : !selectedDate ? (
               <p className="text-center">Vui lòng chọn 1 ngày</p>
@@ -371,8 +372,7 @@ export default function RequestAppointment() {
         )}
 
         <div className="text-center mt-6 text-gray-600">
-          Nếu bạn không thấy khung giờ nào phù hợp với lịch trình của mình, hoặc muốn đặt lịch
-          khám trực tiếp, vui lòng gọi cho chúng tôi qua số 855-643-2430.
+          Lưu ý: Nếu yêu cầu của bạn được chấp nhận, bạn sẽ phải <span className="text-red-500">trả phí 250.000 đ</span> cho phí siêu âm trong <span className="text-red-500">48h</span> kể từ khi bác sĩ đã chấp nhận yêu cầu của bạn.
         </div>
 
         <div className="mt-6 text-center space-x-4">

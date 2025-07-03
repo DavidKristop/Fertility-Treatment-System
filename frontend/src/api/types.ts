@@ -62,6 +62,7 @@ export interface ScheduleResponse{
   rejectedReason: string;
   appointmentDatetime: string; 
   status: "PENDING" | "ACCEPTED" | "DENIED";
+  services?: ServiceReponse[];
 }
 
 
@@ -95,4 +96,89 @@ export interface ApiPaginationResponse<T> {
     totalPages: number;
     content: T[];
   };
+}
+
+export interface ServiceReponse {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
+  active: boolean;
+}
+
+export interface DrugResponse {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unit?: string;
+  active?: boolean;
+}
+
+export interface PatientDrugResponse {
+  id: string;
+  drug: DrugResponse;
+  dosage: string;
+  usageInstructions: string;
+  amount: number;
+}
+
+export interface AssignDrugReponse {
+  id: string;
+  status: string;
+  completeDate: string;
+  patientDrugs: PatientDrugResponse[];
+}
+
+export interface PhaseReponse {
+  id: string;
+  title: string;
+  description: string;
+  position: number;
+  phaseModifierPercentage: number;
+  refundPercentage?: number;
+  services?: ServiceReponse[];
+  drugs?: DrugResponse[];
+  schedules?: ScheduleResponse[];
+  assignDrugs?: AssignDrugReponse[];
+  unsetServices?: ServiceReponse[];
+}
+
+export interface ProtocolReponse {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  phases: PhaseReponse[];
+  estimatedPrice: number;
+  active: boolean;
+}
+
+export interface Treatment {
+  id: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  status: string;
+  patient: PatientProfile;
+  doctor: DoctorProfile;
+  protocol: ProtocolReponse;
+  phases: PhaseReponse[];
+}
+
+export interface RequestAppointmentResponse {
+  id: string;
+  doctor: DoctorProfile;
+  patient: PatientProfile;
+  rejectedReason: string;
+  appointmentDatetime: string;
+  status: string;
+  schedule: ScheduleResponse;
+}
+
+export interface PatientDashboardPayloadResponse {
+  requestAppointment: RequestAppointmentResponse;
+  treatment: Treatment;
 }

@@ -8,6 +8,7 @@ const STATUS_OPTIONS = [
   { value: "PENDING", label: "Đang chờ" },
   { value: "ACCEPTED", label: "Đã chấp nhận" },
   { value: "DENIED", label: "Từ chối" },
+  { value: "ALL", label: "Tất cả" }
 ];
 
 export default function MyAppointmentRequests() {
@@ -16,7 +17,7 @@ export default function MyAppointmentRequests() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "DENIED">("PENDING");
+  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "DENIED" | "ALL">("ALL");
   const [doctorEmail, setDoctorEmail] = useState("");
   const [search, setSearch] = useState("");
 
@@ -34,7 +35,7 @@ export default function MyAppointmentRequests() {
         page: pageNum,
         size: 10,
         doctorEmail: email,
-        status: statusVal,
+        statuses: statusVal === "ALL" ? ["PENDING", "ACCEPTED", "DENIED"] : [statusVal],
       });
       setRequests(res.payload.content);
       setTotalPages(res?.payload?.totalPages || 1);
