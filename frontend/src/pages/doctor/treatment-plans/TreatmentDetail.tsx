@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
+import LoadingComponent from "@/components/common/LoadingComponent"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -590,349 +591,362 @@ export default function TreatmentDetail() {
 
   return (
     <DoctorLayout title="Chi tiết kế hoạch điều trị" breadcrumbs={breadcrumbs}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" onClick={() => navigate("/doctor/treatment-plans")} className="p-2">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{treatmentPlan.patient_name}</h1>
-            <p className="text-lg text-gray-600 mt-1">Lập lịch điều trị</p>
+      <LoadingComponent isLoading={loading}>
+        {!treatmentPlan ? (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Không tìm thấy kế hoạch điều trị</h3>
+            <p className="text-gray-600 mb-4">Kế hoạch điều trị không tồn tại hoặc đã bị xóa</p>
+            <Button onClick={() => navigate("/doctor/treatment-plans")}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Quay lại danh sách
+            </Button>
           </div>
-        </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-8">
+              <Button variant="ghost" onClick={() => navigate("/doctor/treatment-plans")} className="p-2">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{treatmentPlan.patient_name}</h1>
+                <p className="text-lg text-gray-600 mt-1">Lập lịch điều trị</p>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
-          {/* Left Column - Patient Info & Calendar */}
-          <div className="xl:col-span-3 space-y-8">
-            {/* Patient Information */}
-            <Card className="shadow-sm border-gray-200">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-lg">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <User className="h-5 w-5 text-blue-600" />
-                  </div>
-                  Thông tin bệnh nhân
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <Mail className="h-4 w-4 text-gray-600" />
-                    </div>
-                    <span className="text-sm font-medium">{treatmentPlan.patient_email}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <Phone className="h-4 w-4 text-gray-600" />
-                    </div>
-                    <span className="text-sm font-medium">0901234567</span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="font-semibold text-sm text-gray-700 mb-2">Chẩn đoán</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed">{treatmentPlan.diagnosis}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm text-gray-700 mb-2">Giai đoạn hiện tại</h4>
-                    <Badge className="bg-blue-100 text-blue-800 px-3 py-1">{treatmentPlan.current_phase}</Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Calendar */}
-            <Card className="shadow-sm border-gray-200">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-center text-xl font-semibold">
-                  Thời gian và ngày nào phù hợp với bạn?
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-6 pb-8">{renderCalendar()}</CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Schedule Controls */}
-          <div className="xl:col-span-2 space-y-6">
-            {/* Tabs for Services and Drugs */}
-            <Card className="shadow-sm border-gray-200">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Lập lịch điều trị</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="services" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="services" className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Dịch vụ
-                    </TabsTrigger>
-                    <TabsTrigger value="drugs" className="flex items-center gap-2">
-                      <Pill className="h-4 w-4" />
-                      Thuốc
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="services" className="space-y-6 mt-6">
-                    <div>
-                      <Label className="text-sm font-semibold text-gray-700 mb-3 block">
-                        Chọn dịch vụ chưa được phân công ({unassignedServices.length} dịch vụ)
-                      </Label>
-                      {unassignedServices.length > 0 ? (
-                        <div className="space-y-3 max-h-40 overflow-y-auto border rounded-lg p-3 bg-gray-50">
-                          {unassignedServices.map((service) => (
-                            <div key={service.id} className="flex items-center space-x-3">
-                              <input
-                                type="checkbox"
-                                id={service.id}
-                                checked={selectedServices.includes(service.id)}
-                                onChange={() => handleServiceToggle(service.id)}
-                                className="rounded border-gray-300 h-4 w-4"
-                              />
-                              <label htmlFor={service.id} className="text-sm font-medium text-gray-700">
-                                {service.name}
-                              </label>
-                            </div>
-                          ))}
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
+              {/* Left Column - Patient Info & Calendar */}
+              <div className="xl:col-span-3 space-y-8">
+                {/* Patient Information */}
+                <Card className="shadow-sm border-gray-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-3 text-lg">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <User className="h-5 w-5 text-blue-600" />
+                      </div>
+                      Thông tin bệnh nhân
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-100 rounded-lg">
+                          <Mail className="h-4 w-4 text-gray-600" />
                         </div>
-                      ) : (
-                        <div className="text-center py-8 border rounded-lg bg-gray-50">
-                          <p className="text-sm text-gray-500">Tất cả dịch vụ đã được phân công</p>
+                        <span className="text-sm font-medium">{treatmentPlan.patient_email}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-100 rounded-lg">
+                          <Phone className="h-4 w-4 text-gray-600" />
                         </div>
-                      )}
+                        <span className="text-sm font-medium">0901234567</span>
+                      </div>
                     </div>
-
-                    {selectedDate && selectedServices.length > 0 && (
+                    <div className="space-y-3">
                       <div>
-                        <Label className="text-sm font-semibold text-gray-700 mb-3 block">Chọn thời gian</Label>
-                        {renderTimeSlots()}
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">Chẩn đoán</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">{treatmentPlan.diagnosis}</p>
                       </div>
-                    )}
-
-                    {error && (
-                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600 font-medium">{error}</p>
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">Giai đoạn hiện tại</h4>
+                        <Badge className="bg-blue-100 text-blue-800 px-3 py-1">{treatmentPlan.current_phase}</Badge>
                       </div>
-                    )}
-
-                    <Button
-                      onClick={handleAddSchedule}
-                      className="w-full h-11 font-semibold"
-                      disabled={selectedServices.length === 0 || !selectedDate || !selectedTime}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Tạo lịch hẹn ({selectedServices.length} dịch vụ)
-                    </Button>
-                  </TabsContent>
-
-                  <TabsContent value="drugs" className="space-y-6 mt-6">
-                    <div>
-                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Chọn thuốc chưa được phân công ({unassignedDrugs.length} loại thuốc)
-                      </Label>
-                      {unassignedDrugs.length > 0 ? (
-                        <Select value={selectedDrug} onValueChange={setSelectedDrug}>
-                          <SelectTrigger className="h-11">
-                            <SelectValue placeholder="Chọn thuốc..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {unassignedDrugs.map((drug) => (
-                              <SelectItem key={drug.id} value={drug.id}>
-                                {drug.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <div className="text-center py-8 border rounded-lg bg-gray-50">
-                          <p className="text-sm text-gray-500">Tất cả thuốc đã được phân công</p>
-                        </div>
-                      )}
                     </div>
+                  </CardContent>
+                </Card>
 
-                    {selectedDrug && (
-                      <>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="drugStartDate" className="text-sm font-semibold text-gray-700 mb-2 block">
-                              Ngày bắt đầu
-                            </Label>
-                            <div className="relative">
-                              <Input
-                                id="drugStartDate"
-                                type="date"
-                                value={drugStartDate}
-                                onChange={(e) => handleDrugStartDateChange(e.target.value)}
-                                className="h-11"
-                              />
-                              {drugStartDateDisplay && (
-                                <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
-                                  <span className="text-sm text-gray-700 bg-white px-1">{drugStartDateDisplay}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <Label htmlFor="drugEndDate" className="text-sm font-semibold text-gray-700 mb-2 block">
-                              Ngày kết thúc
-                            </Label>
-                            <div className="relative">
-                              <Input
-                                id="drugEndDate"
-                                type="date"
-                                value={drugEndDate}
-                                onChange={(e) => handleDrugEndDateChange(e.target.value)}
-                                className="h-11"
-                              />
-                              {drugEndDateDisplay && (
-                                <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
-                                  <span className="text-sm text-gray-700 bg-white px-1">{drugEndDateDisplay}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                {/* Calendar */}
+                <Card className="shadow-sm border-gray-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-center text-xl font-semibold">
+                      Thời gian và ngày nào phù hợp với bạn?
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-6 pb-8">{renderCalendar()}</CardContent>
+                </Card>
+              </div>
 
+              {/* Right Column - Schedule Controls */}
+              <div className="xl:col-span-2 space-y-6">
+                {/* Tabs for Services and Drugs */}
+                <Card className="shadow-sm border-gray-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg">Lập lịch điều trị</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Tabs defaultValue="services" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="services" className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Dịch vụ
+                        </TabsTrigger>
+                        <TabsTrigger value="drugs" className="flex items-center gap-2">
+                          <Pill className="h-4 w-4" />
+                          Thuốc
+                        </TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="services" className="space-y-6 mt-6">
                         <div>
-                          <Label htmlFor="dosage" className="text-sm font-semibold text-gray-700 mb-2 block">
-                            Liều lượng
+                          <Label className="text-sm font-semibold text-gray-700 mb-3 block">
+                            Chọn dịch vụ chưa được phân công ({unassignedServices.length} dịch vụ)
                           </Label>
-                          <Input
-                            id="dosage"
-                            placeholder="Ví dụ: 150IU/ngày"
-                            value={dosage}
-                            onChange={(e) => setDosage(e.target.value)}
-                            className="h-11"
-                          />
+                          {unassignedServices.length > 0 ? (
+                            <div className="space-y-3 max-h-40 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+                              {unassignedServices.map((service) => (
+                                <div key={service.id} className="flex items-center space-x-3">
+                                  <input
+                                    type="checkbox"
+                                    id={service.id}
+                                    checked={selectedServices.includes(service.id)}
+                                    onChange={() => handleServiceToggle(service.id)}
+                                    className="rounded border-gray-300 h-4 w-4"
+                                  />
+                                  <label htmlFor={service.id} className="text-sm font-medium text-gray-700">
+                                    {service.name}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-8 border rounded-lg bg-gray-50">
+                              <p className="text-sm text-gray-500">Tất cả dịch vụ đã được phân công</p>
+                            </div>
+                          )}
                         </div>
 
-                        <div>
-                          <Label htmlFor="instructions" className="text-sm font-semibold text-gray-700 mb-2 block">
-                            Hướng dẫn sử dụng
-                          </Label>
-                          <Input
-                            id="instructions"
-                            placeholder="Ví dụ: Tiêm dưới da vào buổi tối"
-                            value={instructions}
-                            onChange={(e) => setInstructions(e.target.value)}
-                            className="h-11"
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {error && (
-                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600 font-medium">{error}</p>
-                      </div>
-                    )}
-
-                    <Button
-                      onClick={handleAddDrug}
-                      className="w-full h-11 font-semibold"
-                      disabled={!selectedDrug || unassignedDrugs.length === 0}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm thuốc
-                    </Button>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-
-            {/* Current Schedules */}
-            <Card className="shadow-sm border-gray-200">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Lịch hẹn hiện tại</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {schedules.map((schedule) => (
-                    <div
-                      key={schedule.id}
-                      className="flex items-center justify-between p-4 border rounded-lg bg-gray-50"
-                    >
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm text-gray-900">{schedule.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {formatDate(schedule.date)} {schedule.time && `• ${schedule.time}`}
-                        </p>
-                        {schedule.serviceIds && schedule.serviceIds.length > 1 && (
-                          <p className="text-xs text-blue-600 mt-1">
-                            {schedule.serviceIds.length} dịch vụ được lên lịch cùng lúc
-                          </p>
+                        {selectedDate && selectedServices.length > 0 && (
+                          <div>
+                            <Label className="text-sm font-semibold text-gray-700 mb-3 block">Chọn thời gian</Label>
+                            {renderTimeSlots()}
+                          </div>
                         )}
-                        <Badge className={`${getStatusColor(schedule.status)} text-xs mt-2`}>
-                          {getStatusLabel(schedule.status)}
-                        </Badge>
-                      </div>
-                      {schedule.status === "scheduled" && (
+
+                        {error && (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-sm text-red-600 font-medium">{error}</p>
+                          </div>
+                        )}
+
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleCancelSchedule(schedule.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-3"
+                          onClick={handleAddSchedule}
+                          className="w-full h-11 font-semibold"
+                          disabled={selectedServices.length === 0 || !selectedDate || !selectedTime}
                         >
-                          <X className="h-4 w-4" />
+                          <Plus className="h-4 w-4 mr-2" />
+                          Tạo lịch hẹn ({selectedServices.length} dịch vụ)
                         </Button>
+                      </TabsContent>
+
+                      <TabsContent value="drugs" className="space-y-6 mt-6">
+                        <div>
+                          <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                            Chọn thuốc chưa được phân công ({unassignedDrugs.length} loại thuốc)
+                          </Label>
+                          {unassignedDrugs.length > 0 ? (
+                            <Select value={selectedDrug} onValueChange={setSelectedDrug}>
+                              <SelectTrigger className="h-11">
+                                <SelectValue placeholder="Chọn thuốc..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {unassignedDrugs.map((drug) => (
+                                  <SelectItem key={drug.id} value={drug.id}>
+                                    {drug.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <div className="text-center py-8 border rounded-lg bg-gray-50">
+                              <p className="text-sm text-gray-500">Tất cả thuốc đã được phân công</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {selectedDrug && (
+                          <>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor="drugStartDate" className="text-sm font-semibold text-gray-700 mb-2 block">
+                                  Ngày bắt đầu
+                                </Label>
+                                <div className="relative">
+                                  <Input
+                                    id="drugStartDate"
+                                    type="date"
+                                    value={drugStartDate}
+                                    onChange={(e) => handleDrugStartDateChange(e.target.value)}
+                                    className="h-11"
+                                  />
+                                  {drugStartDateDisplay && (
+                                    <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
+                                      <span className="text-sm text-gray-700 bg-white px-1">{drugStartDateDisplay}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div>
+                                <Label htmlFor="drugEndDate" className="text-sm font-semibold text-gray-700 mb-2 block">
+                                  Ngày kết thúc
+                                </Label>
+                                <div className="relative">
+                                  <Input
+                                    id="drugEndDate"
+                                    type="date"
+                                    value={drugEndDate}
+                                    onChange={(e) => handleDrugEndDateChange(e.target.value)}
+                                    className="h-11"
+                                  />
+                                  {drugEndDateDisplay && (
+                                    <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
+                                      <span className="text-sm text-gray-700 bg-white px-1">{drugEndDateDisplay}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <Label htmlFor="dosage" className="text-sm font-semibold text-gray-700 mb-2 block">
+                                Liều lượng
+                              </Label>
+                              <Input
+                                id="dosage"
+                                placeholder="Ví dụ: 150IU/ngày"
+                                value={dosage}
+                                onChange={(e) => setDosage(e.target.value)}
+                                className="h-11"
+                              />
+                            </div>
+
+                            <div>
+                              <Label htmlFor="instructions" className="text-sm font-semibold text-gray-700 mb-2 block">
+                                Hướng dẫn sử dụng
+                              </Label>
+                              <Input
+                                id="instructions"
+                                placeholder="Ví dụ: Tiêm dưới da vào buổi tối"
+                                value={instructions}
+                                onChange={(e) => setInstructions(e.target.value)}
+                                className="h-11"
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        {error && (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-sm text-red-600 font-medium">{error}</p>
+                          </div>
+                        )}
+
+                        <Button
+                          onClick={handleAddDrug}
+                          className="w-full h-11 font-semibold"
+                          disabled={!selectedDrug || unassignedDrugs.length === 0}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Thêm thuốc
+                        </Button>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+
+                {/* Current Schedules */}
+                <Card className="shadow-sm border-gray-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg">Lịch hẹn hiện tại</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {schedules.map((schedule) => (
+                        <div
+                          key={schedule.id}
+                          className="flex items-center justify-between p-4 border rounded-lg bg-gray-50"
+                        >
+                          <div className="flex-1">
+                            <p className="font-semibold text-sm text-gray-900">{schedule.name}</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatDate(schedule.date)} {schedule.time && `• ${schedule.time}`}
+                            </p>
+                            {schedule.serviceIds && schedule.serviceIds.length > 1 && (
+                              <p className="text-xs text-blue-600 mt-1">
+                                {schedule.serviceIds.length} dịch vụ được lên lịch cùng lúc
+                              </p>
+                            )}
+                            <Badge className={`${getStatusColor(schedule.status)} text-xs mt-2`}>
+                              {getStatusLabel(schedule.status)}
+                            </Badge>
+                          </div>
+                          {schedule.status === "scheduled" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCancelSchedule(schedule.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-3"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      {schedules.length === 0 && (
+                        <div className="text-center py-8">
+                          <p className="text-sm text-gray-500">Chưa có lịch hẹn nào</p>
+                        </div>
                       )}
                     </div>
-                  ))}
-                  {schedules.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-sm text-gray-500">Chưa có lịch hẹn nào</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
 
-            {/* Drug Assignments */}
-            <Card className="shadow-sm border-gray-200">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Thuốc đang sử dụng</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {drugAssignments.map((assignment) => (
-                    <div key={assignment.id} className="p-4 border rounded-lg bg-gray-50">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <p className="font-semibold text-sm text-gray-900">{assignment.name}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {formatDate(assignment.startDate)} - {formatDate(assignment.endDate)}
-                          </p>
-                          <p className="text-xs text-gray-600 mt-2">
-                            <strong>Liều:</strong> {assignment.dosage}
-                          </p>
-                          <p className="text-xs text-gray-600 mt-1">{assignment.instructions}</p>
-                          <Badge className={`${getStatusColor(assignment.status)} text-xs mt-2`}>
-                            {getStatusLabel(assignment.status)}
-                          </Badge>
+                {/* Drug Assignments */}
+                <Card className="shadow-sm border-gray-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg">Thuốc đang sử dụng</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {drugAssignments.map((assignment) => (
+                        <div key={assignment.id} className="p-4 border rounded-lg bg-gray-50">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-semibold text-sm text-gray-900">{assignment.name}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {formatDate(assignment.startDate)} - {formatDate(assignment.endDate)}
+                              </p>
+                              <p className="text-xs text-gray-600 mt-2">
+                                <strong>Liều:</strong> {assignment.dosage}
+                              </p>
+                              <p className="text-xs text-gray-600 mt-1">{assignment.instructions}</p>
+                              <Badge className={`${getStatusColor(assignment.status)} text-xs mt-2`}>
+                                {getStatusLabel(assignment.status)}
+                              </Badge>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveDrugAssignment(assignment.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-3"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveDrugAssignment(assignment.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-3"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      ))}
+                      {drugAssignments.length === 0 && (
+                        <div className="text-center py-8">
+                          <p className="text-sm text-gray-500">Chưa có thuốc nào được kê</p>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                  {drugAssignments.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-sm text-gray-500">Chưa có thuốc nào được kê</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </LoadingComponent>
     </DoctorLayout>
   )
 }
