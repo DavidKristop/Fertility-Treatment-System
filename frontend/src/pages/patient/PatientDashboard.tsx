@@ -2,13 +2,13 @@ import PatientLayout from "@/components/patient/PatientLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CalendarIcon, ChevronLeft, ChevronRight, MapPin} from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SelectTrigger, SelectValue, SelectContent, SelectItem, Select } from "@radix-ui/react-select"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { me } from "@/api/auth"
 
 
 // Mock data
-const patientName = "Nguyễn Thị Lan"
 const hasActiveTreatment = true
 const treatmentProgress = {
   currentStage: "Giai đoạn 2: Kích thích buồng trứng",
@@ -82,6 +82,8 @@ const appointments = [
 ]
 
 export default function PatientDashboard() {
+  const [patientName, setPatientName] = useState<string>("")
+  const navigate = useNavigate()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
   const getPhaseStatus = (status: string) => {
@@ -94,6 +96,26 @@ export default function PatientDashboard() {
         return "bg-gray-300"
     }
   }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const user = await me()             // sẽ gửi header Bearer <token>
+        setPatientName(user.fullName)         // dùng email làm display name
+      } catch {
+        navigate('/authorization/login', { replace: true })
+      }
+    })()
+  }, [navigate])
+
+  if (!patientName) {
+    return (
+      <PatientLayout title="Trang tổng quan">
+        <div>Đang tải thông tin người dùng…</div>
+      </PatientLayout>
+    )
+  }
+
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear()

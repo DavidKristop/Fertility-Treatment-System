@@ -45,7 +45,7 @@ export default function LoginPage() {
         password: values.password
       };
       const response = await auth.login(loginData);
-      localStorage.setItem('token', response.payload.accessToken);
+      sessionStorage.setItem('token', response.payload.accessToken);
       switch (response.payload.role) {
         case 'ROLE_PATIENT':
           navigate('/patient/dashboard');
@@ -124,14 +124,15 @@ export default function LoginPage() {
 
           <div className="space-y-6">
             <LoginForm formik={formik} />
-            <Button 
-              onClick={() => formik.handleSubmit()} 
-              type="submit" 
-              form="login-form" 
-              className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
-            >
-              Đăng nhập
-            </Button>
+              <Button
+                onClick={() => formik.handleSubmit()}
+                type="submit"
+                form="login-form"
+                className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
+                disabled={formik.isSubmitting}
+              >
+                {formik.isSubmitting ? 'Đang vào...' : 'Đăng nhập'}
+              </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng nhập với</div>
             <GoogleAuth text="Đăng nhập Google" mode="login" />
           </div>
