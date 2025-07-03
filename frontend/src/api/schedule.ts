@@ -78,21 +78,21 @@ export interface ScheduleResultRequest {
 // Mock data
 const mockPatients: Patient[] = [
   {
-    id: "1",
+    id: "schedule-1",
     name: "Nguyễn Thị Lan",
     phone: "0901234567",
     email: "lan.nguyen@email.com",
     age: 32,
   },
   {
-    id: "2",
+    id: "schedule-2",
     name: "Trần Văn Nam",
     phone: "0912345678",
     email: "nam.tran@email.com",
     age: 35,
   },
   {
-    id: "3",
+    id: "schedule-3",
     name: "Lê Thị Hoa",
     phone: "0923456789",
     email: "hoa.le@email.com",
@@ -102,7 +102,7 @@ const mockPatients: Patient[] = [
 
 const mockServices: Service[] = [
   {
-    id: "1",
+    id: "schedule-1",
     name: "Siêu âm theo dõi nang trứng",
     description: "Theo dõi sự phát triển của nang trứng trong quá trình kích thích",
     price: 300000,
@@ -110,14 +110,14 @@ const mockServices: Service[] = [
     notes: "Thực hiện vào buổi sáng, nhịn ăn 4 tiếng trước",
   },
   {
-    id: "2",
+    id: "schedule-2",
     name: "Xét nghiệm hormone FSH, LH",
     description: "Xét nghiệm nồng độ hormone kích thích nang trứng",
     price: 250000,
     unit: "lần",
   },
   {
-    id: "3",
+    id: "schedule-3",
     name: "Chọc hút trứng",
     description: "Thu thập trứng từ buồng trứng",
     price: 5000000,
@@ -127,7 +127,7 @@ const mockServices: Service[] = [
 
 const mockDrugs: Drug[] = [
   {
-    id: "1",
+    id: "schedule-1",
     name: "Gonal-F 450IU",
     description: "Thuốc kích thích buồng trứng",
     price: 1200000,
@@ -137,7 +137,7 @@ const mockDrugs: Drug[] = [
     amount: 1,
   },
   {
-    id: "2",
+    id: "schedule-2",
     name: "Lupron (GnRH Agonist)",
     description: "Thuốc ức chế hormone",
     price: 800000,
@@ -150,7 +150,7 @@ const mockDrugs: Drug[] = [
 
 const mockSchedules: Schedule[] = [
   {
-    id: "1",
+    id: "schedule-1",
     doctor_id: "doc1",
     patient_id: "1",
     appointment_datetime: "2024-01-15T09:00:00",
@@ -162,7 +162,7 @@ const mockSchedules: Schedule[] = [
     drugs: [mockDrugs[0]],
   },
   {
-    id: "2",
+    id: "schedule-2",
     doctor_id: "doc1",
     patient_id: "2",
     appointment_datetime: "2024-01-20T14:00:00",
@@ -174,10 +174,10 @@ const mockSchedules: Schedule[] = [
     drugs: [mockDrugs[1]],
   },
   {
-    id: "3",
+    id: "schedule-3",
     doctor_id: "doc1",
     patient_id: "3",
-    appointment_datetime: "2024-01-25T10:30:00",
+    appointment_datetime: "2025-07-05T10:30:00",
     status: "Changed",
     reason: "Khám cấp cứu - tác dụng phụ thuốc",
     duration: 30,
@@ -189,7 +189,7 @@ const mockSchedules: Schedule[] = [
 
 const mockScheduleResults: ScheduleResult[] = [
   {
-    id: "1",
+    id: "schedule-1",
     doctors_note:
       "Bệnh nhân phản ứng tốt với điều trị. Nang trứng phát triển bình thường. Tiếp tục theo dõi và điều chỉnh liều thuốc theo kết quả siêu âm.",
     schedule_id: "1",
