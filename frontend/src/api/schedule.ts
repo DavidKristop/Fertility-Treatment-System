@@ -167,7 +167,7 @@ const mockSchedules: Schedule[] = [
     id: "schedule-3",
     doctor_id: "doc1",
     patient_id: "3",
-    appointment_datetime: "2024-01-25T10:30:00",
+    appointment_datetime: "2025-07-05T10:30:00",
     status: "Changed",
     reason: "Khám cấp cứu - tác dụng phụ thuốc",
     duration: 30,

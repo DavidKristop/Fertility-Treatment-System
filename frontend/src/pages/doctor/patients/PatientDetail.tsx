@@ -682,91 +682,120 @@ export default function PatientDetail() {
             <TabsTrigger value="feedback">Phản hồi</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-4">
+          <TabsContent value="overview" className="space-y-6">
+            {/* Critical Information Only - 3 sections */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Current Treatment */}
+              
+              {/* 1. ONLY Active Treatment */}
               <FormSection title="Điều trị hiện tại" icon={Activity}>
-                {patient.treatments
-                  .filter((treatment) => treatment.status === "In Progress")
-                  .map((treatment) => (
-                    <div key={treatment.id} className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Badge className="bg-purple-100 text-purple-800">{treatment.protocol.title}</Badge>
-                        <AppointmentStatusBadge status={treatment.status} />
-                      </div>
-                      <div>
-                        <p className="font-medium">{treatment.protocol.title}</p>
-                        <p className="text-sm text-muted-foreground">{treatment.description}</p>
-                      </div>
-                      {treatment.currentPhase && (
-                        <div className="text-sm">
-                          <p>
-                            <strong>Giai đoạn hiện tại:</strong> {treatment.currentPhase.title}
-                          </p>
-                          <p>
-                            <strong>Tiến độ:</strong> {treatment.currentPhase.position}/{treatment.phases.length}
-                          </p>
+                {(() => {
+                  const activeTreatment = patient.treatments.find(t => t.status === "In Progress")
+                  
+                  return activeTreatment ? (
+                    <div className="space-y-4">
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <Badge className="bg-green-100 text-green-800">Đang điều trị</Badge>
+                          <span className="text-sm font-medium text-green-700">
+                            {activeTreatment.currentPhase?.position}/{activeTreatment.phases.length}
+                          </span>
                         </div>
-                      )}
-                      <div className="text-sm">
-                        <p>
-                          <strong>Ngày bắt đầu:</strong> {new Date(treatment.startDate).toLocaleDateString("vi-VN")}
-                        </p>
-                        <p>
-                          <strong>Bác sĩ phụ trách:</strong> {treatment.doctor.fullName}
-                        </p>
+                        
+                        <div className="space-y-2">
+                          <h3 className="font-medium text-green-900">{activeTreatment.protocol.title}</h3>
+                          <p className="text-sm text-green-700">{activeTreatment.description}</p>
+                        </div>
+                        
+                        {activeTreatment.currentPhase && (
+                          <div className="mt-3 pt-3 border-t border-green-200">
+                            <p className="text-sm font-medium text-green-800">Giai đoạn hiện tại:</p>
+                            <p className="text-sm text-green-700">{activeTreatment.currentPhase.title}</p>
+                          </div>
+                        )}
                       </div>
+                      
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleViewTreatment(treatment.id)}
-                        className="flex items-center gap-1"
+                        onClick={() => handleViewTreatment(activeTreatment.id)}
+                        className="w-full text-green-700 border-green-300 hover:bg-green-50"
                       >
-                        <ExternalLink className="h-3 w-3" />
-                        Xem chi tiết điều trị
+                        <ExternalLink className="h-3 w-3 mr-2" />
+                        Xem chi tiết
                       </Button>
                     </div>
-                  ))}
-                {patient.treatments.filter((treatment) => treatment.status === "In Progress").length === 0 && (
-                  <p className="text-muted-foreground text-center py-4">
-                    Hiện tại không có điều trị nào đang thực hiện
-                  </p>
-                )}
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Activity className="h-8 w-8 text-gray-400" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">Không có điều trị đang thực hiện</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/doctor/treatment-plans/create')}
+                        className="text-blue-600 border-blue-300"
+                      >
+                        Tạo kế hoạch điều trị
+                      </Button>
+                    </div>
+                  )
+                })()}
               </FormSection>
 
-              {/* Recent Appointments */}
-              <FormSection title="Lịch hẹn gần đây" icon={Calendar}>
-                <div className="space-y-3">
-                  {patient.schedules.slice(0, 3).map((schedule) => (
-                    <div key={schedule.id} className="border rounded p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <p className="font-medium">
-                            {new Date(schedule.appointmentDatetime).toLocaleDateString("vi-VN")}
-                          </p>
-                          <p className="text-sm text-muted-foreground">{schedule.treatmentPhase.title}</p>
+              {/* 2. ONLY Next Appointment */}
+              <FormSection title="Lịch hẹn sắp tới" icon={Calendar}>
+                {(() => {
+                  const nextAppointment = patient.schedules
+                    .filter(s => s.status === "Pending" && new Date(s.appointmentDatetime) > new Date())
+                    .sort((a, b) => new Date(a.appointmentDatetime).getTime() - new Date(b.appointmentDatetime).getTime())[0]
+
+                  return nextAppointment ? (
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Clock className="h-4 w-4 text-blue-600" />
+                          <span className="font-medium text-blue-900">
+                            {new Date(nextAppointment.appointmentDatetime).toLocaleDateString("vi-VN")}
+                          </span>
                         </div>
-                        <AppointmentStatusBadge status={schedule.status} />
+                        
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-blue-800">
+                            {new Date(nextAppointment.appointmentDatetime).toLocaleTimeString("vi-VN", {
+                              hour: "2-digit", minute: "2-digit"
+                            })} - {nextAppointment.treatmentPhase.title}
+                          </p>
+                          <p className="text-sm text-blue-600">
+                            BS. {nextAppointment.doctor.fullName}
+                          </p>
+                          <p className="text-xs text-blue-500">
+                            {nextAppointment.services.map(s => s.service.name).join(" • ")}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        <p>BS. {schedule.doctor.fullName}</p>
-                        <p>{schedule.services.map((service) => service.service.name).join(", ")}</p>
-                      </div>
-                      {schedule.result && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewScheduleResult(schedule.id)}
-                          className="flex items-center gap-1 mt-2"
-                        >
-                          <Eye className="h-3 w-3" />
-                          Xem kết quả
-                        </Button>
-                      )}
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/doctor/patients/${patient.id}?tab=appointments`)}
+                        className="w-full text-blue-700 border-blue-300 hover:bg-blue-50"
+                      >
+                        <Calendar className="h-3 w-3 mr-2" />
+                        Xem tất cả lịch hẹn
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Calendar className="h-8 w-8 text-gray-400" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">Không có lịch hẹn sắp tới</p>
+                    </div>
+                  )
+                })()}
               </FormSection>
+
             </div>
           </TabsContent>
 
