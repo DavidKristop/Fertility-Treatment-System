@@ -27,13 +27,11 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 import Schedules from "./pages/doctor/appointments/Schedules"
 import PatientList from "./pages/doctor/patients/PatientList"
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans"
-import RecordResults from "./pages/doctor/results/RecordResults"
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile"
 import PendingApprovals from "./pages/doctor/pending/PendingApprovals"
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans"
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory"
 import PatientDetail from "./pages/doctor/patients/PatientDetail"
-import ResultsHistory from "./pages/doctor/results/ResultsHistory"
 import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail"
 import ScheduleResult from "./pages/doctor/appointments/ScheduleResult"
 
@@ -209,16 +207,6 @@ const router = createBrowserRouter([
             path: "treatment-details/:id",
             element: <TreatmentDetail />, 
           },
-        ],
-      },
-      // Results routes
-      {
-        path: "results",
-        children: [
-          {
-            path: "history",
-            element: <ResultsHistory />,
-          }
         ],
       },
       // Profile routes
