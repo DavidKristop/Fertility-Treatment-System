@@ -42,7 +42,7 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   {
     id: "dashboard",
-    label: "Bảng điều khiển",
+    label: "Trang tổng quan",
     icon: LayoutDashboard,
     path: "/doctor/dashboard",
   },
