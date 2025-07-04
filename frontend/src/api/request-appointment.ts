@@ -1,5 +1,5 @@
 import { fetchWrapper } from "."
-import type { ApiPaginationResponse, ApiResponse, ScheduleResponse } from "./types";
+import type { ApiPaginationResponse, ApiResponse, RequestAppointmentResponse } from "./types";
 
 
 export const createRequestAppointment = async ({doctorId, appointmentDatetime}: {doctorId: string, appointmentDatetime: Date}): Promise<ApiResponse<void>> =>{
@@ -25,7 +25,7 @@ export const getMyAppointmentRequests = async ({
     size: number,
     doctorEmail: string,
     statuses: ("PENDING" | "ACCEPTED" | "DENIED")[]
-}) : Promise<ApiPaginationResponse<ScheduleResponse>> => {
+}) : Promise<ApiPaginationResponse<RequestAppointmentResponse>> => {
     const response = await fetchWrapper(`request-appointments/my-request?page=${page}&size=${size}&doctorEmail=${doctorEmail}&status=${statuses.join('&status=')}`, 
         {}, true)
     
