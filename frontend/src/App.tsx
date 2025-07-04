@@ -62,6 +62,10 @@ import PaymentDetailPage from './pages/patient/Payment/[id]/page';
 import PaymentFailurePage from './pages/patient/Payment/PaymentFailure';
 import PaymentSuccessPage from './pages/patient/Payment/PaymentSuccess';
 
+<<<<<<< HEAD
+=======
+import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage"
+>>>>>>> 624e3ac32d3dcf0560f5313415db635a449c9efc
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
 
@@ -117,7 +121,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Patient routes (ROLE_PATIENT only)
+ // Patient routes (ROLE_PATIENT only)
   {
     path: 'patient',
     element: (
@@ -150,35 +154,86 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Navigate to="dashboard" replace /> },
-      { path: 'dashboard', element: <DoctorDashboard /> },
-      { path: 'schedule', element: <Schedules /> },
-      { path: 'schedule-result/:id', element: <ScheduleResult /> },
-      { path: 'pending', element: <PendingApprovals /> },
       {
-        path: 'patients',
+        path: "dashboard",
+        element: <DoctorDashboard />,
+      },
+      // Schedule routes
+      {
+        path: "schedule",
+        element: <Schedules />,
+      },
+      // Schedule Result routes
+      {
+        path: "schedule-result/:id",
+        element: <ScheduleResult />,
+      },
+      // Pending Approvals routes
+      {
+          path: "pending",
+          element: <PendingApprovals />,
+      },
+      // Patient routes
+      {
+        path: "patients",
         children: [
-          { index: true, element: <PatientList /> },
-          { path: ':id', element: <PatientDetail /> },
+          {
+            index: true,
+            element: <PatientList />,
+          },
+          {
+            path: ":id",
+            element: <PatientDetail />,
+          }
         ],
       },
+      // Treatment Plan routes
       {
-        path: 'treatment-plans',
+        path: "treatment-plans",
         children: [
-          { index: true, element: <TreatmentPlans /> },
-          { path: 'create', element: <CreateTreatmentPlans /> },
-          { path: 'treatment-details/:id', element: <TreatmentDetail /> },
+          {
+            index: true,
+            element: <TreatmentPlans />,
+          },
+          {
+            path: "create",
+            element: <CreateTreatmentPlans />,
+          },
+          {
+            path: "treatment-details/:id",
+            element: <TreatmentDetail />, 
+          },
         ],
       },
+      // Results routes
       {
-        path: 'results',
+        path: "results",
         children: [
-          { path: 'record', element: <RecordResults /> },
-          { path: 'history', element: <ResultsHistory /> },
+          {
+            path: "record",
+            element: <RecordResults />,
+          },
+          {
+            path: "history",
+            element: <ResultsHistory />,
+          }
         ],
       },
-      { path: 'profile', element: <DoctorProfile /> },
-      { path: 'notifications/reminders', element: <ReminderHistory /> },
+      // Profile routes
+      {
+        path: "profile",
+        element: <DoctorProfile />,
+      },
+      // Notification routes
+      {
+        path: "notifications",
+        children: [
+          {
+            path: "reminders",
+            element: <ReminderHistory />,
+          },
+        ],
+      },
       // fallback for doctor subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -193,8 +248,16 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Navigate to="dashboard" replace /> },
-      { path: 'dashboard', element: <ManagerDashboard /> },
+      {
+        path: "dashboard",
+        element: <ManagerDashboard />,
+      },
+      
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+      // fallback for manager subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
   },
@@ -208,8 +271,16 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Navigate to="dashboard" replace /> },
-      { path: 'dashboard', element: <AdminDashboard /> },
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
+      },
+      
+      {
+        path: "patients",
+        element: <PatientList />,
+      },
+      // fallback for admin subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],
   },

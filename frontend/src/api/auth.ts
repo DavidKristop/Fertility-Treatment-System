@@ -23,7 +23,11 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
         throw new Error('Login failed');
     }
 
-    return response.json();
+    const result: AuthResponse = await response.json();
+
+    localStorage.setItem('access_token', result.payload.accessToken);
+
+    return result;
 };
 
 export const logout = async (data: LogoutResponse): Promise<AuthResponse> => {
