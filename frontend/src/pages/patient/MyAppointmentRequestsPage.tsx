@@ -3,6 +3,7 @@ import { getMyAppointmentRequests } from "@/api/request-appointment";
 import type { ScheduleResponse } from "@/api/types";
 import PatientLayout from "@/components/patient/PatientLayout";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
+import { useSearchParams } from "react-router-dom";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Đang chờ" },
@@ -12,14 +13,22 @@ const STATUS_OPTIONS = [
 ];
 
 export default function MyAppointmentRequests() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read from query params, fallback to defaults
+  const statusParam = searchParams.get("status") as "PENDING" | "ACCEPTED" | "DENIED" | "ALL" | null;
+  const pageParam = Number(searchParams.get("page"));
+  const doctorEmailParam = searchParams.get("doctorEmail") || "";
+
+
   const [requests, setRequests] = useState<ScheduleResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "DENIED" | "ALL">("ALL");
-  const [doctorEmail, setDoctorEmail] = useState("");
-  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "DENIED" | "ALL">(statusParam || "ALL");
+  const [doctorEmail, setDoctorEmail] = useState(doctorEmailParam);
+  const [search, setSearch] = useState(doctorEmailParam);
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/patient/dashboard" },
@@ -45,6 +54,25 @@ export default function MyAppointmentRequests() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const params: Record<string, string> = {};
+    if (status) params.status = status;
+    params.page = String(page);
+    if (doctorEmail) params.doctorEmail = doctorEmail;
+    setSearchParams(params);
+    // eslint-disable-next-line
+  }, [status, page, doctorEmail]);
+
+  useEffect(() => {
+    if (statusParam && statusParam !== status) setStatus(statusParam);
+    if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
+    if (doctorEmailParam !== doctorEmail) {
+      setDoctorEmail(doctorEmailParam);
+      setSearch(doctorEmailParam);
+    }
+    // eslint-disable-next-line
+  }, [statusParam, pageParam, doctorEmailParam]);
 
   useEffect(() => {
     fetchRequests(page, status, doctorEmail);

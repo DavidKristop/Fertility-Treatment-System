@@ -10,7 +10,7 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ thanh toán" },
@@ -20,12 +20,18 @@ const STATUS_OPTIONS = [
 ];
 
 export default function MyPaymentsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read from query params, fallback to defaults
+  const statusParam = searchParams.get("status") as "PENDING" | "COMPLETED" | "CANCELED" | "ALL" | null;
+  const pageParam = Number(searchParams.get("page"));
   const [payments, setPayments] = useState<PaymentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState<"PENDING" | "COMPLETED" | "CANCELED" | "ALL">("ALL");
+  const [status, setStatus] = useState<"PENDING" | "COMPLETED" | "CANCELED" | "ALL">(statusParam || "ALL");
+
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/patient/dashboard" },
@@ -50,6 +56,20 @@ export default function MyPaymentsPage() {
       setLoading(false);
     }
   };
+
+
+  // Update query params when status or page changes
+  useEffect(() => {
+    setSearchParams({ status, page: String(page) });
+    // eslint-disable-next-line
+  }, [status, page]);
+
+  // Keep state in sync with query params (for back/forward navigation)
+  useEffect(() => {
+    if (statusParam && statusParam !== status) setStatus(statusParam);
+    if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
+    // eslint-disable-next-line
+  }, [statusParam, pageParam]);
 
   useEffect(() => {
     fetchPayments(page, status);

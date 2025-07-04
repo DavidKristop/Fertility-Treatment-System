@@ -38,7 +38,7 @@ export default function PaymentDetailPage() {
         if(vnpayUrl?.payload) window.location.href = vnpayUrl?.payload;
         else throw new Error("Không thể giải quyết thanh toán")
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Lỗi khi tải dữ liệu");
+        toast.error(err instanceof Error ? err.message : "Lỗi khi tải dữ liệu");
       }
       finally{
         setProcessingPayment(false)
@@ -103,7 +103,7 @@ export default function PaymentDetailPage() {
               </div>
               {payment.status === "PENDING" && (
                 <Button className="mt-4" onClick={handleVNPay}>
-                  Thanh toán với VNPay
+                  {processingPayment?"Đang thanh toán...":"Thanh toán với VNPay"}
                 </Button>
               )}
             </div>
