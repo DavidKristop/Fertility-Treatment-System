@@ -8,44 +8,26 @@ import { CalendarDays, Calendar, Clock, User, Activity, TestTube } from "lucide-
 import { getTodaySchedules, type Schedule } from "@/api/schedule"
 import AppointmentCard from "@/components/doctor/common/AppointmentCard"
 import FormSection from "@/components/doctor/common/FormSection"
-
-// Mock user data for testing
-const mockDoctorData = {
-  id: "doc123",
-  fullName: "Doctor name",
-  email: "doctor@example.com",
-  roles: ["ROLE_DOCTOR"],
-  specialty: "Sản phụ khoa",
-  licenseNumber: "MD12345",
-}
-
-// Function to set mock data in localStorage
-const setMockUserData = () => {
-  if (!localStorage.getItem("user")) {
-    localStorage.setItem("user", JSON.stringify(mockDoctorData))
-  }
-}
+import { me } from "@/api/auth"
 
 export default function DoctorDashboard() {
-  const [doctorName, setDoctorName] = useState("Doctor name")
+  const [doctorName, setDoctorName] = useState<string>("")
   const [todaySchedules, setTodaySchedules] = useState<Schedule[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
   useEffect(() => {
-    setMockUserData()
-    const userDataString = localStorage.getItem("user")
-    if (userDataString) {
+    ;(async () => {
       try {
-        const userData = JSON.parse(userDataString)
-        if (userData.fullName) {
-          setDoctorName(userData.fullName)
-        }
-      } catch (error) {
-        console.error("Error parsing user data:", error)
+        const user = await me()             // Call the me() API function
+        setDoctorName(user.fullName)        // Set doctor name from user.fullName
+      } catch {
+        navigate('/authorization/login', { replace: true })
       }
-    }
+    })()
+  }, [navigate])
 
+  useEffect(() => {
     // Fetch today's schedules
     const fetchSchedules = async () => {
       try {
@@ -82,11 +64,25 @@ export default function DoctorDashboard() {
     duration: schedule.duration,
   }))
 
-  const breadcrumbs = [{ label: "Trang chủ" }]
+  const breadcrumbs = [{ label: "Trang tổng quan" }]
+
+  // Loading state while fetching doctor info
+  if (!doctorName) {
+    return (
+      <DoctorLayout title="Trang tổng quan" breadcrumbs={breadcrumbs}>
+        <div>Đang tải thông tin bác sĩ…</div>
+      </DoctorLayout>
+    )
+  }
 
   return (
-    <DoctorLayout title={`Xin chào, ${doctorName}`} breadcrumbs={breadcrumbs}>
+    <DoctorLayout title="Trang tổng quan" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
+        {/* Welcome Message */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h1 className="text-2xl font-bold text-gray-900">Chào bác sĩ {doctorName}</h1>
+        </div>
+
         {/* Today's Schedules */}
         <FormSection
           title="Lịch hẹn hôm nay"
