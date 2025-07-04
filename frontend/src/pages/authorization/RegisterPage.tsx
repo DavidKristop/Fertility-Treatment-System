@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthCard from "@/components/auth/AuthCard";
 import AuthHeader from "@/components/auth/AuthHeader";
@@ -27,12 +26,12 @@ export default function RegisterPage() {
         confirmPassword: values.confirmPassword
       };
       const response = await auth.register(registerData);
-      sessionStorage.setItem('token', response.payload.accessToken);
+      localStorage.setItem('token', response.payload.accessToken);
       toast.success('Đăng ký thành công!');
       navigate('/patient/dashboard', { replace: true })
     } catch (error: any) {
-        const errorMessage = error.response?.data?.message || 'Email đã tồn tại!';
-        toast.error(errorMessage);
+      const errorMessage = error.response?.data?.message || 'Email đã tồn tại!';
+      toast.error(errorMessage);
     }
   };
 
@@ -68,15 +67,6 @@ export default function RegisterPage() {
         <CardContent className="pt-2">
           <div className="space-y-6">
             <RegisterForm formik={formik} />
-              <Button
-                onClick={() => formik.handleSubmit()}
-                type="submit"
-                form="register-form"
-                className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting ? 'Đang đăng ký...' : 'Đăng ký'}
-              </Button>
             <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>
             <GoogleAuth text="Đăng kí Google" mode="register" />
           </div>

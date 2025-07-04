@@ -140,7 +140,7 @@ export interface PhaseReponse {
   refundPercentage?: number;
   services?: ServiceReponse[];
   drugs?: DrugResponse[];
-  schedules?: ScheduleResponse[];
+  schedules?: ServiceReponse[];
   assignDrugs?: AssignDrugReponse[];
   unsetServices?: ServiceReponse[];
 }
@@ -181,4 +181,32 @@ export interface RequestAppointmentResponse {
 export interface PatientDashboardPayloadResponse {
   requestAppointment: RequestAppointmentResponse;
   treatment: Treatment;
+}
+
+export interface RefundResponse {
+  id: string;
+  amount: number;
+  refundDate: string;
+  refundMethod: string;
+  reason: string;
+  userId: string;
+  paymentId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaymentResponse {
+  id: string;
+  amount: number;
+  description: string;
+  paymentDate: string;
+  paymentDeadline: string;
+  paymentMethod: string;
+  status: string;
+  userId: string;
+  scheduleServices: ServiceReponse[];
+  assignDrugs: AssignDrugReponse[];
+  refunds: RefundResponse[];
+  createdAt: string;
+  updatedAt: string;
 }

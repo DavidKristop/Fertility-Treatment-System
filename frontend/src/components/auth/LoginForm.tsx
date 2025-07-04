@@ -5,6 +5,7 @@ import type { LoginFormValues } from '@/lib/validations/auth';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react'; // Sử dụng icon từ lucide-react (cần cài đặt)
+import { Button } from '../ui/button';
 
 interface LoginFormProps {
   formik: FormikProps<LoginFormValues>;
@@ -71,6 +72,14 @@ export default function LoginForm({ formik }: LoginFormProps) {
           <div className="text-red-500 text-xs sm:text-sm mt-1">{formik.errors.password}</div>
         )}
       </div>
+      <Button
+        onClick={() => formik.handleSubmit()}
+        type="submit"
+        className="w-full bg-gray-300 hover:bg-gray-400 text-black cursor-pointer"
+        disabled={formik.isSubmitting}
+      >
+        {formik.isSubmitting ? 'Đang vào...' : 'Đăng nhập'}
+      </Button>
     </form>
   );
 }

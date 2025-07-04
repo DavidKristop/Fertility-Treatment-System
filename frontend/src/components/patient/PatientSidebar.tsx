@@ -156,7 +156,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col ${
+      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col sticky top-0 max-h-screen ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
