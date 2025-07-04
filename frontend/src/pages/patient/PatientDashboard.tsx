@@ -257,7 +257,7 @@ export default function PatientDashboard() {
       <div className="space-y-6">
         {/* Welcome */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <h1 className="text-2xl font-bold text-gray-900">Chào bệnh nhân {patientName}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Chào bạn {patientName}</h1>
         </div>
 
         {/* Treatments */}
