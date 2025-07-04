@@ -26,7 +26,7 @@ export default function RegisterPage() {
         confirmPassword: values.confirmPassword
       };
       const response = await auth.register(registerData);
-      sessionStorage.setItem('token', response.payload.accessToken);
+      localStorage.setItem('token', response.payload.accessToken);
       toast.success('Đăng ký thành công!');
       navigate('/patient/dashboard', { replace: true })
     } catch (error: any) {

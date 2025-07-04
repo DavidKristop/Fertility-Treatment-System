@@ -140,7 +140,7 @@ export interface PhaseReponse {
   refundPercentage?: number;
   services?: ServiceReponse[];
   drugs?: DrugResponse[];
-  schedules?: ScheduleResponse[];
+  schedules?: ServiceReponse[];
   assignDrugs?: AssignDrugReponse[];
   unsetServices?: ServiceReponse[];
 }
@@ -204,12 +204,7 @@ export interface PaymentResponse {
   paymentMethod: string;
   status: string;
   userId: string;
-  schedules: {
-    id: string;
-    appointmentDateTime: string;
-    estimatedTime: string;
-    services: ServiceReponse[];
-  }[];
+  scheduleServices: ServiceReponse[];
   assignDrugs: AssignDrugReponse[];
   refunds: RefundResponse[];
   createdAt: string;

@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
+import { Link } from "react-router-dom";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ thanh toán" },
@@ -88,6 +89,7 @@ export default function MyPaymentsPage() {
                 </div>
               ) : (
                 payments.map((payment) => (
+                <Link to={"payment-detail/"+payment.id}>
                   <div
                     key={payment.id}
                     className="border rounded-lg p-4 shadow-sm bg-white"
@@ -142,6 +144,7 @@ export default function MyPaymentsPage() {
                       </div>
                     </div>
                   </div>
+                </Link>
                 ))
               )}
             </div>

@@ -15,7 +15,7 @@ interface JwtPayload {
 }
 
 const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const token = sessionStorage.getItem('token')
+  const token = localStorage.getItem('token')
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -29,7 +29,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, allowedRoles }) => 
   try {
     payload = jwtDecode<JwtPayload>(token)
   } catch {
-    sessionStorage.removeItem('token')
+    localStorage.removeItem('token')
     return <Navigate to="/authorization/login" replace />
   }
 

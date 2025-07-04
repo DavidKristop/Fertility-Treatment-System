@@ -43,7 +43,7 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
     } catch (err) {
       console.error("Logout API failed:", err)
     } finally {
-      sessionStorage.removeItem("token")
+      localStorage.removeItem("token")
       navigate("/", { replace: true })
     }
   }

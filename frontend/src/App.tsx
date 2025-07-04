@@ -58,6 +58,9 @@ import BlogPage from './pages/blog/page';
 import BlogPostPage from './pages/blog/[id]/page';
 import MyAppointmentRequests from './pages/patient/MyAppointmentRequestsPage';
 import MyPaymentsPage from './pages/patient/PaymentRequestPage';
+import PaymentDetailPage from './pages/patient/Payment/[id]/page';
+import PaymentFailurePage from './pages/patient/Payment/PaymentFailure';
+import PaymentSuccessPage from './pages/patient/Payment/PaymentSuccess';
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -128,6 +131,9 @@ const router = createBrowserRouter([
       { path: 'appointments/schedule', element: <RequestAppointment /> },
       { path: 'appointments/my-request', element: <MyAppointmentRequests/>},
       { path: 'payments', element: <MyPaymentsPage/>},
+      { path: 'payments/payment-detail/:id', element: <PaymentDetailPage/>},
+      { path: 'payments/success', element: <PaymentSuccessPage/>},
+      { path: 'payments/failure', element: <PaymentFailurePage/>},
       { path: 'contracts', element: <PatientContracts /> },
       { path: 'profile', element: <PatientProfile /> },
       // fallback for patient subpaths
