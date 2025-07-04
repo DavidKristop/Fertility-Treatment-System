@@ -62,10 +62,6 @@ import PaymentDetailPage from './pages/patient/Payment/[id]/page';
 import PaymentFailurePage from './pages/patient/Payment/PaymentFailure';
 import PaymentSuccessPage from './pages/patient/Payment/PaymentSuccess';
 
-<<<<<<< HEAD
-=======
-import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage"
->>>>>>> 624e3ac32d3dcf0560f5313415db635a449c9efc
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
 
