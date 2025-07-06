@@ -132,4 +132,34 @@ export const me = async (): Promise<AuthResponse['payload']> => {
 
   // 4) Trả về phần payload
   return data.payload
-}
+};
+
+export const resendVerifyEmail = async (email: string): Promise<ApiResponse> => {
+  const response = await fetchWrapper(`verify-email/send?email=${encodeURIComponent(email)}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to resend verification email');
+  }
+
+  return response.json();
+};
+
+export const verifyEmail = async (token: string): Promise<ApiResponse> => {
+  const response = await fetchWrapper(`verify-email/confirm?token=${encodeURIComponent(token)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Email verification failed');
+  }
+
+  return response.json();
+};
