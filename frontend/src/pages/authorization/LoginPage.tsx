@@ -64,10 +64,14 @@ export default function LoginPage() {
       }
       toast.success("Đăng nhập thành công!")
     } catch (error: any) {
-      console.error('Đăng nhập thất bại:', error);
-      toast.error("Đăng nhập thất bại")
-      if (error instanceof Error) {
-        formik.setErrors({ email: ' ', password: 'Nhập sai email hoặc mật khẩu' });
+      const message = error.response?.data?.message;
+
+      if (message?.toLowerCase().includes("not verified")){
+        toast.warn("Email chưa được xác minh. Vui lòng kiểm tra email để xác nhận.");
+      } else if (message?.includes("Invalid email or password.")) {
+        toast.error("Email hoặc mật khẩu không chính xác.");
+      } else {
+        toast.error("Đăng nhập thất bại.");
       }
     }
   };
