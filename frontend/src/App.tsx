@@ -61,6 +61,7 @@ import MyPaymentsPage from './pages/patient/PaymentRequestPage';
 import PaymentDetailPage from './pages/patient/Payment/[id]/page';
 import PaymentFailurePage from './pages/patient/Payment/PaymentFailure';
 import PaymentSuccessPage from './pages/patient/Payment/PaymentSuccess';
+import VerifyEmailPage from './pages/authorization/VerifyEmailPage';
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -72,6 +73,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,  
     children: [
       { index: true, element: <Home /> },
+      { path: 'verify-email', element: <VerifyEmailPage /> },
       {
         path: 'about',
         children: [

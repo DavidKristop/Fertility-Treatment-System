@@ -10,10 +10,11 @@ import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth"
 import { auth } from '@/api';
 import { type RegisterRequest } from '@/api/types';
 import { toast } from 'react-toastify';
+import { useState } from "react";
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
 
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const handleRegister = async (values: RegisterFormValues) => {
     try {
       const registerData: RegisterRequest = {
@@ -25,10 +26,9 @@ export default function RegisterPage() {
         password: values.password,
         confirmPassword: values.confirmPassword
       };
-      const response = await auth.register(registerData);
-      localStorage.setItem('token', response.payload.accessToken);
-      toast.success('Đăng ký thành công!');
-      navigate('/patient/dashboard', { replace: true })
+      await auth.register(registerData);
+      setRegisteredEmail(values.email);
+      toast.success('Đăng ký thành công! Vui lòng kiểm tra email để xác thực.');
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Email đã tồn tại!';
       toast.error(errorMessage);
@@ -66,7 +66,27 @@ export default function RegisterPage() {
         <AuthHeader title="ĐĂNG KÍ" />
         <CardContent className="pt-2">
           <div className="space-y-6">
-            <RegisterForm formik={formik} />
+            {!registeredEmail ? (
+              <RegisterForm formik={formik} />
+            ) : (
+              <div className="text-center space-y-4">
+                <p className="text-green-600 font-medium">Đăng ký thành công!</p>
+                <p>Vui lòng kiểm tra email <span className="font-semibold">{registeredEmail}</span> để xác thực tài khoản.</p>
+                <button
+                  className="text-sm text-blue-600 underline"
+                  onClick={async () => {
+                    try {
+                      await auth.resendVerifyEmail(registeredEmail);
+                      toast.success('Email xác thực đã được gửi lại.');
+                    } catch {
+                      toast.error('Gửi lại email thất bại.');
+                    }
+                  }}
+                >
+                  Gửi lại email xác thực
+                </button>
+              </div>
+            )}
             <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>
             <GoogleAuth text="Đăng kí Google" mode="register" />
           </div>
