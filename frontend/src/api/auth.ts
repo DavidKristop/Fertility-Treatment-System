@@ -19,11 +19,14 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
         body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-        throw new Error('Login failed');
-    }
-
     const result: AuthResponse = await response.json();
+
+    if (!response.ok || !result.success) {
+        const message = result.message || 'Login failed';
+        const error = new Error(message);
+        (error as any).response = result; // Gán để bắt được ở catch phía ngoài
+        throw error;
+    }
 
     localStorage.setItem('access_token', result.payload.accessToken);
 
