@@ -11,7 +11,7 @@ export const fetchWrapper = (
         return fetch(apiUrl, init);
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (!token) {
         throw new Error('Unauthorized access');
     }

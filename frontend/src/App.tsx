@@ -172,8 +172,9 @@ const router = createBrowserRouter([
       // Pending Approvals routes
       {
           path: "pending",
-          element: <DoctorAppointmentRequest />,
+          element: <PendingApprovals />,
       },
+      
       // Patient routes
       {
         path: "patients",
