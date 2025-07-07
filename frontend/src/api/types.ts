@@ -1,5 +1,6 @@
 import type { ScheduleResponse } from "./schedule";
 
+// ==================== AUTH & USER TYPES ====================
 export interface LoginRequest {
   email: string;
   password: string;
@@ -12,6 +13,12 @@ export interface LogoutResponse {
 
 export interface ForgotPasswordRequest {
   email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export interface RegisterRequest extends LoginRequest {
@@ -57,27 +64,7 @@ export interface PatientProfile extends UserProfile {
   medicalHistory: string;
 }
 
-export interface TreatmentScheduleResponse{
-  id: string;
-  appointmentDatetime: string; 
-  estimatedTime: string;
-  status: "PENDING" | "ACCEPTED" | "DENIED";
-  services?: ServiceReponse[];
-}
-
-
-// Add these interfaces to your existing types
-
-export interface ForgotPasswordRequest {
-  email: string;
-}
-
-export interface ResetPasswordRequest {
-  token: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
+// ==================== API RESPONSE TYPES ====================
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
@@ -98,6 +85,7 @@ export interface ApiPaginationResponse<T> {
   };
 }
 
+// ==================== SERVICE & DRUG TYPES ====================
 export interface ServiceReponse {
   id: string;
   name: string;
@@ -131,6 +119,25 @@ export interface AssignDrugReponse {
   patientDrugs: PatientDrugResponse[];
 }
 
+// ==================== SCHEDULE TYPES ====================
+export interface TreatmentScheduleResponse{
+  id: string;
+  appointmentDatetime: string; 
+  estimatedTime: string;
+  status: "PENDING" | "ACCEPTED" | "DENIED";
+  services?: ServiceReponse[];
+}
+
+export interface DoctorScheduleResponse extends ScheduleResponse{
+  scheduleResult:{
+    doctorsNote:string;
+  }
+  patient: PatientProfile,
+  doctor: DoctorProfile,
+  services: ServiceReponse
+}
+
+// ==================== PROTOCOL & PHASE TYPES ====================
 export interface PhaseReponse {
   id: string;
   title: string;
@@ -156,6 +163,7 @@ export interface ProtocolReponse {
   active: boolean;
 }
 
+// ==================== TREATMENT TYPES ====================
 export interface Treatment {
   id: string;
   startDate: string;
@@ -183,6 +191,16 @@ export interface PatientDashboardPayloadResponse {
   treatment: Treatment;
 }
 
+// ==================== CONTRACT TYPES ====================
+export interface ContractResponse {
+  id: string;
+  signDeadline: string;
+  treatment: Treatment;
+  contractUrl: string;
+  signed: boolean;
+}
+
+// ==================== PAYMENT & REFUND TYPES ====================
 export interface RefundResponse {
   id: string;
   amount: number;
@@ -211,15 +229,7 @@ export interface PaymentResponse {
   updatedAt: string;
 }
 
-export interface DoctorScheduleResponse extends ScheduleResponse{
-  scheduleResult:{
-    doctorsNote:string;
-  }
-  patient: PatientProfile,
-  doctor: DoctorProfile,
-  services: ServiceReponse
-}
-
+// ==================== NOTIFICATION TYPES ====================
 export interface Reminder{
   id: string,
   title:string,
