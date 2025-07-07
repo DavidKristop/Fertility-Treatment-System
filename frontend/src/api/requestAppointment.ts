@@ -1,24 +1,37 @@
 import { fetchWrapper } from "./index";
+import type { ApiResponse, RequestAppointmentResponse } from "./types";
 
-export const acceptRequestAppointment = (requestId: string) => {
-  return fetchWrapper(
+export const acceptRequestAppointment = async (requestId: string):Promise<ApiResponse<RequestAppointmentResponse>> => {
+  const res = await fetchWrapper(
     `request-appointments/accept/${requestId}`,
     {
       method: "PUT",
     },
     true
   ); // true: cần token
+
+  if (!res.ok) {
+    throw new Error("Failed to accept appointment request");
+  }
+
+  return res.json();
 };
 
-export const rejectRequestAppointment = (requestId: string, reason: string) => {
-  return fetchWrapper(
+export const rejectRequestAppointment = async (requestId: string, reason: string):Promise<ApiResponse<RequestAppointmentResponse>> => {
+  const res = await fetchWrapper(
     `request-appointments/cancel/${requestId}`,
     {
       method: "PUT",
-      body: JSON.stringify({ reason }),
+      body: reason,
     },
     true
   );
+
+  if (!res.ok) {
+    throw new Error("Failed to reject appointment request");
+  }
+
+  return res.json();
 };
 
 function getAccessToken() {

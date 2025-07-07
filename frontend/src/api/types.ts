@@ -219,3 +219,10 @@ export interface DoctorScheduleResponse extends ScheduleResponse{
   doctor: DoctorProfile,
   services: ServiceReponse
 }
+
+export interface Reminder{
+  id: string,
+  title:string,
+  content:string,
+  read:boolean
+}

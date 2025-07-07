@@ -61,6 +61,8 @@ import MyPaymentsPage from './pages/patient/PaymentRequestPage';
 import PaymentDetailPage from './pages/patient/Payment/[id]/page';
 import PaymentFailurePage from './pages/patient/Payment/PaymentFailure';
 import PaymentSuccessPage from './pages/patient/Payment/PaymentSuccess';
+import DoctorAppointmentRequest from './pages/doctor/DoctorAppointmentRequests';
+import MyRemindersPage from './pages/patient/MyRemindersPage';
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -132,6 +134,7 @@ const router = createBrowserRouter([
       { path: 'appointments/my-request', element: <MyAppointmentRequests/>},
       { path: 'payments', element: <MyPaymentsPage/>},
       { path: 'payments/payment-detail/:id', element: <PaymentDetailPage/>},
+      { path: 'notifications', element: <MyRemindersPage/>},
       { path: 'payments/success', element: <PaymentSuccessPage/>},
       { path: 'payments/failure', element: <PaymentFailurePage/>},
       { path: 'contracts', element: <PatientContracts /> },
@@ -167,7 +170,7 @@ const router = createBrowserRouter([
       // Pending Approvals routes
       {
           path: "pending",
-          element: <PendingApprovals />,
+          element: <DoctorAppointmentRequest />,
       },
       // Patient routes
       {
