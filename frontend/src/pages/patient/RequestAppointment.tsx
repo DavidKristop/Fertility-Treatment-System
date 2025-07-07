@@ -68,7 +68,7 @@ export default function RequestAppointment() {
         8,
         18,
         10,
-        45
+        30
       ))
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
@@ -136,7 +136,7 @@ export default function RequestAppointment() {
     openHour = 8,
     closeHour = 18,
     slotMinutes = 10,
-    appointmentMinutes = 45
+    appointmentMinutes = 30
   ) {
     const slots: string[] = [];
     const appts = appointments.map((a) => {

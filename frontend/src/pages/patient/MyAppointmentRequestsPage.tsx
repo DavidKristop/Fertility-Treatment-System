@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMyAppointmentRequests } from "@/api/request-appointment";
-import type { ScheduleResponse } from "@/api/types";
 import PatientLayout from "@/components/patient/PatientLayout";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
 import { useSearchParams } from "react-router-dom";
+import type { RequestAppointmentResponse } from "@/api/types";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Đang chờ" },
@@ -21,7 +21,7 @@ export default function MyAppointmentRequests() {
   const doctorEmailParam = searchParams.get("doctorEmail") || "";
 
 
-  const [requests, setRequests] = useState<ScheduleResponse[]>([]);
+  const [requests, setRequests] = useState<RequestAppointmentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
@@ -140,7 +140,7 @@ export default function MyAppointmentRequests() {
                       <div className="text-sm text-gray-500 mb-1">Email bác sĩ: {req.doctor.email}</div>
                       <div className="text-sm">
                         <span className="font-medium">Thời gian: </span>
-                        {new Date(req.appointmentDatetime).toLocaleString("vi-VN") + " - " + new Date(new Date(req.appointmentDatetime).getTime() + 45 * 60 * 1000).toLocaleString("vi-VN")}
+                        {new Date(req.appointmentDatetime).toLocaleString("vi-VN") + " - " + new Date(new Date(req.appointmentDatetime).getTime() + 30 * 60 * 1000).toLocaleString("vi-VN")}
                       </div>
                       <div className="text-sm">
                         <span className="font-medium">Trạng thái: </span>

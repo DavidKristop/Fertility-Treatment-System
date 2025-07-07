@@ -1,3 +1,5 @@
+import type { ScheduleResponse } from "./schedule";
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -55,12 +57,10 @@ export interface PatientProfile extends UserProfile {
   medicalHistory: string;
 }
 
-export interface ScheduleResponse{
+export interface TreatmentScheduleResponse{
   id: string;
-  doctor: DoctorProfile;
-  patient: PatientProfile;
-  rejectedReason: string;
   appointmentDatetime: string; 
+  estimatedTime: string;
   status: "PENDING" | "ACCEPTED" | "DENIED";
   services?: ServiceReponse[];
 }
@@ -174,8 +174,8 @@ export interface RequestAppointmentResponse {
   patient: PatientProfile;
   rejectedReason: string;
   appointmentDatetime: string;
-  status: string;
-  schedule: ScheduleResponse;
+  status: "PENDING" | "ACCEPTED" | "DENIED";
+  schedule: TreatmentScheduleResponse;
 }
 
 export interface PatientDashboardPayloadResponse {
@@ -209,4 +209,20 @@ export interface PaymentResponse {
   refunds: RefundResponse[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface DoctorScheduleResponse extends ScheduleResponse{
+  scheduleResult:{
+    doctorsNote:string;
+  }
+  patient: PatientProfile,
+  doctor: DoctorProfile,
+  services: ServiceReponse
+}
+
+export interface Reminder{
+  id: string,
+  title:string,
+  content:string,
+  read:boolean
 }

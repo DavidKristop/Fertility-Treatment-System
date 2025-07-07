@@ -14,7 +14,6 @@ export default function RootLayout() {
       </header>
 
       <main className="flex-grow">
-        <ToastContainer position="top-right" autoClose={3000} />
         <ScrollToTop />
         <Outlet />
       </main>

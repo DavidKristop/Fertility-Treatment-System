@@ -1,5 +1,5 @@
 import { fetchWrapper } from "."
-import type { ApiPaginationResponse, ApiResponse, ScheduleResponse } from "./types";
+import type { ApiPaginationResponse, ApiResponse, RequestAppointmentResponse } from "./types";
 
 
 export const createRequestAppointment = async ({doctorId, appointmentDatetime}: {doctorId: string, appointmentDatetime: Date}): Promise<ApiResponse<void>> =>{
@@ -18,6 +18,24 @@ export const createRequestAppointment = async ({doctorId, appointmentDatetime}: 
     return response.json();
 }
 
+export const getAppointmentRequestToMe = async ({ 
+    page = 0, size = 10, patientEmail = "", statuses = ["PENDING", "ACCEPTED", "DENIED"] 
+}: {
+    page: number,
+    size: number,
+    patientEmail: string,
+    statuses: ("PENDING" | "ACCEPTED" | "DENIED")[]
+}) : Promise<ApiPaginationResponse<RequestAppointmentResponse>> => {
+    const response = await fetchWrapper(`request-appointments/request-to-me?page=${page}&size=${size}&patientEmail=${patientEmail}&status=${statuses.join('&status=')}`, 
+        {}, true)
+    
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch appointment requests');
+    }
+    return response.json();
+}
+
 export const getMyAppointmentRequests = async ({ 
     page = 0, size = 10, doctorEmail = "", statuses = ["PENDING", "ACCEPTED", "DENIED"] 
 }: {
@@ -25,7 +43,7 @@ export const getMyAppointmentRequests = async ({
     size: number,
     doctorEmail: string,
     statuses: ("PENDING" | "ACCEPTED" | "DENIED")[]
-}) : Promise<ApiPaginationResponse<ScheduleResponse>> => {
+}) : Promise<ApiPaginationResponse<RequestAppointmentResponse>> => {
     const response = await fetchWrapper(`request-appointments/my-request?page=${page}&size=${size}&doctorEmail=${doctorEmail}&status=${statuses.join('&status=')}`, 
         {}, true)
     

@@ -17,7 +17,6 @@ export default function PatientLayout({ children, title, breadcrumbs }: PatientL
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <PatientSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         <PatientHeader title={title} breadcrumbs={breadcrumbs} />

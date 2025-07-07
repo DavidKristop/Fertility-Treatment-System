@@ -12,7 +12,6 @@ import {
   ChevronRight,
   LayoutDashboard,
   Activity,
-  MessageSquare,
   User,
   CalendarPlus,
   FileSignature,
@@ -21,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import logo from "@/assets/ucarelogo.png"
+import { getAllOfMyReminder } from "@/api/reminder"
 
 interface SidebarItem {
   id: string
@@ -37,7 +37,7 @@ interface SidebarItem {
   }[]
 }
 
-const sidebarItems: SidebarItem[] = [
+const sidebarItemsProp: SidebarItem[] = [
   {
     id: "dashboard",
     label: "Trang tổng quan",
@@ -48,7 +48,6 @@ const sidebarItems: SidebarItem[] = [
     id: "appointments",
     label: "Lịch hẹn",
     icon: Calendar,
-    badge: 2,
     children: [
       {
         id: "schedule-appointment",
@@ -99,7 +98,6 @@ const sidebarItems: SidebarItem[] = [
     id: "notifications",
     label: "Thông báo",
     icon: Bell,
-    badge: 3,
     path: "/patient/notifications",
   },
   {
@@ -123,6 +121,7 @@ interface PatientSidebarProps {
 }
 
 export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false }: PatientSidebarProps) {
+  const [sideBarItems,setSideBarItems] = useState(sidebarItemsProp)
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -140,9 +139,31 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
     return false
   }
 
+  const fetchReminders = async (pageNum = 0) => {
+    try {
+      const res = await getAllOfMyReminder({
+        page: pageNum,
+        size: 10,
+      });
+      setSideBarItems((prev) => {
+        return prev.map((item) => {
+          if (item.id === "notifications") {
+            return {
+              ...item,
+              badge: res?.payload?.content?.reduce((acc, reminder) => acc + (reminder.read ? 0 : 1), 0),
+            };
+          }
+          return item;
+        });
+      });
+    } catch (err) {
+      console.error("Failed to fetch reminders:", err);
+    }
+  };
+
 // Tự động mở rộng mục cha khi một mục con được chọn
   useEffect(() => {
-    sidebarItems.forEach((item) => {
+    sideBarItems.forEach((item) => {
       if (item.children && item.children.some((child) => isActive(child.path))) {
         setExpandedItems((prev) => {
           if (!prev.includes(item.id)) {
@@ -154,6 +175,9 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
     });
   }, [location.pathname]); // Chạy lại khi location.pathname thay đổi
 
+  useEffect(() => {
+    fetchReminders();
+  }, []);
   return (
     <div
       className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col sticky top-0 max-h-screen ${
@@ -163,10 +187,12 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         {!isCollapsed && (
-          <div className="flex items-center gap-1">
-            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-7" />
-            <span className="font-bold text-[#004c77] text-lg">UCARE</span>
-          </div>
+          <Link to={"/"}>
+            <div className="flex items-center gap-1">
+              <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-7" />
+              <span className="font-bold text-[#004c77] text-lg">UCARE</span>
+            </div>
+          </Link>
         )}
         <Button variant="ghost" size="sm" onClick={onToggle} className="p-1">
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -175,7 +201,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-        {sidebarItems.map((item) => (
+        {sideBarItems.map((item) => (
           <div key={item.id}>
             {/* Main Item */}
             {item.path ? (
@@ -191,7 +217,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
                   </div>
                   {!isCollapsed && item.badge && (
                     <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                      {item.badge}
+                      {item.badge>0?item.badge:""}
                     </Badge>
                   )}
                 </div>
@@ -215,7 +241,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
                   <div className="flex items-center gap-1">
                     {item.badge && (
                       <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                        {item.badge}
+                        {item.badge>0?item.badge:""}
                       </Badge>
                     )}
                     {item.children && (
@@ -244,7 +270,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
                       </div>
                       {child.badge && (
                         <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                          {child.badge}
+                          {child.badge>0?child.badge:""}
                         </Badge>
                       )}
                     </div>
