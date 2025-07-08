@@ -1,4 +1,4 @@
-import type { ScheduleResponse } from "./schedule";
+
 
 // ==================== AUTH & USER TYPES ====================
 export interface LoginRequest {
@@ -128,15 +128,6 @@ export interface TreatmentScheduleResponse{
   services?: ServiceReponse[];
 }
 
-export interface DoctorScheduleResponse extends ScheduleResponse{
-  scheduleResult:{
-    doctorsNote:string;
-  }
-  patient: PatientProfile,
-  doctor: DoctorProfile,
-  services: ServiceReponse
-}
-
 // ==================== PROTOCOL & PHASE TYPES ====================
 export interface PhaseReponse {
   id: string;
@@ -229,10 +220,42 @@ export interface PaymentResponse {
   updatedAt: string;
 }
 
+
 // ==================== NOTIFICATION TYPES ====================
 export interface Reminder{
   id: string,
   title:string,
   content:string,
   read:boolean
+}
+
+export interface TreatmentPlan {
+  id: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+
+  patient: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    avatarUrl: string;
+  };
+
+  doctor: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    avatarUrl: string;
+    specialty: string;
+  };
+
+  protocol: {
+    id: string;
+    title: string;
+    estimatedPrice: number;
+  };
 }

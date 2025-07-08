@@ -1,8 +1,7 @@
-import { Calendar, dateFnsLocalizer, Views, type CalendarProps, type View } from 'react-big-calendar'
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { vi } from 'date-fns/locale'
-import { useCallback, useState } from 'react'
 
 
 const localizer = dateFnsLocalizer({

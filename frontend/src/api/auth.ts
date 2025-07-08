@@ -13,6 +13,7 @@ import type {
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await fetchWrapper('auth/signin', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -33,20 +34,20 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     return result;
 };
 
-export const logout = async (data: LogoutResponse): Promise<AuthResponse> => {
-    const response = await fetchWrapper('auth/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+export const logout = async (p0: {}): Promise<AuthResponse> => {
+  const response = await fetchWrapper('auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  });
 
-    if (!response.ok) {
-        throw new Error('Logout failed');
-    }
+  // Xóa access_token khỏi localStorage sau khi logout
+  localStorage.removeItem('access_token');
 
-    return response.json();
+  if (!response.ok) {
+    throw new Error('Logout failed');
+  }
+
+  return response.json();
 };
 
 export const register = async (data: RegisterRequest): Promise<AuthResponse> => {

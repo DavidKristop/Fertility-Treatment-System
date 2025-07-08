@@ -1,19 +1,58 @@
+// // components/doctor/appointments/Calendar.tsx
+// import { Calendar as RBC, Views, type CalendarProps } from "react-big-calendar";
+// import { dateFnsLocalizer } from "react-big-calendar";
+// import { format, parse, startOfWeek, getDay } from "date-fns";
+// import { vi } from "date-fns/locale";
+
+// const localizer = dateFnsLocalizer({
+//   format, parse, startOfWeek, getDay, locales: { vi }
+// });
+
+// export interface CalendarEvent {
+//   id: string;
+//   title: string;
+//   start: Date;
+//   end: Date;
+// }
+
+// // Chỉ pick đúng các props bạn cần từ CalendarProps
+// type DoctorCalendarProps = Pick<
+//   CalendarProps<CalendarEvent>,
+//   "events" | "date" | "onNavigate" | "onSelectEvent"
+// >;
+
+// export default function Calendar(props: DoctorCalendarProps) {
+//   return (
+//     <RBC<CalendarEvent>
+//       localizer={localizer}
+//       views={[Views.WORK_WEEK]}
+//       view={Views.WORK_WEEK}
+//       step={10}
+//       style={{ height: 500, width: "100%" }}
+//       {...props}
+//     />
+//   );
+// }
+
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ChevronLeft, ChevronRight, MapPin } from "lucide-react"
 import { type Schedule } from "@/api/schedule"
+import type { NavigateAction, stringOrDate, View } from "react-big-calendar"
 
 interface CalendarProps {
-  appointments: Schedule[]
+  events: Schedule[]
+  date?: stringOrDate | undefined;
   onAppointmentClick?: (appointmentId: string) => void
   currentDate?: Date
   onChangeDate?: (date: Date) => void
+  onNavigate?: ((newDate: Date, view: View, action: NavigateAction) => void) | undefined;
 }
 
 export default function Calendar({
-  appointments = [],
+  events = [],
   onAppointmentClick,
   currentDate: externalCurrentDate,
   onChangeDate,
@@ -78,7 +117,7 @@ export default function Calendar({
 
   const getAppointmentsForDate = (date: Date) => {
   const dateString = date.toISOString().split("T")[0]
-  return appointments.filter((apt) => {
+  return events.filter((apt) => {
     const aptDate = new Date(apt.appointment_datetime).toISOString().split("T")[0]
     return aptDate === dateString
   })
