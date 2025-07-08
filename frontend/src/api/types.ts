@@ -119,13 +119,23 @@ export interface AssignDrugReponse {
   patientDrugs: PatientDrugResponse[];
 }
 
-// ==================== SCHEDULE TYPES ====================
+// ==================== SCHEDULE & APPOINTMENT TYPES ====================
 export interface TreatmentScheduleResponse{
   id: string;
   appointmentDatetime: string; 
   estimatedTime: string;
   status: "PENDING" | "ACCEPTED" | "DENIED";
   services?: ServiceReponse[];
+}
+
+export interface RequestAppointmentResponse {
+  id: string;
+  doctor: DoctorProfile;
+  patient: PatientProfile;
+  rejectedReason: string;
+  appointmentDatetime: string;
+  status: "PENDING" | "ACCEPTED" | "DENIED";
+  schedule: TreatmentScheduleResponse;
 }
 
 // ==================== PROTOCOL & PHASE TYPES ====================
@@ -167,20 +177,37 @@ export interface Treatment {
   phases: PhaseReponse[];
 }
 
-export interface RequestAppointmentResponse {
+export interface TreatmentPlan {
   id: string;
-  doctor: DoctorProfile;
-  patient: PatientProfile;
-  rejectedReason: string;
-  appointmentDatetime: string;
-  status: "PENDING" | "ACCEPTED" | "DENIED";
-  schedule: TreatmentScheduleResponse;
+  startDate: string;
+  endDate: string;
+  description: string;
+  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+
+  patient: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    avatarUrl: string;
+  };
+
+  doctor: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    avatarUrl: string;
+    specialty: string;
+  };
+
+  protocol: {
+    id: string;
+    title: string;
+    estimatedPrice: number;
+  };
 }
 
-export interface PatientDashboardPayloadResponse {
-  requestAppointment: RequestAppointmentResponse;
-  treatment: Treatment;
-}
 
 // ==================== CONTRACT TYPES ====================
 export interface ContractResponse {
@@ -229,33 +256,9 @@ export interface Reminder{
   read:boolean
 }
 
-export interface TreatmentPlan {
-  id: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
-
-  patient: {
-    id: string;
-    fullName: string;
-    email: string;
-    phone: string;
-    avatarUrl: string;
-  };
-
-  doctor: {
-    id: string;
-    fullName: string;
-    email: string;
-    phone: string;
-    avatarUrl: string;
-    specialty: string;
-  };
-
-  protocol: {
-    id: string;
-    title: string;
-    estimatedPrice: number;
-  };
+// ==================== DASHBOARD TYPES ====================
+export interface PatientDashboardPayloadResponse {
+  requestAppointment: RequestAppointmentResponse;
+  treatment: Treatment;
 }
+
