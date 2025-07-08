@@ -49,7 +49,7 @@ export default function DoctorHeader({
     } catch (err) {
       console.error("Logout API failed:", err)
     } finally {
-      localStorage.removeItem("token")
+      localStorage.removeItem("access_token")
       navigate("/", { replace: true })
     }
   }

@@ -38,8 +38,6 @@ import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
 // Doctor pages
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import Schedules from './pages/doctor/appointments/Schedules';
-import ScheduleResult from './pages/doctor/appointments/ScheduleResult';
-import PendingApprovals from './pages/doctor/pending/PendingApprovals';
 import PatientList from './pages/doctor/patients/PatientList';
 import PatientDetail from './pages/doctor/patients/PatientDetail';
 import TreatmentPlans from './pages/doctor/treatment-plans/TreatmentPlans';
@@ -66,6 +64,7 @@ import PaymentSuccessPage from './pages/patient/Payment/PaymentSuccess';
 import DoctorAppointmentRequest from './pages/doctor/DoctorAppointmentRequests';
 import MyRemindersPage from './pages/patient/MyRemindersPage';
 import VerifyEmailPage from './pages/authorization/VerifyEmailPage';
+import DoctorScheduleResult from './pages/doctor/appointments/ScheduleResult';
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -159,84 +158,43 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        path: "dashboard",
-        element: <DoctorDashboard />,
-      },
-      // Schedule routes
-      {
-        path: "schedule",
-        element: <Schedules />,
-      },
-      // Schedule Result routes
-      {
-        path: "schedule-result/:id",
-        element: <ScheduleResult />,
-      },
-      // Pending Approvals routes
-      {
-          path: "pending",
-          element: <DoctorAppointmentRequest />,
-      },
+      { path: "dashboard", element: <DoctorDashboard />, },
+      { path: "schedule", element: <Schedules />, },
+      // { path: "scheduledetail", element: <SchedulesDetail />, },
+      { path: "schedule-result/:scheduleId", element: <DoctorScheduleResult  />, },
+      { path: "pending", element: <DoctorAppointmentRequest />, },
       // Patient routes
       {
         path: "patients",
         children: [
-          {
-            index: true,
-            element: <PatientList />,
-          },
-          {
-            path: ":id",
-            element: <PatientDetail />,
-          }
+          { index: true, element: <PatientList />, },
+          { path: ":id", element: <PatientDetail />, }
         ],
       },
       // Treatment Plan routes
       {
         path: "treatment-plans",
         children: [
-          {
-            index: true,
-            element: <TreatmentPlans />,
-          },
-          {
-            path: "create",
-            element: <CreateTreatmentPlans />,
-          },
-          {
-            path: "treatment-details/:id",
-            element: <TreatmentDetail />, 
-          },
+          { index: true, element: <TreatmentPlans />, },
+          { path: "create", element: <CreateTreatmentPlans />, },
+          { path: "treatment-details/:id", element: <TreatmentDetail />, },
         ],
       },
       // Results routes
       {
         path: "results",
         children: [
-          {
-            path: "record",
-            element: <RecordResults />,
-          },
-          {
-            path: "history",
-            element: <ResultsHistory />,
-          }
+          { path: "record", element: <RecordResults />, },
+          { path: "history", element: <ResultsHistory />, }
         ],
       },
       // Profile routes
-      {
-        path: "profile",
-        element: <DoctorProfile />,
-      },
+      { path: "profile", element: <DoctorProfile />, },
       // Notification routes
       {
         path: "notifications",
         children: [
-          {
-            path: "reminders",
-            element: <ReminderHistory />,
-          },
+          { path: "reminders", element: <ReminderHistory />, },
         ],
       },
       // fallback for doctor subpaths

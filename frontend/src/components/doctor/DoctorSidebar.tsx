@@ -228,7 +228,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
-            localStorage.removeItem("token")
+            localStorage.removeItem("access_token")
             navigate("/authorization/login")
           }}
         >

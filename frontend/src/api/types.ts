@@ -1,4 +1,4 @@
-import type { ScheduleResponse } from "./schedule";
+
 
 export interface LoginRequest {
   email: string;
@@ -209,15 +209,6 @@ export interface PaymentResponse {
   refunds: RefundResponse[];
   createdAt: string;
   updatedAt: string;
-}
-
-export interface DoctorScheduleResponse extends ScheduleResponse{
-  scheduleResult:{
-    doctorsNote:string;
-  }
-  patient: PatientProfile,
-  doctor: DoctorProfile,
-  services: ServiceReponse
 }
 
 export interface Reminder{

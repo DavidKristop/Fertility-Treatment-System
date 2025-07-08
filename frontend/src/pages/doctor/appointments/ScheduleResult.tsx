@@ -7,19 +7,17 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { Calendar, Clock, User, Phone, Mail, FileText, Save, ArrowLeft, ClipboardList } from "lucide-react"
+import { Calendar, Clock, User, Phone, Mail, FileText, Save, ArrowLeft, ClipboardList, Cake } from "lucide-react"
 import {
-  getScheduleById,
-  getScheduleResult,
   createScheduleResult,
-  type Schedule,
   type ScheduleResult,
   type ScheduleResultRequest,
+  getDoctorSchedules,
+  type ScheduleResponse,
+  markScheduleDone,
 } from "@/api/schedule"
 import FormSection from "@/components/doctor/common/FormSection"
 import MedicalHistoryCard from "@/components/doctor/common/MedicalHistoryCard"
-import ServiceCard from "@/components/doctor/common/ServiceCard"
-import DrugCard from "@/components/doctor/common/DrugCard"
 import VitalSignsForm from "@/components/doctor/common/VitalSignsForm"
 import FileUpload from "@/components/doctor/common/FileUpload"
 import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge"
@@ -42,13 +40,14 @@ const mockMedicalHistory = {
 }
 
 export default function DoctorScheduleResult() {
-  const { id } = useParams<{ id: string }>()
+  const { scheduleId } = useParams<{ scheduleId: string }>();
   const navigate = useNavigate()
-
-  const [schedule, setSchedule] = useState<Schedule | null>(null)
-  const [existingResult, setExistingResult] = useState<ScheduleResult | null>(null)
+  const [status, setStatus] = useState<ScheduleResponse["status"]>("PENDING")
+  const [schedule, setSchedule] = useState<ScheduleResponse | null>(null);
+  const [existingResult] = useState<ScheduleResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [] = useState(new Date());
 
   // Form state
   const [doctorsNote, setDoctorsNote] = useState("")
@@ -64,43 +63,49 @@ export default function DoctorScheduleResult() {
   const [followUpInstructions, setFollowUpInstructions] = useState("")
   const [attachments, setAttachments] = useState<File[]>([])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return
-
-      try {
-        setLoading(true)
-
-        // Fetch schedule details
-        const scheduleData = await getScheduleById(id)
-        if (scheduleData) {
-          setSchedule(scheduleData)
-        }
-
-        // Check if result already exists
-        const resultData = await getScheduleResult(id)
-        if (resultData) {
-          setExistingResult(resultData)
-          setDoctorsNote(resultData.doctors_note)
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error)
-      } finally {
-        setLoading(false)
-      }
+useEffect(() => {
+  if (!scheduleId) {
+    navigate("/doctor", { replace: true });
+    return;
+  }
+  const fetchList = async () => {
+    setLoading(true);
+    try {
+      const all = await getDoctorSchedules();
+      const found = all.find((s) => s.id === scheduleId);
+      if (!found) throw new Error("Không tìm thấy lịch hẹn");
+      setSchedule(found);
+      setStatus(found.status)
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
+  };
+  fetchList();
+}, [scheduleId, navigate]);
 
-    fetchData()
-  }, [id])
+  const handleMarkDone = async () => {
+    if (!scheduleId) return
+    setSaving(true)
+    try {
+      await markScheduleDone(scheduleId)
+      setStatus("DONE")
+      setSchedule((s) => s && ({ ...s, status: "DONE" }))
+    } catch (err) {
+      console.error(err)
+      alert("Không thể đánh dấu hoàn thành!");
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleSaveResult = async () => {
-    if (!id || !schedule) return
+    if (!scheduleId || !schedule) return
 
     try {
-      setSaving(true)
-
       const resultData: ScheduleResultRequest = {
-        schedule_id: id,
+        schedule_id: scheduleId,
         doctors_note: doctorsNote,
         attachments: attachments,
       }
@@ -140,12 +145,7 @@ export default function DoctorScheduleResult() {
     { label: "Chi tiết lịch hẹn" },
   ]
 
-  const patientInfo = {
-    id: schedule?.patient?.id || "",
-    name: schedule?.patient?.name || "Bệnh nhân",
-    phone: schedule?.patient?.phone || "",
-    email: schedule?.patient?.email || "",
-  }
+  const isReadOnly = status !== "DONE"
 
   return (
     <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={breadcrumbs}>
@@ -160,7 +160,7 @@ export default function DoctorScheduleResult() {
             <div>
               <h1 className="text-2xl font-bold">Chi tiết lịch hẹn</h1>
               <p className="text-gray-600">
-                Ngày {schedule && new Date(schedule.appointment_datetime).toLocaleDateString("vi-VN")}
+                Ngày {schedule && new Date(schedule.appointmentDateTime).toLocaleDateString("vi-VN")}
               </p>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function DoctorScheduleResult() {
                 <div className="flex items-center gap-3">
                   <User className="h-5 w-5 text-gray-500" />
                   <div>
-                    <p className="font-medium">{schedule?.patient?.name}</p>
+                    <p className="font-medium">{schedule?.patient?.fullName}</p>
                     <p className="text-sm text-gray-600">Bệnh nhân</p>
                   </div>
                 </div>
@@ -180,20 +180,28 @@ export default function DoctorScheduleResult() {
                 <div className="flex items-center gap-3">
                   <Phone className="h-5 w-5 text-gray-500" />
                   <div>
-                    <p className="font-medium">{schedule?.patient?.phone}</p>
+                    <p className="font-medium">{schedule?.patient.phone}</p>
                     <p className="text-sm text-gray-600">Số điện thoại</p>
                   </div>
                 </div>
 
-                {schedule?.patient?.email && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="font-medium">{schedule.patient.email}</p>
-                      <p className="text-sm text-gray-600">Email</p>
-                    </div>
+
+                <div className="flex items-center gap-3">
+                  <Mail className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="font-medium">{schedule?.patient.email}</p>
+                    <p className="text-sm text-gray-600">Email</p>
                   </div>
-                )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Cake className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="font-medium">{schedule?.patient.dateOfBirth}</p>
+                    <p className="text-sm text-gray-600">Ngày sinh</p>
+                  </div>
+                </div>                
+ 
               </div>
 
               <div className="space-y-4">
@@ -201,7 +209,7 @@ export default function DoctorScheduleResult() {
                   <Clock className="h-5 w-5 text-gray-500" />
                   <div>
                     <p className="font-medium">
-                      {schedule && new Date(schedule.appointment_datetime).toLocaleTimeString("vi-VN", {
+                      {schedule && new Date(schedule.appointmentDateTime).toLocaleTimeString("vi-VN", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -211,16 +219,18 @@ export default function DoctorScheduleResult() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <FileText className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="font-medium">{schedule?.reason}</p>
-                    <p className="text-sm text-gray-600">Lý do khám</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
                   {schedule && <AppointmentStatusBadge status={schedule.status} />}
                 </div>
+
+                {status === "PENDING" && (
+                  <Button
+                    onClick={handleMarkDone}
+                    disabled={saving}
+                    className="mb-4 cursor-pointer"
+                  >
+                    {saving ? "Đang cập nhật…" : "Đánh dấu hoàn thành"}
+                  </Button>
+                )}              
               </div>
             </div>
           </FormSection>
@@ -229,13 +239,12 @@ export default function DoctorScheduleResult() {
           <MedicalHistoryCard data={mockMedicalHistory} />
 
           {/* Services */}
-          {schedule?.services && schedule.services.length > 0 && <ServiceCard services={schedule.services} />}
+          {/* {schedule?.services && schedule.services.length > 0 && <ServiceCard services={schedule.services} />} */}
 
           {/* Drugs */}
-          {schedule?.drugs && schedule.drugs.length > 0 && <DrugCard drugs={schedule.drugs} />}
-
-          {/* Examination Results */}
-          <FormSection title="Kết quả khám" icon={ClipboardList}>
+          {/* {schedule?.drugs && schedule.drugs.length > 0 && <DrugCard drugs={schedule.services} />} */}
+          <fieldset disabled={isReadOnly} className={isReadOnly ? "opacity-50" : ""}>
+                      <FormSection title="Kết quả khám" icon={ClipboardList}>
             <div className="space-y-6">
               {/* Vital Signs */}
               <VitalSignsForm vitalSigns={vitalSigns} onChange={setVitalSigns} />
@@ -353,6 +362,9 @@ export default function DoctorScheduleResult() {
               </Button>
             </LoadingComponent>
           </div>
+          </fieldset>
+          {/* Examination Results */}
+
         </div>
       </LoadingComponent>
     </DoctorLayout>
