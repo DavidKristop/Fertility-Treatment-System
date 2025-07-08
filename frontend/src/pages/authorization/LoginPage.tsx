@@ -45,7 +45,6 @@ export default function LoginPage() {
         password: values.password
       };
       const response = await auth.login(loginData);
-      console.log('➡️ payload=', response.payload)
       switch (response.payload.role) {
         case 'ROLE_PATIENT':
           navigate('/patient/dashboard');
