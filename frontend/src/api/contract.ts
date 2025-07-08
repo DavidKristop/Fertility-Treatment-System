@@ -2,7 +2,7 @@ import { fetchWrapper } from '.';
 import type { ApiPaginationResponse, ApiResponse, ContractResponse } from './types';
 
 // Get all contracts for patient (paginated)
-export const getPatientCotracts = async ({
+export const getPatientContracts = async ({
     page = 0,
     size = 10,
     isSigned = false
@@ -35,23 +35,41 @@ export const getPatientContractById = async (id: string): Promise<ApiResponse<Co
     return response.json();
 }
 
-// Get all contracts for manager (paginated)
-export const getManagerContracts = async ({
+// Get all patient contracts from manager's side (paginated)
+
+// Get signed contracts
+export const getSignedContracts = async ({
     page = 0,
     size = 10,
-    isSigned = false
 }: {
     page?: number;
     size?: number;
-    isSigned?: boolean;
 }): Promise<ApiPaginationResponse<ContractResponse>> => {
     const response = await fetchWrapper(
-        `contracts/manager?page=${page}&size=${size}&isSigned=${isSigned}`,
-        {},
-        true
-    );
+        `contracts/manager?page=${page}&size=${size}&isSigned=true`, {}, true
+    )
 
-    if( !response.ok) {
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch contracts');
+    }
+
+    return response.json();
+};
+
+// Get unsigned contracts
+export const getUnsignedContracts = async ({
+    page = 0,
+    size = 10,
+}: {
+    page?: number;
+    size?: number;
+}): Promise<ApiPaginationResponse<ContractResponse>> => {
+    const response = await fetchWrapper(
+        `contracts/manager?page=${page}&size=${size}&isSigned=false`, {}, true
+    )
+
+    if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch contracts');
     }
