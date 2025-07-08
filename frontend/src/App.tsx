@@ -32,6 +32,8 @@ import PatientDashboard from './pages/patient/PatientDashboard';
 import RequestAppointment from './pages/patient/RequestAppointment';
 import PatientContracts from './pages/patient/contracts/PatientContracts';
 import PatientProfile from './pages/patient/profile/PatientProfile';
+import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
+import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
 
 // Doctor pages
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
@@ -141,6 +143,8 @@ const router = createBrowserRouter([
       { path: 'payments/failure', element: <PaymentFailurePage/>},
       { path: 'contracts', element: <PatientContracts /> },
       { path: 'profile', element: <PatientProfile /> },
+      { path: 'treatment', element: <TreatmentPage /> },
+      { path: 'treatment/:id', element: <TreatmentDetailPage /> },
       // fallback for patient subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },
     ],

@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import logo from "@/assets/ucarelogo.png"
 import { getAllOfMyReminder } from "@/api/reminder"
+import { logout } from "@/api/auth"
 
 interface SidebarItem {
   id: string
@@ -286,9 +287,17 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
       <div className="p-2 border-t border-gray-200">
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
-          onClick={() => {
-            localStorage.removeItem("token")
-            navigate("/authorization/login")
+          onClick={async () => {
+            try {
+              // Gọi API logout để xóa refresh token cookie
+              await logout({});
+              // Navigate sau khi logout thành công
+              navigate("/authorization/login");
+            } catch (error) {
+              console.error('Logout error:', error);
+              // Dù có lỗi, vẫn navigate (vì localStorage đã bị xóa trong hàm logout)
+              navigate("/authorization/login");
+            }
           }}
         >
           <LogOut className="h-5 w-5 flex-shrink-0" />
