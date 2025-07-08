@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 import logo from "@/assets/ucarelogo.png";
 import { Dropdown } from "@/components/ui/dropdown";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Link, useNavigate } from "react-router-dom";
+import { me } from "@/api/auth";
+import { auth } from "@/api";
 
 export default function Navbar() {
+  const navigate = useNavigate()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
 
   const navItemClass =
     "text-[20px] font-semibold px-4 py-6 transition-colors text-[#004c77] hover:bg-[#004c77] hover:text-white";
@@ -25,6 +29,35 @@ export default function Navbar() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  const goToDashboard = () => {
+    if (!user) return;
+    switch (user.role) {
+      case "ROLE_PATIENT":
+        navigate("/patient/dashboard");
+        break;
+      case "ROLE_DOCTOR":
+        navigate("doctor/dashboard");
+        break;
+      case "ROLE_ADMIN":
+        navigate("admin/dashboard");
+        break;
+      default:
+        navigate("/");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.logout // POST /auth/logout
+    } catch (err) {
+      console.error("Logout API failed:", err)
+    } finally {
+      localStorage.removeItem("access_token")
+      setUser(null);
+      navigate("/authorization/login", { replace: true })
+    }
+  }
+
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.classList.add("overflow-hidden");
@@ -33,6 +66,18 @@ export default function Navbar() {
     }
     return () => document.body.classList.remove("overflow-hidden");
   }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const current = await me();
+        setUser(current);
+        console.log("Fetched user.role =", current.role);
+      } catch {
+        setUser(null);
+      }
+    })();
+  }, []);
 
   return (
     <header className="flex items-center justify-between px-6 py-0 bg-white border-b sticky top-0 z-50">
@@ -88,14 +133,43 @@ export default function Navbar() {
           </Dropdown>
         </nav>
 
-        <Link to="/authorization/login">
-          <Button
-            variant="outline"
-            className="text-[20px] font-semibold px-6 h-12 rounded-xl border-2 border-[#004c77] text-[#004c77] hover:bg-[#004c77] hover:text-white transition-colors cursor-pointer shadow-md flex items-center justify-center"
-          >
-            Đăng nhập
-          </Button>
-        </Link>
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="cursor-pointer">
+              <Button
+                variant="outline"
+                className="text-[20px] font-semibold px-6 h-12 rounded-xl border-2 border-[#004c77] text-[#004c77] hover:bg-[#004c77] hover:text-white transition-colors shadow-md flex items-center justify-center"
+              >
+                {user.fullName}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem className="cursor-pointer" onClick={goToDashboard}>
+                  <LayoutDashboard className="h-5 w-5 flex-shrink-0" />
+                  Dashboard
+                </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-red-600 cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleLogout()
+                }}
+              >
+                <LogOut className="h-5 w-5 flex-shrink-0 text-red-600" />
+                Đăng xuất
+              </DropdownMenuItem>              
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link to="/authorization/login">
+            <Button
+              variant="outline"
+              className="text-[20px] font-semibold px-6 h-12 rounded-xl border-2 border-[#004c77] text-[#004c77] hover:bg-[#004c77] hover:text-white transition-colors cursor-pointer shadow-md flex items-center justify-center"
+            >
+              Đăng nhập
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Mobile Menu Button */}
