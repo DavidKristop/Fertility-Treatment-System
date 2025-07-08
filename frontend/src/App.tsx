@@ -31,6 +31,7 @@ import ResetPasswordPage from "./pages/authorization/ResetPasswordPage"
 import PatientDashboard from './pages/patient/PatientDashboard';
 import RequestAppointment from './pages/patient/RequestAppointment';
 import PatientContracts from './pages/patient/contracts/PatientContracts';
+import ContractHistory from './pages/patient/contracts/ContractHistory';
 import PatientProfile from './pages/patient/profile/PatientProfile';
 
 // Doctor pages
@@ -50,6 +51,7 @@ import ReminderHistory from './pages/doctor/notifications/ReminderHistory';
 
 // Manager pages
 import ManagerDashboard from './pages/manager/ManagerDashboard';
+import ManagerContracts from './pages/manager/contracts/ManagerContracts';
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -139,7 +141,13 @@ const router = createBrowserRouter([
       { path: 'notifications', element: <MyRemindersPage/>},
       { path: 'payments/success', element: <PaymentSuccessPage/>},
       { path: 'payments/failure', element: <PaymentFailurePage/>},
-      { path: 'contracts', element: <PatientContracts /> },
+      { path:
+        'contracts', 
+        children: [
+          { index: true, element: <PatientContracts /> },
+          { path: 'history', element: <ContractHistory /> },
+        ]
+      },
       { path: 'profile', element: <PatientProfile /> },
       // fallback for patient subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },
@@ -257,6 +265,10 @@ const router = createBrowserRouter([
       {
         path: "patients",
         element: <PatientList />,
+      },
+      { 
+        path: 'contracts', 
+        element: <ManagerContracts /> 
       },
       // fallback for manager subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },
