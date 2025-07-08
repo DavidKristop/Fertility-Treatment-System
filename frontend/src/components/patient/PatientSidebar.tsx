@@ -70,6 +70,25 @@ const sidebarItemsProp: SidebarItem[] = [
     path: "/patient/treatment",
   },
   {
+    id: "contracts",
+    label: "Hợp đồng",
+    icon: FileSignature,
+    children: [
+      {
+        id: "active-contracts",
+        label: "Hợp đồng hiện tại",
+        icon: FileText,
+        path: "/patient/contracts",
+      },
+      {
+        id: "history-contracts",
+        label: "Lịch sử hợp đồng",
+        icon: FileText,
+        path: "/patient/contracts/history",
+      },
+    ],
+  },
+  {
     id: "prescriptions",
     label: "Đơn thuốc",
     icon: Pill,
@@ -99,12 +118,6 @@ const sidebarItemsProp: SidebarItem[] = [
     label: "Thông báo",
     icon: Bell,
     path: "/patient/notifications",
-  },
-  {
-    id: "contracts",
-    label: "Hợp đồng",
-    icon: FileSignature,
-    path: "/patient/contracts",
   },
   {
     id: "profile",

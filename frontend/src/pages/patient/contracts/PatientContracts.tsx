@@ -1,258 +1,201 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { FileText, Download, Eye, PenTool, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { FileText, RefreshCw } from "lucide-react"
 import PatientLayout from "@/components/patient/PatientLayout"
+import ContractCard from "@/components/contracts/ContractCard"
+import ContractDetailModal from "@/components/contracts/ContractDetailModal"
+import ContractSignModal from "@/components/contracts/ContractSignModal"
+import { getPatientContracts, signContract } from "@/api/contract"
+import type { ContractResponse } from "@/api/types"
+import { toast } from "react-toastify"
 
-// Mock data
-const patientName = "Nguyễn Thị Lan"
-const contracts = [
-  {
-    id: 1,
-    title: "Hợp đồng điều trị IVF",
-    description: "Hợp đồng điều trị thụ tinh trong ống nghiệm - Gói cơ bản",
-    createdDate: "2025-01-15",
-    expiryDate: "2025-07-17",
-    status: "pending", // pending, signed, expired
-    amount: "150,000,000 VNĐ",
-    doctor: "BS. Trần Minh Đức",
-    type: "IVF Treatment",
-  },
-  {
-    id: 2,
-    title: "Hợp đồng điều trị IUI",
-    description: "Hợp đồng xét nghiệm di truyền tiền làm tổ (PGT)",
-    createdDate: "2025-01-10",
-    expiryDate: "2025-06-10",
-    status: "signed",
-    amount: "25,000,000 VNĐ",
-    doctor: "BS. Lê Thị Hoa",
-    type: "Genetic Testing",
-  },
-  {
-    id: 3,
-    title: "Hợp đồng điều trị IVF",
-    description: "Hợp đồng bảo quản phôi đông lạnh - 2 năm",
-    createdDate: "2024-12-20",
-    expiryDate: "2025-05-20",
-    status: "expired",
-    amount: "15,000,000 VNĐ",
-    doctor: "BS. Nguyễn Văn An",
-    type: "Embryo Storage",
-  },
-]
-
-
-interface PatientContractsProps {
-  className?: string
-}
-
-export default function PatientContracts({ className }: PatientContractsProps) {
-  const [selectedContract, setSelectedContract] = useState<(typeof contracts)[0] | null>(null)
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "signed":
-        return "bg-green-100 text-green-800"
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "expired":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "signed":
-        return <CheckCircle className="h-4 w-4" />
-      case "pending":
-        return <Clock className="h-4 w-4" />
-      case "expired":
-        return <AlertCircle className="h-4 w-4" />
-      default:
-        return <FileText className="h-4 w-4" />
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "signed":
-        return "Đã ký"
-      case "pending":
-        return "Chờ ký"
-      case "expired":
-        return "Hết hạn"
-      default:
-        return "Không xác định"
-    }
-  }
-
-  const handleSignContract = (contractId: number) => {
-    // Logic to sign contract
-    console.log("Signing contract:", contractId)
-    // Update contract status to signed
-    // You can add API call here
-  }
-
-  const handleDownloadContract = (contractId: number) => {
-    // Logic to download contract
-    console.log("Downloading contract:", contractId)
-    // You can add download logic here
-  }
+export default function PatientContracts() {
+  const [contracts, setContracts] = useState<ContractResponse[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedContract, setSelectedContract] = useState<ContractResponse | null>(null)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [isSignModalOpen, setIsSignModalOpen] = useState(false)
+  const [signingContract, setSigningContract] = useState<ContractResponse | null>(null)
+  const [isSigningLoading, setIsSigningLoading] = useState(false)
 
   const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Hợp đồng" },
+    { label: "Trang tổng quan", path: "/patient/dashboard" },
+    { label: "Hợp đồng chờ ký" },
   ]
 
+  const fetchContracts = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await getPatientContracts({ page: 0, size: 20 })
+      // Chỉ lấy hợp đồng chưa ký và chưa hết hạn
+      const unsignedContracts = response.payload.content.filter(contract => 
+        !contract.signed && new Date(contract.signDeadline) > new Date()
+      )
+      setContracts(unsignedContracts)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Lỗi khi tải danh sách hợp đồng")
+      toast.error("Không thể tải danh sách hợp đồng")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchContracts()
+  }, [])
+
+  const handleViewContract = (contract: ContractResponse) => {
+    setSelectedContract(contract)
+    setIsDetailModalOpen(true)
+  }
+
+  const handleSignContract = (contractId: string) => {
+    const contract = contracts.find(c => c.id === contractId)
+    if (contract) {
+      setSigningContract(contract)
+      setIsSignModalOpen(true)
+    }
+  }
+
+  const handleConfirmSign = async (contractId: string) => {
+    setIsSigningLoading(true)
+    try {
+      await signContract(contractId)
+      toast.success("Ký hợp đồng thành công!")
+      setIsSignModalOpen(false)
+      setSigningContract(null)
+      await fetchContracts() // Refresh contracts
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Lỗi khi ký hợp đồng")
+    } finally {
+      setIsSigningLoading(false)
+    }
+  }
+
+  const handleDownloadContract = (contractId: string) => {
+    const contract = contracts.find(c => c.id === contractId)
+    if (contract?.contractUrl) {
+      window.open(contract.contractUrl, '_blank')
+    } else {
+      toast.error("Không tìm thấy file hợp đồng")
+    }
+  }
+
   return (
-    <PatientLayout title="Hợp đồng" breadcrumbs={breadcrumbs}>
-            <div className={className}>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Hợp đồng của bệnh nhân {patientName} </h2>
-      </div>
+    <PatientLayout title="Hợp đồng chờ ký" breadcrumbs={breadcrumbs}>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Hợp đồng chờ ký
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Danh sách hợp đồng điều trị cần được ký để bắt đầu quá trình điều trị
+            </p>
+          </div>
+          <Button 
+            onClick={fetchContracts} 
+            disabled={loading}
+            variant="outline"
+            size="sm"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Làm mới
+          </Button>
+        </div>
 
-      {/* Contracts List */}
-      <Card className="min-h-[600px]">
-        <CardContent className="p-6">
-          {contracts.length > 0 ? (
-            <div className="space-y-4">
+        <Card className="min-h-[600px]">
+          <CardContent className="p-6">
+            {loading && (
+              <div className="flex justify-center items-center py-12">
+                <div className="text-center">
+                  <RefreshCw className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-4" />
+                  <p>Đang tải danh sách hợp đồng...</p>
+                </div>
+              </div>
+            )}
 
-              {contracts.map((contract) => (
-                <div key={contract.id} className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold">{contract.title}</h3>
-                        <Badge className={getStatusColor(contract.status)}>
-                          <div className="flex items-center gap-1">
-                            {getStatusIcon(contract.status)}
-                            {getStatusText(contract.status)}
-                          </div>
-                        </Badge>
-                      </div>
+            {error && (
+              <div className="text-center py-12">
+                <div className="text-red-500 mb-4">
+                  <FileText className="h-12 w-12 mx-auto mb-2" />
+                  <p>{error}</p>
+                </div>
+                <Button onClick={fetchContracts} variant="outline">
+                  Thử lại
+                </Button>
+              </div>
+            )}
 
-                      <p className="text-gray-600 mb-3">{contract.description}</p>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-500">Bác sĩ:</span>
-                          <div className="font-medium">{contract.doctor}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Giá trị:</span>
-                          <div className="font-medium text-green-600">{contract.amount}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Ngày tạo:</span>
-                          <div className="font-medium">{contract.createdDate}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Hết hạn:</span>
-                          <div className="font-medium">{contract.expiryDate}</div>
-                        </div>
-                      </div>
+            {!loading && !error && contracts.length > 0 && (
+              <div className="space-y-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <FileText className="h-5 w-5 text-yellow-600" />
                     </div>
-
-                    <div className="flex flex-col gap-2 ml-4">
-                      {/* View Contract Dialog */}
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" onClick={() => setSelectedContract(contract)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            Xem
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>{selectedContract?.title}</DialogTitle>
-                            <DialogDescription>Chi tiết hợp đồng và thông tin bệnh nhân</DialogDescription>
-                          </DialogHeader>
-
-                          <DialogFooter>
-                            <Button variant="outline" onClick={() => handleDownloadContract(selectedContract?.id || 0)}>
-                              <Download className="h-4 w-4 mr-2" />
-                              Tải xuống
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-
-                      {/* Sign Contract Dialog - Only for pending contracts */}
-                      {contract.status === "pending" && (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button size="sm">
-                              <PenTool className="h-4 w-4 mr-2" />
-                              Ký hợp đồng
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Xác nhận ký hợp đồng</DialogTitle>
-                              <DialogDescription>
-                                Bạn có chắc chắn muốn ký hợp đồng "{contract.title}"?
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="py-4">
-                              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                <div className="flex items-start gap-3">
-                                  <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                                  <div className="text-sm">
-                                    <p className="font-medium text-yellow-800 mb-1">Lưu ý quan trọng:</p>
-                                    <p className="text-yellow-700">
-                                      Sau khi ký, hợp đồng sẽ có hiệu lực pháp lý. Vui lòng đọc kỹ các điều khoản trước
-                                      khi xác nhận.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button variant="outline">Hủy</Button>
-                              <Button onClick={() => handleSignContract(contract.id)}>Xác nhận ký</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      )}
-
-                      {/* Download Button - Only for signed contracts */}
-                      {contract.status === "signed" && (
-                        <Button variant="outline" size="sm" onClick={() => handleDownloadContract(contract.id)}>
-                          <Download className="h-4 w-4 mr-2" />
-                          Tải xuống
-                        </Button>
-                      )}
+                    <div className="ml-3">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Lưu ý:</strong> Bạn cần ký hợp đồng trước thời hạn để bắt đầu điều trị. 
+                        Hợp đồng quá hạn sẽ bị hủy tự động.
+                      </p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Chưa có hợp đồng nào</h3>
-              <p className="text-gray-600">Các hợp đồng điều trị sẽ xuất hiện tại đây</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-    </PatientLayout>
 
+                {contracts.map((contract) => (
+                  <ContractCard
+                    key={contract.id}
+                    contract={contract}
+                    onView={handleViewContract}
+                    onSign={handleSignContract}
+                    onDownload={handleDownloadContract}
+                  />
+                ))}
+              </div>
+            )}
+
+            {!loading && !error && contracts.length === 0 && (
+              <div className="text-center py-12">
+                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Không có hợp đồng chờ ký
+                </h3>
+                <p className="text-gray-600">
+                  Hiện tại không có hợp đồng nào cần ký. Hợp đồng mới sẽ xuất hiện sau khi bác sĩ tạo kế hoạch điều trị.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detail Modal */}
+      <ContractDetailModal
+        contract={selectedContract}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false)
+          setSelectedContract(null)
+        }}
+      />
+
+      {/* Sign Modal */}
+      <ContractSignModal
+        contract={signingContract}
+        isOpen={isSignModalOpen}
+        onClose={() => {
+          setIsSignModalOpen(false)
+          setSigningContract(null)
+        }}
+        onConfirm={handleConfirmSign}
+        isLoading={isSigningLoading}
+      />
+    </PatientLayout>
   )
 }
