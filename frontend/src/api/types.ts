@@ -86,7 +86,7 @@ export interface ApiPaginationResponse<T> {
 }
 
 // ==================== SERVICE & DRUG TYPES ====================
-export interface ServiceReponse {
+export interface ServiceResponse {
   id: string;
   name: string;
   description: string;
@@ -112,7 +112,7 @@ export interface PatientDrugResponse {
   amount: number;
 }
 
-export interface AssignDrugReponse {
+export interface AssignDrugResponse {
   id: string;
   status: string;
   completeDate: string;
@@ -125,7 +125,7 @@ export interface TreatmentScheduleResponse{
   appointmentDatetime: string; 
   estimatedTime: string;
   status: "PENDING" | "ACCEPTED" | "DENIED";
-  services?: ServiceReponse[];
+  services?: ServiceResponse[];
 }
 
 export interface RequestAppointmentResponse {
@@ -139,27 +139,27 @@ export interface RequestAppointmentResponse {
 }
 
 // ==================== PROTOCOL & PHASE TYPES ====================
-export interface PhaseReponse {
+export interface PhaseResponse {
   id: string;
   title: string;
   description: string;
   position: number;
   phaseModifierPercentage: number;
   refundPercentage?: number;
-  services?: ServiceReponse[];
+  services?: ServiceResponse[];
   drugs?: DrugResponse[];
-  schedules?: ServiceReponse[];
-  assignDrugs?: AssignDrugReponse[];
-  unsetServices?: ServiceReponse[];
+  schedules?: ServiceResponse[];
+  assignDrugs?: AssignDrugResponse[];
+  unsetServices?: ServiceResponse[];
 }
 
-export interface ProtocolReponse {
+export interface ProtocolResponse {
   id: string;
   title: string;
   description: string;
   createdAt: string;
   updatedAt: string;
-  phases: PhaseReponse[];
+  phases: PhaseResponse[];
   estimatedPrice: number;
   active: boolean;
 }
@@ -173,8 +173,8 @@ export interface Treatment {
   status: string;
   patient: PatientProfile;
   doctor: DoctorProfile;
-  protocol: ProtocolReponse;
-  phases: PhaseReponse[];
+  protocol: ProtocolResponse;
+  phases: PhaseResponse[];
 }
 
 export interface TreatmentPlan {
@@ -240,8 +240,8 @@ export interface PaymentResponse {
   paymentMethod: string;
   status: string;
   userId: string;
-  scheduleServices: ServiceReponse[];
-  assignDrugs: AssignDrugReponse[];
+  scheduleServices: ServiceResponse[];
+  assignDrugs: AssignDrugResponse[];
   refunds: RefundResponse[];
   createdAt: string;
   updatedAt: string;
