@@ -1,6 +1,5 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { me } from "@/api/auth"
@@ -58,7 +57,7 @@ export default function PatientDashboard() {
   
   if (!doctorName) {
     return (
-      <DoctorLayout title="Trang tổng quan">
+      <DoctorLayout title="Lịch khám">
         <div>Đang tải thông tin người dùng…</div>
       </DoctorLayout>
     )
@@ -75,28 +74,19 @@ export default function PatientDashboard() {
     navigate(`/doctor/schedule-result/${event.id}`);
   };
 
+  const breadcrumbs = [{ label: "Trang tổng quan", path: "/doctor/dashboard" }, { label: "Lịch khám" }]
+
   return (
-    <DoctorLayout title="Trang tổng quan" breadcrumbs={[{ label: "Trang tổng quan" }]}>
+    <DoctorLayout title="Lịch khám" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Welcome */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <h1 className="text-2xl font-bold text-gray-900">Xin Chào, {doctorName}</h1>
+        <div className="flex flex-col lg:flex-row gap-4 justify-between">
+          <MyScheduler
+            events={events}
+            date={currentDate}
+            onNavigate={handleScheduleNavigate}
+            onSelectEvent={handleScheduleClick}
+          />
         </div>
-
-        
-
-        
-                <div className="flex flex-col lg:flex-row gap-4 justify-between">
-                  <MyScheduler
-                    events={events}
-                    date={currentDate}
-                    onNavigate={handleScheduleNavigate}
-                    onSelectEvent={handleScheduleClick}
-                  />
-                </div>
-        
-
-        
         <Card>
           <CardHeader>
             <CardTitle>Chú thích</CardTitle>
