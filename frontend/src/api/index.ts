@@ -14,7 +14,24 @@ export const fetchWrapper = async (
 
     let token = localStorage.getItem('access_token');
     if (!token) {
-        throw new Error('Unauthorized access');
+        try {
+            const refreshResponse = await fetch(`${API_URL}/api/auth/refresh`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (refreshResponse.ok) {
+                const data = await refreshResponse.json();
+                token = data.payload.accessToken;
+                if (token) {
+                    localStorage.setItem('access_token', token);
+                }
+            } else {
+                throw new Error('No access token and refresh failed');
+            }
+        } catch (err) {
+            throw new Error('No access token and refresh failed');
+        }
     }
 
     // Gửi request lần đầu
