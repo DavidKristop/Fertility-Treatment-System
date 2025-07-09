@@ -85,10 +85,6 @@ export default function ManagerContracts() {
     )
   })
 
-  const totalContracts = contracts.length
-  const signedContracts = contracts.filter(c => c.signed).length
-  const pendingContracts = contracts.filter(c => !c.signed).length
-
   return (
     <ManagerLayout title="Quản lý hợp đồng" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
@@ -111,50 +107,6 @@ export default function ManagerContracts() {
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Làm mới
           </Button>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {statusFilter === "all" ? "Tổng hợp đồng" : 
-                     statusFilter === "signed" ? "Đã ký" : "Chờ ký"}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">{totalContracts}</p>
-                </div>
-                <FileText className="h-8 w-8 text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Đã ký</p>
-                  <p className="text-2xl font-bold text-green-600">{signedContracts}</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <div className="h-3 w-3 bg-green-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Chờ ký</p>
-                  <p className="text-2xl font-bold text-yellow-600">{pendingContracts}</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <div className="h-3 w-3 bg-yellow-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Filters */}
