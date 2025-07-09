@@ -31,7 +31,6 @@ import ResetPasswordPage from "./pages/authorization/ResetPasswordPage"
 import PatientDashboard from './pages/patient/PatientDashboard';
 import RequestAppointment from './pages/patient/RequestAppointment';
 import PatientContracts from './pages/patient/contracts/PatientContracts';
-import ContractHistory from './pages/patient/contracts/ContractHistory';
 import PatientProfile from './pages/patient/profile/PatientProfile';
 import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
 import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
@@ -142,13 +141,7 @@ const router = createBrowserRouter([
       { path: 'notifications', element: <MyRemindersPage/>},
       { path: 'payments/success', element: <PaymentSuccessPage/>},
       { path: 'payments/failure', element: <PaymentFailurePage/>},
-      { path:
-        'contracts', 
-        children: [
-          { index: true, element: <PatientContracts /> },
-          { path: 'history', element: <ContractHistory /> },
-        ]
-      },
+      { path: 'contracts', element: <PatientContracts />},
       { path: 'profile', element: <PatientProfile /> },
       { path: 'treatment', element: <TreatmentPage /> },
       { path: 'treatment/:id', element: <TreatmentDetailPage /> },
