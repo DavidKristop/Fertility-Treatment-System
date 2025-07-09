@@ -45,7 +45,6 @@ export default function LoginPage() {
         password: values.password
       };
       const response = await auth.login(loginData);
-      localStorage.setItem('token', response.payload.accessToken);
       switch (response.payload.role) {
         case 'ROLE_PATIENT':
           navigate('/patient/dashboard');

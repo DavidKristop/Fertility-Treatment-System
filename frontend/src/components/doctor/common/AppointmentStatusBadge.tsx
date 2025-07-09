@@ -5,62 +5,81 @@ interface AppointmentStatusBadgeProps {
   className?: string
 }
 
-export default function AppointmentStatusBadge({ status, className = "" }: AppointmentStatusBadgeProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Done":
-      case "Complete":
+export default function AppointmentStatusBadge({
+  status,
+  className = "",
+}: AppointmentStatusBadgeProps) {
+  // Chuẩn hoá string để switch dễ hơn
+  const norm = status.toLowerCase()
+
+  const getStatusColor = () => {
+    switch (norm) {
+      // DONE và biến thể → nền xanh lá, chữ xanh, to + đậm
+      case "done":
+      case "complete":
       case "completed":
-      case "active":
-      case "normal":
-        return "bg-green-100 text-green-800"
-      case "Pending":
+        return "bg-green-100 text-green-800 text-lg font-semibold"
+
+      // PENDING
       case "pending":
       case "scheduled":
-        return "bg-yellow-100 text-yellow-800"
-      case "In Progress":
-      case "Changed":
+        return "bg-yellow-100 text-yellow-800 text-lg font-semibold"
+
+      // IN PROGRESS
+      case "in progress":
+      case "changed":
         return "bg-blue-100 text-blue-800"
-      case "Cancel":
+
+      // CANCEL
+      case "cancel":
       case "cancelled":
       case "paused":
         return "bg-red-100 text-red-800"
+
+      // NEW PATIENT
       case "new":
         return "bg-blue-100 text-blue-800"
+
+      // ABNORMAL
       case "abnormal":
         return "bg-red-100 text-red-800"
+
+      // NORMAL / ACTIVE
+      case "normal":
+      case "active":
+        return "bg-green-100 text-green-800"
+
       default:
         return "bg-gray-100 text-gray-800"
     }
   }
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "Done":
+  const getStatusText = () => {
+    switch (norm) {
+      case "done":
         return "Đã hoàn thành"
-      case "Complete":
+      case "complete":
       case "completed":
         return "Hoàn thành"
-      case "Pending":
       case "pending":
         return "Chờ xác nhận"
-      case "In Progress":
-        return "Đang điều trị"
-      case "Changed":
-        return "Đã thay đổi"
-      case "Cancel":
-      case "cancelled":
-        return "Đã hủy"
-      case "active":
-        return "Đang điều trị"
-      case "new":
-        return "Bệnh nhân mới"
-      case "paused":
-        return "Tạm dừng"
       case "scheduled":
         return "Đã lên lịch"
+      case "in progress":
+        return "Đang điều trị"
+      case "changed":
+        return "Đã thay đổi"
+      case "cancel":
+      case "cancelled":
+        return "Đã hủy"
+      case "paused":
+        return "Tạm dừng"
+      case "new":
+        return "Bệnh nhân mới"
       case "normal":
         return "Bình thường"
+      case "active":
+        return "Đang điều trị"
       case "abnormal":
         return "Bất thường"
       default:
@@ -68,5 +87,9 @@ export default function AppointmentStatusBadge({ status, className = "" }: Appoi
     }
   }
 
-  return <Badge className={`${getStatusColor(status)} ${className}`}>{getStatusText(status)}</Badge>
+  return (
+    <Badge className={`${getStatusColor()} ${className}`}>
+      {getStatusText()}
+    </Badge>
+  )
 }

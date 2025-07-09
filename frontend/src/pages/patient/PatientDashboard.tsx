@@ -5,8 +5,7 @@ import { useCallback, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { me } from "@/api/auth"
 import MyScheduler from "@/components/Scheduler"
-import { getPatientScheduleInAMonth } from "@/api/schedule"
-import type { DoctorScheduleResponse } from "@/api/types"
+import { getPatientScheduleInAMonth, type ScheduleResponse } from "@/api/schedule"
 
 
 // Mock data
@@ -63,7 +62,7 @@ export default function PatientDashboard() {
         const month = currentDate.getMonth() + 1; // JS months are 0-based
         const res = await getPatientScheduleInAMonth(year, month);
         // Map API data to react-big-calendar event format
-        const mappedEvents = (res.payload || []).map((item: DoctorScheduleResponse) => ({
+        const mappedEvents = (res.payload || []).map((item: ScheduleResponse) => ({
           id: item.id,
           title: "Hẹn với bác sĩ "+item.doctor.fullName,
           start: new Date(item.appointmentDateTime),
@@ -150,13 +149,19 @@ export default function PatientDashboard() {
             </CardContent>
         </Card>
 
-        <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <MyScheduler
-            events={events}
-            date={currentDate}
-            onNavigate={handleScheduleNavigate}
-          />
-        </div>
+        
+                <div className="flex flex-col lg:flex-row gap-4 justify-between">
+                  <MyScheduler
+                    events={events}
+                    date={currentDate}
+                    onNavigate={handleScheduleNavigate}
+                    onSelectEvent={() => {
+                      navigate(`/patient/schedule`);
+                    }}
+                  />
+                </div>
+        
+
         
         <Card>
           <CardHeader>
