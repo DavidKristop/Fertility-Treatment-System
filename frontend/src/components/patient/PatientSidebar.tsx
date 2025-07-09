@@ -74,20 +74,7 @@ const sidebarItemsProp: SidebarItem[] = [
     id: "contracts",
     label: "Hợp đồng",
     icon: FileSignature,
-    children: [
-      {
-        id: "active-contracts",
-        label: "Hợp đồng hiện tại",
-        icon: FileText,
-        path: "/patient/contracts",
-      },
-      {
-        id: "history-contracts",
-        label: "Lịch sử hợp đồng",
-        icon: FileText,
-        path: "/patient/contracts/history",
-      },
-    ],
+    path: "/patient/contracts",
   },
   {
     id: "prescriptions",
