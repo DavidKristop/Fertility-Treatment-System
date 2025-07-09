@@ -70,7 +70,7 @@ export interface ScheduleService {
 
 export interface ScheduleResult {
   id: string
-  doctors_note: string
+  doctorsNote: string
   schedule_id: string
   attachments?: ScheduleResultAttachment[]
 }
@@ -199,21 +199,7 @@ const mockSchedules: Schedule[] = [
   },
 ]
 
-const mockScheduleResults: ScheduleResult[] = [
-  {
-    id: "schedule-1",
-    doctors_note:
-      "Bệnh nhân phản ứng tốt với điều trị. Nang trứng phát triển bình thường. Tiếp tục theo dõi và điều chỉnh liều thuốc theo kết quả siêu âm.",
-    schedule_id: "1",
-    attachments: [
-      {
-        id: "1",
-        attachment_url: "/files/ultrasound-20240115.jpg",
-        schedule_result_id: "1",
-      },
-    ],
-  },
-]
+
 
 // API functions
 export const getSchedules = async (): Promise<Schedule[]> => {
@@ -229,31 +215,7 @@ export const getTodaySchedules = async (): Promise<Schedule[]> => {
   return mockSchedules.filter((schedule) => schedule.appointment_datetime.startsWith(today))
 }
 
-export const getScheduleResult = async (scheduleId: string): Promise<ScheduleResult | null> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  return mockScheduleResults.find((result) => result.schedule_id === scheduleId) || null
-}
 
-export const createScheduleResult = async (data: ScheduleResultRequest): Promise<ScheduleResult> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  const newResult: ScheduleResult = {
-    id: Date.now().toString(),
-    doctors_note: data.doctors_note,
-    schedule_id: data.schedule_id,
-    attachments:
-      data.attachments?.map((file, index) => ({
-        id: `${Date.now()}-${index}`,
-        attachment_url: `/files/${file.name}`,
-        schedule_result_id: Date.now().toString(),
-      })) || [],
-  }
-
-  mockScheduleResults.push(newResult)
-  return newResult
-}
 
 
 export const getDoctorScheduleByDoctorId = async (doctorId: string, date: Date): Promise<ApiResponse<ScheduleResponse[]>> => {
@@ -289,7 +251,6 @@ export const getDoctorScheduleInAMonth = async (year: number, month: number):Pro
   return response.json();
 }
 
-
 export const getDoctorSchedules = async(): Promise<ScheduleResponse[]>=>{
   const res = await fetchWrapper("schedules/doctor",{},true);
 
@@ -298,10 +259,7 @@ export const getDoctorSchedules = async(): Promise<ScheduleResponse[]>=>{
   if (!data.success) throw new Error(data.message);
   return data.payload ?? [];
 }
-/**
- * Đánh dấu lịch hẹn DONE
- * PUT /api/schedules/done/{id}
- */
+
 export async function markScheduleDone(
   scheduleId: string
 ): Promise<ScheduleResponse> {
@@ -328,6 +286,15 @@ export async function markScheduleDone(
   }
   // trả về luôn payload là ScheduleResponse (mảng service, doctor, patient…)
   return data.payload;
+}
+
+export const getPatientResult = async(): Promise<ScheduleResponse[]>=>{
+  const res = await fetchWrapper("schedules/patient",{},true);
+
+  if (!res.ok) throw new Error("Failed to load results");
+  const data = await res.json() as ApiResponse<ScheduleResponse[]>;
+  if (!data.success) throw new Error(data.message);
+  return data.payload ?? [];
 }
 
 

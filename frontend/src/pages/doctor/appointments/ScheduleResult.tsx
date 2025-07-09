@@ -6,38 +6,19 @@ import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Separator } from "@/components/ui/separator"
-import { Calendar, Clock, User, Phone, Mail, FileText, Save, ArrowLeft, ClipboardList, Cake } from "lucide-react"
+import { Calendar, Clock, User, Phone, Mail, FileText, Save, ArrowLeft, Cake } from "lucide-react"
 import {
-  createScheduleResult,
   type ScheduleResult,
-  type ScheduleResultRequest,
   getDoctorSchedules,
   type ScheduleResponse,
   markScheduleDone,
 } from "@/api/schedule"
 import FormSection from "@/components/doctor/common/FormSection"
-import MedicalHistoryCard from "@/components/doctor/common/MedicalHistoryCard"
-import VitalSignsForm from "@/components/doctor/common/VitalSignsForm"
 import FileUpload from "@/components/doctor/common/FileUpload"
 import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge"
 import LoadingComponent from "@/components/common/LoadingComponent"
 
 // Mock patient medical history data
-const mockMedicalHistory = {
-  allergies: ["Penicillin", "Shellfish"],
-  chronicConditions: ["Hypertension", "Diabetes Type 2"],
-  previousSurgeries: [
-    { procedure: "Appendectomy", date: "2020-03-15" },
-    { procedure: "Gallbladder removal", date: "2019-08-22" },
-  ],
-  medications: [
-    { name: "Metformin", dosage: "500mg", frequency: "2x daily" },
-    { name: "Lisinopril", dosage: "10mg", frequency: "1x daily" },
-  ],
-  familyHistory: "Mother: Diabetes, Father: Heart disease",
-  notes: "Patient has been compliant with medication regimen. Regular exercise routine.",
-}
 
 export default function DoctorScheduleResult() {
   const { scheduleId } = useParams<{ scheduleId: string }>();
@@ -51,16 +32,6 @@ export default function DoctorScheduleResult() {
 
   // Form state
   const [doctorsNote, setDoctorsNote] = useState("")
-  const [vitalSigns, setVitalSigns] = useState({
-    bloodPressure: "",
-    heartRate: "",
-    temperature: "",
-    weight: "",
-    height: "",
-  })
-  const [diagnosis, setDiagnosis] = useState("")
-  const [treatmentPlan, setTreatmentPlan] = useState("")
-  const [followUpInstructions, setFollowUpInstructions] = useState("")
   const [attachments, setAttachments] = useState<File[]>([])
 
 useEffect(() => {
@@ -104,13 +75,7 @@ useEffect(() => {
     if (!scheduleId || !schedule) return
 
     try {
-      const resultData: ScheduleResultRequest = {
-        schedule_id: scheduleId,
-        doctors_note: doctorsNote,
-        attachments: attachments,
-      }
 
-      await createScheduleResult(resultData)
 
       // Show success message and navigate back
       alert("Kết quả đã được lưu thành công!")
@@ -140,8 +105,8 @@ useEffect(() => {
   }
 
   const breadcrumbs = [
-    { label: "Trang chủ", path: "/doctor/dashboard" },
-    { label: "Lịch hẹn", path: "/doctor/schedule" },
+    { label: "Trang tổng quan", path: "/doctor/dashboard" },
+    { label: "Lịch khám", path: "/doctor/schedule" },
     { label: "Chi tiết lịch hẹn" },
   ]
 
@@ -235,69 +200,8 @@ useEffect(() => {
             </div>
           </FormSection>
 
-          {/* Medical History */}
-          <MedicalHistoryCard data={mockMedicalHistory} />
-
-          {/* Services */}
-          {/* {schedule?.services && schedule.services.length > 0 && <ServiceCard services={schedule.services} />} */}
-
-          {/* Drugs */}
-          {/* {schedule?.drugs && schedule.drugs.length > 0 && <DrugCard drugs={schedule.services} />} */}
           <fieldset disabled={isReadOnly} className={isReadOnly ? "opacity-50" : ""}>
-                      <FormSection title="Kết quả khám" icon={ClipboardList}>
-            <div className="space-y-6">
-              {/* Vital Signs */}
-              <VitalSignsForm vitalSigns={vitalSigns} onChange={setVitalSigns} />
 
-              <Separator />
-
-              {/* Diagnosis */}
-              <div>
-                <Label htmlFor="diagnosis" className="text-base font-semibold">
-                  Chẩn đoán
-                </Label>
-                <Textarea
-                  id="diagnosis"
-                  placeholder="Nhập chẩn đoán..."
-                  value={diagnosis}
-                  onChange={(e) => setDiagnosis(e.target.value)}
-                  className="mt-2 min-h-[100px]"
-                />
-              </div>
-
-              <Separator />
-
-              {/* Treatment Plan */}
-              <div>
-                <Label htmlFor="treatmentPlan" className="text-base font-semibold">
-                  Kế hoạch điều trị
-                </Label>
-                <Textarea
-                  id="treatmentPlan"
-                  placeholder="Nhập kế hoạch điều trị..."
-                  value={treatmentPlan}
-                  onChange={(e) => setTreatmentPlan(e.target.value)}
-                  className="mt-2 min-h-[100px]"
-                />
-              </div>
-
-              <Separator />
-
-              {/* Follow-up Instructions */}
-              <div>
-                <Label htmlFor="followUp" className="text-base font-semibold">
-                  Hướng dẫn theo dõi
-                </Label>
-                <Textarea
-                  id="followUp"
-                  placeholder="Nhập hướng dẫn theo dõi..."
-                  value={followUpInstructions}
-                  onChange={(e) => setFollowUpInstructions(e.target.value)}
-                  className="mt-2 min-h-[100px]"
-                />
-              </div>
-            </div>
-          </FormSection>
 
           {/* Schedule Result */}
           <FormSection title="Ghi chú của bác sĩ" icon={FileText}>
@@ -320,7 +224,7 @@ useEffect(() => {
               {existingResult && (
                 <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <h4 className="font-semibold text-blue-800 mb-2">Kết quả đã lưu trước đó:</h4>
-                  <p className="text-sm text-blue-700">{existingResult.doctors_note}</p>
+                  <p className="text-sm text-blue-700">{existingResult.doctorsNote}</p>
                   {existingResult.attachments && existingResult.attachments.length > 0 && (
                     <div className="mt-2">
                       <p className="text-sm font-medium text-blue-800">File đính kèm:</p>

@@ -78,7 +78,7 @@ export default function PatientProfile() {
     });
   };
 
-  const breadcrumbs = [{ label: "Trang chủ", href: "/patient/dashboard" }, { label: "Hồ sơ cá nhân" }];
+  const breadcrumbs = [{ label: "Trang tổng quan", path: "/patient/dashboard" }, { label: "Hồ sơ cá nhân" }];
 
     useEffect(() => {
       (async () => {

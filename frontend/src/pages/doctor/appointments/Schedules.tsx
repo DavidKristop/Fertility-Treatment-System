@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { me } from "@/api/auth"
 import MyScheduler from "@/components/Scheduler"
@@ -15,6 +15,7 @@ export default function PatientDashboard() {
   const [events, setEvents] = useState<any[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const navigate = useNavigate()
+  const initRef = useRef(false);
 
 
   useEffect(() => {
@@ -48,6 +49,10 @@ export default function PatientDashboard() {
         }));
         console.log("mappedEvents =", mappedEvents);
         setEvents(mappedEvents);
+      if (!initRef.current && mappedEvents.length) {
+        setCurrentDate(mappedEvents[0].start);
+        initRef.current = true;
+      }
       } catch (err) {
         // handle error
       }
