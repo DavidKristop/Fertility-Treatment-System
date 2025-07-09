@@ -1,4 +1,3 @@
-
 import { fetchWrapper } from '.'
 import type { 
   AuthResponse, 
@@ -7,7 +6,6 @@ import type {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ApiResponse,
-  LogoutResponse,
 } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
@@ -34,7 +32,7 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     return result;
 };
 
-export const logout = async (p0: {}): Promise<AuthResponse> => {
+export const logout = async (): Promise<AuthResponse> => {
   const response = await fetchWrapper('auth/logout', {
     method: 'POST',
     credentials: 'include',
