@@ -1,297 +1,306 @@
-"use client"
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { createTreatment, existByPatientId } from "@/api/treatment";
+import { getPatients } from "@/api/patient-management";
+import { getProtocols } from "@/api/treatment-protocol";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Autocomplete, TextField } from "@mui/material";
+import type { PatientProfile, ProtocolReponse, ServiceReponse, DrugResponse, TreatmentCreateRequest } from "@/api/types";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-import type React from "react"
+const formSchema = z.object({
+  patientEmail: z.string().email("Invalid email address"),
+  protocolTitle: z.string().min(1, "Protocol is required"),
+  medicalHistory: z.string().min(1, "Medical history is required").max(500),
+  paymentType: z.enum(["FULL", "BY_PHASE"]),
+  description: z.string().min(1, "Description is required").max(500),
+});
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, FileText } from "lucide-react"
+type FormValues = z.infer<typeof formSchema>;
 
-interface Protocol {
-  id: string
-  title: string
-  description: string
-  isActive: boolean
-}
+export function CreateTreatmentForm() {
+  const [selectedPatient, setSelectedPatient] = useState<{ email: string; fullName: string; medicalHistory: string; id: string } | null>(null);
+  const [patientSearch, setPatientSearch] = useState("");
+  const [protocolSearch, setProtocolSearch] = useState("");
+  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolReponse | null>(null);
+  const [patients, setPatients] = useState<{ email: string; fullName: string; medicalHistory: string; id: string }[]>([]);
+  const [protocols, setProtocols] = useState<ProtocolReponse[]>([]);
+  const [hasTreatment, setHasTreatment] = useState(false);
 
-interface Patient {
-  id: string
-  name: string
-  email: string
-  phone: string
-  age: number
-}
+  const navigate = useNavigate();
 
-interface TreatmentPlanFormProps {
-  onSubmit: (data: any) => void
-  onCancel: () => void
-  availableProtocols?: Protocol[]
-}
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      paymentType: "FULL",
+    },
+  });
 
-const mockProtocols: Protocol[] = [
-  {
-    id: "1",
-    title: "IVF Long Protocol",
-    description: "Phác đồ IVF dài với ức chế GnRH trước khi kích thích buồng trứng",
-    isActive: true,
-  },
-  {
-    id: "2",
-    title: "IVF Short Protocol",
-    description: "Phác đồ IVF ngắn với kích thích buồng trứng trực tiếp",
-    isActive: true,
-  },
-  {
-    id: "3",
-    title: "IUI Natural Protocol",
-    description: "Phác đồ IUI tự nhiên theo dõi chu kỳ kinh nguyệt",
-    isActive: true,
-  },
-  {
-    id: "4",
-    title: "IUI Stimulated Protocol",
-    description: "Phác đồ IUI có kích thích buồng trứng nhẹ",
-    isActive: true,
-  },
-]
 
-const mockPatients: Patient[] = [
-  { id: "1", name: "Nguyễn Thị Lan", email: "lan.nguyen@email.com", phone: "0901234567", age: 32 },
-  { id: "2", name: "Trần Thị Hoa", email: "hoa.tran@email.com", phone: "0901234568", age: 28 },
-  { id: "3", name: "Lê Thị Mai", email: "mai.le@email.com", phone: "0901234569", age: 35 },
-  { id: "4", name: "Phạm Thị Thu", email: "thu.pham@email.com", phone: "0901234570", age: 30 },
-]
-
-export default function TreatmentPlanForm({
-  onSubmit,
-  onCancel,
-  availableProtocols = mockProtocols,
-}: TreatmentPlanFormProps) {
-  const [formData, setFormData] = useState({
-    patientId: "",
-    protocolId: "",
-    diagnosis: "",
-    description: "",
-    paymentMethod: "phase",
-  })
-  const [patientSearch, setPatientSearch] = useState("")
-  const [protocolSearch, setProtocolSearch] = useState("")
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(mockPatients)
-  const [filteredProtocols, setFilteredProtocols] = useState<Protocol[]>(availableProtocols)
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
-  const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(null)
-  const [showPatientDropdown, setShowPatientDropdown] = useState(false)
-  const [showProtocolDropdown, setShowProtocolDropdown] = useState(false)
-
-  // Filter patients based on search
   useEffect(() => {
-    const filtered = mockPatients.filter(
-      (patient) =>
-        patient.name.toLowerCase().includes(patientSearch.toLowerCase()) ||
-        patient.email.toLowerCase().includes(patientSearch.toLowerCase()),
-    )
-    setFilteredPatients(filtered)
-  }, [patientSearch])
+    const fetchPatients = async () => {
+      try {
+        const response = await getPatients(patientSearch, 0, 10);
+        if (response?.payload?.content) {
+          setPatients(
+            response?.payload?.content.map((p: PatientProfile) => ({
+              email: p.email,
+              fullName: p.fullName || "",
+              medicalHistory: p.medicalHistory || "",
+              id: p.id,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
 
-  // Filter protocols based on search
-  useEffect(() => {
-    const filtered = availableProtocols.filter(
-      (protocol) =>
-        protocol.title.toLowerCase().includes(protocolSearch.toLowerCase()) ||
-        protocol.description.toLowerCase().includes(protocolSearch.toLowerCase()),
-    )
-    setFilteredProtocols(filtered)
-  }, [protocolSearch, availableProtocols])
+    const fetchProtocols = async () => {
+      try {
+        const response = await getProtocols(0, 10, protocolSearch);
+        if (response?.payload?.content) {
+          setProtocols(response?.payload?.content as ProtocolReponse[]);
+        }
+      } catch (error) {
+        console.error("Error fetching protocols:", error);
+      }
+    };
 
-  const handlePatientSelect = (patient: Patient) => {
-    setSelectedPatient(patient)
-    setFormData((prev) => ({ ...prev, patientId: patient.id }))
-    setPatientSearch(patient.name)
-    setShowPatientDropdown(false)
-  }
+    fetchPatients();
+    fetchProtocols();
+  }, [patientSearch, protocolSearch]);
 
-  const handleProtocolSelect = (protocol: Protocol) => {
-    setSelectedProtocol(protocol)
-    setFormData((prev) => ({ ...prev, protocolId: protocol.id }))
-    setProtocolSearch(protocol.title)
-    setShowProtocolDropdown(false)
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!formData.patientId || !formData.protocolId || !formData.diagnosis || !formData.description) {
-      alert("Vui lòng điền đầy đủ thông tin")
-      return
+  useEffect(()=>{
+    const existTreatmentByPatientId = async () => {
+      try {
+        const res = await existByPatientId(
+          selectedPatient?.id,
+          ["IN_PROGRESS","AWAITING_CONTRACT_SIGNED"]
+        );
+        setHasTreatment(res?.payload || false);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Lỗi khi tải dữ liệu");
+      } 
+    };
+    
+    if(selectedPatient){
+      existTreatmentByPatientId();
+      setValue("medicalHistory", selectedPatient.medicalHistory);
     }
+  },[selectedPatient])
 
-    const submitData = {
-      ...formData,
-      patientName: selectedPatient?.name,
-      patientEmail: selectedPatient?.email,
-      protocolName: selectedProtocol?.title,
+  const onSubmit = async (data: FormValues) => {
+    try {
+      if (!selectedPatient || !selectedProtocol) {
+        throw new Error("Please select both patient and protocol");
+      }
+
+      const treatmentData = {
+        paymentMode: data.paymentType as "FULL" | "BY_PHASE",
+        protocolId: selectedProtocol.id,
+        userId: selectedPatient.id,
+        medicalHistory: data.medicalHistory,
+        description: data.description
+      } as TreatmentCreateRequest;
+
+      await createTreatment(treatmentData);
+      // Reset form after successful submission
+      setValue("patientEmail", "");
+      setValue("protocolTitle", "");
+      setValue("medicalHistory", "");
+      setValue("description", "");
+      setValue("paymentType", "FULL");
+      setSelectedPatient(null);
+      setSelectedProtocol(null);
+      setPatientSearch("");
+      setProtocolSearch("");
+      toast.success("Treatment created successfully");
+      navigate("/doctor/treatment-plans");
+    } catch (error) {
+      console.error("Error creating treatment:", error);
+      toast.error(error instanceof Error ? error.message : "Lỗi khi tạo dữ liệu");
     }
-
-    onSubmit(submitData)
-  }
+  };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Thông tin kế hoạch điều trị
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Patient Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="patient">
-                Bệnh nhân <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <div className="relative">
-                  <Input
-                    id="patient"
-                    placeholder="Tìm kiếm và chọn bệnh nhân..."
-                    value={patientSearch}
-                    onChange={(e) => {
-                      setPatientSearch(e.target.value)
-                      setShowPatientDropdown(true)
-                    }}
-                    onFocus={() => setShowPatientDropdown(true)}
-                    className="pr-10"
-                  />
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
+      <input autoComplete="false" name="hidden" type="text" style={{ display: "none" }} />
+      <div className="space-y-2">
+        <Label htmlFor="patientEmail">Patient Email</Label>
+        <Autocomplete
+          value={selectedPatient}
+          onChange={(_, newValue) => {
+            setValue("patientEmail", newValue?.email || "");
+            setSelectedPatient(newValue);
+          }}
+          inputValue={patientSearch}
+          onInputChange={(_, newInputValue) => {
+            setPatientSearch(newInputValue);
+          }}
+          options={patients}
+          getOptionLabel={(option) => option.email}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Patient Email"
+              placeholder="Search patient by email..."
+              error={!!errors.patientEmail}
+              helperText={errors.patientEmail?.message}
+            />
+          )}
+          className="w-full"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="medicalHistory">Medical History</Label>
+        <Textarea
+          {...register("medicalHistory")}
+          disabled={!selectedPatient}
+          placeholder="Medical history will be auto-filled when patient is selected..."
+          className="resize-none"
+        />
+        {errors.medicalHistory && (
+          <p className="text-sm text-red-500">{errors.medicalHistory.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="protocolTitle">Protocol Title</Label>
+        <Autocomplete
+          value={selectedProtocol}
+          onChange={(_, newValue) => {
+            setValue("protocolTitle", newValue?.title || "");
+            setSelectedProtocol(newValue);
+            setValue("description", newValue?.description || "");
+          }}
+          inputValue={protocolSearch}
+          onInputChange={(_, newInputValue) => {
+            setProtocolSearch(newInputValue);
+          }}
+          options={protocols}
+          getOptionLabel={(option) => `${option.title} - ${option.description.substring(0, 50)}... (${option.estimatedPrice.toLocaleString("vi-VN")} đ)`}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Protocol Title"
+              placeholder="Search protocol by title..."
+              error={!!errors.protocolTitle}
+              helperText={errors.protocolTitle?.message}
+            />
+          )}
+          className="w-full"
+        />
+      </div>
+
+      {selectedProtocol && (
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Selected Protocol Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Title</Label>
+                  <Input value={selectedProtocol.title} disabled />
                 </div>
-
-                {showPatientDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-                    {filteredPatients.map((patient) => (
-                      <div
-                        key={patient.id}
-                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                        onClick={() => handlePatientSelect(patient)}
-                      >
-                        <div className="font-medium text-gray-900">{patient.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {patient.email} • {patient.age} tuổi
-                        </div>
-                      </div>
-                    ))}
-                    {filteredPatients.length === 0 && (
-                      <div className="px-4 py-3 text-gray-500 text-center">Không tìm thấy bệnh nhân nào</div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Protocol Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="protocol">
-                Giao thức điều trị <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <div className="relative">
-                  <Input
-                    id="protocol"
-                    placeholder="Tìm kiếm và chọn giao thức..."
-                    value={protocolSearch}
-                    onChange={(e) => {
-                      setProtocolSearch(e.target.value)
-                      setShowProtocolDropdown(true)
-                    }}
-                    onFocus={() => setShowProtocolDropdown(true)}
-                    className="pr-10"
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={selectedProtocol.description}
+                    disabled
+                    className="resize-none"
                   />
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
-
-                {showProtocolDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-                    {filteredProtocols.map((protocol) => (
-                      <div
-                        key={protocol.id}
-                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                        onClick={() => handleProtocolSelect(protocol)}
-                      >
-                        <div className="font-medium text-gray-900">{protocol.title}</div>
-                        <div className="text-sm text-gray-500">{protocol.description}</div>
-                      </div>
+                <div className="space-y-2">
+                  <Label>Estimated Price</Label>
+                  <Input value={selectedProtocol.estimatedPrice.toLocaleString("vi-VN")+" đ"} disabled />
+                </div>
+                <div className="space-y-2">
+                  <Label>Phases</Label>
+                  <Accordion type="single" collapsible className="w-full">
+                    {selectedProtocol.phases.map((phase) => (
+                      <AccordionItem key={phase.id} value={phase.id}>
+                        <AccordionTrigger>
+                          {phase.title} (Phase {phase.position})
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-4">
+                            {phase.services && phase.services.length > 0 && (
+                              <div>
+                                <h3 className="font-medium">Services</h3>
+                                <ul className="list-disc list-inside space-y-2">
+                                  {phase.services.map((service: ServiceReponse) => (
+                                    <li key={service.id}>
+                                      {service.name} - {service.price.toLocaleString("vi-VN")+" đ"}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {phase.drugs && phase.drugs.length > 0 && (
+                              <div>
+                                <h3 className="font-medium">Drugs</h3>
+                                <ul className="list-disc list-inside space-y-2">
+                                  {phase.drugs.map((drug: DrugResponse) => (
+                                    <li key={drug.id}>
+                                      {drug.name} - {drug.price.toLocaleString("vi-VN")+" đ"}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
                     ))}
-                    {filteredProtocols.length === 0 && (
-                      <div className="px-4 py-3 text-gray-500 text-center">Không tìm thấy giao thức nào</div>
-                    )}
-                  </div>
-                )}
+                  </Accordion>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-            {/* Diagnosis */}
-            <div className="space-y-2">
-              <Label htmlFor="diagnosis">
-                Chẩn đoán <span className="text-red-500">*</span>
-              </Label>
-              <Textarea
-                id="diagnosis"
-                placeholder="Nhập chẩn đoán của bệnh nhân"
-                value={formData.diagnosis}
-                onChange={(e) => setFormData((prev) => ({ ...prev, diagnosis: e.target.value }))}
-                rows={3}
-              />
-            </div>
+      <div className="space-y-2">
+        <Label htmlFor="paymentType">Payment Type</Label>
+        <select
+          {...register("paymentType")}
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="FULL">Full Payment</option>
+          <option value="BY_PHASE">By Phases</option>
+        </select>
+      </div>
 
-            {/* Treatment Plan Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">
-                Mô tả kế hoạch điều trị <span className="text-red-500">*</span>
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Mô tả chi tiết về kế hoạch điều trị, mục tiêu và các bước thực hiện..."
-                value={formData.description}
-                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                rows={4}
-              />
-            </div>
-
-            {/* Payment Method */}
-            {/* <div className="space-y-2">
-              <Label htmlFor="paymentMethod">Hình thức thanh toán</Label>
-              <Select
-                value={formData.paymentMethod}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, paymentMethod: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="phase">Thanh toán theo giai đoạn</SelectItem>
-                  <SelectItem value="full">Thanh toán toàn bộ</SelectItem>
-                  <SelectItem value="insurance">Bảo hiểm y tế</SelectItem>
-                </SelectContent>
-              </Select>
-            </div> */}
-
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-4 pt-6">
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Hủy
-              </Button>
-              <Button type="submit" className="bg-[#004c77] hover:bg-[#003d61]">
-                Tạo kế hoạch điều trị
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  )
+      <Button type="submit" className="w-full" disabled={hasTreatment}>
+        Create Treatment
+      </Button>
+      {hasTreatment && (
+        <p className="text-red-500 mt-2">
+          Bệnh nhân đã có một kế hoạch đang trong trạng thái điều trị hoặc là đang chờ kí hợp đồng.
+        </p>
+      )}
+    </form>
+  );
 }

@@ -53,3 +53,37 @@ export const getMyAppointmentRequests = async ({
     }
     return response.json();
 }
+
+export const acceptRequestAppointment = async (requestId: string):Promise<ApiResponse<RequestAppointmentResponse>> => {
+    const res = await fetchWrapper(
+      `request-appointments/accept/${requestId}`,
+      {
+        method: "PUT",
+      },
+      true
+    ); // true: cần token
+  
+    if (!res.ok) {
+      throw new Error("Failed to accept appointment request");
+    }
+  
+    return res.json();
+  };
+  
+  export const rejectRequestAppointment = async (requestId: string, reason: string):Promise<ApiResponse<RequestAppointmentResponse>> => {
+    const res = await fetchWrapper(
+      `request-appointments/cancel/${requestId}`,
+      {
+        method: "PUT",
+        body: reason,
+      },
+      true
+    );
+  
+    if (!res.ok) {
+      throw new Error("Failed to reject appointment request");
+    }
+  
+    return res.json();
+  };
+  

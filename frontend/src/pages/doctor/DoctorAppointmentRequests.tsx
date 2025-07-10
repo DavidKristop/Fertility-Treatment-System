@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAppointmentRequestToMe } from "@/api/request-appointment";
-import { acceptRequestAppointment, rejectRequestAppointment } from "@/api/requestAppointment";
+import { acceptRequestAppointment, rejectRequestAppointment } from "@/api/request-appointment";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
 import { useSearchParams } from "react-router-dom";
 import type { RequestAppointmentResponse } from "@/api/types";

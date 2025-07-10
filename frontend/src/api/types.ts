@@ -226,3 +226,11 @@ export interface Reminder{
   content:string,
   read:boolean
 }
+
+export interface TreatmentCreateRequest{
+  paymentMode: "FULL" | "BY_PHASE",
+  protocolId: string,
+  userId:string,
+  medicalHistory:string,
+  description:string
+}

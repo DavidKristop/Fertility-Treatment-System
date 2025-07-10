@@ -37,7 +37,6 @@ import PatientProfile from './pages/patient/profile/PatientProfile';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import Schedules from './pages/doctor/appointments/Schedules';
 import ScheduleResult from './pages/doctor/appointments/ScheduleResult';
-import PendingApprovals from './pages/doctor/pending/PendingApprovals';
 import PatientList from './pages/doctor/patients/PatientList';
 import PatientDetail from './pages/doctor/patients/PatientDetail';
 import TreatmentPlans from './pages/doctor/treatment-plans/TreatmentPlans';

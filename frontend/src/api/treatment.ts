@@ -1,5 +1,8 @@
 // Mock data for treatment-related API calls
 
+import { fetchWrapper } from "."
+import type { ApiPaginationResponse, ApiResponse, Treatment, TreatmentCreateRequest } from "./types"
+
 export interface TreatmentPlan {
   id: string
   patient_id: string
@@ -240,4 +243,47 @@ export const deleteTreatmentPlan = async (id: string): Promise<boolean> => {
 
   mockTreatmentPlans.splice(index, 1)
   return true
+}
+
+
+export const createTreatment = async (newTreatment: TreatmentCreateRequest): Promise<ApiResponse<Treatment>>=>{
+  const response = await fetchWrapper("treatments", {
+    method: "POST",
+    body: JSON.stringify(newTreatment),
+  }, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create treatment');
+  }
+
+  return response.json();
+}
+
+export const getTreatmentICreated = async (
+  page = 0,
+  size = 10,
+  patientEmail = "",
+  status = ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
+): Promise<ApiPaginationResponse<Treatment>> => {
+  const response = await fetchWrapper(`treatments/doctor?page=${page}&size=${size}&email=${patientEmail}&status=${status.join('&status=')}`, {}, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch treatments');
+  }
+  return response.json();
+}
+
+export const existByPatientId = async (
+  patientId="",
+  status = ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
+): Promise<ApiResponse<boolean>> => {
+  const response = await fetchWrapper(`treatments/doctor/exist/${patientId}?status=${status.join('&status=')}`, {}, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch treatments');
+  }
+  return response.json();
 }
