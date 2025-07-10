@@ -1,37 +1,29 @@
-"use client"
-
 import { useState } from "react"
-import PatientLayout from "@/components/patient/PatientLayout"
+import ManagerLayout from "@/components/manager/ManagerLayout"
 import ContractHeader from "@/components/contracts/ContractHeader"
 import ContractFilters from "@/components/contracts/ContractFilters"
 import ContractList from "@/components/contracts/ContractList"
 import ContractDetailModal from "@/components/contracts/ContractDetailModal"
-import ContractSignModal from "@/components/contracts/ContractSignModal"
-import { getPatientContracts } from "@/api/contract"
+import { getContracts } from "@/api/contract"
 import { useContractManagement } from "@/hooks/useContractManagement"
-import { usePatientContractActions } from "@/hooks/usePatientContractActions"
 import { getPageTitle, getPageDescription } from "@/utils/contractHelpers"
 import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
 
-export default function PatientContracts() {
+export default function ManagerContracts() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedContract, setSelectedContract] = useState<ContractResponse | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
 
-  // Business logic hooks
+  // Business logic hook
   const contractManager = useContractManagement({
-    fetchFunction: getPatientContracts,
-    userRole: "patient"
+    fetchFunction: getContracts,
+    userRole: "manager"
   })
 
-  const patientActions = usePatientContractActions(() => 
-    contractManager.fetchContracts(contractManager.currentPage)
-  )
-
   const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Hợp đồng điều trị" },
+    { label: "Trang tổng quan", path: "/manager/dashboard" },
+    { label: "Quản lý hợp đồng" },
   ]
 
   const handleViewContract = (contract: ContractResponse) => {
@@ -49,11 +41,11 @@ export default function PatientContracts() {
   }
 
   return (
-    <PatientLayout title={getPageTitle(contractManager.statusFilter)} breadcrumbs={breadcrumbs}>
+    <ManagerLayout title={getPageTitle(contractManager.statusFilter)} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <ContractHeader
           title={getPageTitle(contractManager.statusFilter)}
-          description={getPageDescription(contractManager.statusFilter, "patient")}
+          description={getPageDescription(contractManager.statusFilter, "manager")}
           onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
           loading={contractManager.loading}
         />
@@ -63,7 +55,7 @@ export default function PatientContracts() {
           onSearchChange={setSearchTerm}
           statusFilter={contractManager.statusFilter}
           onStatusFilterChange={contractManager.setStatusFilter}
-          searchPlaceholder="Tìm kiếm theo mô tả điều trị, protocol, hoặc bác sĩ..."
+          searchPlaceholder="Tìm kiếm theo tên bệnh nhân, bác sĩ, hoặc phác đồ..."
         />
         
         <ContractList
@@ -76,16 +68,15 @@ export default function PatientContracts() {
           totalPages={contractManager.totalPages}
           totalElements={contractManager.totalElements}
           onViewContract={handleViewContract}
-          onSignContract={(contractId) => patientActions.handleSignContract(contractId, contractManager.contracts)}
           onDownloadContract={handleDownloadContract}
           onPageChange={contractManager.handlePageChange}
           onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
-          showPatientInfo={false}
-          userRole="patient"
+          showPatientInfo={true}
+          userRole="manager"
         />
       </div>
 
-      {/* Modals */}
+      {/* Detail Modal */}
       <ContractDetailModal
         contract={selectedContract}
         isOpen={isDetailModalOpen}
@@ -93,15 +84,9 @@ export default function PatientContracts() {
           setIsDetailModalOpen(false)
           setSelectedContract(null)
         }}
+        showPatientInfo={true}
+        userRole="manager"
       />
-
-      <ContractSignModal
-        contract={patientActions.signingContract}
-        isOpen={patientActions.isSignModalOpen}
-        onClose={patientActions.closeSignModal}
-        onConfirm={patientActions.handleConfirmSign}
-        isLoading={patientActions.isSigningLoading}
-      />
-    </PatientLayout>
+    </ManagerLayout>
   )
 }

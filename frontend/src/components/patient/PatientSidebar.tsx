@@ -71,6 +71,12 @@ const sidebarItemsProp: SidebarItem[] = [
     path: "/patient/treatment",
   },
   {
+    id: "contracts",
+    label: "Hợp đồng",
+    icon: FileSignature,
+    path: "/patient/contracts",
+  },
+  {
     id: "prescriptions",
     label: "Đơn thuốc",
     icon: Pill,
@@ -100,12 +106,6 @@ const sidebarItemsProp: SidebarItem[] = [
     label: "Thông báo",
     icon: Bell,
     path: "/patient/notifications",
-  },
-  {
-    id: "contracts",
-    label: "Hợp đồng",
-    icon: FileSignature,
-    path: "/patient/contracts",
   },
   {
     id: "profile",
