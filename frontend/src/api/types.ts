@@ -240,8 +240,8 @@ export interface PaymentResponse {
   description: string;
   paymentDate: string;
   paymentDeadline: string;
-  paymentMethod: string;
-  status: string;
+  paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL";
+  status: "PENDING" | "COMPLETED" | "CANCELED";
   userId: string;
   scheduleServices: ServiceResponse[];
   assignDrugs: AssignDrugResponse[];

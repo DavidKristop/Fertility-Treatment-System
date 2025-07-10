@@ -37,3 +37,23 @@ export const getVNPayPaymentUrl = async (paymentId:string): Promise<ApiResponse<
     }
     return response.json();
 }
+
+export const processPaymentByManager = async (
+    paymentId: string,
+    paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL"
+): Promise<ApiResponse<PaymentResponse>> => {
+    const response = await fetchWrapper(
+        `payments/manager/process/${paymentId}?paymentMethod=${paymentMethod}`,
+        {
+            method: "PUT",
+        },
+        true
+    );
+
+    if(!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to process payment');
+    }
+
+    return response.json();
+}
