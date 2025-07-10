@@ -65,10 +65,11 @@ export default function PatientDashboard() {
     const fetchSchedules = async () => {
       try {
         const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1; // JS months are 0-based
+        const month = currentDate.getMonth() + 1;
         const res = await getPatientScheduleInAMonth(year, month);
-        // Map API data to react-big-calendar event format
-        const mappedEvents = (res.payload || []).map(
+
+        // Map thẳng tất cả payload thành event, không còn lọc status
+        const mappedEvents = (res.payload ?? []).map(
           (item: ScheduleResponse) => ({
             id: item.id,
             title: "Hẹn với bác sĩ " + item.doctor.fullName,
@@ -76,13 +77,15 @@ export default function PatientDashboard() {
             end: new Date(item.estimatedTime),
           })
         );
+
         setEvents(mappedEvents);
+
         if (!initRef.current && mappedEvents.length) {
           setCurrentDate(mappedEvents[0].start);
           initRef.current = true;
         }
       } catch (err) {
-        // handle error
+        console.error(err);
       }
     };
     fetchSchedules();

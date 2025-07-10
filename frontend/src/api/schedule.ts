@@ -69,9 +69,10 @@ export interface ScheduleService {
 }
 
 export interface ScheduleResult {
-  id: string
+  id?: string
   doctorsNote: string
   schedule_id: string
+  success: boolean
   attachments?: ScheduleResultAttachment[]
 }
 
@@ -81,10 +82,9 @@ export interface ScheduleResultAttachment {
   schedule_result_id: string
 }
 
-export interface ScheduleResultRequest {
-  schedule_id: string
-  doctors_note: string
-  attachments?: File[]
+export interface ScheduleResultInput {
+  scheduleId: string
+  doctorsNote: string
 }
 
 // Mock data
@@ -296,6 +296,18 @@ export const getPatientResult = async(): Promise<ScheduleResponse[]>=>{
   if (!data.success) throw new Error(data.message);
   return data.payload ?? [];
 }
+
+export const postDoctorNote = async (
+  payload: ScheduleResultInput
+): Promise<ApiResponse<ScheduleResult>> => {
+  const res = await fetchWrapper(
+    "schedules/result",
+    { method: "POST", body: JSON.stringify(payload) },
+    true
+  );
+  if (!res.ok) throw new Error("Failed to save schedule result");
+  return (await res.json()) as ApiResponse<ScheduleResult>;
+};
 
 
 

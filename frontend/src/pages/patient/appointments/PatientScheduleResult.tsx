@@ -15,8 +15,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import FormSection from "@/components/doctor/common/FormSection";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge";
 
 export default function PatientScheduleResult() {
@@ -211,22 +209,23 @@ export default function PatientScheduleResult() {
           </FormSection>
 
           <FormSection title="Ghi chú của bác sĩ" icon={FileText}>
-            <div className="space-y-4">
-              <div>
-                <Label>Ghi chú chi tiết</Label>
-                <Textarea
-                  readOnly
-                  value={doctorsNote}
-                  className="mt-2 min-h-[150px] bg-gray-100 cursor-not-allowed"
-                />
-              </div>
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+              {doctorsNote ? (
+                <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
+                  {doctorsNote}
+                </p>
+              ) : (
+                <p className="text-gray-500 italic">Chưa có ghi chú nào.</p>
+              )}
             </div>
           </FormSection>
 
           <FormSection title="Dịch vụ" icon={FileText}>
             {services.length > 0 ? (
               <div className="border border-gray-200 rounded-lg bg-white p-6">
-                <h3 className="text-lg font-medium mb-4">Danh sách dịch vụ của {schedule?.patient.fullName}</h3>
+                <h3 className="text-lg font-medium mb-4">
+                  Danh sách dịch vụ của {schedule?.patient.fullName}
+                </h3>
                 <div className="space-y-4">
                   {services.map((svc) => (
                     <div
