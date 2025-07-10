@@ -50,6 +50,7 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
+import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -136,11 +137,11 @@ const router = createBrowserRouter([
       { path: "appointments/schedule", element: <RequestAppointment /> },
       { path: "appointments/my-request", element: <MyAppointmentRequests /> },
       { path: "payments", element: <MyPaymentsPage /> },
-      { path: "payments/payment-detail/:id", element: <PaymentDetailPage /> },
       {
         path: "schedule-result/:scheduleId",
         element: <PatientScheduleResult />,
       },
+      { path: "payments/payment-detail/:id", element: <PaymentDetailPage /> },
       { path: "notifications", element: <MyRemindersPage /> },
       { path: "payments/success", element: <PaymentSuccessPage /> },
       { path: "payments/failure", element: <PaymentFailurePage /> },
@@ -224,6 +225,10 @@ const router = createBrowserRouter([
       {
         path: "patients",
         element: <PatientList />,
+      },
+      {
+        path: "contracts",
+        element: <ManagerContracts />,
       },
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
