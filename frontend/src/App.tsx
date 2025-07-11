@@ -51,6 +51,9 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
+import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
+import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
+
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -217,19 +220,11 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        path: "dashboard",
-        element: <ManagerDashboard />,
-      },
-
-      {
-        path: "patients",
-        element: <PatientList />,
-      },
-      {
-        path: "contracts",
-        element: <ManagerContracts />,
-      },
+      { path: "dashboard", element: <ManagerDashboard /> },
+      { path: "patients", element: <PatientList /> },
+      { path: "protocols", element: <ProtocolsList /> },
+      { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
+      { path: "contracts", element: <ManagerContracts /> },
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],

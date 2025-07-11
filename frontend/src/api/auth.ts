@@ -6,6 +6,8 @@ import type {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ApiResponse,
+  ProtocolResponse,
+  ApiPaginationResponse,
 } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
@@ -165,3 +167,32 @@ export const verifyEmail = async (token: string): Promise<ApiResponse> => {
 
   return response.json();
 };
+
+export const fetchProtocolsManager = async (page = 0, size = 10): Promise<ApiPaginationResponse<ProtocolResponse>> => {
+  const response = await fetchWrapper(
+    `protocols/manager?page=${page}&size=${size}`,
+    { method: "GET" },
+    true
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Error fetching protocols (status ${response.status}): ${response.statusText}`
+    );
+  }
+
+  return response.json() as Promise<ApiPaginationResponse<ProtocolResponse>>;
+}
+
+export const fetchProtocolById = async (id: string): Promise<ProtocolResponse> => {
+  const res = await fetchWrapper(
+    `protocols/manager/${id}`,
+    { method: "GET" },
+    true
+  );
+  const body = (await res.json()) as ApiResponse<ProtocolResponse>;
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+  return body.payload!;
+}
