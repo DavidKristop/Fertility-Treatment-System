@@ -281,3 +281,14 @@ export const getPatientScheduleInAMonth = async (year: number, month: number):Pr
 
   return response.json();
 }
+
+export const getDoctorScheduleInAMonth = async (year: number, month: number, status:("PENDING" | "ACCEPTED" | "DENIED")[]):Promise<ApiResponse<ScheduleResponse[]>>=>{
+  const response = await fetchWrapper(`schedules/doctor?year=${year}&month=${month}&status=${status.join('&status=')}`,{},true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch doctors');
+  }
+
+  return response.json();
+}

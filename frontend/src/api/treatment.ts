@@ -1,7 +1,7 @@
 // Mock data for treatment-related API calls
 
 import { fetchWrapper } from "."
-import type { ApiPaginationResponse, ApiResponse, Treatment, TreatmentCreateRequest } from "./types"
+import type { ApiPaginationResponse, ApiResponse, PhaseReponse, Treatment, TreatmentCreateRequest, TreatmentPhaseSetRequest } from "./types"
 
 export interface TreatmentPlan {
   id: string
@@ -275,6 +275,16 @@ export const getTreatmentICreated = async (
   return response.json();
 }
 
+export const getTreatmentDetaiICreated = async(treatmentId:string):Promise<ApiResponse<Treatment>>=>{
+  const response = await fetchWrapper(`treatments/doctor/${treatmentId}`, {}, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch treatment detail');
+  }
+  return response.json();
+}
+
 export const existByPatientId = async (
   patientId="",
   status = ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
@@ -284,6 +294,19 @@ export const existByPatientId = async (
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to fetch treatments');
+  }
+  return response.json();
+}
+
+export const setTreatmentPhase = async(phase: TreatmentPhaseSetRequest): Promise<ApiResponse<PhaseReponse>>=>{
+  const response = await fetchWrapper(`treatment-phases/set`, {
+    method: "PUT",
+    body: JSON.stringify(phase),
+  }, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to set treatment phase');
   }
   return response.json();
 }

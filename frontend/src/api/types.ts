@@ -165,7 +165,11 @@ export interface Treatment {
   patient: PatientProfile;
   doctor: DoctorProfile;
   protocol: ProtocolReponse;
+  contractId: string;
+  signedContract: boolean;
   phases: PhaseReponse[];
+  unsetServices: ServiceReponse[];
+  currentPhase: PhaseReponse;
 }
 
 export interface RequestAppointmentResponse {
@@ -233,4 +237,35 @@ export interface TreatmentCreateRequest{
   userId:string,
   medicalHistory:string,
   description:string
+}
+
+export interface TreatmentPhaseSetRequest{
+  phaseId: string,
+  schedules: ScheduleSetRequest[],
+  assignDrugs: AssignDrugSetRequest[],
+}
+
+export interface ScheduleSetRequest{
+  scheduleId: string|null,
+  appointmentDateTime: string,
+  estimatedTime: string,
+  scheduleServices: 
+  ({
+    id: string|null,
+    serviceId: string
+  })[]
+}
+
+export interface AssignDrugSetRequest{
+  assignDrugId: string|null,
+  patientDrugs: 
+  ({
+    patientDrugId: string|null,
+    drugId: string,
+    usageInstructions: string,
+    startDate: string,
+    endDate: string,
+    dosage: string,
+    amount: number
+  })[]
 }
