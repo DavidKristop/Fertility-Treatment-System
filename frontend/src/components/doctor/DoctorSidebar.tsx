@@ -7,17 +7,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
   Users,
-  FileText,
-  Pill,
   Bell,
   LogOut,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  Clock,
-  CalendarDays,
   Activity,
-  MessageSquare,
   ClipboardList,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -55,10 +50,10 @@ const sidebarItems: SidebarItem[] = [
   },
 
   {
-        id: "pending-approvals",
-        label: "Chờ duyệt",
-        icon: ClipboardList,
-        path: "/doctor/pending",
+    id: "pending-approvals",
+    label: "Chờ duyệt",
+    icon: ClipboardList,
+    path: "/doctor/pending",
   },
 
   {
@@ -128,7 +123,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         {(!isCollapsed || isMobile) && (
           <div className="flex items-center gap-2">
-            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-8 w-8" />
+            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-8" />
             <span className="font-bold text-[#004c77] text-lg">UCARE</span>
           </div>
         )}
@@ -228,7 +223,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
-            localStorage.removeItem("token")
+            localStorage.removeItem("access_token")
             navigate("/authorization/login")
           }}
         >

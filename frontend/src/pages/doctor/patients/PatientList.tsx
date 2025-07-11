@@ -208,7 +208,7 @@ export default function PatientList() {
     return age
   }
 
-  const breadcrumbs = [{ label: "Trang chủ", path: "/doctor/dashboard" }, { label: "Bệnh nhân" }]
+  const breadcrumbs = [{ label: "Trang tổng quan", path: "/doctor/dashboard" }, { label: "Bệnh nhân" }]
 
   const columns = [
     {

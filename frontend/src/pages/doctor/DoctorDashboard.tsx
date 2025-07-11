@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import DoctorLayout from "@/components/doctor/DoctorLayout"
 import { Button } from "@/components/ui/button"
-import { CalendarDays, Calendar, Clock, User, Activity, TestTube } from "lucide-react"
+import { CalendarDays, Calendar, Clock } from "lucide-react"
 import { getTodaySchedules, type Schedule } from "@/api/schedule"
 import AppointmentCard from "@/components/doctor/common/AppointmentCard"
 import FormSection from "@/components/doctor/common/FormSection"
@@ -80,7 +80,7 @@ export default function DoctorDashboard() {
       <div className="space-y-6">
         {/* Welcome Message */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <h1 className="text-2xl font-bold text-gray-900">Chào bác sĩ {doctorName}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Xin chào, {doctorName}</h1>
         </div>
 
         {/* Today's Schedules */}

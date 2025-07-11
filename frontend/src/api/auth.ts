@@ -1,4 +1,3 @@
-
 import { fetchWrapper } from '.'
 import type { 
   AuthResponse, 
@@ -7,43 +6,46 @@ import type {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ApiResponse,
-  LogoutResponse,
 } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await fetchWrapper('auth/signin', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-        throw new Error('Login failed');
-    }
-
     const result: AuthResponse = await response.json();
+
+    if (!response.ok || !result.success) {
+        const message = result.message || 'Login failed';
+        const error = new Error(message);
+        (error as any).response = result; // Gán để bắt được ở catch phía ngoài
+        throw error;
+    }
 
     localStorage.setItem('access_token', result.payload.accessToken);
 
     return result;
 };
 
-export const logout = async (data: LogoutResponse): Promise<AuthResponse> => {
-    const response = await fetchWrapper('auth/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+export const logout = async (): Promise<AuthResponse> => {
+  const response = await fetchWrapper('auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  });
 
-    if (!response.ok) {
-        throw new Error('Logout failed');
-    }
+  // Xóa access_token khỏi localStorage sau khi logout
+  localStorage.removeItem('access_token');
 
-    return response.json();
+  if (!response.ok) {
+    throw new Error('Logout failed');
+  }
+
+  return response.json();
 };
 
 export const register = async (data: RegisterRequest): Promise<AuthResponse> => {

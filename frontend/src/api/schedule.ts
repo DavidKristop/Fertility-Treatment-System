@@ -1,7 +1,7 @@
 // Mock data and types for schedule management
 
 import { fetchWrapper } from "."
-import type { ApiResponse, DoctorScheduleResponse } from "./types"
+import type { ApiResponse, DoctorProfile, PatientProfile } from "./types"
 
 export interface Patient {
   id: string
@@ -50,16 +50,29 @@ export interface Schedule {
 }
 
 export interface ScheduleResponse {
-  id: string,
-  appointmentDateTime: string,
-  estimatedTime: string,
-  status: string,
+  id: string;
+  appointmentDateTime: string; // ISO timestamp
+  estimatedTime: string;       // ISO timestamp
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | string;
+  patient: PatientProfile;
+  doctor: DoctorProfile;
+  scheduleResult: ScheduleResult;
+  services: ScheduleService[];
+}
+
+export interface ScheduleService {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  active: boolean;
 }
 
 export interface ScheduleResult {
-  id: string
-  doctors_note: string
+  id?: string
+  doctorsNote: string
   schedule_id: string
+  success: boolean
   attachments?: ScheduleResultAttachment[]
 }
 
@@ -69,10 +82,9 @@ export interface ScheduleResultAttachment {
   schedule_result_id: string
 }
 
-export interface ScheduleResultRequest {
-  schedule_id: string
-  doctors_note: string
-  attachments?: File[]
+export interface ScheduleResultInput {
+  scheduleId: string
+  doctorsNote: string
 }
 
 // Mock data
@@ -187,21 +199,7 @@ const mockSchedules: Schedule[] = [
   },
 ]
 
-const mockScheduleResults: ScheduleResult[] = [
-  {
-    id: "schedule-1",
-    doctors_note:
-      "Bệnh nhân phản ứng tốt với điều trị. Nang trứng phát triển bình thường. Tiếp tục theo dõi và điều chỉnh liều thuốc theo kết quả siêu âm.",
-    schedule_id: "1",
-    attachments: [
-      {
-        id: "1",
-        attachment_url: "/files/ultrasound-20240115.jpg",
-        schedule_result_id: "1",
-      },
-    ],
-  },
-]
+
 
 // API functions
 export const getSchedules = async (): Promise<Schedule[]> => {
@@ -217,47 +215,7 @@ export const getTodaySchedules = async (): Promise<Schedule[]> => {
   return mockSchedules.filter((schedule) => schedule.appointment_datetime.startsWith(today))
 }
 
-export const getScheduleById = async (id: string): Promise<Schedule | null> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  return mockSchedules.find((schedule) => schedule.id === id) || null
-}
 
-export const getScheduleResult = async (scheduleId: string): Promise<ScheduleResult | null> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  return mockScheduleResults.find((result) => result.schedule_id === scheduleId) || null
-}
-
-export const createScheduleResult = async (data: ScheduleResultRequest): Promise<ScheduleResult> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  const newResult: ScheduleResult = {
-    id: Date.now().toString(),
-    doctors_note: data.doctors_note,
-    schedule_id: data.schedule_id,
-    attachments:
-      data.attachments?.map((file, index) => ({
-        id: `${Date.now()}-${index}`,
-        attachment_url: `/files/${file.name}`,
-        schedule_result_id: Date.now().toString(),
-      })) || [],
-  }
-
-  mockScheduleResults.push(newResult)
-  return newResult
-}
-
-export const updateScheduleStatus = async (scheduleId: string, status: string): Promise<void> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  const schedule = mockSchedules.find((s) => s.id === scheduleId)
-  if (schedule) {
-    schedule.status = status
-  }
-}
 
 
 export const getDoctorScheduleByDoctorId = async (doctorId: string, date: Date): Promise<ApiResponse<ScheduleResponse[]>> => {
@@ -271,7 +229,7 @@ export const getDoctorScheduleByDoctorId = async (doctorId: string, date: Date):
     return response.json();
 }
 
-export const getPatientScheduleInAMonth = async (year: number, month: number):Promise<ApiResponse<DoctorScheduleResponse[]>>=>{
+export const getPatientScheduleInAMonth = async (year: number, month: number):Promise<ApiResponse<ScheduleResponse[]>>=>{
   const response = await fetchWrapper(`schedules/patient?year=${year}&month=${month}`,{},true)
 
   if (!response.ok) {
@@ -281,3 +239,75 @@ export const getPatientScheduleInAMonth = async (year: number, month: number):Pr
 
   return response.json();
 }
+
+export const getDoctorScheduleInAMonth = async (year: number, month: number):Promise<ApiResponse<ScheduleResponse[]>>=>{
+  const response = await fetchWrapper(`schedules/doctor?year=${year}&month=${month}`,{},true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch patients');
+  }
+
+  return response.json();
+}
+
+export const getDoctorSchedules = async(): Promise<ScheduleResponse[]>=>{
+  const res = await fetchWrapper("schedules/doctor",{},true);
+
+  if (!res.ok) throw new Error("Failed to load schedules");
+  const data = await res.json() as ApiResponse<ScheduleResponse[]>;
+  if (!data.success) throw new Error(data.message);
+  return data.payload ?? [];
+}
+
+export async function markScheduleDone(
+  scheduleId: string
+): Promise<ScheduleResponse> {
+  const res = await fetchWrapper(
+    `schedules/done/${scheduleId}`,     // ← nhớ xem baseURL của bạn
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+    },
+    true
+  );
+
+  if (!res.ok) {
+    throw new Error("Không thể cập nhật trạng thái lịch hẹn");
+  }
+
+  const data = (await res.json()) as ApiResponse<ScheduleResponse>;
+  if (!data.success) {
+    throw new Error(data.message);
+  }
+
+  if (!data.payload) {
+    throw new Error("Server did not return updated schedule");
+  }
+  // trả về luôn payload là ScheduleResponse (mảng service, doctor, patient…)
+  return data.payload;
+}
+
+export const getPatientResult = async(): Promise<ScheduleResponse[]>=>{
+  const res = await fetchWrapper("schedules/patient",{},true);
+
+  if (!res.ok) throw new Error("Failed to load results");
+  const data = await res.json() as ApiResponse<ScheduleResponse[]>;
+  if (!data.success) throw new Error(data.message);
+  return data.payload ?? [];
+}
+
+export const postDoctorNote = async (
+  payload: ScheduleResultInput
+): Promise<ApiResponse<ScheduleResult>> => {
+  const res = await fetchWrapper(
+    "schedules/result",
+    { method: "POST", body: JSON.stringify(payload) },
+    true
+  );
+  if (!res.ok) throw new Error("Failed to save schedule result");
+  return (await res.json()) as ApiResponse<ScheduleResult>;
+};
+
+
+
