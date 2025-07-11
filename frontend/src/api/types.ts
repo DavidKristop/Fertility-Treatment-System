@@ -100,8 +100,8 @@ export interface DrugResponse {
   name: string;
   description: string;
   price: number;
-  unit?: string;
-  active?: boolean;
+  unit: string;
+  active: boolean;
 }
 
 export interface PatientDrugResponse {
@@ -117,6 +117,13 @@ export interface AssignDrugResponse {
   status: string;
   completeDate: string;
   patientDrugs: PatientDrugResponse[];
+}
+
+export interface DrugCreateRequest {
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
 }
 
 // ==================== SCHEDULE & APPOINTMENT TYPES ====================
