@@ -45,7 +45,6 @@ export default function LoginPage() {
         password: values.password
       };
       const response = await auth.login(loginData);
-      localStorage.setItem('token', response.payload.accessToken);
       switch (response.payload.role) {
         case 'ROLE_PATIENT':
           navigate('/patient/dashboard');
@@ -64,15 +63,7 @@ export default function LoginPage() {
       }
       toast.success("Đăng nhập thành công!")
     } catch (error: any) {
-      const message = error.response?.data?.message;
-
-      if (message?.toLowerCase().includes("not verified")){
-        toast.warn("Email chưa được xác minh. Vui lòng kiểm tra email để xác nhận.");
-      } else if (message?.includes("Invalid email or password.")) {
-        toast.error("Email hoặc mật khẩu không chính xác.");
-      } else {
-        toast.error("Đăng nhập thất bại.");
-      }
+      toast.error(error.message);
     }
   };
 

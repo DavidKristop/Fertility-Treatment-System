@@ -46,7 +46,6 @@ export default function DoctorAppointmentRequest() {
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/doctor/dashboard" },
-    { label: "Lịch hẹn" },
     { label: "Yêu cầu đặt lịch" },
   ];
 

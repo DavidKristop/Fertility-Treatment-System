@@ -222,7 +222,7 @@ export default function RequestAppointment() {
             { hasInProgressTreatment ? (
               <p className="text-center text-blue-500">Bạn đang trong một khóa điều trị.</p>
             ): hasPendingRequestSchedule ? (
-              <p className="text-center text-blue-500">Bác sĩ bạn chọn đã chấp nhận yêu cầu tư vấn và khám tổng quán của bạn.</p>
+              <p className="text-center text-blue-500">Bác sĩ bạn chọn đã chấp nhận yêu cầu tư vấn và khám tổng quát của bạn.</p>
             ) : hasPendingRequest ? (
               <p className="text-center text-blue-500">Bạn đã có một yêu cầu đang chờ xử lý. <Link className="text-red-500" to="/patient/appointments/my-request">Xem lịch hẹn đặt của bạn tại đây</Link></p>
             ) : !selectedDate ? (

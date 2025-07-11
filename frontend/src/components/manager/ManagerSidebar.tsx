@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
   FileText,
@@ -91,10 +91,16 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
+    id: "contracts",
+    label: "Hợp đồng",
+    icon: FileText,
+    path: "/manager/contracts",
+  },
+  {
     id: "facility",
     label: "Cảnh báo cơ sở vật chất",
     icon: AlertTriangle,
- badge: 2,
+    badge: 2,
     path: "/manager/facility/alerts",
   },
   {
@@ -120,12 +126,14 @@ const sidebarItems: SidebarItem[] = [
 
 interface ManagerSidebarProps {
   isCollapsed: boolean
+  isMobile?: boolean
   onToggle: () => void
 }
 
-export default function ManagerSidebar({ isCollapsed, onToggle }: ManagerSidebarProps) {
+export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false }: ManagerSidebarProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>(["staff"])
   const location = useLocation()
+  const navigate = useNavigate()
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems((prev) => (prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]))
@@ -141,19 +149,35 @@ export default function ManagerSidebar({ isCollapsed, onToggle }: ManagerSidebar
     return false
   }
 
+  // Auto-expand parent items when child is active
+  useEffect(() => {
+    sidebarItems.forEach((item) => {
+      if (item.children && item.children.some((child) => isActive(child.path))) {
+        setExpandedItems((prev) => {
+          if (!prev.includes(item.id)) {
+            return [...prev, item.id]
+          }
+          return prev
+        })
+      }
+    })
+  }, [location.pathname])
+
   return (
     <div
-      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col ${
+      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col sticky top-0 max-h-screen ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         {!isCollapsed && (
-          <div className="flex items-center gap-2">
-            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-8 w-8" />
-            <span className="font-bold text-[#004c77] text-lg">UCARE</span>
-          </div>
+          <Link to="/">
+            <div className="flex items-center gap-1">
+              <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-7" />
+              <span className="font-bold text-[#004c77] text-lg">UCARE</span>
+            </div>
+          </Link>
         )}
         <Button variant="ghost" size="sm" onClick={onToggle} className="p-1">
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -178,7 +202,7 @@ export default function ManagerSidebar({ isCollapsed, onToggle }: ManagerSidebar
                   </div>
                   {!isCollapsed && item.badge && (
                     <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                      {item.badge}
+                      {item.badge > 0 ? item.badge : ""}
                     </Badge>
                   )}
                 </div>
@@ -202,7 +226,7 @@ export default function ManagerSidebar({ isCollapsed, onToggle }: ManagerSidebar
                   <div className="flex items-center gap-1">
                     {item.badge && (
                       <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                        {item.badge}
+                        {item.badge > 0 ? item.badge : ""}
                       </Badge>
                     )}
                     {item.children && (
@@ -231,7 +255,7 @@ export default function ManagerSidebar({ isCollapsed, onToggle }: ManagerSidebar
                       </div>
                       {child.badge && (
                         <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                          {child.badge}
+                          {child.badge > 0 ? child.badge : ""}
                         </Badge>
                       )}
                     </div>
@@ -245,9 +269,15 @@ export default function ManagerSidebar({ isCollapsed, onToggle }: ManagerSidebar
 
       {/* Logout */}
       <div className="p-2 border-t border-gray-200">
-        <div className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors">
+        <div
+          className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
+          onClick={() => {
+            localStorage.removeItem("token")
+            navigate("/authorization/login")
+          }}
+        >
           <LogOut className="h-5 w-5 flex-shrink-0" />
-          {!isCollapsed && <span className="text-sm font-medium">Đăng xuất</span>}
+          {(!isCollapsed || isMobile) && <span className="text-sm font-medium">Đăng xuất</span>}
         </div>
       </div>
     </div>

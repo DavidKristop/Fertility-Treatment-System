@@ -1,12 +1,12 @@
 import { fetchWrapper } from ".";
-import type { ApiPaginationResponse, ProtocolReponse } from "./types";
+import type { ApiPaginationResponse, ProtocolResponse } from "./types";
 
 
 export const getProtocols = async (
     page = 0,
     size = 10,
     title = ""
-):Promise<ApiPaginationResponse<ProtocolReponse>>=>{
+):Promise<ApiPaginationResponse<ProtocolResponse>>=>{
     const response = await fetchWrapper(`protocols?page=${page}&size=${size}&title=${title}`, {}, true)
 
     if (!response.ok) {

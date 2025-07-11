@@ -1,53 +1,40 @@
-// src/routes/ProtectedRoute.tsx
-import type { FC, ReactNode } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import {jwtDecode} from 'jwt-decode'
-import { useEffect } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
 
-interface ProtectedRouteProps {
-  children: ReactNode
+const HOME_BY_ROLE: Record<string,string> = {
+  ROLE_PATIENT: '/patient/dashboard',
+  ROLE_DOCTOR:  '/doctor/dashboard',
+  ROLE_MANAGER: '/manager/dashboard',
+  ROLE_ADMIN:   '/admin/dashboard',
+}
+
+export default function ProtectedRoute({
+  children,
+  allowedRoles
+}: {
+  children: React.ReactNode
   allowedRoles: string[]
-}
-
-interface JwtPayload {
-  role: string
-  exp?: number
-}
-
-const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const token = localStorage.getItem('token')
+}) {
+  const token = localStorage.getItem('access_token')
   const location = useLocation()
-  const navigate = useNavigate()
 
-  // 1) Nếu chưa có token, ép về login
   if (!token) {
-    return <Navigate to="/authorization/login" replace state={{ from: location }} />
+    return <Navigate to="/authorization/login" replace state={{from: location}}/>
   }
 
-  // 2) Giải mã
-  let payload: JwtPayload
+  let payload: { role: string }
   try {
-    payload = jwtDecode<JwtPayload>(token)
+    payload = jwtDecode<{ role: string }>(token)
   } catch {
-    localStorage.removeItem('token')
-    return <Navigate to="/authorization/login" replace />
+    localStorage.removeItem('access_token')
+    return <Navigate to="/authorization/login" replace/>
   }
 
-  // 3) Kiểm tra role
-  const hasRole = allowedRoles.includes(payload.role)
-
-  // 4) Nếu không đúng role, dùng history.back() để quay lại
-  useEffect(() => {
-    if (!hasRole) {
-      // quay lại trang trước đó trong lịch sử
-      navigate(-1)
-    }
-  }, [hasRole, navigate])
-
-  // 5) Nếu đúng role thì render children, nếu không thì không render gì (vì useEffect đã điều hướng)
-  if (!hasRole) return null
+  if (!allowedRoles.includes(payload.role)) {
+    // redirect về dashboard của chính role đó
+    const home = HOME_BY_ROLE[payload.role] || '/home'
+    return <Navigate to={home} replace />
+  }
 
   return <>{children}</>
 }
-
-export default ProtectedRoute

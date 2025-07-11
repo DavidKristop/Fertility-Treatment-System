@@ -43,8 +43,8 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
     } catch (err) {
       console.error("Logout API failed:", err)
     } finally {
-      localStorage.removeItem("token")
-      navigate("/", { replace: true })
+      localStorage.removeItem("access_token")
+      navigate("/authorization/login", { replace: true })
     }
   }
 
@@ -102,7 +102,7 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
           {/* Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2">
+              <Button variant="ghost" className="flex items-center gap-2 cursor-pointer">
                 <div className="w-8 h-8 bg-[#004c77] rounded-full flex items-center justify-center">
                   <UserIcon className="h-4 w-4 text-white" />
                 </div>

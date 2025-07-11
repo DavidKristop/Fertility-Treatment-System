@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTreatmentICreated } from "@/api/treatment";
-import type { Treatment } from "@/api/types";
+import type { TreatmentResponse } from "@/api/types";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
 import {
   Pagination,
@@ -40,7 +40,7 @@ export default function TreatmentPlans() {
   const statusParam = searchParams.get("status") as (typeof STATUS_OPTIONS)[number]["value"] | null;
   const pageParam = Number(searchParams.get("page"));
   const patientEmailParam = searchParams.get("patientEmail") || "";
-  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [treatments, setTreatments] = useState<TreatmentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
