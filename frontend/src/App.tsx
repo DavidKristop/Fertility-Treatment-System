@@ -51,6 +51,8 @@ import ReminderHistory from './pages/doctor/notifications/ReminderHistory';
 // Manager pages
 import ManagerDashboard from './pages/manager/ManagerDashboard';
 import ManagerContracts from './pages/manager/contracts/ManagerContracts';
+import DrugsManagement from './pages/manager/drugs/DrugManagement';
+import CreateDrug from './pages/manager/drugs/CreateDrug';
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -224,6 +226,18 @@ const router = createBrowserRouter([
       { 
         path: 'contracts', 
         element: <ManagerContracts /> 
+      },
+      {
+        path: "drugs",
+        children: [
+          { index: true,
+            element: <DrugsManagement />,
+          },
+          {
+            path: "create",
+            element: <CreateDrug />,
+          },
+        ]
       },
       // fallback for manager subpaths
       { path: '*', element: <Navigate to="/authorization/login" replace /> },

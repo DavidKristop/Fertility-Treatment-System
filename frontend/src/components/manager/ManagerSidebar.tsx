@@ -17,6 +17,7 @@ import {
   MessageSquare,
   User,
   DollarSign,
+  Pill,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -95,6 +96,12 @@ const sidebarItems: SidebarItem[] = [
     label: "Hợp đồng",
     icon: FileText,
     path: "/manager/contracts",
+  },
+  {
+    id: "drugs",
+    label: "Quản lý thuốc",
+    icon: Pill,
+    path: "/manager/drugs",
   },
   {
     id: "facility",
