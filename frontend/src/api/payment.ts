@@ -38,6 +38,45 @@ export const getVNPayPaymentUrl = async (paymentId:string): Promise<ApiResponse<
     return response.json();
 }
 
+export const getManagerPayments = async ({
+    page = 0, 
+    size = 10, 
+    email = "", 
+    statuses = ["PENDING", "COMPLETED", "CANCELED"]
+}: {
+    page?: number,
+    size?: number,
+    email?: string,
+    statuses?: ("PENDING" | "COMPLETED" | "CANCELED")[]
+} = {}): Promise<ApiPaginationResponse<PaymentResponse>> => {
+    const statusParams = statuses.map(status => `status=${status}`).join('&');
+    const emailParam = email ? `&email=${encodeURIComponent(email)}` : '';
+    
+    const response = await fetchWrapper(
+        `payments/manager?page=${page}&size=${size}${emailParam}&${statusParams}`,
+        {}, 
+        true
+    );
+    
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch manager payments');
+    }
+    
+    return response.json();
+}
+
+export const getManagerPaymentDetail = async (id: string): Promise<ApiResponse<PaymentResponse>> => {
+    const response = await fetchWrapper(`payments/manager/${id}`, {}, true);
+    
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch payment details');
+    }
+    
+    return response.json();
+}
+
 export const processPaymentByManager = async (
     paymentId: string,
     paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL"
@@ -53,6 +92,23 @@ export const processPaymentByManager = async (
     if(!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to process payment');
+    }
+
+    return response.json();
+}
+
+export const cancelPaymentByManager = async (paymentId: string): Promise<ApiResponse<PaymentResponse>> => {
+    const response = await fetchWrapper(
+        `payments/manager/cancel/${paymentId}`,
+        {
+            method: "PUT",
+        },
+        true
+    );
+
+    if(!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to cancel payment');
     }
 
     return response.json();

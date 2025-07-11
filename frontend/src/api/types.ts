@@ -240,7 +240,7 @@ export interface PaymentResponse {
   description: string;
   paymentDate: string;
   paymentDeadline: string;
-  paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL";
+  paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
   status: "PENDING" | "COMPLETED" | "CANCELED";
   userId: string;
   scheduleServices: ServiceResponse[];
