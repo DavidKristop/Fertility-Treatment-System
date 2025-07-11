@@ -117,11 +117,13 @@ export interface DrugResponse {
 }
 
 export interface PatientDrugResponse {
-  id: string;
-  drug: DrugResponse;
   dosage: string;
   usageInstructions: string;
   amount: number;
+  drugName: string;
+  drugPrice: number;
+  startDate: string;
+  endDate: string;
 }
 
 export interface AssignDrugReponse {
@@ -247,4 +249,13 @@ export interface TreatmentPlan {
     title: string;
     estimatedPrice: number;
   };
+}
+
+export interface AssignDrugResponse {
+  id: string;
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  createdAt: string;
+  treatmentPhaseName: string;
+  patientName: string;
+  patientDrugs: PatientDrugResponse[];
 }
