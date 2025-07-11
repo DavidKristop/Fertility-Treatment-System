@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import logo from "@/assets/ucarelogo.png"
+import { logout } from "@/api/auth"
 
 interface SidebarItem {
   id: string
@@ -112,6 +113,18 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
     }
     return false
   }
+
+  
+    const handleLogout = async () => {
+      try {
+        await logout() // POST /auth/logout
+      } catch (err) {
+        console.error("Logout API failed:", err)
+      } finally {
+        navigate("/authorization/login", { replace: true })
+      }
+    }
+  
 
   const sidebarWidth = isMobile ? "w-64" : isCollapsed ? "w-16" : "w-64"
 
@@ -223,8 +236,7 @@ export default function DoctorSidebar({ isCollapsed, onToggle, isMobile = false 
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
-            localStorage.removeItem("access_token")
-            navigate("/authorization/login")
+            handleLogout()
           }}
         >
           <LogOut className="h-5 w-5 flex-shrink-0" />

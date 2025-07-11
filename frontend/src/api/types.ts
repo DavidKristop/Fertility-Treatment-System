@@ -113,15 +113,15 @@ export interface PatientDrugResponse {
   dosage: string;
   usageInstructions: string;
   amount: number;
+  startDate: string;
+  endDate: string;
 }
 
 export interface AssignDrugResponse {
   id: string;
   status: string;
-  completeDate: string;
   patientDrugs: PatientDrugResponse[];
   payment: PaymentPreviewResponse;
-
 }
 
 // ==================== SCHEDULE & APPOINTMENT TYPES ====================

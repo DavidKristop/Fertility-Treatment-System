@@ -10,8 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { me } from "@/api/auth"
-import { auth } from "@/api"
+import { logout, me } from "@/api/auth"
 
 interface DoctorHeaderProps {
   title: string
@@ -45,12 +44,11 @@ export default function DoctorHeader({
 
   const handleLogout = async () => {
     try {
-      await auth.logout // POST /auth/logout
+      await logout() // POST /auth/logout
     } catch (err) {
       console.error("Logout API failed:", err)
     } finally {
-      localStorage.removeItem("access_token")
-      navigate("/", { replace: true })
+      navigate("/authorization/login", { replace: true })
     }
   }
 
@@ -131,7 +129,6 @@ export default function DoctorHeader({
               <DropdownMenuItem
                 className="text-red-600 cursor-pointer"
                 onClick={(e) => {
-                  e.preventDefault()
                   handleLogout()
                 }}
               >
