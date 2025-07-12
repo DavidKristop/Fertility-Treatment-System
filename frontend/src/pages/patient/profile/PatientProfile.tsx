@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PatientLayout from "@/components/patient/PatientLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   X,
   Camera,
 } from "lucide-react";
+import { me } from "@/api/auth";
 
 // Mock data for patient profile
 const patientData = {
@@ -38,6 +39,7 @@ const patientData = {
 export default function PatientProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(patientData);
+  const [user, setUser] = useState<{ fullName: string; role: string; email: string; phone: string; address: string; dateOfBirth: string } | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -76,10 +78,27 @@ export default function PatientProfile() {
     });
   };
 
-  const breadcrumbs = [{ label: "Trang chủ", href: "/patient/dashboard" }, { label: "Hồ sơ cá nhân" }];
+  const breadcrumbs = [{ label: "Trang tổng quan", path: "/patient/dashboard" }, { label: "Hồ sơ cá nhân" }];
 
+    useEffect(() => {
+      (async () => {
+        try {
+          const current = await me();
+          setUser(current);
+          console.log("Fetched user:", current);
+          console.log("  → phone =", current.phone);
+        } catch {
+          setUser(null);
+        }
+      })();
+    }, []);
+
+      if (!user) {
+        return <p>Đang tải...</p>;
+      }
   return (
     <PatientLayout title="Hồ sơ cá nhân" breadcrumbs={breadcrumbs}>
+
       <div className="space-y-6">
         {/* Header Card with Avatar */}
         <Card>
@@ -87,8 +106,8 @@ export default function PatientProfile() {
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="relative">
                 <img
-                  src={formData.avatarUrl || "/placeholder.svg"}
-                  alt="Avatar"
+                  src={formData.avatarUrl || ""}
+                  alt=""
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
                 <Button
@@ -103,13 +122,13 @@ export default function PatientProfile() {
               </div>
 
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{formData.fullName}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{user.fullName}</h1>
                 <p className="text-lg text-blue-600 mb-3">Bệnh nhân</p>
 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600 mb-4">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>{formatDate(formData.dateOfBirth)} ({calculateAge(formData.dateOfBirth)} tuổi)</span>
+                    <span>{formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Stethoscope className="h-4 w-4" />
@@ -161,7 +180,7 @@ export default function PatientProfile() {
                       onChange={(e) => handleInputChange("fullName", e.target.value)}
                     />
                   ) : (
-                    <p className="text-sm text-gray-600 mt-1">{formData.fullName}</p>
+                    <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
                   )}
                 </div>
 
@@ -178,7 +197,7 @@ export default function PatientProfile() {
                         className="flex-1"
                       />
                     ) : (
-                      <span className="text-sm text-gray-600">{formData.email}</span>
+                      <span className="text-sm text-gray-600">{user.email}</span>
                     )}
                   </div>
                 </div>
@@ -190,12 +209,12 @@ export default function PatientProfile() {
                     {isEditing ? (
                       <Input
                         id="phone"
-                        value={formData.phone}
+                        value={user.phone}
                         onChange={(e) => handleInputChange("phone", e.target.value)}
                         className="flex-1"
                       />
                     ) : (
-                      <span className="text-sm text-gray-600">{formData.phone}</span>
+                      <span className="text-sm text-gray-600">{user.phone}</span>
                     )}
                   </div>
                 </div>
@@ -208,13 +227,13 @@ export default function PatientProfile() {
                       <Input
                         id="dateOfBirth"
                         type="date"
-                        value={formData.dateOfBirth}
+                        value={user.dateOfBirth}
                         onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
                         className="flex-1"
                       />
                     ) : (
                       <span className="text-sm text-gray-600">
-                        {formatDate(formData.dateOfBirth)} ({calculateAge(formData.dateOfBirth)} tuổi)
+                        {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
                       </span>
                     )}
                   </div>
@@ -227,29 +246,12 @@ export default function PatientProfile() {
                     {isEditing ? (
                       <Input
                         id="address"
-                        value={formData.address}
+                        value={user?.address}
                         onChange={(e) => handleInputChange("address", e.target.value)}
                         className="flex-1"
                       />
                     ) : (
-                      <span className="text-sm text-gray-600">{formData.address}</span>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="emergencyContact">Liên hệ khẩn cấp</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Phone className="h-4 w-4 text-gray-400" />
-                    {isEditing ? (
-                      <Input
-                        id="emergencyContact"
-                        value={formData.emergencyContact}
-                        onChange={(e) => handleInputChange("emergencyContact", e.target.value)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <span className="text-sm text-gray-600">{formData.emergencyContact}</span>
+                      <span className="text-sm text-gray-600">{user.address}</span>
                     )}
                   </div>
                 </div>

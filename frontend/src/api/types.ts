@@ -1,5 +1,6 @@
 
 
+// ==================== AUTH & USER TYPES ====================
 export interface LoginRequest {
   email: string;
   password: string;
@@ -12,6 +13,12 @@ export interface LogoutResponse {
 
 export interface ForgotPasswordRequest {
   email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export interface RegisterRequest extends LoginRequest {
@@ -28,6 +35,9 @@ export interface AuthResponse {
     email: string;
     role: string;
     fullName: string;
+    phone: string;
+    address: string;
+    dateOfBirth: string;
     userId: string;
   };
   message: string;
@@ -57,27 +67,7 @@ export interface PatientProfile extends UserProfile {
   medicalHistory: string;
 }
 
-export interface TreatmentScheduleResponse{
-  id: string;
-  appointmentDatetime: string; 
-  estimatedTime: string;
-  status: "PENDING" | "ACCEPTED" | "DENIED";
-  services?: ServiceReponse[];
-}
-
-
-// Add these interfaces to your existing types
-
-export interface ForgotPasswordRequest {
-  email: string;
-}
-
-export interface ResetPasswordRequest {
-  token: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
+// ==================== API RESPONSE TYPES ====================
 export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
@@ -98,7 +88,8 @@ export interface ApiPaginationResponse<T> {
   };
 }
 
-export interface ServiceReponse {
+// ==================== SERVICE & DRUG TYPES ====================
+export interface ServiceResponse {
   id: string;
   name: string;
   description: string;
@@ -126,48 +117,23 @@ export interface PatientDrugResponse {
   endDate: string;
 }
 
-export interface AssignDrugReponse {
+export interface AssignDrugResponse {
   id: string;
-  status: string;
-  completeDate: string;
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  completeDate?: string;
+  createdAt?: string;
+  treatmentPhaseName?: string;
+  patientName?: string;
   patientDrugs: PatientDrugResponse[];
 }
 
-export interface PhaseReponse {
+// ==================== SCHEDULE & APPOINTMENT TYPES ====================
+export interface TreatmentScheduleResponse{
   id: string;
-  title: string;
-  description: string;
-  position: number;
-  phaseModifierPercentage: number;
-  refundPercentage?: number;
-  services?: ServiceReponse[];
-  drugs?: DrugResponse[];
-  schedules?: ServiceReponse[];
-  assignDrugs?: AssignDrugReponse[];
-  unsetServices?: ServiceReponse[];
-}
-
-export interface ProtocolReponse {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  phases: PhaseReponse[];
-  estimatedPrice: number;
-  active: boolean;
-}
-
-export interface Treatment {
-  id: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  status: string;
-  patient: PatientProfile;
-  doctor: DoctorProfile;
-  protocol: ProtocolReponse;
-  phases: PhaseReponse[];
+  appointmentDatetime: string; 
+  estimatedTime: string;
+  status: "PENDING" | "ACCEPTED" | "DENIED";
+  services?: ServiceResponse[];
 }
 
 export interface RequestAppointmentResponse {
@@ -180,44 +146,43 @@ export interface RequestAppointmentResponse {
   schedule: TreatmentScheduleResponse;
 }
 
-export interface PatientDashboardPayloadResponse {
-  requestAppointment: RequestAppointmentResponse;
-  treatment: Treatment;
-}
-
-export interface RefundResponse {
+// ==================== PROTOCOL & PHASE TYPES ====================
+export interface PhaseResponse {
   id: string;
-  amount: number;
-  refundDate: string;
-  refundMethod: string;
-  reason: string;
-  userId: string;
-  paymentId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PaymentResponse {
-  id: string;
-  amount: number;
+  title: string;
   description: string;
-  paymentDate: string;
-  paymentDeadline: string;
-  paymentMethod: string;
-  status: string;
-  userId: string;
-  scheduleServices: ServiceReponse[];
-  assignDrugs: AssignDrugReponse[];
-  refunds: RefundResponse[];
-  createdAt: string;
-  updatedAt: string;
+  position: number;
+  phaseModifierPercentage: number;
+  refundPercentage?: number;
+  services?: ServiceResponse[];
+  drugs?: DrugResponse[];
+  schedules?: ServiceResponse[];
+  assignDrugs?: AssignDrugResponse[];
+  unsetServices?: ServiceResponse[];
 }
 
-export interface Reminder{
-  id: string,
-  title:string,
-  content:string,
-  read:boolean
+export interface ProtocolResponse {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  phases: PhaseResponse[];
+  estimatedPrice: number;
+  active: boolean;
+}
+
+// ==================== TREATMENT TYPES ====================
+export interface Treatment {
+  id: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  status: string;
+  patient: PatientProfile;
+  doctor: DoctorProfile;
+  protocol: ProtocolResponse;
+  phases: PhaseResponse[];
 }
 
 export interface TreatmentPlan {
@@ -251,11 +216,56 @@ export interface TreatmentPlan {
   };
 }
 
-export interface AssignDrugResponse {
+// ==================== CONTRACT TYPES ====================
+export interface ContractResponse {
   id: string;
-  status: "PENDING" | "COMPLETED" | "CANCELLED";
-  createdAt: string;
-  treatmentPhaseName: string;
-  patientName: string;
-  patientDrugs: PatientDrugResponse[];
+  signDeadline: string;
+  treatment: Treatment;
+  contractUrl: string;
+  signed: boolean;
 }
+
+// ==================== PAYMENT & REFUND TYPES ====================
+export interface RefundResponse {
+  id: string;
+  amount: number;
+  refundDate: string;
+  refundMethod: string;
+  reason: string;
+  userId: string;
+  paymentId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaymentResponse {
+  id: string;
+  amount: number;
+  description: string;
+  paymentDate: string;
+  paymentDeadline: string;
+  paymentMethod: string;
+  status: string;
+  userId: string;
+  scheduleServices: ServiceResponse[];
+  assignDrugs: AssignDrugResponse[];
+  refunds: RefundResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+// ==================== NOTIFICATION TYPES ====================
+export interface Reminder{
+  id: string,
+  title:string,
+  content:string,
+  read:boolean
+}
+
+// ==================== DASHBOARD TYPES ====================
+export interface PatientDashboardPayloadResponse {
+  requestAppointment: RequestAppointmentResponse;
+  treatment: Treatment;
+}
+

@@ -36,10 +36,10 @@ export default function Navbar() {
         navigate("/patient/dashboard");
         break;
       case "ROLE_DOCTOR":
-        navigate("doctor/dashboard");
+        navigate("/doctor/dashboard");
         break;
       case "ROLE_ADMIN":
-        navigate("admin/dashboard");
+        navigate("/admin/dashboard");
         break;
       default:
         navigate("/");
