@@ -51,15 +51,12 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
 
 // Manager pages
 import ManagerAssignedDrugPage from "@/pages/manager/ManagerAssignDrugPage";
-<<<<<<< HEAD
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
 import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
 import ManagerServiceUpdatePage from './pages/manager/servicePages/ManagerServiceUpdatePage';
 import ManagerServiceDetailPage from './pages/manager/servicePages/ManagerServiceDetailPage';
-=======
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
->>>>>>> master
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";

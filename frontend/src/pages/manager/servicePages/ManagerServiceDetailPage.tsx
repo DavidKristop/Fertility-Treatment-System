@@ -5,12 +5,12 @@ import ManagerLayout from "@/components/manager/ManagerLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "react-toastify";
-import type { ServiceReponse } from "@/api/types";
+import type { ServiceResponse } from "@/api/types";
 
 export default function ManagerServiceDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [service, setService] = useState<ServiceReponse | null>(null);
+  const [service, setService] = useState<ServiceResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function ManagerServiceDetailPage() {
               </Button>
               <Button
                 onClick={() => navigate(`/manager/services/${service.id}/edit`)}
-                disabled={!service.active}
+                disabled={service.active}
               >
                 Cập nhật
               </Button>

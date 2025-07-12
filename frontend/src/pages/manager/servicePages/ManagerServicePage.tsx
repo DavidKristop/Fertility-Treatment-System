@@ -4,7 +4,7 @@ import {
   deactivateService,
   reactivateService,
 } from "@/api/service";
-import type { ServiceReponse } from "@/api/types";
+import type { ServiceResponse } from "@/api/types";
 import ManagerLayout from "@/components/manager/ManagerLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function ManagerServicePage() {
-  const [services, setServices] = useState<ServiceReponse[]>([]);
+  const [services, setServices] = useState<ServiceResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -41,8 +41,12 @@ export default function ManagerServicePage() {
   };
 
   useEffect(() => {
+  const delayDebounce = setTimeout(() => {
     fetchServices();
-  }, [page, isActive]);
+  }, 500);
+
+  return () => clearTimeout(delayDebounce);
+}, [name, page, isActive]);
 
   const handleSearch = () => {
     setPage(0);
