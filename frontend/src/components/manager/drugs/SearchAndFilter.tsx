@@ -1,69 +1,49 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter } from "lucide-react"
+import { Search } from "lucide-react"
+
+type DrugStatusFilter = "active" | "inactive"
 
 interface SearchAndFilterProps {
   searchTerm: string
-  activeFilter: boolean
   onSearchChange: (value: string) => void
-  onActiveFilterChange: (value: boolean) => void
-  onSearch: () => void
-  onClearFilters: () => void
+  statusFilter: DrugStatusFilter
+  onStatusFilterChange: (value: DrugStatusFilter) => void
+  searchPlaceholder?: string
 }
 
 export default function SearchAndFilter({
   searchTerm,
-  activeFilter,
   onSearchChange,
-  onActiveFilterChange,
-  onSearch,
-  onClearFilters
+  statusFilter,
+  onStatusFilterChange,
+  searchPlaceholder = "Tìm kiếm thuốc..."
 }: SearchAndFilterProps) {
-  const handleActiveFilterChange = (value: string) => {
-    onActiveFilterChange(value === "true")
-  }
-
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Search className="h-5 w-5" />
-          Tìm kiếm & Bộ lọc
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <Input
-              placeholder="Nhập tên thuốc..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && onSearch()}
-            />
+      <CardContent className="p-4">
+        <div className="flex gap-4 items-center">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="pl-10"
+              />
+            </div>
           </div>
-          <div>
-            <Select onValueChange={handleActiveFilterChange} value={activeFilter.toString()}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Thuốc hoạt động</SelectItem>
-                <SelectItem value="false">Thuốc vô hiệu hóa</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <div className="flex gap-2 mt-4">
-          <Button onClick={onSearch}>
-            <Search className="h-4 w-4 mr-2" />
-            Tìm kiếm
-          </Button>
-          <Button variant="outline" onClick={onClearFilters}>
-            <Filter className="h-4 w-4 mr-2" />
-            Xóa bộ lọc
-          </Button>
+          <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Lọc theo trạng thái" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">Thuốc hoạt động</SelectItem>
+              <SelectItem value="inactive">Thuốc vô hiệu hóa</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </CardContent>
     </Card>
