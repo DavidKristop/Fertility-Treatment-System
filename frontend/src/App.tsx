@@ -52,6 +52,10 @@ import ReminderHistory from './pages/doctor/notifications/ReminderHistory';
 // Manager pages
 import ManagerDashboard from './pages/manager/ManagerDashboard';
 import ManagerAssignedDrugPage from "@/pages/manager/ManagerAssignDrugPage";
+import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
+import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
+import ManagerServiceUpdatePage from './pages/manager/servicePages/ManagerServiceUpdatePage';
+import ManagerServiceDetailPage from './pages/manager/servicePages/ManagerServiceDetailPage';
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -216,7 +220,10 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
       { path: "/manager/assigned-drugs", element: <ManagerAssignedDrugPage /> } ,
-      
+      { path: "/manager/services", element: <ManagerServicePage /> },
+      { path: "/manager/services/create", element: <ManagerServiceCreatePage /> },
+      { path: "/manager/services/:id/edit", element: <ManagerServiceUpdatePage /> },
+      {path: "/manager/services/:id", element: <ManagerServiceDetailPage />},
       {
         path: "patients",
         element: <PatientList />,

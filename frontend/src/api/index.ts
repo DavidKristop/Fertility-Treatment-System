@@ -39,7 +39,7 @@ export const fetchWrapper = async (
         ...init,
         headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=UTF-8',
             ...init?.headers,
         },
     });
@@ -64,7 +64,7 @@ export const fetchWrapper = async (
                     ...init,
                     headers: {
                         'Authorization': `Bearer ${newToken}`,
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json; charset=UTF-8',
                         ...init?.headers,
                     },
                 });
