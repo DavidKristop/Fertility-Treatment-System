@@ -108,17 +108,22 @@ export interface DrugResponse {
 }
 
 export interface PatientDrugResponse {
-  id: string;
-  drug: DrugResponse;
   dosage: string;
   usageInstructions: string;
   amount: number;
+  drugName: string;
+  drugPrice: number;
+  startDate: string;
+  endDate: string;
 }
 
 export interface AssignDrugResponse {
   id: string;
-  status: string;
-  completeDate: string;
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  completeDate?: string;
+  createdAt?: string;
+  treatmentPhaseName?: string;
+  patientName?: string;
   patientDrugs: PatientDrugResponse[];
 }
 
@@ -210,7 +215,6 @@ export interface TreatmentPlan {
     estimatedPrice: number;
   };
 }
-
 
 // ==================== CONTRACT TYPES ====================
 export interface ContractResponse {
