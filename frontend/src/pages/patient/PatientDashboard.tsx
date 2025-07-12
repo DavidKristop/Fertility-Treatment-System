@@ -1,14 +1,15 @@
 import PatientLayout from "@/components/patient/PatientLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { startOfWeek, endOfWeek } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
-import MyScheduler from "@/components/Scheduler";
 import {
   getPatientScheduleInAMonth,
-  type ScheduleResponse,
 } from "@/api/schedule";
+import ScheduleCalendar from "@/components/ScheduleCalendar";
+import type { ScheduleDetailResponse } from "@/api/types";
 
 // Mock data
 const hasActiveTreatment = true;
@@ -27,8 +28,9 @@ const treatmentProgress = {
 
 export default function PatientDashboard() {
   const [patientName, setPatientName] = useState<string>("");
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
+
   const navigate = useNavigate();
   const initRef = useRef(false);
 
@@ -64,24 +66,13 @@ export default function PatientDashboard() {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
-        const res = await getPatientScheduleInAMonth(year, month);
+        const start = startOfWeek(currentDate, { weekStartsOn: 1 }); 
+        const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+        const res = await getPatientScheduleInAMonth(start, end);
 
-        // Map thẳng tất cả payload thành event, không còn lọc status
-        const mappedEvents = (res.payload ?? []).map(
-          (item: ScheduleResponse) => ({
-            id: item.id,
-            title: "Hẹn với bác sĩ " + item.doctor.fullName,
-            start: new Date(item.appointmentDateTime),
-            end: new Date(item.estimatedTime),
-          })
-        );
+        setEvents(res?.payload || []);
 
-        setEvents(mappedEvents);
-
-        if (!initRef.current && mappedEvents.length) {
-          setCurrentDate(mappedEvents[0].start);
+        if (!initRef.current && res?.payload?.length) {
           initRef.current = true;
         }
       } catch (err) {
@@ -98,17 +89,6 @@ export default function PatientDashboard() {
       </PatientLayout>
     );
   }
-
-  interface CalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-  }
-
-  const handleScheduleClick = (event: CalendarEvent) => {
-    navigate(`/patient/schedule-result/${event.id}`);
-  };
 
   return (
     <PatientLayout
@@ -196,11 +176,12 @@ export default function PatientDashboard() {
           </CardContent>
         </Card>
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <MyScheduler
-            events={events}
+          <ScheduleCalendar
+            schedules={events}
             date={currentDate}
             onNavigate={handleScheduleNavigate}
-            onSelectEvent={handleScheduleClick}
+            onScheduleClick={(event)=>navigate(`/patient/schedule-result/${event.id}`)}
+            drugs={[]}
           />
         </div>
         <Card>

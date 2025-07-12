@@ -1,5 +1,6 @@
 // Mock data and types for schedule management
 
+import { getLocalDateFormat } from "@/lib/utils"
 import { fetchWrapper } from "."
 import type { ApiResponse, PreviewScheduleResponse, ScheduleDetailResponse, ScheduleResult } from "./types"
 
@@ -197,8 +198,8 @@ export const getDoctorScheduleByDoctorId = async (doctorId: string, date: Date):
     return response.json();
 }
 
-export const getPatientScheduleInAMonth = async (year: number, month: number):Promise<ApiResponse<ScheduleDetailResponse[]>>=>{
-  const response = await fetchWrapper(`schedules/patient?year=${year}&month=${month}`,{},true)
+export const getPatientScheduleInAMonth = async (from: Date, to: Date, status: string[]=["PENDING","CHANGED","CANCELLED","DONE"]):Promise<ApiResponse<ScheduleDetailResponse[]>>=>{
+  const response = await fetchWrapper(`schedules/patient?from=${getLocalDateFormat(from)}&to=${getLocalDateFormat(to)}&status=${status.join('&status=')}`,{},true)
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -208,8 +209,8 @@ export const getPatientScheduleInAMonth = async (year: number, month: number):Pr
   return response.json();
 }
 
-export const getDoctorScheduleInAMonth = async (year: number, month: number):Promise<ApiResponse<ScheduleDetailResponse[]>>=>{
-  const response = await fetchWrapper(`schedules/doctor?year=${year}&month=${month}`,{},true)
+export const getDoctorScheduleInAMonth = async (from: Date, to: Date, status: string[]=["PENDING","CHANGED","CANCELLED","DONE"]):Promise<ApiResponse<ScheduleDetailResponse[]>>=>{
+  const response = await fetchWrapper(`schedules/doctor?from=${getLocalDateFormat(from)}&to=${getLocalDateFormat(to)}&status=${status.join('&status=')}`,{},true)
 
   if (!response.ok) {
     const errorData = await response.json();

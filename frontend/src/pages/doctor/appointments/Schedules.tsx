@@ -2,18 +2,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
-import MyScheduler from "@/components/Scheduler";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { Button } from "@/components/ui/button";
 import { getDoctorScheduleInAMonth } from "@/api/schedule";
-import type { ScheduleResponse } from "@/api/types";
+import ScheduleCalendar from "@/components/ScheduleCalendar";
+import { endOfWeek, startOfWeek } from "date-fns";
+import type { ScheduleDetailResponse } from "@/api/types";
 
 export default function PatientDashboard() {
   const [doctorName, setDoctorName] = useState<string>("");
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [filterStatus, setFilterStatus] = useState<"ALL" | "PENDING" | "DONE">(
-    "ALL"
+  const [filterStatus, setFilterStatus] = useState<"ALL" | "PENDING" | "CANCELLED" | "DONE">(
+    "PENDING"
   );
   const navigate = useNavigate();
   const initRef = useRef(false);
@@ -40,24 +41,13 @@ export default function PatientDashboard() {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
-        const res = await getDoctorScheduleInAMonth(year, month);
+        const start = startOfWeek(currentDate, { weekStartsOn: 1 }); 
+        const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+        const res = await getDoctorScheduleInAMonth(start, end, filterStatus==="ALL" ? undefined : [filterStatus]);
 
-        const mappedEvents = (res.payload || []).map(
-          (item) => ({
-            id: item.id,
-            title: "Hẹn với bệnh nhân " + item.patient.fullName,
-            start: new Date(item.appointmentDateTime),
-            end: new Date(item.estimatedTime),
-            status: item.status, // vẫn giữ nếu bạn có dùng trong tooltip hay style
-          })
-        );
+        setEvents(res.payload || []);
 
-        setEvents(mappedEvents);
-
-        if (!initRef.current && mappedEvents.length) {
-          setCurrentDate(mappedEvents[0].start);
+        if (!initRef.current && res.payload?.length) {
           initRef.current = true;
         }
       } catch (err) {
@@ -65,7 +55,7 @@ export default function PatientDashboard() {
       }
     };
     fetchSchedules();
-  }, [currentDate]);
+  }, [currentDate, filterStatus]);
 
   if (!doctorName) {
     return (
@@ -74,22 +64,6 @@ export default function PatientDashboard() {
       </DoctorLayout>
     );
   }
-
-  interface CalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    status: string;
-  }
-
-  const filteredEvents = events.filter((e) =>
-    filterStatus === "ALL" ? true : e.status === filterStatus
-  );
-
-  const handleScheduleClick = (event: CalendarEvent) => {
-    navigate(`/doctor/schedule-result/${event.id}`);
-  };
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/doctor/dashboard" },
@@ -105,6 +79,7 @@ export default function PatientDashboard() {
             [
               { key: "ALL", label: "Tất cả" },
               { key: "PENDING", label: "Chưa hoàn thành" },
+              { key: "CANCELLED", label: "Đã hủy" },
               { key: "DONE", label: "Đã hoàn thành" },
             ] as const
           ).map((opt) => (
@@ -113,7 +88,7 @@ export default function PatientDashboard() {
               size="sm"
               variant={filterStatus === opt.key ? "default" : "outline"}
               onClick={() =>
-                setFilterStatus(opt.key as "ALL" | "PENDING" | "DONE")
+                setFilterStatus(opt.key as "ALL" | "PENDING" | "CANCELLED" | "DONE")
               }
             >
               {opt.label}
@@ -121,11 +96,12 @@ export default function PatientDashboard() {
           ))}
         </div>
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <MyScheduler
-            events={filteredEvents}
+          <ScheduleCalendar
+            schedules={events}
             date={currentDate}
             onNavigate={handleScheduleNavigate}
-            onSelectEvent={handleScheduleClick}
+            onScheduleClick={(event)=>navigate(`/doctor/schedule-result/${event.id}`)}
+            drugs={[]}
           />
         </div>
         <Card>
