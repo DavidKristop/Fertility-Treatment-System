@@ -73,6 +73,18 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/appointments",
   },
   {
+    id: "assigned-drugs",
+    label: "Quản lý đơn thuốc",
+    icon: FileText,
+    path: "/manager/assigned-drugs",
+  },
+  {
+    id: "services",
+    label: "Quản lý dịch vụ",
+    icon: FileText,
+    path: "/manager/services",
+  },
+  {
     id: "reports",
     label: "Báo cáo vận hành",
     icon: BarChart,

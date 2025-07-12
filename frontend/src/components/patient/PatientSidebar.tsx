@@ -80,20 +80,7 @@ const sidebarItemsProp: SidebarItem[] = [
     id: "prescriptions",
     label: "Đơn thuốc",
     icon: Pill,
-    children: [
-      {
-        id: "active-prescriptions",
-        label: "Đơn thuốc hiện tại",
-        icon: Pill,
-        path: "/patient/prescriptions/active",
-      },
-      {
-        id: "history-prescriptions",
-        label: "Lịch sử đơn thuốc",
-        icon: FileText,
-        path: "/patient/prescriptions/history",
-      },
-    ],
+    path: "/patient/prescriptions/history",
   },
   {
     id: "payments",
