@@ -74,13 +74,13 @@ export default function DrugCard({
         {/* Actions */}
         <div className="ml-4 flex flex-col gap-2">
           <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onView(drug.id)}
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            Xem
-          </Button>
+          size="sm"
+          variant="outline"
+          onClick={() => onView(drug.id)}
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          Xem
+        </Button>
           
           {drug.active ? (
             <>

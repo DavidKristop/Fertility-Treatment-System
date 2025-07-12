@@ -53,6 +53,7 @@ import ManagerDashboard from './pages/manager/ManagerDashboard';
 import ManagerContracts from './pages/manager/contracts/ManagerContracts';
 import DrugsManagement from './pages/manager/drugs/DrugManagement';
 import CreateDrug from './pages/manager/drugs/CreateDrug';
+import DrugDetail from './pages/manager/drugs/DrugDetail';
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -236,6 +237,10 @@ const router = createBrowserRouter([
           {
             path: "create",
             element: <CreateDrug />,
+          },
+          {
+            path: ":id",
+            element: <DrugDetail />,
           },
         ]
       },

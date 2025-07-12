@@ -2,31 +2,27 @@ import { useState, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, Pill } from "lucide-react"
+import { Plus, Pill, RefreshCw } from "lucide-react"
 import ManagerLayout from "@/components/manager/ManagerLayout"
 import DrugCard from "@/components/manager/drugs/DrugCard"
 import SearchAndFilter from "@/components/manager/drugs/SearchAndFilter"
-import DrugDetailModal from "@/components/manager/drugs/DrugDetailModal"
 import Pagination from "@/components/layout/Pagination"
-import { getDrugs, getDrugDetail } from "@/api/drug"
+import { getDrugs } from "@/api/drug"
 import type { DrugResponse } from "@/api/types"
 import { toast } from "react-toastify"
+
+type DrugStatusFilter = "active" | "inactive"
 
 export default function DrugsManagement() {
   const navigate = useNavigate()
   const [drugs, setDrugs] = useState<DrugResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const [activeFilter, setActiveFilter] = useState<boolean>(true)
+  const [statusFilter, setStatusFilter] = useState<DrugStatusFilter>("active")
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [totalElements, setTotalElements] = useState(0)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  
-  // Detail modal states
-  const [selectedDrug, setSelectedDrug] = useState<DrugResponse | null>(null)
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
-  const [detailLoading, setDetailLoading] = useState(false)
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/manager/dashboard" },
@@ -38,9 +34,9 @@ export default function DrugsManagement() {
     try {
       const response = await getDrugs({ 
         page, 
-        size: 6, // 6 items per page for better grid layout
+        size: 6,
         name: searchTerm.trim(), 
-        isActive: activeFilter 
+        isActive: statusFilter === "active"
       })
       setDrugs(response.payload.content)
       setTotalPages(response.payload.totalPages)
@@ -52,47 +48,23 @@ export default function DrugsManagement() {
     }
   }
 
-  const fetchDrugDetail = async (drugId: string) => {
-    setDetailLoading(true)
-    try {
-      const response = await getDrugDetail(drugId)
-      setSelectedDrug(response.payload || null)
-      setIsDetailModalOpen(true)
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Lỗi khi tải chi tiết thuốc")
-    } finally {
-      setDetailLoading(false)
-    }
-  }
-
-  const handleSearch = () => {
-    setPage(0)
-    fetchDrugs()
-  }
-
   const handleSearchChange = (value: string) => {
     setSearchTerm(value)
     setPage(0)
   }
 
-  const handleActiveFilterChange = (value: boolean) => {
-    setActiveFilter(value)
-    setPage(0)
-  }
-
-  const handleClearFilters = () => {
-    setSearchTerm("")
-    setActiveFilter(true)
+  const handleStatusFilterChange = (value: DrugStatusFilter) => {
+    setStatusFilter(value)
     setPage(0)
   }
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage - 1) // Pagination component uses 1-based indexing
+    setPage(newPage - 1)
   }
 
-  // Drug actions
+  // Drug actions - Cập nhật để navigate đến trang riêng
   const handleViewDrug = (drugId: string) => {
-    fetchDrugDetail(drugId)
+    navigate(`/manager/drugs/${drugId}`)
   }
 
   const handleEditDrug = (drugId: string) => {
@@ -100,11 +72,31 @@ export default function DrugsManagement() {
   }
 
   const handleDeactivateDrug = async (drugId: string) => {
-    toast.info(`Vô hiệu hóa thuốc ${drugId} - Chức năng sẽ được phát triển`)
+    setActionLoading(drugId)
+    try {
+      // TODO: Implement deactivate API call
+      toast.info(`Vô hiệu hóa thuốc ${drugId} - Chức năng sẽ được phát triển`)
+      // After successful deactivation, refresh the list
+      // await fetchDrugs()
+    } catch (error) {
+      toast.error("Lỗi khi vô hiệu hóa thuốc")
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   const handleReactivateDrug = async (drugId: string) => {
-    toast.info(`Kích hoạt lại thuốc ${drugId} - Chức năng sẽ được phát triển`)
+    setActionLoading(drugId)
+    try {
+      // TODO: Implement reactivate API call
+      toast.info(`Kích hoạt lại thuốc ${drugId} - Chức năng sẽ được phát triển`)
+      // After successful reactivation, refresh the list
+      // await fetchDrugs()
+    } catch (error) {
+      toast.error("Lỗi khi kích hoạt lại thuốc")
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   const handleRefresh = () => {
@@ -113,7 +105,19 @@ export default function DrugsManagement() {
 
   useEffect(() => {
     fetchDrugs()
-  }, [page, activeFilter])
+  }, [page, statusFilter])
+
+  // ✅ Auto search với debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm !== undefined) {
+        setPage(0)
+        fetchDrugs()
+      }
+    }, 500)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchTerm])
 
   const { paginatedDrugs } = useMemo(() => {
     return {
@@ -127,12 +131,12 @@ export default function DrugsManagement() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Quản lý thuốc</h2>
-            <p className="text-gray-600">Quản lý danh sách thuốc trong hệ thống</p>
+            <h2 className="text-2xl font-bold text-gray-900">Danh sách thuốc</h2>
+            <p className="text-gray-600">Quản lý và theo dõi thông tin các loại thuốc</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleRefresh} disabled={loading}>
-              <span className="mr-2">🔄</span>
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Làm mới
             </Button>
             <Button onClick={() => navigate("/manager/drugs/create")}>
@@ -145,11 +149,10 @@ export default function DrugsManagement() {
         {/* Search & Filter */}
         <SearchAndFilter
           searchTerm={searchTerm}
-          activeFilter={activeFilter}
           onSearchChange={handleSearchChange}
-          onActiveFilterChange={handleActiveFilterChange}
-          onSearch={handleSearch}
-          onClearFilters={handleClearFilters}
+          statusFilter={statusFilter}
+          onStatusFilterChange={handleStatusFilterChange}
+          searchPlaceholder="Tìm kiếm thuốc..."
         />
 
         {/* Results Summary */}
@@ -185,7 +188,8 @@ export default function DrugsManagement() {
                   Không có thuốc nào
                 </h3>
                 <p className="text-gray-500">
-                  {searchTerm.trim() ? "Thử tìm kiếm với tên khác" : "Chưa có thuốc nào trong hệ thống"}
+                  {searchTerm.trim() ? "Thử tìm kiếm với tên khác" : 
+                   statusFilter === "active" ? "Chưa có thuốc hoạt động nào" : "Chưa có thuốc vô hiệu hóa nào"}
                 </p>
                 <Button 
                   className="mt-4" 
@@ -227,21 +231,6 @@ export default function DrugsManagement() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Detail Modal */}
-      <DrugDetailModal
-        drug={selectedDrug}
-        isOpen={isDetailModalOpen}
-        onClose={() => {
-          setIsDetailModalOpen(false)
-          setSelectedDrug(null)
-        }}
-        loading={detailLoading}
-        onEdit={handleEditDrug}
-        onDeactivate={handleDeactivateDrug}
-        onReactivate={handleReactivateDrug}
-        actionLoading={actionLoading}
-      />
     </ManagerLayout>
   )
 }
