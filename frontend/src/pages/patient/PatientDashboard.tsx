@@ -9,7 +9,7 @@ import {
   getPatientScheduleInAMonth,
 } from "@/api/schedule";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
-import type { ScheduleDetailResponse } from "@/api/types";
+import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 
 // Mock data
 const hasActiveTreatment = true;
@@ -29,6 +29,9 @@ const treatmentProgress = {
 export default function PatientDashboard() {
   const [patientName, setPatientName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
+  const [filterStatus, setFilterStatus] = useState<"ALL" | ScheduleStatus>(
+    "ALL"
+  );
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const navigate = useNavigate();
@@ -56,31 +59,16 @@ export default function PatientDashboard() {
     })();
   }, [navigate]);
 
-  const handleScheduleNavigate = useCallback(
-    (newDate: Date) => {
-      setCurrentDate(newDate);
-    },
-    [setCurrentDate]
-  );
 
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const start = startOfWeek(currentDate, { weekStartsOn: 1 }); 
-        const end = endOfWeek(currentDate, { weekStartsOn: 1 });
-        const res = await getPatientScheduleInAMonth(start, end);
-
-        setEvents(res?.payload || []);
-
-        if (!initRef.current && res?.payload?.length) {
-          initRef.current = true;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchSchedules();
-  }, [currentDate]);
+  const fetchSchedules = useCallback(async (startDate:Date, endDate:Date) => {
+    try {
+      const res = await getPatientScheduleInAMonth(startDate, endDate, filterStatus==="ALL" ? undefined : [filterStatus]);
+      setCurrentDate(startDate);
+      setEvents(res.payload || []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [filterStatus]); 
 
   if (!patientName) {
     return (
@@ -178,9 +166,11 @@ export default function PatientDashboard() {
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
           <ScheduleCalendar
             schedules={events}
-            date={currentDate}
-            onNavigate={handleScheduleNavigate}
+            date={new Date()}
+            onNavigate={fetchSchedules}
             onScheduleClick={(event)=>navigate(`/patient/schedule-result/${event.id}`)}
+            onFilterChange={(status)=>setFilterStatus(status)}
+            filterStatus={filterStatus}
             drugs={[]}
           />
         </div>

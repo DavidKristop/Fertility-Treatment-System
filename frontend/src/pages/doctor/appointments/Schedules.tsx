@@ -1,23 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
-import { Button } from "@/components/ui/button";
 import { getDoctorScheduleInAMonth } from "@/api/schedule";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
-import { endOfWeek, startOfWeek } from "date-fns";
-import type { ScheduleDetailResponse } from "@/api/types";
+import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 
 export default function PatientDashboard() {
   const [doctorName, setDoctorName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [filterStatus, setFilterStatus] = useState<"ALL" | "PENDING" | "CANCELLED" | "DONE">(
-    "PENDING"
+  const [filterStatus, setFilterStatus] = useState<"ALL" | ScheduleStatus>(
+    "ALL"
   );
+  const [currentDate, setCurrentDate] = useState(new Date());
   const navigate = useNavigate();
-  const initRef = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -30,32 +27,15 @@ export default function PatientDashboard() {
     })();
   }, [navigate]);
 
-  const handleScheduleNavigate = useCallback(
-    (newDate: Date) => {
-      setCurrentDate(newDate);
-    },
-    [setCurrentDate]
-  );
-
-  // Fetch và map tất cả các event (không còn filter status)
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const start = startOfWeek(currentDate, { weekStartsOn: 1 }); 
-        const end = endOfWeek(currentDate, { weekStartsOn: 1 });
-        const res = await getDoctorScheduleInAMonth(start, end, filterStatus==="ALL" ? undefined : [filterStatus]);
-
-        setEvents(res.payload || []);
-
-        if (!initRef.current && res.payload?.length) {
-          initRef.current = true;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchSchedules();
-  }, [currentDate, filterStatus]);
+  const fetchSchedules =useCallback(async (startDate:Date, endDate:Date) => {
+    try {
+      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" ? undefined : [filterStatus]);
+      setCurrentDate(startDate);
+      setEvents(res.payload || []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [filterStatus]); 
 
   if (!doctorName) {
     return (
@@ -73,35 +53,16 @@ export default function PatientDashboard() {
   return (
     <DoctorLayout title="Lịch khám" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* BỘ LỌC STATUS */}
-        <div className="flex items-center gap-2 mb-4">
-          {(
-            [
-              { key: "ALL", label: "Tất cả" },
-              { key: "PENDING", label: "Chưa hoàn thành" },
-              { key: "CANCELLED", label: "Đã hủy" },
-              { key: "DONE", label: "Đã hoàn thành" },
-            ] as const
-          ).map((opt) => (
-            <Button
-              key={opt.key}
-              size="sm"
-              variant={filterStatus === opt.key ? "default" : "outline"}
-              onClick={() =>
-                setFilterStatus(opt.key as "ALL" | "PENDING" | "CANCELLED" | "DONE")
-              }
-            >
-              {opt.label}
-            </Button>
-          ))}
-        </div>
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
           <ScheduleCalendar
             schedules={events}
             date={currentDate}
-            onNavigate={handleScheduleNavigate}
+            isDoctorPov={true}
+            onNavigate={fetchSchedules}
             onScheduleClick={(event)=>navigate(`/doctor/schedule-result/${event.id}`)}
             drugs={[]}
+            onFilterChange={(status)=>setFilterStatus(status)}
+            filterStatus={filterStatus}
           />
         </div>
         <Card>

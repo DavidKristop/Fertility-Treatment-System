@@ -34,7 +34,7 @@ export default function MyRemindersPage() {
       setReminders(res?.payload?.content || []);
       setTotalPages(res?.payload?.totalPages || 1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Lỗi khi tải dữ liệu");
+    setError(err instanceof Error ? err.message : "Lỗi khi tải dữ liệu");
     } finally {
       setLoading(false);
     }

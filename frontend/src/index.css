@@ -151,7 +151,13 @@ body {
   border-radius: 3px;
 }
 
-.custom-scrollbar {
+/* .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
 }
+
+.rbc-row-content {
+  height: 110px !important;
+} */
+
+/* .rbc-row-content .rbc-row:nth-child(n + 3) { display: none; } */

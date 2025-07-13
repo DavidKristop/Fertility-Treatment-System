@@ -1,12 +1,13 @@
-import { Calendar, Views, type Event } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { Calendar, Views, type Event, type View } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { dateFnsLocalizer } from 'react-big-calendar';
-import type { ScheduleResponse, PatientDrugResponse, ScheduleDetailResponse } from '@/api/types';
+import type { ScheduleResponse, PatientDrugResponse, ScheduleDetailResponse, ScheduleStatus } from '@/api/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { vi } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useCallback, useEffect, useState } from 'react';
+import { Button } from './ui/button';
 
 const localizer = dateFnsLocalizer({
   format,
@@ -22,9 +23,12 @@ interface CustomCalendarProps {
   schedules: ScheduleDetailResponse[];
   drugs: PatientDrugResponse[];
   date: Date;
-  onNavigate: (newDate: Date)=>void;
+  filterStatus?: "ALL" | ScheduleStatus;
+  isDoctorPov?: boolean;
+  onNavigate: (startDate: Date,endDate: Date)=>void;
   onScheduleClick?: (schedule: ScheduleDetailResponse) => void;
   onDrugClick?: (drug: PatientDrugResponse) => void;
+  onFilterChange?: (status: "ALL" | ScheduleStatus) => void;
 }
 
 function getStatusColor(status: string) {
@@ -64,8 +68,9 @@ interface CalendarEvent extends Event {
   schedule?: ScheduleDetailResponse;
 }
 
-export default function ScheduleCalendar({ schedules, drugs, date, onScheduleClick, onDrugClick,onNavigate }: CustomCalendarProps) {
+export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,onFilterChange,filterStatus }: CustomCalendarProps) {
   const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [currView,setCurrView] = useState<View>(Views.MONTH)
 
   const getEventStyle = useCallback((event: CalendarEvent) => {
     const style = {
@@ -82,10 +87,6 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
       const status = event.schedule.status;
       switch (status) {
         case 'PENDING':
-          style.backgroundColor = '#E3F2FD';
-          style.color = '#1976D2';
-          break;
-        case 'CHANGED':
           style.backgroundColor = '#FFF3E0';
           style.color = '#F57C00';
           break;
@@ -100,8 +101,8 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
       }
     }
     else{
-      style.backgroundColor = '#E8F5E9';
-      style.color = '#2E7D32';
+      style.backgroundColor = '#E3F2FD'; 
+      style.color = '#1976D2'; 
     }
     return style;
   }, []);
@@ -117,6 +118,35 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
       onDrugClick(event.drug as PatientDrugResponse);
     }
   },[onScheduleClick, onDrugClick]);
+
+  const handleOnFilterChange = useCallback((status: "ALL" | ScheduleStatus)=>{
+    if(onFilterChange){
+      onFilterChange(status)
+    }
+  },[onFilterChange])
+
+  const handleNavigate = useCallback((newDate:Date, view:View)=>{
+    switch (view) {
+      case Views.MONTH:
+          onNavigate(startOfMonth(newDate), endOfMonth(newDate))
+        break;
+      case Views.WEEK:
+          onNavigate(startOfWeek(newDate, { weekStartsOn: 1 }), endOfWeek(newDate, { weekStartsOn: 1 }))
+        break;
+      case Views.DAY:
+          onNavigate(newDate, newDate)
+        break;
+    }
+  },[onNavigate])
+
+  const handleChangeView=useCallback((view:View)=>{
+    setCurrView(view)
+    handleNavigate(date,view)
+  },[setCurrView,handleNavigate,date])
+
+  useEffect(()=>{
+    handleNavigate(date,currView)
+  },[filterStatus])
 
   useEffect(()=>{
     const scheduleEvents: CalendarEvent[] = schedules.map(schedule => ({
@@ -140,19 +170,41 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
 
   return (
     <Card className='w-full'>
-      <CardHeader>
+      <CardHeader className='flex justify-between items-center md:flex-row flex-col'>
         <CardTitle>Thời gian biểu</CardTitle>
+        <div className="flex items-center gap-2 mb-4 md:flex-row flex-col">
+          {filterStatus && <>
+          <select
+            className="border rounded px-2 py-1"
+            value={filterStatus}
+            onChange={(e)=>handleOnFilterChange(e.target.value as "ALL" | ScheduleStatus)}
+          >
+            {(
+              [
+                { key: "ALL", label: "Tất cả" },
+                { key: "PENDING", label: "Chưa hoàn thành" },
+                { key: "CANCELLED", label: "Đã hủy" },
+                { key: "DONE", label: "Đã hoàn thành" },
+              ] as const
+            ).map((opt) => (
+              <option key={opt.key} value={opt.key}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          </>}
+        </div>
       </CardHeader>
       <CardContent>
         <Calendar
+          style={{ height: '700px' }}
           localizer={localizer}
           events={events}
-          startAccessor="start"
-          endAccessor="end"
-          views={[Views.WEEK]}
-          defaultView={Views.WEEK}
+          onView={handleChangeView}
+          views={[Views.WEEK, Views.MONTH, Views.DAY]}
+          view={currView}
           date={date}
-          onNavigate={onNavigate}
+          onNavigate={handleNavigate}
           step={10}
           timeslots={1}
           min={new Date(new Date().setHours(8, 0, 0, 0))}
@@ -160,7 +212,16 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
           selectable
           onSelectEvent={handleEventClick}
           eventPropGetter={eventPropGetter}
+          showAllEvents={false}
           components={{
+            showMore:({events})=>(
+              <p onClick={()=>{
+                setCurrView(Views.DAY)
+                handleNavigate(events[0]?.start || new Date(),Views.DAY)
+              }} className='text-sm text-blue-500 cursor-pointer'>
+                {events.length} thêm +
+              </p>
+            ),
             event: ({ event }) => (
               <div>
                 {event.type === 'schedule' && event.schedule?.status && (
@@ -168,8 +229,8 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
                     {getStatusText(event.schedule.status)}
                   </Badge>
                 )}
-                <div className="flex-1 mt-2">
-                  {event.type === 'schedule' 
+                <div className="flex-1">
+                  {event.type === 'schedule'
                     ? <>
                       <p className="text-xs">Bác sĩ: {event.schedule?.doctor?.fullName}</p>
                       <p className="text-xs">Bệnh nhân: {event.schedule?.patient?.fullName}</p>
@@ -177,7 +238,18 @@ export default function ScheduleCalendar({ schedules, drugs, date, onScheduleCli
                     : <p className="text-xs">Thuốc: {event.drug?.drug?.name}</p>}
                 </div>
               </div>
-            )
+            ),
+            month:{
+              event:({event})=>(
+                <div>
+                  {event.type === 'schedule'
+                    ? <>
+                      <p className="text-xs">Hẹn với {isDoctorPov? event.schedule?.patient?.fullName : "BS " + event.schedule?.doctor?.fullName}</p>
+                    </>
+                    : <p className="text-xs">Thuốc: {event.drug?.drug?.name}</p>}
+                </div>
+              )
+            }
           }}
         />
       </CardContent>

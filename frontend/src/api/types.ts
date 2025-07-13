@@ -141,7 +141,7 @@ export interface TreatmentResponse {
   currentPhase: PhaseResponse;
   appointmentDatetime: string; 
   estimatedTime: string;
-  status: "CANCELLED" | "COMPLETED" | "IN_PROGRESS" | "AWAITING_CONTRACT_SIGNED";
+  status: TreatmentStatus;
   services?: ServiceResponse[];
 }
 
@@ -151,12 +151,12 @@ export interface RequestAppointmentResponse {
   patient: PatientProfile;
   rejectedReason: string;
   appointmentDatetime: string;
-  status: "PENDING" | "ACCEPTED" | "DENIED";
+  status: AppointmentStatus;
   schedule?: {
     id: string;
     appointmentDateTime: string;
     estimatedTime: string;
-    status: "PENDING" | "ACCEPTED" | "DENIED";
+    status: ScheduleStatus;
   };
 }
 
@@ -201,7 +201,7 @@ export interface ScheduleResponse{
   id: string;
   appointmentDateTime: string; 
   estimatedTime: string;       
-  status: "PENDING" | "CHANGED" | "CANCELLED" | "DONE";
+  status: ScheduleStatus;
 }
 
 export interface TreatmentScheduleResponse extends ScheduleResponse{
@@ -255,7 +255,7 @@ export interface TreatmentPlan {
   startDate: string;
   endDate: string;
   description: string;
-  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+  status: TreatmentStatus;
 
   patient: {
     id: string;
@@ -306,7 +306,7 @@ export interface RefundResponse {
 
 export interface TreatmentPreviewResponse{
   id: string;
-  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+  status: TreatmentStatus;
   contractId: string;
 }
 
@@ -319,7 +319,7 @@ export interface PaymentPreviewResponse {
   id: string;
   amount: number;
   paymentDeadline: string;
-  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  status: PaymentStatus;
 }
 
 export interface PaymentResponse {
@@ -329,7 +329,7 @@ export interface PaymentResponse {
   paymentDate: string;
   paymentDeadline: string;
   paymentMethod: string;
-  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  status: PaymentStatus;
   userId: string;
   scheduleServices: ServiceResponse[];
   assignDrugs: AssignDrugResponse[];
@@ -391,3 +391,13 @@ export interface PatientDashboardPayloadResponse {
   treatment: TreatmentResponse;
 }
 
+
+// ==================== STATUS ENUMS ====================
+
+export type ScheduleStatus = "PENDING" | "CHANGED" | "CANCELLED" | "DONE";
+
+export type TreatmentStatus = "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+
+export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
+
+export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELLED";
