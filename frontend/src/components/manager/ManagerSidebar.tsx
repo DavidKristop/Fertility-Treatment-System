@@ -19,6 +19,7 @@ import {
   DollarSign,
   ListCollapse,
   Plus,
+  Pill,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +88,18 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/appointments",
   },
   {
+    id: "assigned-drugs",
+    label: "Quản lý đơn thuốc",
+    icon: FileText,
+    path: "/manager/assigned-drugs",
+  },
+  {
+    id: "services",
+    label: "Quản lý dịch vụ",
+    icon: FileText,
+    path: "/manager/services",
+  },
+  {
     id: "reports",
     label: "Báo cáo vận hành",
     icon: BarChart,
@@ -110,6 +123,12 @@ const sidebarItems: SidebarItem[] = [
     label: "Hợp đồng",
     icon: FileText,
     path: "/manager/contracts",
+  },
+  {
+    id: "drugs",
+    label: "Quản lý thuốc",
+    icon: Pill,
+    path: "/manager/drugs",
   },
   {
     id: "facility",

@@ -33,6 +33,7 @@ import PatientContracts from "./pages/patient/contracts/PatientContracts";
 import PatientProfile from "./pages/patient/profile/PatientProfile";
 import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
 import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
+import MyAssignDrugsPage from "@/pages/patient/MyAssignDrugPage";
 import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleResult";
 
 // Doctor pages
@@ -51,10 +52,17 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
+import DrugsManagement from "./pages/manager/drugs/DrugManagement";
+import CreateDrug from "./pages/manager/drugs/CreateDrug";
+import DrugDetail from "./pages/manager/drugs/DrugDetail";
+import ManagerAssignedDrugPage from "@/pages/manager/ManagerAssignDrugPage";
+import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
+import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
+import ManagerServiceUpdatePage from "./pages/manager/servicePages/ManagerServiceUpdatePage";
+import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServiceDetailPage";
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
-
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -153,6 +161,7 @@ const router = createBrowserRouter([
       { path: "profile", element: <PatientProfile /> },
       { path: "treatment", element: <TreatmentPage /> },
       { path: "treatment/:id", element: <TreatmentDetailPage /> },
+      { path: "prescriptions/history", element: <MyAssignDrugsPage /> },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -222,11 +231,24 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
-      { path: "patients", element: <PatientList /> },
+      { path: "/manager/assigned-drugs", element: <ManagerAssignedDrugPage /> },
+      { path: "/manager/services", element: <ManagerServicePage /> },
+      { path: "/manager/services/create", element: <ManagerServiceCreatePage />, },
+      { path: "/manager/services/:id/edit", element: <ManagerServiceUpdatePage />, },
+      { path: "/manager/services/:id", element: <ManagerServiceDetailPage /> },
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
-      { path: "contracts", element: <ManagerContracts /> },
+      { path: "patients", element: <PatientList />, },
+      { path: "contracts", element: <ManagerContracts />, },
+      {
+        path: "drugs",
+        children: [
+          { index: true, element: <DrugsManagement /> },
+          { path: "create", element: <CreateDrug />, },
+          { path: ":id", element: <DrugDetail />, },
+        ],
+      },
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
