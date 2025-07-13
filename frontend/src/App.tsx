@@ -30,6 +30,7 @@ import ResetPasswordPage from "./pages/authorization/ResetPasswordPage";
 import PatientDashboard from "./pages/patient/PatientDashboard";
 import RequestAppointment from "./pages/patient/RequestAppointment";
 import PatientContracts from "./pages/patient/contracts/PatientContracts";
+import PatientContractDetail from "./pages/patient/contracts/ContractDetail";
 import PatientProfile from "./pages/patient/profile/PatientProfile";
 import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
 import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
@@ -52,6 +53,7 @@ import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
+import ManagerContractDetail from "./pages/manager/contracts/ContractDetail";
 import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
 import DrugDetail from "./pages/manager/drugs/DrugDetail";
@@ -158,7 +160,13 @@ const router = createBrowserRouter([
       { path: "notifications", element: <MyRemindersPage /> },
       { path: "payments/success", element: <PaymentSuccessPage /> },
       { path: "payments/failure", element: <PaymentFailurePage /> },
-      { path: "contracts", element: <PatientContracts /> },
+      { 
+        path: "contracts", 
+        children: [
+          { index: true, element: <PatientContracts /> },
+          { path: ":id", element: <PatientContractDetail /> },
+        ],
+      },
       { path: "profile", element: <PatientProfile /> },
       { path: "treatment", element: <TreatmentPage /> },
       { path: "treatment/:id", element: <TreatmentDetailPage /> },
@@ -232,18 +240,40 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
-      { path: "/manager/assigned-drugs", element: <ManagerAssignedDrugPage /> },
-      { path: "/manager/services", element: <ManagerServicePage /> },
-      { path: "/manager/services/create", element: <ManagerServiceCreatePage /> },
-      { path: "/manager/services/:id/edit", element: <ManagerServiceUpdatePage /> },
-      { path: "/manager/services/:id", element: <ManagerServiceDetailPage />},
-      { path: "/manager/doctors/create",  element: <CreateDoctorPage /> },
+      { path: "assigned-drugs", element: <ManagerAssignedDrugPage /> },
+      { 
+        path: "services", 
+        children: [
+          { 
+            index: true,
+            element: <ManagerServicePage />
+          },
+          {
+            path: "create",
+            element: <ManagerServiceCreatePage />
+          },
+          {
+            path: ":id",
+            element: <ManagerServiceDetailPage />
+          },
+          {
+            path: ":id/edit",
+            element: <ManagerServiceUpdatePage />
+          },
+        ],
+      },
+      { path: "doctors/create",  element: <CreateDoctorPage /> },
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
       { path: "patients", element: <PatientList />, },
-      { path: "contracts", element: <ManagerContracts />, },
-
+      { 
+        path: "contracts", 
+        children: [
+          { index: true, element: <ManagerContracts /> },
+          { path: ":id", element: <ManagerContractDetail /> },
+        ], 
+      },
       {
         path: "drugs",
         children: [
