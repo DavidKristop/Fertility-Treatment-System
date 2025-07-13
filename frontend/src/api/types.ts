@@ -148,13 +148,27 @@ export interface PhaseResponse {
   description: string;
   position: number;
   phaseModifierPercentage: number;
-  refundPercentage?: number;
+  refundPercentage: number;
   services?: ServiceResponse[];
   drugs?: DrugResponse[];
   schedules?: ServiceResponse[];
   assignDrugs?: AssignDrugResponse[];
   unsetServices?: ServiceResponse[];
 }
+
+export interface CreateProtocolRequest {
+  title: string;
+  description: string;
+  refundPercentage?: number;
+  phases: {
+    title: string;
+    description: string;
+    phaseModifierPercentage: number;
+    serviceIds?: string[];
+    drugIds?: string[];
+  }[];
+}
+
 
 export interface ProtocolResponse {
   id: string;

@@ -42,12 +42,14 @@ export default function ProtocolDetail() {
               <p className="text-gray-700 mb-2">{protocol.description}</p>
               <div className="text-sm text-gray-500 space-y-1">
                 <div>
-                  Tạo lúc: {protocol.createdAt
+                  Tạo lúc:{" "}
+                  {protocol.createdAt
                     ? new Date(protocol.createdAt).toLocaleString("vi-VN")
                     : "-"}
                 </div>
                 <div>
-                  Cập nhật: {protocol.updatedAt
+                  Cập nhật:{" "}
+                  {protocol.updatedAt
                     ? new Date(protocol.updatedAt).toLocaleString("vi-VN")
                     : "-"}
                 </div>
@@ -74,7 +76,7 @@ export default function ProtocolDetail() {
                   className="border rounded-lg p-4 bg-white shadow-sm"
                 >
                   <h3 className="text-xl font-semibold mb-1">
-                    Phase {phase.position}: {phase.title}
+                    Phase {phase.position+1}: {phase.title}
                   </h3>
                   <p className="text-gray-700 mb-2">{phase.description}</p>
                   <div className="text-sm mb-2">
@@ -89,7 +91,8 @@ export default function ProtocolDetail() {
                       <ul className="list-disc list-inside">
                         {phase.services.map((s) => (
                           <li key={s.id}>
-                            {s.name} – {s.description} – {s.price.toLocaleString("vi-VN")} đ
+                            {s.name} – {s.description} –{" "}
+                            {s.price.toLocaleString("vi-VN")} đ
                           </li>
                         ))}
                       </ul>
@@ -103,7 +106,8 @@ export default function ProtocolDetail() {
                       <ul className="list-disc list-inside">
                         {phase.drugs.map((d) => (
                           <li key={d.id}>
-                            {d.name} – {d.description}
+                            {d.name} – {d.description} –{" "}
+                            {d.price.toLocaleString("vi-VN")} đ
                           </li>
                         ))}
                       </ul>

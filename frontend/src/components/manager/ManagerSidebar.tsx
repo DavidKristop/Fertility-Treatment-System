@@ -18,6 +18,7 @@ import {
   User,
   DollarSign,
   ListCollapse,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,12 @@ const sidebarItems: SidebarItem[] = [
     label: "Trang tổng quan",
     icon: LayoutDashboard,
     path: "/manager/dashboard",
+  },
+  {
+    id: "createprotocols",
+    label: "Tạo phác đồ điều trị",
+    icon: Plus,
+    path: "/manager/createprotocols",
   },
   {
     id: "protocols",
@@ -338,7 +345,7 @@ export default function ManagerSidebar({
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
-            handleLogout()
+            handleLogout();
           }}
         >
           <LogOut className="h-5 w-5 flex-shrink-0" />

@@ -53,6 +53,7 @@ import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
+import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
 
 
 // Admin pages
@@ -223,6 +224,7 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <ManagerDashboard /> },
       { path: "patients", element: <PatientList /> },
       { path: "protocols", element: <ProtocolsList /> },
+      { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
       { path: "contracts", element: <ManagerContracts /> },
       // fallback for manager subpaths
