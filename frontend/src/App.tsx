@@ -57,6 +57,7 @@ import ManagerServiceUpdatePage from './pages/manager/servicePages/ManagerServic
 import ManagerServiceDetailPage from './pages/manager/servicePages/ManagerServiceDetailPage';
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
+import CreateDoctorPage from "./pages/manager/CreateDoctorPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -229,7 +230,8 @@ const router = createBrowserRouter([
       { path: "/manager/services", element: <ManagerServicePage /> },
       { path: "/manager/services/create", element: <ManagerServiceCreatePage /> },
       { path: "/manager/services/:id/edit", element: <ManagerServiceUpdatePage /> },
-      {path: "/manager/services/:id", element: <ManagerServiceDetailPage />},
+      { path: "/manager/services/:id", element: <ManagerServiceDetailPage />},
+      { path: "/manager/doctors/create",  element: <CreateDoctorPage /> },
       {
         path: "patients",
         element: <PatientList />,

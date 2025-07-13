@@ -84,6 +84,12 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/services",
   },
   {
+    id: "create-doctor",
+    label: "Tạo tài khoản bác sĩ",
+    icon: User, // Hoặc icon nào khác phù hợp
+    path: "/manager/doctors/create",
+  },
+  {
     id: "reports",
     label: "Báo cáo vận hành",
     icon: BarChart,

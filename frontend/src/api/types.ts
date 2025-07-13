@@ -67,6 +67,17 @@ export interface PatientProfile extends UserProfile {
   medicalHistory: string;
 }
 
+export interface DoctorResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  specialty: string;
+  degree: string;
+  yearsOfExperience: number;
+  licenseNumber: string;
+}
 // ==================== API RESPONSE TYPES ====================
 export interface ApiResponse<T = any> {
   success: boolean;
