@@ -71,7 +71,7 @@ export default function PatientScheduleResult() {
   ];
 
   return (
-    <PatientLayout title="Kết quả khám" breadcrumbs={breadcrumbs}>
+    <PatientLayout title={schedule?.title || "Kết quả khám"} breadcrumbs={breadcrumbs}>
       <LoadingComponent isLoading={loading}>
         <div className="space-y-6">
           {/* Header with back button */}

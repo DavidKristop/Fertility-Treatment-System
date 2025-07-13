@@ -154,6 +154,7 @@ export interface RequestAppointmentResponse {
   status: AppointmentStatus;
   schedule?: {
     id: string;
+    title:string;
     appointmentDateTime: string;
     estimatedTime: string;
     status: ScheduleStatus;
@@ -199,6 +200,7 @@ export interface ProtocolResponse {
 
 export interface ScheduleResponse{
   id: string;
+  title:string;
   appointmentDateTime: string; 
   estimatedTime: string;       
   status: ScheduleStatus;

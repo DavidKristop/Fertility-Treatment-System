@@ -164,7 +164,7 @@ const haveUnpaidPayment = (schedule: ScheduleDetailResponse) => {
           </div>
 
           {/* Appointment Details */}
-          <FormSection title="Thông tin cuộc hẹn" icon={Calendar}>
+          <FormSection title={schedule?.title || "Thông tin cuộc hẹn"} icon={Calendar}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">

@@ -1,13 +1,12 @@
 import { Calendar, Views, type Event, type View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { dateFnsLocalizer } from 'react-big-calendar';
-import type { ScheduleResponse, PatientDrugResponse, ScheduleDetailResponse, ScheduleStatus } from '@/api/types';
+import type { PatientDrugResponse, ScheduleDetailResponse, ScheduleStatus } from '@/api/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { vi } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from './ui/button';
 
 const localizer = dateFnsLocalizer({
   format,
@@ -232,6 +231,7 @@ export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=f
                 <div className="flex-1">
                   {event.type === 'schedule'
                     ? <>
+                      <p className='text-xs'>{event.schedule?.title}</p>
                       <p className="text-xs">Bác sĩ: {event.schedule?.doctor?.fullName}</p>
                       <p className="text-xs">Bệnh nhân: {event.schedule?.patient?.fullName}</p>
                     </>
@@ -244,7 +244,9 @@ export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=f
                 <div>
                   {event.type === 'schedule'
                     ? <>
-                      <p className="text-xs">Hẹn với {isDoctorPov? event.schedule?.patient?.fullName : "BS " + event.schedule?.doctor?.fullName}</p>
+                      <p className="text-xs">
+                        {event.schedule?.title!==null?event.schedule?.title:"Hẹn với " + isDoctorPov? event.schedule?.patient?.fullName : "BS " + event.schedule?.doctor?.fullName}
+                      </p>
                     </>
                     : <p className="text-xs">Thuốc: {event.drug?.drug?.name}</p>}
                 </div>
