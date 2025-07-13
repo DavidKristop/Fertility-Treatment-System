@@ -1,21 +1,37 @@
-import { Bell, Search, User } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Bell, Search, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { auth } from "@/api";
+import { useNavigate } from "react-router-dom";
 
 interface ManagerHeaderProps {
-  title: string
-  breadcrumbs?: { label: string; path?: string }[]
+  title: string;
+  breadcrumbs?: { label: string; path?: string }[];
 }
 
-export default function ManagerHeader({ title, breadcrumbs }: ManagerHeaderProps) {
+export default function ManagerHeader({
+  title,
+  breadcrumbs,
+}: ManagerHeaderProps) {
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+  try {
+    await auth.logout(); // POST /auth/logout
+  } catch (err) {
+    console.error("Logout API failed:", err);
+  } finally {
+    navigate("/authorization/login", { replace: true });
+  }
+};
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -45,14 +61,19 @@ export default function ManagerHeader({ title, breadcrumbs }: ManagerHeaderProps
           {/* Search */}
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input placeholder="Tìm nhân viên, báo cáo, cảnh báo..." className="pl-10 w-80" />
+            <Input
+              placeholder="Tìm nhân viên, báo cáo, cảnh báo..."
+              className="pl-10 w-80"
+            />
           </div>
 
           {/* Notifications */}
           <div className="relative">
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">3</Badge>
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">
+                3
+              </Badge>
             </Button>
           </div>
 
@@ -83,11 +104,19 @@ export default function ManagerHeader({ title, breadcrumbs }: ManagerHeaderProps
                 Quản lý nhân viên
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600">Đăng xuất</DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-red-600 cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLogout();
+                }}
+              >
+                Đăng xuất
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </header>
-  )
+  );
 }

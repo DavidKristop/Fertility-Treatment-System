@@ -277,7 +277,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
           onClick={async () => {
             try {
               // Gọi API logout để xóa refresh token cookie
-              await logout({});
+              await logout();
               // Navigate sau khi logout thành công
               navigate("/authorization/login");
             } catch (error) {

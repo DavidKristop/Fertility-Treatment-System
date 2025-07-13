@@ -39,11 +39,10 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
 
   const handleLogout = async () => {
     try {
-      await auth.logout // POST /auth/logout
+      await auth.logout() // POST /auth/logout
     } catch (err) {
       console.error("Logout API failed:", err)
     } finally {
-      localStorage.removeItem("access_token")
       navigate("/authorization/login", { replace: true })
     }
   }
