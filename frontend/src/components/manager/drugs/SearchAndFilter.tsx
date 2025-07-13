@@ -21,8 +21,6 @@ export default function SearchAndFilter({
   searchPlaceholder = "Tìm kiếm thuốc..."
 }: SearchAndFilterProps) {
   return (
-    <Card>
-      <CardContent className="p-4">
         <div className="flex gap-4 items-center">
           <div className="flex-1">
             <div className="relative">
@@ -45,7 +43,5 @@ export default function SearchAndFilter({
             </SelectContent>
           </Select>
         </div>
-      </CardContent>
-    </Card>
   )
 }
