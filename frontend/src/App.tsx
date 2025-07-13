@@ -63,6 +63,7 @@ import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServic
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
+import CreateDoctorPage from "./pages/manager/CreateDoctorPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -233,14 +234,16 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <ManagerDashboard /> },
       { path: "/manager/assigned-drugs", element: <ManagerAssignedDrugPage /> },
       { path: "/manager/services", element: <ManagerServicePage /> },
-      { path: "/manager/services/create", element: <ManagerServiceCreatePage />, },
-      { path: "/manager/services/:id/edit", element: <ManagerServiceUpdatePage />, },
-      { path: "/manager/services/:id", element: <ManagerServiceDetailPage /> },
+      { path: "/manager/services/create", element: <ManagerServiceCreatePage /> },
+      { path: "/manager/services/:id/edit", element: <ManagerServiceUpdatePage /> },
+      { path: "/manager/services/:id", element: <ManagerServiceDetailPage />},
+      { path: "/manager/doctors/create",  element: <CreateDoctorPage /> },
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
       { path: "patients", element: <PatientList />, },
       { path: "contracts", element: <ManagerContracts />, },
+
       {
         path: "drugs",
         children: [

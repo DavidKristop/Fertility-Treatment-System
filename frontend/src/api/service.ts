@@ -1,4 +1,4 @@
-import type { ApiPaginationResponse, ServiceReponse, ApiResponse } from "@/api/types";
+import type { ApiPaginationResponse, ServiceResponse, ApiResponse } from "@/api/types";
 import { fetchWrapper } from ".";
 
 export const getServices = async ({
@@ -11,7 +11,7 @@ export const getServices = async ({
   size?: number;
   name?: string;
   isActive?: boolean;
-}): Promise<ApiPaginationResponse<ServiceReponse>> => {
+}): Promise<ApiPaginationResponse<ServiceResponse>> => {
   const url = `services?page=${page}&size=${size}&name=${encodeURIComponent(name)}&isActive=${isActive}`;
   const res = await fetchWrapper(url, {}, true);
   if (!res.ok) throw new Error("Không thể tải danh sách dịch vụ");
@@ -20,7 +20,7 @@ export const getServices = async ({
 
 export const getServiceById = async (
   id: string
-): Promise<ApiResponse<ServiceReponse>> => {
+): Promise<ApiResponse<ServiceResponse>> => {
   const response = await fetchWrapper(`services/${id}`, {}, true);
   if (!response.ok) {
     const errorData = await response.json();
