@@ -114,8 +114,8 @@ export interface DrugResponse {
   name: string;
   description: string;
   price: number;
-  unit?: string;
-  active?: boolean;
+  unit: string;
+  active: boolean;
 }
 
 export interface PatientDrugResponse {
@@ -136,6 +136,13 @@ export interface AssignDrugResponse {
   treatmentPhaseName?: string;
   patientName?: string;
   patientDrugs: PatientDrugResponse[];
+}
+
+export interface DrugCreateRequest {
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
 }
 
 // ==================== SCHEDULE & APPOINTMENT TYPES ====================
@@ -164,13 +171,27 @@ export interface PhaseResponse {
   description: string;
   position: number;
   phaseModifierPercentage: number;
-  refundPercentage?: number;
+  refundPercentage: number;
   services?: ServiceResponse[];
   drugs?: DrugResponse[];
   schedules?: ServiceResponse[];
   assignDrugs?: AssignDrugResponse[];
   unsetServices?: ServiceResponse[];
 }
+
+export interface CreateProtocolRequest {
+  title: string;
+  description: string;
+  refundPercentage?: number;
+  phases: {
+    title: string;
+    description: string;
+    phaseModifierPercentage: number;
+    serviceIds?: string[];
+    drugIds?: string[];
+  }[];
+}
+
 
 export interface ProtocolResponse {
   id: string;

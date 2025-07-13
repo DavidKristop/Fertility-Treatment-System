@@ -3,16 +3,23 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 import logo from "@/assets/ucarelogo.png";
 import { Dropdown } from "@/components/ui/dropdown";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
 import { auth } from "@/api";
 
 export default function Navbar() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ fullName: string; role: string } | null>(
+    null
+  );
 
   const navItemClass =
     "text-[20px] font-semibold px-4 py-6 transition-colors text-[#004c77] hover:bg-[#004c77] hover:text-white";
@@ -41,6 +48,9 @@ export default function Navbar() {
       case "ROLE_ADMIN":
         navigate("/admin/dashboard");
         break;
+      case "ROLE_MANAGER":
+        navigate("/manager/dashboard");
+        break;
       default:
         navigate("/");
     }
@@ -48,15 +58,15 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await auth.logout // POST /auth/logout
+      await auth.logout; // POST /auth/logout
     } catch (err) {
-      console.error("Logout API failed:", err)
+      console.error("Logout API failed:", err);
     } finally {
-      localStorage.removeItem("access_token")
+      localStorage.removeItem("access_token");
       setUser(null);
-      navigate("/authorization/login", { replace: true })
+      navigate("/authorization/login", { replace: true });
     }
-  }
+  };
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -100,19 +110,29 @@ export default function Navbar() {
 
           <Dropdown label="Giới thiệu">
             <Link to="/about/company">
-              <DropdownMenuItem className="cursor-pointer">Về UCare</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Về UCare
+              </DropdownMenuItem>
             </Link>
             <Link to="/doctors">
-              <DropdownMenuItem className="cursor-pointer">Đội ngũ bác sĩ</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Đội ngũ bác sĩ
+              </DropdownMenuItem>
             </Link>
             <Link to="/about/story">
-              <DropdownMenuItem className="cursor-pointer">Câu chuyện thương hiệu</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Câu chuyện thương hiệu
+              </DropdownMenuItem>
             </Link>
             <Link to="/blog">
-              <DropdownMenuItem className="cursor-pointer">Blog</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Blog
+              </DropdownMenuItem>
             </Link>
             <Link to="blog/:id">
-              <DropdownMenuItem className="cursor-pointer">Post blog</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                Post blog
+              </DropdownMenuItem>
             </Link>
           </Dropdown>
 
@@ -144,20 +164,23 @@ export default function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem className="cursor-pointer" onClick={goToDashboard}>
-                  <LayoutDashboard className="h-5 w-5 flex-shrink-0" />
-                  Dashboard
-                </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={goToDashboard}
+              >
+                <LayoutDashboard className="h-5 w-5 flex-shrink-0" />
+                Dashboard
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-600 cursor-pointer"
                 onClick={(e) => {
-                  e.preventDefault()
-                  handleLogout()
+                  e.preventDefault();
+                  handleLogout();
                 }}
               >
                 <LogOut className="h-5 w-5 flex-shrink-0 text-red-600" />
                 Đăng xuất
-              </DropdownMenuItem>              
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
@@ -345,10 +368,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={toggleMobileMenu}
-        ></div>
+        <div className="fixed inset-0 z-40" onClick={toggleMobileMenu}></div>
       )}
     </header>
   );

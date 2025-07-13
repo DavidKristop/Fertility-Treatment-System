@@ -6,6 +6,11 @@ import type {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ApiResponse,
+  ProtocolResponse,
+  ApiPaginationResponse,
+  CreateProtocolRequest,
+  ServiceResponse,
+  DrugResponse,
 } from './types'
 
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
@@ -164,4 +169,78 @@ export const verifyEmail = async (token: string): Promise<ApiResponse> => {
   }
 
   return response.json();
+};
+
+export const fetchProtocolsManager = async (page = 0, size = 10): Promise<ApiPaginationResponse<ProtocolResponse>> => {
+  const response = await fetchWrapper(
+    `protocols/manager?page=${page}&size=${size}`,
+    { method: "GET" },
+    true
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Error fetching protocols (status ${response.status}): ${response.statusText}`
+    );
+  }
+
+  return response.json() as Promise<ApiPaginationResponse<ProtocolResponse>>;
+}
+
+export const fetchProtocolById = async (id: string): Promise<ProtocolResponse> => {
+  const res = await fetchWrapper(
+    `protocols/manager/${id}`,
+    { method: "GET" },
+    true
+  );
+  const body = (await res.json()) as ApiResponse<ProtocolResponse>;
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+  return body.payload!;
+}
+
+export async function createProtocol(
+  protocolData: CreateProtocolRequest
+): Promise<ProtocolResponse> {
+  // Gửi request tới endpoint POST /api/protocols
+  const response = await fetchWrapper(
+    `protocols`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(protocolData),
+    },
+    true // yêu cầu auth
+  );
+
+  // Kiểm tra HTTP status
+  if (!response.ok) {
+    throw new Error(
+      `Error creating protocol (status ${response.status}): ${response.statusText}`
+    );
+  }
+
+  // Parse JSON và unwrap ApiResponse
+  const body = (await response.json()) as ApiResponse<ProtocolResponse>;
+  if (!body.success) {
+    throw new Error(body.message || "Failed to create protocol");
+  }
+
+  // Trả về payload chứa ProtocolResponse
+  return body.payload!;
+}
+
+export const fetchServices = async (): Promise<ApiResponse<ServiceResponse[]>> => {
+  const res = await fetchWrapper("services", {
+    method: "GET",
+  }, true);
+  return res.json();
+};
+
+export const fetchDrugs = async (): Promise<ApiResponse<DrugResponse[]>> => {
+  const res = await fetchWrapper("drugs", {
+    method: "GET",
+  }, true);
+  return res.json();
 };

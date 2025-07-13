@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Calendar,
   FileText,
@@ -17,24 +17,28 @@ import {
   MessageSquare,
   User,
   DollarSign,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import logo from "@/assets/ucarelogo.png"
+  ListCollapse,
+  Plus,
+  Pill,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import logo from "@/assets/ucarelogo.png";
+import { auth } from "@/api";
 
 interface SidebarItem {
-  id: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  path?: string
-  badge?: number
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  path?: string;
+  badge?: number;
   children?: {
-    id: string
-    label: string
-    icon: React.ComponentType<{ className?: string }>
-    path: string
-    badge?: number
-  }[]
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    path: string;
+    badge?: number;
+  }[];
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -43,6 +47,18 @@ const sidebarItems: SidebarItem[] = [
     label: "Trang tổng quan",
     icon: LayoutDashboard,
     path: "/manager/dashboard",
+  },
+  {
+    id: "createprotocols",
+    label: "Tạo phác đồ điều trị",
+    icon: Plus,
+    path: "/manager/createprotocols",
+  },
+  {
+    id: "protocols",
+    label: "Danh sách phác đồ điều trị",
+    icon: ListCollapse,
+    path: "/manager/protocols",
   },
   {
     id: "staff",
@@ -115,6 +131,12 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/contracts",
   },
   {
+    id: "drugs",
+    label: "Quản lý thuốc",
+    icon: Pill,
+    path: "/manager/drugs",
+  },
+  {
     id: "facility",
     label: "Cảnh báo cơ sở vật chất",
     icon: AlertTriangle,
@@ -140,46 +162,67 @@ const sidebarItems: SidebarItem[] = [
     icon: User,
     path: "/manager/profile",
   },
-]
+];
 
 interface ManagerSidebarProps {
-  isCollapsed: boolean
-  isMobile?: boolean
-  onToggle: () => void
+  isCollapsed: boolean;
+  isMobile?: boolean;
+  onToggle: () => void;
 }
 
-export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false }: ManagerSidebarProps) {
-  const [expandedItems, setExpandedItems] = useState<string[]>(["staff"])
-  const location = useLocation()
-  const navigate = useNavigate()
+export default function ManagerSidebar({
+  isCollapsed,
+  onToggle,
+  isMobile = false,
+}: ManagerSidebarProps) {
+  const [expandedItems, setExpandedItems] = useState<string[]>(["staff"]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleExpanded = (itemId: string) => {
-    setExpandedItems((prev) => (prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]))
-  }
+    setExpandedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
 
-  const isActive = (path: string) => location.pathname === path
+  const isActive = (path: string) => location.pathname === path;
 
   const isParentActive = (item: SidebarItem) => {
-    if (item.path && isActive(item.path)) return true
+    if (item.path && isActive(item.path)) return true;
     if (item.children) {
-      return item.children.some((child) => isActive(child.path))
+      return item.children.some((child) => isActive(child.path));
     }
-    return false
-  }
+    return false;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.logout(); // POST /auth/logout
+    } catch (err) {
+      console.error("Logout API failed:", err);
+    } finally {
+      navigate("/authorization/login", { replace: true });
+    }
+  };
 
   // Auto-expand parent items when child is active
   useEffect(() => {
     sidebarItems.forEach((item) => {
-      if (item.children && item.children.some((child) => isActive(child.path))) {
+      if (
+        item.children &&
+        item.children.some((child) => isActive(child.path))
+      ) {
         setExpandedItems((prev) => {
           if (!prev.includes(item.id)) {
-            return [...prev, item.id]
+            return [...prev, item.id];
           }
-          return prev
-        })
+          return prev;
+        });
       }
-    })
-  }, [location.pathname])
+    });
+  }, [location.pathname]);
 
   return (
     <div
@@ -192,13 +235,21 @@ export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false
         {!isCollapsed && (
           <Link to="/">
             <div className="flex items-center gap-1">
-              <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-7" />
+              <img
+                src={logo || "/placeholder.svg"}
+                alt="UCARE"
+                className="h-7"
+              />
               <span className="font-bold text-[#004c77] text-lg">UCARE</span>
             </div>
           </Link>
         )}
         <Button variant="ghost" size="sm" onClick={onToggle} className="p-1">
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {isCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
         </Button>
       </div>
 
@@ -211,15 +262,24 @@ export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false
               <Link to={item.path}>
                 <div
                   className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                    isParentActive(item) ? "bg-[#004c77] text-white" : "text-gray-700 hover:bg-gray-100"
+                    isParentActive(item)
+                      ? "bg-[#004c77] text-white"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <item.icon className="h-5 w-5 flex-shrink-0" />
-                    {!isCollapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+                    {!isCollapsed && (
+                      <span className="text-sm font-medium truncate">
+                        {item.label}
+                      </span>
+                    )}
                   </div>
                   {!isCollapsed && item.badge && (
-                    <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                    <Badge
+                      variant="destructive"
+                      className="text-xs px-1.5 py-0.5"
+                    >
                       {item.badge > 0 ? item.badge : ""}
                     </Badge>
                   )}
@@ -228,28 +288,39 @@ export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false
             ) : (
               <div
                 className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                  isParentActive(item) ? "bg-[#004c77] text-white" : "text-gray-700 hover:bg-gray-100"
+                  isParentActive(item)
+                    ? "bg-[#004c77] text-white"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
                 onClick={() => {
                   if (item.children) {
-                    toggleExpanded(item.id)
+                    toggleExpanded(item.id);
                   }
                 }}
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <item.icon className="h-5 w-5 flex-shrink-0" />
-                  {!isCollapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+                  {!isCollapsed && (
+                    <span className="text-sm font-medium truncate">
+                      {item.label}
+                    </span>
+                  )}
                 </div>
                 {!isCollapsed && (
                   <div className="flex items-center gap-1">
                     {item.badge && (
-                      <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                      <Badge
+                        variant="destructive"
+                        className="text-xs px-1.5 py-0.5"
+                      >
                         {item.badge > 0 ? item.badge : ""}
                       </Badge>
                     )}
                     {item.children && (
                       <ChevronRight
-                        className={`h-4 w-4 transition-transform ${expandedItems.includes(item.id) ? "rotate-90" : ""}`}
+                        className={`h-4 w-4 transition-transform ${
+                          expandedItems.includes(item.id) ? "rotate-90" : ""
+                        }`}
                       />
                     )}
                   </div>
@@ -258,29 +329,38 @@ export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false
             )}
 
             {/* Children */}
-            {item.children && !isCollapsed && expandedItems.includes(item.id) && (
-              <div className="ml-6 mt-1 space-y-1">
-                {item.children.map((child) => (
-                  <Link key={child.id} to={child.path}>
-                    <div
-                      className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
-                        isActive(child.path) ? "bg-[#004c77] text-white" : "text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <child.icon className="h-4 w-4 flex-shrink-0" />
-                        <span className="text-sm truncate">{child.label}</span>
+            {item.children &&
+              !isCollapsed &&
+              expandedItems.includes(item.id) && (
+                <div className="ml-6 mt-1 space-y-1">
+                  {item.children.map((child) => (
+                    <Link key={child.id} to={child.path}>
+                      <div
+                        className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
+                          isActive(child.path)
+                            ? "bg-[#004c77] text-white"
+                            : "text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <child.icon className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-sm truncate">
+                            {child.label}
+                          </span>
+                        </div>
+                        {child.badge && (
+                          <Badge
+                            variant="destructive"
+                            className="text-xs px-1.5 py-0.5"
+                          >
+                            {child.badge > 0 ? child.badge : ""}
+                          </Badge>
+                        )}
                       </div>
-                      {child.badge && (
-                        <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                          {child.badge > 0 ? child.badge : ""}
-                        </Badge>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+                    </Link>
+                  ))}
+                </div>
+              )}
           </div>
         ))}
       </nav>
@@ -290,14 +370,15 @@ export default function ManagerSidebar({ isCollapsed, onToggle, isMobile = false
         <div
           className="flex items-center gap-3 p-2 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           onClick={() => {
-            localStorage.removeItem("token")
-            navigate("/authorization/login")
+            handleLogout();
           }}
         >
           <LogOut className="h-5 w-5 flex-shrink-0" />
-          {(!isCollapsed || isMobile) && <span className="text-sm font-medium">Đăng xuất</span>}
+          {(!isCollapsed || isMobile) && (
+            <span className="text-sm font-medium">Đăng xuất</span>
+          )}
         </div>
       </div>
     </div>
-  )
+  );
 }
