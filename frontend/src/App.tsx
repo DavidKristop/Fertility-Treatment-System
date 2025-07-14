@@ -30,26 +30,14 @@ import ResetPasswordPage from "./pages/authorization/ResetPasswordPage";
 import PatientDashboard from "./pages/patient/PatientDashboard";
 import RequestAppointment from "./pages/patient/RequestAppointment";
 import PatientContracts from "./pages/patient/contracts/PatientContracts";
+import PatientContractDetail from "./pages/patient/contracts/ContractDetail";
 import PatientProfile from "./pages/patient/profile/PatientProfile";
 import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
 import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
+import MyAssignDrugsPage from "@/pages/patient/MyAssignDrugPage";
 import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleResult";
 
 // Doctor pages
-<<<<<<< HEAD
-import DoctorDashboard from './pages/doctor/DoctorDashboard';
-import Schedules from './pages/doctor/appointments/Schedules';
-import ScheduleResult from './pages/doctor/appointments/ScheduleResult';
-import PatientList from './pages/doctor/patients/PatientList';
-import PatientDetail from './pages/doctor/patients/PatientDetail';
-import TreatmentPlans from './pages/doctor/treatment-plans/TreatmentPlans';
-import CreateTreatmentPlans from './pages/doctor/treatment-plans/CreateTreatmentPlans';
-import TreatmentDetail from './pages/doctor/treatment-plans/TreatmentDetail';
-import RecordResults from './pages/doctor/results/RecordResults';
-import ResultsHistory from './pages/doctor/results/ResultsHistory';
-import DoctorProfile from './pages/doctor/profile/DoctorProfile';
-import ReminderHistory from './pages/doctor/notifications/ReminderHistory';
-=======
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import Schedules from "./pages/doctor/appointments/Schedules";
 import PatientList from "./pages/doctor/patients/PatientList";
@@ -61,11 +49,23 @@ import RecordResults from "./pages/doctor/results/RecordResults";
 import ResultsHistory from "./pages/doctor/results/ResultsHistory";
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile";
 import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
->>>>>>> 0b19e634ad562b8e8351ad4befc3ac0ccf2b2d6c
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
+import ManagerContractDetail from "./pages/manager/contracts/ContractDetail";
+import DrugsManagement from "./pages/manager/drugs/DrugManagement";
+import CreateDrug from "./pages/manager/drugs/CreateDrug";
+import DrugDetail from "./pages/manager/drugs/DrugDetail";
+import ManagerAssignedDrugPage from "@/pages/manager/ManagerAssignDrugPage";
+import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
+import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
+import ManagerServiceUpdatePage from "./pages/manager/servicePages/ManagerServiceUpdatePage";
+import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServiceDetailPage";
+import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
+import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
+import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
+import CreateDoctorPage from "./pages/manager/CreateDoctorPage";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -160,10 +160,17 @@ const router = createBrowserRouter([
       { path: "notifications", element: <MyRemindersPage /> },
       { path: "payments/success", element: <PaymentSuccessPage /> },
       { path: "payments/failure", element: <PaymentFailurePage /> },
-      { path: "contracts", element: <PatientContracts /> },
+      { 
+        path: "contracts", 
+        children: [
+          { index: true, element: <PatientContracts /> },
+          { path: ":id", element: <PatientContractDetail /> },
+        ],
+      },
       { path: "profile", element: <PatientProfile /> },
       { path: "treatment", element: <TreatmentPage /> },
       { path: "treatment/:id", element: <TreatmentDetailPage /> },
+      { path: "prescriptions/history", element: <MyAssignDrugsPage /> },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -232,18 +239,48 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        path: "dashboard",
-        element: <ManagerDashboard />,
+      { path: "dashboard", element: <ManagerDashboard /> },
+      { path: "assigned-drugs", element: <ManagerAssignedDrugPage /> },
+      { 
+        path: "services", 
+        children: [
+          { 
+            index: true,
+            element: <ManagerServicePage />
+          },
+          {
+            path: "create",
+            element: <ManagerServiceCreatePage />
+          },
+          {
+            path: ":id",
+            element: <ManagerServiceDetailPage />
+          },
+          {
+            path: ":id/edit",
+            element: <ManagerServiceUpdatePage />
+          },
+        ],
       },
-
-      {
-        path: "patients",
-        element: <PatientList />,
+      { path: "doctors/create",  element: <CreateDoctorPage /> },
+      { path: "protocols", element: <ProtocolsList /> },
+      { path: "createprotocols", element: <CreateProtocolsPage /> },
+      { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
+      { path: "patients", element: <PatientList />, },
+      { 
+        path: "contracts", 
+        children: [
+          { index: true, element: <ManagerContracts /> },
+          { path: ":id", element: <ManagerContractDetail /> },
+        ], 
       },
       {
-        path: "contracts",
-        element: <ManagerContracts />,
+        path: "drugs",
+        children: [
+          { index: true, element: <DrugsManagement /> },
+          { path: "create", element: <CreateDrug />, },
+          { path: ":id", element: <DrugDetail />, },
+        ],
       },
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },

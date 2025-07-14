@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FileText, Download, Eye, PenTool, CheckCircle, Clock, AlertCircle } from "lucide-react"
@@ -34,7 +33,7 @@ export default function ContractCard({
   const isExpired = new Date(contract.signDeadline) < new Date()
 
   return (
-    <div className="border rounded-lg p-6 hover:shadow-md transition-shadow">
+    <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">

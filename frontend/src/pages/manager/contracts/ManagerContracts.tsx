@@ -1,9 +1,9 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import ManagerLayout from "@/components/manager/ManagerLayout"
 import ContractHeader from "@/components/contracts/ContractHeader"
 import ContractFilters from "@/components/contracts/ContractFilters"
 import ContractList from "@/components/contracts/ContractList"
-import ContractDetailModal from "@/components/contracts/ContractDetailModal"
 import { getContracts } from "@/api/contract"
 import { useContractManagement } from "@/hooks/useContractManagement"
 import { getPageTitle, getPageDescription } from "@/utils/contractHelpers"
@@ -11,9 +11,8 @@ import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
 
 export default function ManagerContracts() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedContract, setSelectedContract] = useState<ContractResponse | null>(null)
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
 
   // Business logic hook
   const contractManager = useContractManagement({
@@ -27,8 +26,7 @@ export default function ManagerContracts() {
   ]
 
   const handleViewContract = (contract: ContractResponse) => {
-    setSelectedContract(contract)
-    setIsDetailModalOpen(true)
+    navigate(`/manager/contracts/${contract.id}`)
   }
 
   const handleDownloadContract = (contractId: string) => {
@@ -76,17 +74,6 @@ export default function ManagerContracts() {
         />
       </div>
 
-      {/* Detail Modal */}
-      <ContractDetailModal
-        contract={selectedContract}
-        isOpen={isDetailModalOpen}
-        onClose={() => {
-          setIsDetailModalOpen(false)
-          setSelectedContract(null)
-        }}
-        showPatientInfo={true}
-        userRole="manager"
-      />
     </ManagerLayout>
   )
 }
