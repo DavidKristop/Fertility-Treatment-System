@@ -137,12 +137,8 @@ export interface TreatmentResponse {
   contractId: string;
   signedContract: boolean;
   phases: PhaseResponse[];
-  unsetServices: ServiceResponse[];
   currentPhase: PhaseResponse;
-  appointmentDatetime: string; 
-  estimatedTime: string;
   status: TreatmentStatus;
-  services?: ServiceResponse[];
 }
 
 export interface RequestAppointmentResponse {
@@ -170,6 +166,7 @@ export interface PhaseResponse {
   phaseModifierPercentage: number;
   refundPercentage?: number;
   schedules?: TreatmentScheduleResponse[];
+  complete?:boolean;
   assignDrugs?: AssignDrugResponse[];
   unsetServices?: ServiceResponse[];
 }

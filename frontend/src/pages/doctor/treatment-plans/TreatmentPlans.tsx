@@ -138,7 +138,7 @@ export default function TreatmentPlans() {
         ) : (
             <div className="space-y-4">
             {treatments.map((treatment) => (
-              <Link to={`/doctor/treatment-plans/${treatment.id}`}>
+              <Link to={`/doctor/treatment-plans/treatment-details/${treatment.id}`}>
                 <div
                   key={treatment.id}
                   className="border rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all duration-200 my-2"
