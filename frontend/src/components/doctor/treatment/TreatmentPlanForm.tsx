@@ -161,7 +161,6 @@ export function CreateTreatmentForm() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Patient Email"
               placeholder="Search patient by email..."
               error={!!errors.patientEmail}
               helperText={errors.patientEmail?.message}
@@ -202,7 +201,6 @@ export function CreateTreatmentForm() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Protocol Title"
               placeholder="Search protocol by title..."
               error={!!errors.protocolTitle}
               helperText={errors.protocolTitle?.message}

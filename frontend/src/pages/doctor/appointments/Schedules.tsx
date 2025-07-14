@@ -6,6 +6,7 @@ import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { getDoctorScheduleInAMonth } from "@/api/schedule";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
 import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
+import { toast } from "react-toastify";
 
 export default function PatientDashboard() {
   const [doctorName, setDoctorName] = useState<string>("");
@@ -25,10 +26,11 @@ export default function PatientDashboard() {
 
   const fetchSchedules =useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
     try {
-      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
+      const res = await getDoctorScheduleInAMonth(startDate, endDate, ["PENDING"]);
       setEvents(res.payload || []);
     } catch (err) {
       console.error(err);
+      toast.error((err as Error).message || "Lỗi khi tải danh sách lịch hẹn");
     }
   }, []); 
 

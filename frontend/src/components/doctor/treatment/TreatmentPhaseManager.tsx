@@ -8,15 +8,11 @@ import { useState } from "react";
 interface TreatmentPhaseManagerProps {
   treatment: TreatmentResponse;
   initialPhasePosition: number;
-  onScheduleCreate: (schedule: Partial<TreatmentScheduleResponse>) => void;
-  onScheduleEdit: (schedule: TreatmentScheduleResponse) => void;
 }
 
 export default function TreatmentPhaseManager({
   treatment,
   initialPhasePosition = 1,
-  onScheduleCreate,
-  onScheduleEdit,
 }: TreatmentPhaseManagerProps) {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<TreatmentScheduleResponse | undefined>();
@@ -70,14 +66,7 @@ export default function TreatmentPhaseManager({
       <ScheduleCreateDialog
         isOpen={isScheduleDialogOpen}
         onClose={() => setIsScheduleDialogOpen(false)}
-        onSubmit={(newSchedule) => {
-          if (selectedSchedule) {
-            onScheduleEdit(newSchedule as TreatmentScheduleResponse);
-          } else {
-            onScheduleCreate(newSchedule);
-          }
-          setIsScheduleDialogOpen(false);
-        }}
+        unsetServices={treatment.phases[currentPhasePosition - 1].unsetServices||[]}
       />
     </div>
   );

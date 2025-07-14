@@ -119,6 +119,28 @@ export const resetPasswordSchema = z.object({
   path: ["confirmPassword"],
 });
 
+export const scheduleSetRequestSchema = z.object({
+  title: z.string()
+    .min(1, "Tiêu đề buổi hẹn là bắt buộc")
+    .max(50, "Tiêu đề buổi hẹn không được quá 50 ký tự"),
+  appointmentDateTime: z.date()
+    .min(new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000), "Buổi hẹn phải được đặt ít nhất 3 ngày trước"),
+  estimatedTime: z.date()
+    .max(new Date(new Date().getTime() + 120 * 24 * 60 * 60 * 1000), "Buổi hẹn phải được đặt ít nhất 120 ngày trước"),
+  scheduleServices: z.array(z.object({
+    serviceId: z.string(),
+    id: z.string()
+  })).min(1, "Phải chọn ít nhất 1 dịch vụ")
+}).refine((data) => {
+  const appointmentTime = new Date(data.appointmentDateTime);
+  const estimatedTime = new Date(data.estimatedTime);
+  const minEstimatedTime = new Date(appointmentTime.getTime() + 10 * 60 * 1000);
+  return estimatedTime >= minEstimatedTime;
+}, {
+  message: "Thời gian dự kiến phải cách thời gian hẹn ít nhất 10 phút",
+  path: ["estimatedTime"]
+})
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;

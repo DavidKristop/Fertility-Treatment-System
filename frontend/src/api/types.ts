@@ -98,6 +98,10 @@ export interface ServiceResponse {
   active: boolean;
 }
 
+export interface TreatmentServiceResponse extends ServiceResponse{
+  serviceId:string
+}
+
 export interface DrugResponse {
   id: string;
   name: string;
@@ -168,7 +172,7 @@ export interface PhaseResponse {
   schedules?: TreatmentScheduleResponse[];
   complete?:boolean;
   assignDrugs?: AssignDrugResponse[];
-  unsetServices?: ServiceResponse[];
+  unsetServices?: TreatmentServiceResponse[];
 }
 
 export interface ProtocolPhaseResponse{
@@ -204,7 +208,7 @@ export interface ScheduleResponse{
 }
 
 export interface TreatmentScheduleResponse extends ScheduleResponse{
-  services: ScheduleService[];
+  services: TreatmentServiceResponse[];
   payment: PaymentPreviewResponse[];
 }
 
@@ -361,28 +365,35 @@ export interface TreatmentPhaseSetRequest{
 }
 
 export interface ScheduleSetRequest{
-  scheduleId: string|null,
+  scheduleId: string|"",
+  title: string,
   appointmentDateTime: string,
   estimatedTime: string,
-  scheduleServices: 
-  ({
-    id: string|null,
-    serviceId: string
-  })[]
+  scheduleServices: (ScheduleServiceSetRequest)[]
+}
+
+export interface ScheduleServiceSetRequest{
+  id: string|"",
+  serviceId: string,
+  name:string,
+  inputId:string,
+  isUnset:boolean
 }
 
 export interface AssignDrugSetRequest{
-  assignDrugId: string|null,
-  patientDrugs: 
-  ({
-    patientDrugId: string|null,
-    drugId: string,
-    usageInstructions: string,
-    startDate: string,
-    endDate: string,
-    dosage: string,
-    amount: number
-  })[]
+  assignDrugId: string|"",
+  patientDrugs: (DrugSetRequest)[]
+}
+
+export interface DrugSetRequest{
+  id: string|"",
+  drugId: string,
+  usageInstructions: string,
+  name:string,
+  startDate: string,
+  endDate: string,
+  dosage: string,
+  amount: number
 }
 // ==================== DASHBOARD TYPES ====================
 export interface PatientDashboardPayloadResponse {

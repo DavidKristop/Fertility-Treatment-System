@@ -108,17 +108,11 @@ export default function TreatmentDetail(){
             <TreatmentInfoCard treatment={treatmentDetail!} />
           </FormSection>
         </Grid>
-        <Grid size={{xs: 12, md: 8}}>
+        <Grid size={12}>
           <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
             <TreatmentPhaseManager
               treatment={treatmentDetail!}
               initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
-              onScheduleCreate={(schedule) => {
-                // Handle schedule creation
-              }}
-              onScheduleEdit={(schedule) => {
-                // Handle schedule edit
-              }}
             />
           </FormSection>
         </Grid>

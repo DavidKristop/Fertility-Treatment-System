@@ -21,8 +21,11 @@ const localizer = dateFnsLocalizer({
 interface CustomCalendarProps {
   schedules: ScheduleDetailResponse[];
   drugs: PatientDrugResponse[];
+  initialView?: View;
   isDoctorPov?: boolean;
   hasFilterStatus?: boolean;
+  canChangeView?: boolean;
+  calendarStyle?: React.CSSProperties;
   onNavigate: (startDate: Date,endDate: Date,filterStatus?: ScheduleStatus | "ALL")=>void;
   onScheduleClick?: (schedule: ScheduleDetailResponse) => void;
   onDrugClick?: (drug: PatientDrugResponse) => void;
@@ -65,9 +68,9 @@ interface CalendarEvent extends Event {
   schedule?: ScheduleDetailResponse;
 }
 
-export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,hasFilterStatus=false }: CustomCalendarProps) {
+export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,hasFilterStatus=false, calendarStyle, initialView=Views.MONTH, canChangeView=true }: CustomCalendarProps) {
   const [events, setEvents] = useState<CalendarEvent[]>([])
-  const [currView,setCurrView] = useState<View>(Views.MONTH)
+  const [currView,setCurrView] = useState<View>(initialView)
   const [currentDate, setCurrentDate] = useState(new Date());
   const [filterStatus, setFilterStatus] = useState<ScheduleStatus | "ALL">("ALL");
 
@@ -195,11 +198,11 @@ export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,o
       </CardHeader>
       <CardContent>
         <Calendar
-          style={{ height: '700px' }}
+          style={{ height: `700px`, ...calendarStyle }}
           localizer={localizer}
           events={events}
           onView={handleChangeView}
-          views={[Views.WEEK, Views.MONTH, Views.DAY]}
+          views={canChangeView?[Views.WEEK, Views.MONTH, Views.DAY]:[currView]}
           view={currView}
           date={currentDate}
           onNavigate={handleNavigate}
