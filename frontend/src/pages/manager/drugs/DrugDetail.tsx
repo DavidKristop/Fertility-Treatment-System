@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Pill } from "lucide-react"
 import ManagerLayout from "@/components/manager/ManagerLayout"
 import DrugDetailForm from "@/components/manager/drugs/DrugDetailForm"
-import { getDrugDetail } from "@/api/drug"
+import { getDrugDetail, deactivateDrug, reactivateDrug } from "@/api/drug"
 import type { DrugResponse } from "@/api/types"
 import { toast } from "react-toastify"
 
@@ -55,12 +55,11 @@ export default function DrugDetail() {
     if (!drug) return
     setActionLoading(true)
     try {
-      // TODO: Implement deactivate API call
-      toast.info(`Vô hiệu hóa thuốc ${drug.name} - Chức năng sẽ được phát triển`)
-      // After successful deactivation, refresh data
-      // await fetchDrugDetail()
+      await deactivateDrug(drug.id)
+      toast.success(`Thuốc ${drug.name} đã được vô hiệu hóa thành công!`)
+      await fetchDrugDetail() // Refresh data after action
     } catch (error) {
-      toast.error("Lỗi khi vô hiệu hóa thuốc")
+      toast.error(error instanceof Error ? error.message : "Lỗi khi vô hiệu hóa thuốc")
     } finally {
       setActionLoading(false)
     }
@@ -70,12 +69,11 @@ export default function DrugDetail() {
     if (!drug) return
     setActionLoading(true)
     try {
-      // TODO: Implement reactivate API call
-      toast.info(`Kích hoạt lại thuốc ${drug.name} - Chức năng sẽ được phát triển`)
-      // After successful reactivation, refresh data
-      // await fetchDrugDetail()
+      await reactivateDrug(drug.id)
+      toast.success(`Thuốc ${drug.name} đã được kích hoạt lại thành công!`)
+      await fetchDrugDetail() // Refresh data after action
     } catch (error) {
-      toast.error("Lỗi khi kích hoạt lại thuốc")
+      toast.error(error instanceof Error ? error.message : "Lỗi khi kích hoạt lại thuốc")
     } finally {
       setActionLoading(false)
     }

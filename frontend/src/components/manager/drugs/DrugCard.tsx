@@ -80,14 +80,6 @@ export default function DrugCard({
             <>
               <Button
                 size="sm"
-                variant="outline"
-                onClick={() => onEdit(drug.id)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Sửa
-              </Button>
-              <Button
-                size="sm"
                 variant="destructive"
                 onClick={() => onDeactivate(drug.id)}
                 disabled={isLoading}
@@ -106,24 +98,35 @@ export default function DrugCard({
               </Button>
             </>
           ) : (
-            <Button
-              size="sm"
-              variant="default"
-              onClick={() => onReactivate(drug.id)}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Đang xử lý...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Kích hoạt lại
-                </>
-              )}
-            </Button>
+            <>
+              {/* ✅ HIỂN THỊ edit button cho inactive drugs */}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onEdit(drug.id)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Sửa
+              </Button>
+              <Button
+                size="sm"
+                variant="default"
+                onClick={() => onReactivate(drug.id)}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Đang xử lý...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Kích hoạt lại
+                  </>
+                )}
+              </Button>
+            </>
           )}
         </div>
       </div>
