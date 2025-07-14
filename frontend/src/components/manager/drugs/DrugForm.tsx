@@ -1,20 +1,22 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Save, Pill } from "lucide-react"
-import { createDrug } from "@/api/drug"
-import type { DrugCreateRequest } from "@/api/types"
+import { createDrug, updateDrug } from "@/api/drug"
+import type { DrugCreateRequest, DrugResponse, DrugUpdateRequest } from "@/api/types"
 import { toast } from "react-toastify"
 
-interface CreateDrugFormProps {
+interface DrugFormProps {
+  drug?: DrugResponse // ✅ Optional for edit mode
+  mode: 'create' | 'edit' // ✅ Explicit mode
   onSuccess: () => void
   onCancel: () => void
 }
 
-export default function CreateDrugForm({ onSuccess, onCancel }: CreateDrugFormProps) {
+export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormProps) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<DrugCreateRequest>({
     name: "",
@@ -22,6 +24,28 @@ export default function CreateDrugForm({ onSuccess, onCancel }: CreateDrugFormPr
     price: 0,
     unit: ""
   })
+
+  const isEditMode = mode === 'edit'
+
+  // ✅ Initialize form data based on mode
+  useEffect(() => {
+    if (isEditMode && drug) {
+      setFormData({
+        name: drug.name,
+        description: drug.description,
+        price: drug.price,
+        unit: drug.unit
+      })
+    } else {
+      // Reset form for create mode
+      setFormData({
+        name: "",
+        description: "",
+        price: 0,
+        unit: ""
+      })
+    }
+  }, [drug, isEditMode])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,11 +70,19 @@ export default function CreateDrugForm({ onSuccess, onCancel }: CreateDrugFormPr
 
     setLoading(true)
     try {
-      await createDrug(formData)
-      toast.success("Thuốc đã được tạo thành công!")
+      if (isEditMode && drug) {
+        // ✅ Update existing drug
+        await updateDrug(drug.id, formData as DrugUpdateRequest)
+        toast.success("Thuốc đã được cập nhật thành công!")
+      } else {
+        // ✅ Create new drug
+        await createDrug(formData)
+        toast.success("Thuốc đã được tạo thành công!")
+      }
       onSuccess()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Lỗi khi tạo thuốc")
+      const action = isEditMode ? "cập nhật" : "tạo"
+      toast.error(error instanceof Error ? error.message : `Lỗi khi ${action} thuốc`)
     } finally {
       setLoading(false)
     }
@@ -63,12 +95,23 @@ export default function CreateDrugForm({ onSuccess, onCancel }: CreateDrugFormPr
     }))
   }
 
+  const getTitle = () => {
+    return isEditMode ? "Chỉnh sửa thông tin thuốc" : "Thông tin thuốc"
+  }
+
+  const getSubmitButtonText = () => {
+    if (loading) {
+      return isEditMode ? "Đang cập nhật..." : "Đang tạo..."
+    }
+    return isEditMode ? "Cập nhật thuốc" : "Tạo thuốc"
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Pill className="h-5 w-5" />
-          Thông tin thuốc
+          {getTitle()}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -154,12 +197,12 @@ export default function CreateDrugForm({ onSuccess, onCancel }: CreateDrugFormPr
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Đang tạo...
+                  {getSubmitButtonText()}
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  Tạo thuốc
+                  {getSubmitButtonText()}
                 </>
               )}
             </Button>

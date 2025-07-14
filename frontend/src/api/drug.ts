@@ -1,5 +1,5 @@
 import { fetchWrapper } from "."
-import type { ApiPaginationResponse, ApiResponse, DrugResponse, DrugCreateRequest } from "./types";
+import type { ApiPaginationResponse, ApiResponse, DrugResponse, DrugCreateRequest, DrugUpdateRequest } from "./types";
 
 export const getDrugs = async ({ 
   page = 0, 
@@ -53,6 +53,64 @@ export const createDrug = async (drugData: DrugCreateRequest): Promise<ApiRespon
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to create drug');
+  }
+
+  return response.json();
+}
+
+// ✅ Thêm API update drug
+export const updateDrug = async (id: string, drugData: DrugUpdateRequest): Promise<ApiResponse<DrugResponse>> => {
+  const response = await fetchWrapper(
+    `drugs/${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(drugData),
+    },
+    true
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to update drug');
+  }
+
+  return response.json();
+}
+
+// ✅ Thêm API deactivate drug
+export const deactivateDrug = async (id: string): Promise<ApiResponse<string>> => {
+  const response = await fetchWrapper(
+    `drugs/deactivate/${id}`,
+    {
+      method: 'POST',
+    },
+    true
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to deactivate drug');
+  }
+
+  return response.json();
+}
+
+// ✅ Thêm API reactivate drug
+export const reactivateDrug = async (id: string): Promise<ApiResponse<string>> => {
+  const response = await fetchWrapper(
+    `drugs/reactivate/${id}`,
+    {
+      method: 'POST',
+    },
+    true
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to reactivate drug');
   }
 
   return response.json();
