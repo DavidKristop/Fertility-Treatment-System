@@ -1,12 +1,10 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, Pill, RefreshCw } from "lucide-react"
+import { Plus, RefreshCw } from "lucide-react"
 import ManagerLayout from "@/components/manager/ManagerLayout"
-import DrugCard from "@/components/manager/drugs/DrugCard"
+import DrugList from "@/components/manager/drugs/DrugList"
 import SearchAndFilter from "@/components/manager/drugs/SearchAndFilter"
-import Pagination from "@/components/layout/Pagination"
 import { getDrugs } from "@/api/drug"
 import type { DrugResponse } from "@/api/types"
 import { toast } from "react-toastify"
@@ -62,7 +60,6 @@ export default function DrugsManagement() {
     setPage(newPage - 1)
   }
 
-  // Drug actions - Cập nhật để navigate đến trang riêng
   const handleViewDrug = (drugId: string) => {
     navigate(`/manager/drugs/${drugId}`)
   }
@@ -74,10 +71,7 @@ export default function DrugsManagement() {
   const handleDeactivateDrug = async (drugId: string) => {
     setActionLoading(drugId)
     try {
-      // TODO: Implement deactivate API call
       toast.info(`Vô hiệu hóa thuốc ${drugId} - Chức năng sẽ được phát triển`)
-      // After successful deactivation, refresh the list
-      // await fetchDrugs()
     } catch (error) {
       toast.error("Lỗi khi vô hiệu hóa thuốc")
     } finally {
@@ -88,10 +82,7 @@ export default function DrugsManagement() {
   const handleReactivateDrug = async (drugId: string) => {
     setActionLoading(drugId)
     try {
-      // TODO: Implement reactivate API call
       toast.info(`Kích hoạt lại thuốc ${drugId} - Chức năng sẽ được phát triển`)
-      // After successful reactivation, refresh the list
-      // await fetchDrugs()
     } catch (error) {
       toast.error("Lỗi khi kích hoạt lại thuốc")
     } finally {
@@ -107,7 +98,6 @@ export default function DrugsManagement() {
     fetchDrugs()
   }, [page, statusFilter])
 
-  // ✅ Auto search với debounce
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchTerm !== undefined) {
@@ -118,12 +108,6 @@ export default function DrugsManagement() {
 
     return () => clearTimeout(timeoutId)
   }, [searchTerm])
-
-  const { paginatedDrugs } = useMemo(() => {
-    return {
-      paginatedDrugs: drugs
-    }
-  }, [drugs])
 
   return (
     <ManagerLayout title="Quản lý thuốc" breadcrumbs={breadcrumbs}>
@@ -155,81 +139,23 @@ export default function DrugsManagement() {
           searchPlaceholder="Tìm kiếm thuốc..."
         />
 
-        {/* Results Summary */}
-        <div className="flex justify-between items-center text-sm text-gray-600">
-          <span>
-            Hiển thị {paginatedDrugs.length} trong tổng số {totalElements} thuốc
-          </span>
-          {totalPages > 1 && (
-            <span>
-              Trang {page + 1} / {totalPages}
-            </span>
-          )}
-        </div>
-
-        {/* Drugs Grid */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Pill className="h-5 w-5" />
-              Danh sách thuốc ({totalElements} kết quả)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p>Đang tải...</p>
-              </div>
-            ) : paginatedDrugs.length === 0 ? (
-              <div className="text-center py-12">
-                <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Không có thuốc nào
-                </h3>
-                <p className="text-gray-500">
-                  {searchTerm.trim() ? "Thử tìm kiếm với tên khác" : 
-                   statusFilter === "active" ? "Chưa có thuốc hoạt động nào" : "Chưa có thuốc vô hiệu hóa nào"}
-                </p>
-                <Button 
-                  className="mt-4" 
-                  onClick={() => navigate("/manager/drugs/create")}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tạo thuốc đầu tiên
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {/* Drugs Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {paginatedDrugs.map((drug) => (
-                    <DrugCard
-                      key={drug.id}
-                      drug={drug}
-                      onView={handleViewDrug}
-                      onEdit={handleEditDrug}
-                      onDeactivate={handleDeactivateDrug}
-                      onReactivate={handleReactivateDrug}
-                      actionLoading={actionLoading}
-                    />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="mt-6">
-                    <Pagination 
-                      currentPage={page + 1} 
-                      totalPages={totalPages} 
-                      onPageChange={handlePageChange} 
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* ✅ Drug List Component - Bỏ Card wrapper */}
+        <DrugList
+          drugs={drugs}
+          loading={loading}
+          statusFilter={statusFilter}
+          searchTerm={searchTerm}
+          currentPage={page + 1}
+          totalPages={totalPages}
+          totalElements={totalElements}
+          onViewDrug={handleViewDrug}
+          onEditDrug={handleEditDrug}
+          onDeactivateDrug={handleDeactivateDrug}
+          onReactivateDrug={handleReactivateDrug}
+          onPageChange={handlePageChange}
+          onRefresh={handleRefresh}
+          actionLoading={actionLoading}
+        />
       </div>
     </ManagerLayout>
   )

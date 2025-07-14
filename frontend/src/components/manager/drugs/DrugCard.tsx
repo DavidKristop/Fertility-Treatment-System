@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DollarSign, Package, Edit, Ban, CheckCircle, Eye } from "lucide-react"
+import { Edit, Eye, Ban, CheckCircle, DollarSign, Package } from "lucide-react"
 import type { DrugResponse } from "@/api/types"
 
 interface DrugCardProps {
@@ -9,7 +9,7 @@ interface DrugCardProps {
   onEdit: (drugId: string) => void
   onDeactivate: (drugId: string) => void
   onReactivate: (drugId: string) => void
-  actionLoading?: string | null
+  actionLoading: string | null
 }
 
 export default function DrugCard({ 
@@ -35,52 +35,46 @@ export default function DrugCard({
     )
   }
 
+  const isLoading = actionLoading === drug.id
+
   return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start">
-        <div className="flex-1 space-y-3">
-          {/* Header */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <h3 className="font-semibold text-lg text-gray-900">
+    <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <h3 className="text-lg font-semibold">
               {drug.name}
             </h3>
             {getStatusBadge(drug.active)}
           </div>
 
-          {/* Description */}
-          <p className="text-gray-600 text-sm line-clamp-2">
-            {drug.description}
-          </p>
+          <p className="text-gray-600 mb-3 line-clamp-2">{drug.description}</p>
 
-          {/* Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-600">Giá:</span>
-              <span className="font-semibold text-green-600">
+              <span className="text-gray-500">Giá:</span>
+              <span className="font-medium text-green-600">
                 {formatCurrency(drug.price)}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-600">Đơn vị:</span>
-              <span className="font-medium">
-                {drug.unit}
-              </span>
+              <span className="text-gray-500">Đơn vị:</span>
+              <span className="font-medium">{drug.unit}</span>
             </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="ml-4 flex flex-col gap-2">
+        <div className="flex flex-col gap-2 ml-4">
           <Button
-          size="sm"
-          variant="outline"
-          onClick={() => onView(drug.id)}
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          Xem
-        </Button>
+            size="sm"
+            variant="outline"
+            onClick={() => onView(drug.id)}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Xem
+          </Button>
           
           {drug.active ? (
             <>
@@ -95,30 +89,40 @@ export default function DrugCard({
               <Button
                 size="sm"
                 variant="destructive"
-                disabled={actionLoading === drug.id}
                 onClick={() => onDeactivate(drug.id)}
+                disabled={isLoading}
               >
-                {actionLoading === drug.id ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Đang xử lý...
+                  </>
                 ) : (
-                  <Ban className="h-4 w-4 mr-2" />
+                  <>
+                    <Ban className="h-4 w-4 mr-2" />
+                    Vô hiệu hóa
+                  </>
                 )}
-                Vô hiệu hóa
               </Button>
             </>
           ) : (
             <Button
               size="sm"
               variant="default"
-              disabled={actionLoading === drug.id}
               onClick={() => onReactivate(drug.id)}
+              disabled={isLoading}
             >
-              {actionLoading === drug.id ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Đang xử lý...
+                </>
               ) : (
-                <CheckCircle className="h-4 w-4 mr-2" />
+                <>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Kích hoạt lại
+                </>
               )}
-              Kích hoạt lại
             </Button>
           )}
         </div>
