@@ -80,20 +80,7 @@ const sidebarItemsProp: SidebarItem[] = [
     id: "prescriptions",
     label: "Đơn thuốc",
     icon: Pill,
-    children: [
-      {
-        id: "active-prescriptions",
-        label: "Đơn thuốc hiện tại",
-        icon: Pill,
-        path: "/patient/prescriptions/active",
-      },
-      {
-        id: "history-prescriptions",
-        label: "Lịch sử đơn thuốc",
-        icon: FileText,
-        path: "/patient/prescriptions/history",
-      },
-    ],
+    path: "/patient/prescriptions/history",
   },
   {
     id: "payments",
@@ -290,7 +277,7 @@ export default function PatientSidebar({ isCollapsed, onToggle, isMobile = false
           onClick={async () => {
             try {
               // Gọi API logout để xóa refresh token cookie
-              await logout({});
+              await logout();
               // Navigate sau khi logout thành công
               navigate("/authorization/login");
             } catch (error) {

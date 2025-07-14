@@ -1,11 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { fetchWrapper } from "@/api";
 import type { TreatmentPlan } from "@/api/types";
 import PatientLayout from "@/components/patient/PatientLayout";
 import { toast } from "react-toastify";
-import Pagination from "@/components/layout/Pagination";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const STATUS_OPTIONS = [
   { label: "Đang điều trị", value: "IN_PROGRESS" },
@@ -21,11 +34,19 @@ const formatDate = (isoDate?: string) => {
 };
 
 export default function TreatmentPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const statusParam = searchParams.get("status") || "IN_PROGRESS";
+  const pageParam = Number(searchParams.get("page"));
+
   const [treatments, setTreatments] = useState<TreatmentPlan[]>([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(0);
-  const [statusFilter, setStatusFilter] = useState("IN_PROGRESS");
+  const [statusFilter, setStatusFilter] = useState(statusParam);
+
+  useEffect(() => {
+    setSearchParams({ status: statusFilter, page: String(page) });
+  }, [statusFilter, page]);
 
   useEffect(() => {
     const fetchTreatments = async () => {
@@ -65,10 +86,13 @@ export default function TreatmentPage() {
         {/* Bộ lọc trạng thái */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Lọc theo trạng thái</label>
-          <Select value={statusFilter} onValueChange={(value) => {
-            setStatusFilter(value);
-            setPage(0);
-          }}>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => {
+              setStatusFilter(value);
+              setPage(0);
+            }}
+          >
             <SelectTrigger className="w-60">
               <SelectValue />
             </SelectTrigger>
@@ -88,7 +112,9 @@ export default function TreatmentPage() {
 
         {/* Danh sách điều trị */}
         {!loading && treatments.length === 0 && (
-          <p className="text-gray-500 italic">Bạn chưa có kế hoạch điều trị nào phù hợp với bộ lọc.</p>
+          <p className="text-gray-500 italic">
+            Bạn chưa có kế hoạch điều trị nào phù hợp với bộ lọc.
+          </p>
         )}
         {!loading && treatments.length > 0 && (
           <div className="space-y-4">
@@ -116,13 +142,30 @@ export default function TreatmentPage() {
         )}
 
         {/* Phân trang */}
-        {totalPages > 1 && (
-          <div className="flex justify-center pt-6">
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={(newPage) => setPage(newPage)}
-            />
+        {totalPages > 0 && (
+          <div className="mt-6 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious onClick={() => setPage((p) => Math.max(0, p - 1))} />
+                </PaginationItem>
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <PaginationItem key={idx}>
+                    <PaginationLink
+                      isActive={page === idx}
+                      onClick={() => setPage(idx)}
+                    >
+                      {idx + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         )}
       </div>

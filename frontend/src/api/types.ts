@@ -67,6 +67,17 @@ export interface PatientProfile extends UserProfile {
   medicalHistory: string;
 }
 
+export interface DoctorResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  specialty: string;
+  degree: string;
+  yearsOfExperience: number;
+  licenseNumber: string;
+}
 // ==================== API RESPONSE TYPES ====================
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -103,23 +114,35 @@ export interface DrugResponse {
   name: string;
   description: string;
   price: number;
-  unit?: string;
-  active?: boolean;
+  unit: string;
+  active: boolean;
 }
 
 export interface PatientDrugResponse {
-  id: string;
-  drug: DrugResponse;
   dosage: string;
   usageInstructions: string;
   amount: number;
+  drugName: string;
+  drugPrice: number;
+  startDate: string;
+  endDate: string;
 }
 
 export interface AssignDrugResponse {
   id: string;
-  status: string;
-  completeDate: string;
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  completeDate?: string;
+  createdAt?: string;
+  treatmentPhaseName?: string;
+  patientName?: string;
   patientDrugs: PatientDrugResponse[];
+}
+
+export interface DrugCreateRequest {
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
 }
 
 // ==================== SCHEDULE & APPOINTMENT TYPES ====================
@@ -148,13 +171,27 @@ export interface PhaseResponse {
   description: string;
   position: number;
   phaseModifierPercentage: number;
-  refundPercentage?: number;
+  refundPercentage: number;
   services?: ServiceResponse[];
   drugs?: DrugResponse[];
   schedules?: ServiceResponse[];
   assignDrugs?: AssignDrugResponse[];
   unsetServices?: ServiceResponse[];
 }
+
+export interface CreateProtocolRequest {
+  title: string;
+  description: string;
+  refundPercentage?: number;
+  phases: {
+    title: string;
+    description: string;
+    phaseModifierPercentage: number;
+    serviceIds?: string[];
+    drugIds?: string[];
+  }[];
+}
+
 
 export interface ProtocolResponse {
   id: string;
@@ -210,7 +247,6 @@ export interface TreatmentPlan {
     estimatedPrice: number;
   };
 }
-
 
 // ==================== CONTRACT TYPES ====================
 export interface ContractResponse {

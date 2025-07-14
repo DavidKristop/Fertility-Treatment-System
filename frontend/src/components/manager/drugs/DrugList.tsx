@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { FileText, RefreshCw } from "lucide-react"
+import { Pill } from "lucide-react"
 import { 
   Pagination, 
   PaginationContent, 
@@ -9,31 +9,31 @@ import {
   PaginationPrevious,
   PaginationEllipsis 
 } from "@/components/ui/pagination"
-import ContractCard from "./ContractCard"
-import ContractStatusWarnings from "./ContractStatusWarnings"
-import type { ContractResponse } from "@/api/types"
+import DrugCard from "./DrugCard"
+import type { DrugResponse } from "@/api/types"
 
-type ContractStatusFilter = "all" | "pending" | "signed"
-interface ContractListProps {
-  contracts: ContractResponse[]
+type DrugStatusFilter = "active" | "inactive"
+
+interface DrugListProps {
+  drugs: DrugResponse[]
   loading: boolean
-  error: string | null
-  statusFilter: ContractStatusFilter
+  error?: string | null
+  statusFilter: DrugStatusFilter
   searchTerm: string
   currentPage: number
   totalPages: number
   totalElements: number
-  onViewContract: (contract: ContractResponse) => void
-  onSignContract?: (contractId: string) => void
-  onDownloadContract: (contractId: string) => void
+  onViewDrug: (drugId: string) => void
+  onEditDrug: (drugId: string) => void
+  onDeactivateDrug: (drugId: string) => void
+  onReactivateDrug: (drugId: string) => void
   onPageChange: (page: number) => void
   onRefresh: () => void
-  showPatientInfo?: boolean
-  userRole?: "patient" | "manager"
+  actionLoading: string | null
 }
 
-export default function ContractList({
-  contracts,
+export default function DrugList({
+  drugs,
   loading,
   error,
   statusFilter,
@@ -41,47 +41,36 @@ export default function ContractList({
   currentPage,
   totalPages,
   totalElements,
-  onViewContract,
-  onSignContract,
-  onDownloadContract,
+  onViewDrug,
+  onEditDrug,
+  onDeactivateDrug,
+  onReactivateDrug,
   onPageChange,
   onRefresh,
-  showPatientInfo = false,
-  userRole = "patient"
-}: ContractListProps) {
-  // Filter contracts by search term
-  const filteredContracts = contracts.filter(contract => {
-    if (searchTerm === "") return true
+  actionLoading
+}: DrugListProps) {
+  // Filter drugs by search term
+  const filteredDrugs = drugs.filter(drug => {
+    if (!searchTerm.trim()) return true
     
     const searchLower = searchTerm.toLowerCase()
-    const searchFields = [
-      contract.treatment?.description,
-      contract.treatment?.protocol?.title,
-      contract.treatment?.doctor?.fullName,
-      ...(showPatientInfo ? [contract.treatment?.patient?.fullName] : [])
-    ]
-    
-    return searchFields.some(field => 
-      field?.toLowerCase().includes(searchLower)
-    )
+    return drug.name.toLowerCase().includes(searchLower) ||
+           drug.description.toLowerCase().includes(searchLower) ||
+           drug.unit.toLowerCase().includes(searchLower)
   })
 
   const getEmptyMessage = () => {
-    if (searchTerm) {
-      return "Không tìm thấy hợp đồng phù hợp"
+    if (searchTerm.trim()) {
+      return "Thử tìm kiếm với từ khóa khác"
     }
     
     switch (statusFilter) {
-      case "pending":
-        return userRole === "patient" 
-          ? "Hợp đồng mới sẽ xuất hiện sau khi bác sĩ tạo kế hoạch điều trị"
-          : "Hợp đồng mới sẽ xuất hiện khi có điều trị được tạo"
-      case "signed":
-        return userRole === "patient" 
-          ? "Bạn chưa ký hợp đồng nào"
-          : "Chưa có hợp đồng nào được ký"
+      case "active":
+        return "Chưa có thuốc hoạt động nào"
+      case "inactive":
+        return "Chưa có thuốc vô hiệu hóa nào"
       default:
-        return "Các hợp đồng sẽ xuất hiện tại đây"
+        return "Các thuốc sẽ xuất hiện tại đây"
     }
   }
 
@@ -89,7 +78,7 @@ export default function ContractList({
     return (
       <div className="text-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-        <p>Đang tải danh sách hợp đồng...</p>
+        <p>Đang tải danh sách thuốc...</p>
       </div>
     )
   }
@@ -98,7 +87,7 @@ export default function ContractList({
     return (
       <div className="text-center py-12">
         <div className="text-red-500 mb-4">
-          <FileText className="h-12 w-12 mx-auto mb-2" />
+          <Pill className="h-12 w-12 mx-auto mb-2" />
           <p>{error}</p>
         </div>
         <Button onClick={onRefresh} variant="outline">
@@ -108,15 +97,15 @@ export default function ContractList({
     )
   }
 
-  if (filteredContracts.length === 0) {
+  if (filteredDrugs.length === 0) {
     return (
       <div className="text-center py-12">
-        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          {searchTerm ? "Không tìm thấy hợp đồng phù hợp" : "Chưa có hợp đồng nào"}
+          {searchTerm.trim() ? "Không tìm thấy thuốc phù hợp" : "Chưa có thuốc nào"}
         </h3>
         <p className="text-gray-600">
-          {searchTerm ? "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc" : getEmptyMessage()}
+          {getEmptyMessage()}
         </p>
       </div>
     )
@@ -124,19 +113,18 @@ export default function ContractList({
 
   return (
     <div className="space-y-6">
-      {/* Status Warnings */}
-      <ContractStatusWarnings statusFilter={statusFilter} userRole={userRole} />
 
-      {/* ✅ Contract Cards - Bỏ Card wrapper */}
+      {/* Drug Cards */}
       <div className="space-y-4">
-        {filteredContracts.map((contract) => (
-          <ContractCard
-            key={contract.id}
-            contract={contract}
-            onView={onViewContract}
-            onSign={onSignContract}
-            onDownload={onDownloadContract}
-            showPatientInfo={showPatientInfo}
+        {filteredDrugs.map((drug) => (
+          <DrugCard
+            key={drug.id}
+            drug={drug}
+            onView={onViewDrug}
+            onEdit={onEditDrug}
+            onDeactivate={onDeactivateDrug}
+            onReactivate={onReactivateDrug}
+            actionLoading={actionLoading}
           />
         ))}
       </div>
@@ -149,23 +137,23 @@ export default function ContractList({
               <PaginationItem>
                 <PaginationPrevious 
                   onClick={() => onPageChange(currentPage - 1)}
-                  className={currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                 />
               </PaginationItem>
               
               {/* First page */}
-              {currentPage > 2 && (
+              {currentPage > 3 && (
                 <>
                   <PaginationItem>
                     <PaginationLink 
-                      onClick={() => onPageChange(0)}
-                      isActive={currentPage === 0}
+                      onClick={() => onPageChange(1)}
+                      isActive={currentPage === 1}
                       className="cursor-pointer"
                     >
                       1
                     </PaginationLink>
                   </PaginationItem>
-                  {currentPage > 3 && (
+                  {currentPage > 4 && (
                     <PaginationItem>
                       <PaginationEllipsis />
                     </PaginationItem>
@@ -174,10 +162,10 @@ export default function ContractList({
               )}
               
               {/* Visible pages */}
-              {Array.from({ length: totalPages }, (_, i) => i)
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter(page => 
-                  page >= Math.max(0, currentPage - 2) && 
-                  page <= Math.min(totalPages - 1, currentPage + 2)
+                  page >= Math.max(1, currentPage - 2) && 
+                  page <= Math.min(totalPages, currentPage + 2)
                 )
                 .map(page => (
                   <PaginationItem key={page}>
@@ -186,23 +174,23 @@ export default function ContractList({
                       isActive={currentPage === page}
                       className="cursor-pointer"
                     >
-                      {page + 1}
+                      {page}
                     </PaginationLink>
                   </PaginationItem>
                 ))}
               
               {/* Last page */}
-              {currentPage < totalPages - 3 && (
+              {currentPage < totalPages - 2 && (
                 <>
-                  {currentPage < totalPages - 4 && (
+                  {currentPage < totalPages - 3 && (
                     <PaginationItem>
                       <PaginationEllipsis />
                     </PaginationItem>
                   )}
                   <PaginationItem>
                     <PaginationLink 
-                      onClick={() => onPageChange(totalPages - 1)}
-                      isActive={currentPage === totalPages - 1}
+                      onClick={() => onPageChange(totalPages)}
+                      isActive={currentPage === totalPages}
                       className="cursor-pointer"
                     >
                       {totalPages}
@@ -214,7 +202,7 @@ export default function ContractList({
               <PaginationItem>
                 <PaginationNext 
                   onClick={() => onPageChange(currentPage + 1)}
-                  className={currentPage === totalPages - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                 />
               </PaginationItem>
             </PaginationContent>

@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import PatientLayout from "@/components/patient/PatientLayout"
 import ContractHeader from "@/components/contracts/ContractHeader"
 import ContractFilters from "@/components/contracts/ContractFilters"
 import ContractList from "@/components/contracts/ContractList"
-import ContractDetailModal from "@/components/contracts/ContractDetailModal"
 import ContractSignModal from "@/components/contracts/ContractSignModal"
 import { getPatientContracts } from "@/api/contract"
 import { useContractManagement } from "@/hooks/useContractManagement"
@@ -15,9 +15,8 @@ import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
 
 export default function PatientContracts() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedContract, setSelectedContract] = useState<ContractResponse | null>(null)
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
 
   // Business logic hooks
   const contractManager = useContractManagement({
@@ -35,8 +34,7 @@ export default function PatientContracts() {
   ]
 
   const handleViewContract = (contract: ContractResponse) => {
-    setSelectedContract(contract)
-    setIsDetailModalOpen(true)
+    navigate(`/patient/contracts/${contract.id}`)
   }
 
   const handleDownloadContract = (contractId: string) => {
@@ -86,15 +84,6 @@ export default function PatientContracts() {
       </div>
 
       {/* Modals */}
-      <ContractDetailModal
-        contract={selectedContract}
-        isOpen={isDetailModalOpen}
-        onClose={() => {
-          setIsDetailModalOpen(false)
-          setSelectedContract(null)
-        }}
-      />
-
       <ContractSignModal
         contract={patientActions.signingContract}
         isOpen={patientActions.isSignModalOpen}
