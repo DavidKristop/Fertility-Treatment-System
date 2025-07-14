@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Bell, Search, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { auth } from "@/api";
-import { useNavigate } from "react-router-dom";
+import { me } from "@/api/auth";
 
 interface ManagerHeaderProps {
   title: string;
@@ -23,6 +25,22 @@ export default function ManagerHeader({
 }: ManagerHeaderProps) {
   const navigate = useNavigate()
 
+  const [userName, setUserName] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>("");
+
+  // ✅ Fetch current user info
+  useEffect(() => {
+    (async () => {
+      try {
+        const payload = await me(); // GET /auth/me
+        setUserName(payload.fullName ?? payload.email);
+        setUserRole(payload.role);
+      } catch {
+        navigate("/authorization/login", { replace: true });
+      }
+    })();
+  }, [navigate]);
+
   const handleLogout = async () => {
   try {
     await auth.logout(); // POST /auth/logout
@@ -32,6 +50,15 @@ export default function ManagerHeader({
     navigate("/authorization/login", { replace: true });
   }
 };
+
+const roleLabelMap: Record<string, string> = {
+    ROLE_PATIENT: "Bệnh nhân",
+    ROLE_DOCTOR: "Bác sĩ", 
+    ROLE_MANAGER: "Quản lý",
+    ROLE_ADMIN: "Admin",
+};
+const roleLabel = roleLabelMap[userRole] ?? userRole;
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -85,8 +112,9 @@ export default function ManagerHeader({
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div className="hidden md:block text-left">
-                  <div className="text-sm font-medium">Trần Văn Minh</div>
-                  <div className="text-xs text-gray-500">Quản lý</div>
+                  {/* ✅ Use dynamic user info */}
+                  <div className="text-sm font-medium">{userName}</div>
+                  <div className="text-xs text-gray-500">{roleLabel}</div>
                 </div>
               </Button>
             </DropdownMenuTrigger>
