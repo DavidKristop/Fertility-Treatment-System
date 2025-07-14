@@ -146,10 +146,10 @@ export interface DrugCreateRequest {
 }
 
 export interface DrugUpdateRequest {
-  name: string
-  description: string
-  price: number
-  unit: string
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
 }
 
 // ==================== SCHEDULE & APPOINTMENT TYPES ====================
