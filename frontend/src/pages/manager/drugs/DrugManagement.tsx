@@ -5,7 +5,7 @@ import { Plus, RefreshCw } from "lucide-react"
 import ManagerLayout from "@/components/manager/ManagerLayout"
 import DrugList from "@/components/manager/drugs/DrugList"
 import SearchAndFilter from "@/components/manager/drugs/SearchAndFilter"
-import { getDrugs } from "@/api/drug"
+import { getDrugs, deactivateDrug, reactivateDrug } from "@/api/drug" // ✅ Import real APIs
 import type { DrugResponse } from "@/api/types"
 import { toast } from "react-toastify"
 
@@ -68,23 +68,29 @@ export default function DrugsManagement() {
     navigate(`/manager/drugs/edit/${drugId}`)
   }
 
+  // ✅ CẬP NHẬT: Implement real deactivate API thay vì toast.info
   const handleDeactivateDrug = async (drugId: string) => {
     setActionLoading(drugId)
     try {
-      toast.info(`Vô hiệu hóa thuốc ${drugId} - Chức năng sẽ được phát triển`)
+      await deactivateDrug(drugId)
+      toast.success("Thuốc đã được vô hiệu hóa thành công!")
+      await fetchDrugs() // Refresh data after action
     } catch (error) {
-      toast.error("Lỗi khi vô hiệu hóa thuốc")
+      toast.error(error instanceof Error ? error.message : "Lỗi khi vô hiệu hóa thuốc")
     } finally {
       setActionLoading(null)
     }
   }
 
+  // ✅ CẬP NHẬT: Implement real reactivate API thay vì toast.info
   const handleReactivateDrug = async (drugId: string) => {
     setActionLoading(drugId)
     try {
-      toast.info(`Kích hoạt lại thuốc ${drugId} - Chức năng sẽ được phát triển`)
+      await reactivateDrug(drugId)
+      toast.success("Thuốc đã được kích hoạt lại thành công!")
+      await fetchDrugs() // Refresh data after action
     } catch (error) {
-      toast.error("Lỗi khi kích hoạt lại thuốc")
+      toast.error(error instanceof Error ? error.message : "Lỗi khi kích hoạt lại thuốc")
     } finally {
       setActionLoading(null)
     }
@@ -139,7 +145,7 @@ export default function DrugsManagement() {
           searchPlaceholder="Tìm kiếm thuốc..."
         />
 
-        {/* ✅ Drug List Component - Bỏ Card wrapper */}
+        {/* Drug List Component */}
         <DrugList
           drugs={drugs}
           loading={loading}

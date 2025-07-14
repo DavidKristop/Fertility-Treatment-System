@@ -57,6 +57,7 @@ import ManagerContractDetail from "./pages/manager/contracts/ContractDetail";
 import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
 import DrugDetail from "./pages/manager/drugs/DrugDetail";
+import EditDrug from "./pages/manager/drugs/EditDrug";
 import ManagerAssignedDrugPage from "@/pages/manager/ManagerAssignDrugPage";
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
 import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
@@ -280,6 +281,7 @@ const router = createBrowserRouter([
           { index: true, element: <DrugsManagement /> },
           { path: "create", element: <CreateDrug />, },
           { path: ":id", element: <DrugDetail />, },
+          { path: "edit/:id", element: <EditDrug />, },
         ],
       },
       // fallback for manager subpaths
