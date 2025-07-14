@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import ManagerLayout from "@/components/manager/ManagerLayout"
-import CreateDrugForm from "@/components/manager/drugs/DrugForm"
+import DrugForm from "@/components/manager/drugs/DrugForm" // ✅ Reuse form
 
 export default function CreateDrug() {
   const navigate = useNavigate()
@@ -10,7 +10,7 @@ export default function CreateDrug() {
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/manager/dashboard" },
     { label: "Quản lý thuốc", path: "/manager/drugs" },
-    { label: "Thêm thuốc mới" },
+    { label: "Tạo thuốc mới" },
   ]
 
   const handleSuccess = () => {
@@ -22,7 +22,7 @@ export default function CreateDrug() {
   }
 
   return (
-    <ManagerLayout title="Thêm thuốc mới" breadcrumbs={breadcrumbs}>
+    <ManagerLayout title="Tạo thuốc mới" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -36,16 +36,17 @@ export default function CreateDrug() {
           </Button>
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
-              Thêm thuốc mới
+              Tạo thuốc mới
             </h2>
             <p className="text-gray-600">
-              Tạo một loại thuốc mới trong hệ thống
+              Thêm thông tin thuốc mới vào hệ thống
             </p>
           </div>
         </div>
 
-        {/* Form */}
-        <CreateDrugForm
+        {/* ✅ Reuse DrugForm in create mode */}
+        <DrugForm
+          mode="create"
           onSuccess={handleSuccess}
           onCancel={handleCancel}
         />

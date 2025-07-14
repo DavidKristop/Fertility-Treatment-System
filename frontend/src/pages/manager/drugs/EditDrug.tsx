@@ -3,22 +3,21 @@ import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Pill } from "lucide-react"
 import ManagerLayout from "@/components/manager/ManagerLayout"
-import DrugDetailForm from "@/components/manager/drugs/DrugDetailForm"
-import { getDrugDetail, deactivateDrug, reactivateDrug } from "@/api/drug"
+import DrugForm from "@/components/manager/drugs/DrugForm" // ✅ Reuse form
+import { getDrugDetail } from "@/api/drug"
 import type { DrugResponse } from "@/api/types"
 import { toast } from "react-toastify"
 
-export default function DrugDetail() {
+export default function EditDrug() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [drug, setDrug] = useState<DrugResponse | null>(null)
   const [loading, setLoading] = useState(true)
-  const [actionLoading, setActionLoading] = useState(false)
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/manager/dashboard" },
     { label: "Quản lý thuốc", path: "/manager/drugs" },
-    { label: "Chi tiết thuốc" },
+    { label: "Chỉnh sửa thuốc" },
   ]
 
   const fetchDrugDetail = async () => {
@@ -45,38 +44,12 @@ export default function DrugDetail() {
     }
   }
 
-  const handleEdit = () => {
-    if (drug) {
-      navigate(`/manager/drugs/edit/${drug.id}`)
-    }
+  const handleSuccess = () => {
+    navigate("/manager/drugs")
   }
 
-  const handleDeactivate = async () => {
-    if (!drug) return
-    setActionLoading(true)
-    try {
-      await deactivateDrug(drug.id)
-      toast.success(`Thuốc ${drug.name} đã được vô hiệu hóa thành công!`)
-      await fetchDrugDetail() // Refresh data after action
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Lỗi khi vô hiệu hóa thuốc")
-    } finally {
-      setActionLoading(false)
-    }
-  }
-
-  const handleReactivate = async () => {
-    if (!drug) return
-    setActionLoading(true)
-    try {
-      await reactivateDrug(drug.id)
-      toast.success(`Thuốc ${drug.name} đã được kích hoạt lại thành công!`)
-      await fetchDrugDetail() // Refresh data after action
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Lỗi khi kích hoạt lại thuốc")
-    } finally {
-      setActionLoading(false)
-    }
+  const handleCancel = () => {
+    navigate("/manager/drugs")
   }
 
   useEffect(() => {
@@ -85,7 +58,7 @@ export default function DrugDetail() {
 
   if (loading) {
     return (
-      <ManagerLayout title="Chi tiết thuốc" breadcrumbs={breadcrumbs}>
+      <ManagerLayout title="Chỉnh sửa thuốc" breadcrumbs={breadcrumbs}>
         <div className="flex justify-center items-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -98,7 +71,7 @@ export default function DrugDetail() {
 
   if (!drug) {
     return (
-      <ManagerLayout title="Chi tiết thuốc" breadcrumbs={breadcrumbs}>
+      <ManagerLayout title="Chỉnh sửa thuốc" breadcrumbs={breadcrumbs}>
         <div className="text-center py-12">
           <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -117,7 +90,7 @@ export default function DrugDetail() {
   }
 
   return (
-    <ManagerLayout title="Chi tiết thuốc" breadcrumbs={breadcrumbs}>
+    <ManagerLayout title="Chỉnh sửa thuốc" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -131,21 +104,20 @@ export default function DrugDetail() {
           </Button>
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
-              Chi tiết thuốc
+              Chỉnh sửa thuốc
             </h2>
             <p className="text-gray-600">
-              Thông tin chi tiết về thuốc {drug.name}
+              Cập nhật thông tin thuốc {drug.name}
             </p>
           </div>
         </div>
 
-        {/* Drug Detail Form */}
-        <DrugDetailForm
+        {/* ✅ Reuse DrugForm in edit mode */}
+        <DrugForm
           drug={drug}
-          onEdit={handleEdit}
-          onDeactivate={handleDeactivate}
-          onReactivate={handleReactivate}
-          actionLoading={actionLoading}
+          mode="edit"
+          onSuccess={handleSuccess}
+          onCancel={handleCancel}
         />
       </div>
     </ManagerLayout>
