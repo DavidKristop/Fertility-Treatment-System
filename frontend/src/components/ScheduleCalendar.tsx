@@ -21,13 +21,11 @@ const localizer = dateFnsLocalizer({
 interface CustomCalendarProps {
   schedules: ScheduleDetailResponse[];
   drugs: PatientDrugResponse[];
-  date: Date;
-  filterStatus?: "ALL" | ScheduleStatus;
   isDoctorPov?: boolean;
-  onNavigate: (startDate: Date,endDate: Date)=>void;
+  hasFilterStatus?: boolean;
+  onNavigate: (startDate: Date,endDate: Date,filterStatus?: ScheduleStatus | "ALL")=>void;
   onScheduleClick?: (schedule: ScheduleDetailResponse) => void;
   onDrugClick?: (drug: PatientDrugResponse) => void;
-  onFilterChange?: (status: "ALL" | ScheduleStatus) => void;
 }
 
 function getStatusColor(status: string) {
@@ -67,9 +65,11 @@ interface CalendarEvent extends Event {
   schedule?: ScheduleDetailResponse;
 }
 
-export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,onFilterChange,filterStatus }: CustomCalendarProps) {
+export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,hasFilterStatus=false }: CustomCalendarProps) {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [currView,setCurrView] = useState<View>(Views.MONTH)
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [filterStatus, setFilterStatus] = useState<ScheduleStatus | "ALL">("ALL");
 
   const getEventStyle = useCallback((event: CalendarEvent) => {
     const style = {
@@ -119,32 +119,31 @@ export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=f
   },[onScheduleClick, onDrugClick]);
 
   const handleOnFilterChange = useCallback((status: "ALL" | ScheduleStatus)=>{
-    if(onFilterChange){
-      onFilterChange(status)
-    }
-  },[onFilterChange])
+    setFilterStatus(status)
+  },[setFilterStatus])
 
   const handleNavigate = useCallback((newDate:Date, view:View)=>{
     switch (view) {
       case Views.MONTH:
-          onNavigate(startOfMonth(newDate), endOfMonth(newDate))
+          onNavigate(startOfMonth(newDate), endOfMonth(newDate),filterStatus)
         break;
       case Views.WEEK:
-          onNavigate(startOfWeek(newDate, { weekStartsOn: 1 }), endOfWeek(newDate, { weekStartsOn: 1 }))
+          onNavigate(startOfWeek(newDate, { weekStartsOn: 1 }), endOfWeek(newDate, { weekStartsOn: 1 }),filterStatus)
         break;
       case Views.DAY:
-          onNavigate(newDate, newDate)
+          onNavigate(newDate, newDate,filterStatus)
         break;
     }
-  },[onNavigate])
+    setCurrentDate(newDate)
+  },[onNavigate,filterStatus])
 
   const handleChangeView=useCallback((view:View)=>{
     setCurrView(view)
-    handleNavigate(date,view)
-  },[setCurrView,handleNavigate,date])
+    handleNavigate(currentDate,view)
+  },[setCurrView,handleNavigate,currentDate])
 
   useEffect(()=>{
-    handleNavigate(date,currView)
+    handleNavigate(currentDate,currView)
   },[filterStatus])
 
   useEffect(()=>{
@@ -172,7 +171,7 @@ export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=f
       <CardHeader className='flex justify-between items-center md:flex-row flex-col'>
         <CardTitle>Thời gian biểu</CardTitle>
         <div className="flex items-center gap-2 mb-4 md:flex-row flex-col">
-          {filterStatus && <>
+          {hasFilterStatus && <>
           <select
             className="border rounded px-2 py-1"
             value={filterStatus}
@@ -202,7 +201,7 @@ export default function ScheduleCalendar({ schedules, drugs, date, isDoctorPov=f
           onView={handleChangeView}
           views={[Views.WEEK, Views.MONTH, Views.DAY]}
           view={currView}
-          date={date}
+          date={currentDate}
           onNavigate={handleNavigate}
           step={10}
           timeslots={1}

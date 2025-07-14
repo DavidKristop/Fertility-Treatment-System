@@ -10,10 +10,6 @@ import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 export default function PatientDashboard() {
   const [doctorName, setDoctorName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
-  const [filterStatus, setFilterStatus] = useState<"ALL" | ScheduleStatus>(
-    "ALL"
-  );
-  const [currentDate, setCurrentDate] = useState(new Date());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,15 +23,14 @@ export default function PatientDashboard() {
     })();
   }, [navigate]);
 
-  const fetchSchedules =useCallback(async (startDate:Date, endDate:Date) => {
+  const fetchSchedules =useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
     try {
-      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" ? undefined : [filterStatus]);
-      setCurrentDate(startDate);
+      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
       setEvents(res.payload || []);
     } catch (err) {
       console.error(err);
     }
-  }, [filterStatus]); 
+  }, []); 
 
   if (!doctorName) {
     return (
@@ -56,13 +51,11 @@ export default function PatientDashboard() {
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
           <ScheduleCalendar
             schedules={events}
-            date={currentDate}
             isDoctorPov={true}
             onNavigate={fetchSchedules}
             onScheduleClick={(event)=>navigate(`/doctor/schedule-result/${event.id}`)}
             drugs={[]}
-            onFilterChange={(status)=>setFilterStatus(status)}
-            filterStatus={filterStatus}
+            hasFilterStatus={true}
           />
         </div>
         <Card>

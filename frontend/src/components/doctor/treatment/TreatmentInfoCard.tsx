@@ -10,9 +10,9 @@ interface TreatmentInfoCardProps {
 export default function TreatmentInfoCard({ treatment }: TreatmentInfoCardProps) {
   return (
     <CardContent>
-      <div className="space-y-6 flex justify-between">
+      <div className="space-y-6 flex flex-col md:flex-row justify-between">
         {/* Patient Info */}
-        <div className="space-y-4">
+        <div className="space-y-4 flex-1">
           <h4 className="font-medium">Thông tin bệnh nhân</h4>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ export default function TreatmentInfoCard({ treatment }: TreatmentInfoCardProps)
         </div>
 
         {/* Doctor Info */}
-        <div className="space-y-4">
+        <div className="space-y-4 flex-1">
           <h4 className="font-medium">Thông tin bác sĩ</h4>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export default function TreatmentInfoCard({ treatment }: TreatmentInfoCardProps)
         </div>
 
         {/* Treatment Info */}
-        <div className="space-y-4">
+        <div className="space-y-4 flex-1">
           <h4 className="font-medium">Thông tin điều trị</h4>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">

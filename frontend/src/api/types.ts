@@ -285,7 +285,7 @@ export interface TreatmentPlan {
 export interface ContractResponse {
   id: string;
   signDeadline: string;
-  treatmentId: string;
+  treatment: string;
   contractUrl: string;
   signed: boolean;
 }

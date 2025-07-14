@@ -29,13 +29,8 @@ const treatmentProgress = {
 export default function PatientDashboard() {
   const [patientName, setPatientName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
-  const [filterStatus, setFilterStatus] = useState<"ALL" | ScheduleStatus>(
-    "ALL"
-  );
-  const [currentDate, setCurrentDate] = useState(new Date());
 
   const navigate = useNavigate();
-  const initRef = useRef(false);
 
   const getPhaseStatus = (status: string) => {
     switch (status) {
@@ -60,15 +55,14 @@ export default function PatientDashboard() {
   }, [navigate]);
 
 
-  const fetchSchedules = useCallback(async (startDate:Date, endDate:Date) => {
+  const fetchSchedules = useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
     try {
-      const res = await getPatientScheduleInAMonth(startDate, endDate, filterStatus==="ALL" ? undefined : [filterStatus]);
-      setCurrentDate(startDate);
+      const res = await getPatientScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
       setEvents(res.payload || []);
     } catch (err) {
       console.error(err);
     }
-  }, [filterStatus]); 
+  }, []); 
 
   if (!patientName) {
     return (
@@ -166,11 +160,9 @@ export default function PatientDashboard() {
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
           <ScheduleCalendar
             schedules={events}
-            date={new Date()}
             onNavigate={fetchSchedules}
             onScheduleClick={(event)=>navigate(`/patient/schedule-result/${event.id}`)}
-            onFilterChange={(status)=>setFilterStatus(status)}
-            filterStatus={filterStatus}
+            hasFilterStatus={true}
             drugs={[]}
           />
         </div>

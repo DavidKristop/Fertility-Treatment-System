@@ -1,5 +1,5 @@
 import { getTreatmentDetaiICreated } from "@/api/treatment";
-import type { TreatmentResponse } from "@/api/types";
+import type { AssignDrugSetRequest, TreatmentPhaseSetRequest, TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,22 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FormSection from "@/components/doctor/common/FormSection";
+import { useFormik } from "formik";
 
 export default function TreatmentDetail(){
   const [isLoading, setIsLoading] = useState(false)
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentResponse | undefined>()
+
+  const formik = useFormik<TreatmentPhaseSetRequest>({
+    initialValues: {
+      phaseId: "",
+      schedules: [],
+      assignDrugs: []
+    },
+    onSubmit:async(request)=>{
+
+    }
+  })
 
   const {id} = useParams<{id: string}>()
 
@@ -42,6 +54,32 @@ export default function TreatmentDetail(){
   useEffect(()=>{
     if(id) fetchTreatmentDetail(id)
   },[id])
+
+  useEffect(()=>{
+    if(treatmentDetail){
+      const currentPhase = treatmentDetail.currentPhase
+      formik.setFieldValue("phaseId", currentPhase.id)
+      //Get all patientDrug that does not have a date yet and turn them into set request
+      const unsetDateDrug: AssignDrugSetRequest[] = []
+      currentPhase.assignDrugs?.forEach(assignDrug=>{
+        const unsetDrug: AssignDrugSetRequest = {
+          assignDrugId: assignDrug.id,
+          patientDrugs: []
+        }
+        assignDrug.patientDrugs.forEach(patientDrug=>{
+          if(!patientDrug.startDate){
+            unsetDrug.patientDrugs.push({
+                patientDrugId: patientDrug.id,
+                drugId: patientDrug.drug.id,
+                ...patientDrug
+              })  
+            }
+          })
+        unsetDateDrug.push(unsetDrug)
+      })
+      formik.setFieldValue("assignDrugs", unsetDateDrug)     
+    }
+  },[treatmentDetail])
 
   // Error state - schedule not found
   if (!isLoading && !treatmentDetail) {
