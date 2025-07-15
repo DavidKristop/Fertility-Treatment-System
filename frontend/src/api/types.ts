@@ -119,6 +119,8 @@ export interface DrugResponse {
 }
 
 export interface PatientDrugResponse {
+  id: string;
+  drug: DrugResponse;
   dosage: string;
   usageInstructions: string;
   amount: number;
