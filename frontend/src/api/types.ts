@@ -410,4 +410,6 @@ export type TreatmentStatus = "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAIT
 
 export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
+export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
+
 export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELLED";

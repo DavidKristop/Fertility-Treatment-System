@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import type { TreatmentResponse } from "@/api/types";
 import ScheduleList from "./ScheduleList";
 import { useState } from "react";
 import { useTreatmentDetail } from "@/lib/context/TreatmentDetailContext";
+import AssignDrugList from "./AssignDrugList";
 
 interface TreatmentPhaseManagerProps {
   initialPhasePosition: number;
@@ -53,6 +53,17 @@ export default function TreatmentPhaseManager({
             schedules={treatmentDetail?.phases[currentPhasePosition - 1].schedules || []}
             unsetServices={treatmentDetail?.phases[currentPhasePosition - 1].unsetServices||[]}
             phaseId={treatmentDetail?.phases[currentPhasePosition - 1].id}
+            isSettable={treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
+              && treatmentDetail.status==='IN_PROGRESS'
+            }
+          />
+
+          {/* Assign Drug Management */}
+          <AssignDrugList
+            assignDrugs={treatmentDetail?.phases[currentPhasePosition - 1].assignDrugs || []}
+            isSettable={treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
+              && treatmentDetail.status==='IN_PROGRESS'
+            }
           />
         </>
       }

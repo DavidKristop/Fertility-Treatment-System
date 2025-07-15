@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil } from "lucide-react";
-import type { ScheduleSetRequest, TreatmentScheduleResponse, TreatmentServiceResponse } from "@/api/types";
+import { Plus } from "lucide-react";
+import type { ScheduleSetRequest, ScheduleStatus, TreatmentScheduleResponse, TreatmentServiceResponse } from "@/api/types";
 import ScheduleSetDialog from "./ScheduleSetDialog";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function getStatusText(status: string) {
+function getStatusText(status: ScheduleStatus) {
   switch (status) {
     case 'PENDING':
       return 'Chờ xử lý';
@@ -24,35 +25,39 @@ interface ScheduleListProps {
   unsetServices: TreatmentServiceResponse[];
   schedules: TreatmentScheduleResponse[];
   phaseId:string;
+  isSettable?:boolean;
 }
 
 export default function ScheduleList({
   unsetServices,
   schedules,
   phaseId,
+  isSettable=true,
 }: ScheduleListProps) {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleSetRequest | undefined>(undefined);
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h4 className="text-sm font-medium">Lịch hẹn</h4>
-        <Button
+        {isSettable&&<Button
           variant="outline"
           size="sm"
           onClick={()=>setIsScheduleDialogOpen(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
           Tạo lịch hẹn mới
-        </Button>
+        </Button>}
       </div>
 
-      <div className="space-y-2  h-[350px] overflow-y-auto">
-        {schedules.map((schedule) => (
+      <div className="space-y-2 max-h-[350px] overflow-y-auto">
+        {schedules.length===0&&<p className="text-center text-gray-500">Không có lịch hẹn</p>}
+        {schedules.sort((a,b)=>new Date(a.appointmentDateTime).getTime() - new Date(b.appointmentDateTime).getTime()).map((schedule) => (
           <div
             key={schedule.id}
-            className="border rounded-md p-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200"
+            className="border cursor-pointer rounded-md p-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200"
             style={{
               backgroundColor: schedule.status === 'PENDING' ? '#FFF3E0' : 
                         schedule.status === 'CANCELLED' ? '#FFE7E7' : 
@@ -66,18 +71,21 @@ export default function ScheduleList({
               borderRadius: '4px',
             }}
             onClick={()=>{
-              setIsScheduleDialogOpen(true)
-              setSelectedSchedule({
-                scheduleId:schedule.id,
-                title:schedule.title,
-                appointmentDateTime:new Date(schedule.appointmentDateTime),
-                estimatedTime:new Date(schedule.estimatedTime),
-                scheduleServices:schedule.services.map((service)=>({
-                  ...service,
-                  isUnset:false,
-                  inputId:crypto.randomUUID(),
-                }))
-              })
+              if(isSettable) {
+                setIsScheduleDialogOpen(true)
+                setSelectedSchedule({
+                    scheduleId:schedule.id,
+                    title:schedule.title,
+                    appointmentDateTime:new Date(schedule.appointmentDateTime),
+                  estimatedTime:new Date(schedule.estimatedTime),
+                  scheduleServices:schedule.services.map((service)=>({
+                    ...service,
+                    isUnset:false,
+                    inputId:crypto.randomUUID(),
+                  }))
+                })
+              }
+              else navigate(`/doctor/schedule-result/${schedule.id}`)
             }}
           >
             <div>

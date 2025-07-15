@@ -17,6 +17,7 @@ import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { setTreatmentPhase } from "@/api/treatment";
 import { useTreatmentDetail } from "@/lib/context/TreatmentDetailContext";
 import type { PhaseResponse } from "@/api/types";
+import { useNavigate } from "react-router-dom";
 
 interface ScheduleSetDialog {
   isOpen: boolean;
@@ -44,6 +45,7 @@ export default function ScheduleSetDialog({
     inputId:crypto.randomUUID(),
   })))
   const [isSetting,setIsSetting] = useState(false)
+  const navigate = useNavigate()
 
   const [searchServiceInput,setSearchServiceInput] = useState<string>("")
   const [services,setServices] = useState<ServiceResponse[]>([])
@@ -117,13 +119,13 @@ export default function ScheduleSetDialog({
   const fetchSchedules =useCallback(async (startDate:Date, endDate:Date) => {
     try {
       const res = await getDoctorScheduleInAMonth(startDate, endDate, ["PENDING"]);
-      setSchedules(res.payload || []);
+      setSchedules(res.payload?.filter((s)=>s.id !== schedule?.scheduleId) || []);
       setSelectedDate(startDate)
     } catch (err) {
       console.error(err);
       toast.error((err as Error).message || "Lỗi khi tải lịch hẹn");
     }
-  }, []); 
+  }, [schedule]); 
   
   const handleRemoveService = useCallback((service: ScheduleServiceSetRequest) => {
     formik.setFieldValue(
@@ -222,69 +224,70 @@ export default function ScheduleSetDialog({
               />
             </div>
 
-            {/* Service Selection Section */}
+            
             <div className="space-y-4">
-              {/* Service Search */}
-              <div>
-                <Label htmlFor="service" className="my-2">Tìm dịch vụ</Label>
-                <Autocomplete
-                  fullWidth
-                  value={null} // Add this line
-                  inputValue={searchServiceInput}
-                  onInputChange={(_, newInputValue) => {
-                    setSearchServiceInput(newInputValue);
-                  }}
-                  onChange={(_, newValue) => {
-                    if (newValue) {
-                      const newService = {
-                        id: "",
-                        serviceId: newValue.id,
-                        name: newValue.name,
-                        isUnset: false,
-                        inputId: crypto.randomUUID(),
-                      };
-                      
-                      // Create a new array with the new service
-                      const updatedServices = [...formik.values.scheduleServices, newService];
-                      
-                      // Set the new value
-                      formik.setFieldValue("scheduleServices", updatedServices);
-                      
-                      // Clear the search input
-                      setSearchServiceInput("");
-                    }
-                  }}
-                  options={services}
-                  getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Nhập dịch vụ..."
-                      className="w-full"
-                    />
-                  )}
-                />
-              </div>
-
-              {/* List of Available Services */}
-              <div className="bg-gray-50 p-2 rounded-lg border-gray-200 border">
-                <h3 className="text-lg font-semibold mb-2">Danh sách dịch vụ có sẵn</h3>
-                <div className="grid grid-cols-2 gap-2 h-[80px] overflow-y-auto">
-                  {unsetServicesState.map((service) => (
-                    <Button
-                      key={service.inputId}
-                      variant="outline"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        formik.setFieldValue("scheduleServices", [...formik.values.scheduleServices, service]);
-                        setUnsetServicesState((prev) => prev.filter(s => s.inputId !== service.inputId));
-                      }}
-                    >
-                      {service.name}
-                    </Button>
-                  ))}
+              {!schedule&&
+                <div>
+                  <Label htmlFor="service" className="my-2">Tìm dịch vụ</Label>
+                  <Autocomplete
+                    fullWidth
+                    value={null} // Add this line
+                    inputValue={searchServiceInput}
+                    onInputChange={(_, newInputValue) => {
+                      setSearchServiceInput(newInputValue);
+                    }}
+                    onChange={(_, newValue) => {
+                      if (newValue) {
+                        const newService = {
+                          id: "",
+                          serviceId: newValue.id,
+                          name: newValue.name,
+                          isUnset: false,
+                          inputId: crypto.randomUUID(),
+                        };
+                        
+                        // Create a new array with the new service
+                        const updatedServices = [...formik.values.scheduleServices, newService];
+                        
+                        // Set the new value
+                        formik.setFieldValue("scheduleServices", updatedServices);
+                        
+                        // Clear the search input
+                        setSearchServiceInput("");
+                      }
+                    }}
+                    options={services}
+                    getOptionLabel={(option) => option.name}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Nhập dịch vụ..."
+                        className="w-full"
+                      />
+                    )}
+                  />
                 </div>
-              </div>
+              }
+              {!schedule&&
+                <div className="bg-gray-50 p-2 rounded-lg border-gray-200 border">
+                  <h3 className="text-lg font-semibold mb-2">Danh sách dịch vụ có sẵn</h3>
+                  <div className="grid grid-cols-2 gap-2 h-[80px] overflow-y-auto">
+                    {unsetServicesState.map((service) => (
+                      <Button
+                        key={service.inputId}
+                        variant="outline"
+                        className="w-full justify-start"
+                        onClick={() => {
+                          formik.setFieldValue("scheduleServices", [...formik.values.scheduleServices, service]);
+                          setUnsetServicesState((prev) => prev.filter(s => s.inputId !== service.inputId));
+                        }}
+                      >
+                        {service.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              }
 
               {/* Selected Services */}
               <div className="bg-gray-50 p-2 rounded-lg border-gray-200 border">
@@ -293,13 +296,15 @@ export default function ScheduleSetDialog({
                   {formik.values.scheduleServices.map((service) => (
                     <div key={service.inputId} className="flex items-center justify-between p-2 bg-white rounded-md">
                       <span>{service.name}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveService(service)}
-                      >
-                        <Trash className="text-red-500"/>
-                      </Button>
+                      {!schedule&&
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveService(service)}
+                        >
+                          <Trash className="text-red-500"/>
+                        </Button>
+                      }
                     </div>
                   ))}
                 </div>
@@ -334,11 +339,16 @@ export default function ScheduleSetDialog({
           </div>
         </div>
         <div className="flex justify-end gap-2">
+          {schedule&&
+            <Button variant="outline" onClick={()=>{navigate(`/doctor/schedule-result/${schedule.scheduleId}`)}}>
+              Xem chi tiết
+            </Button>
+          }
           <Button variant="outline" onClick={onClose}>
             Hủy
           </Button>
           <Button disabled={isSetting} className="cursor-pointer" type="submit" onClick={()=>formik.handleSubmit()}>
-            {isSetting ? "Đang tạo..." : "Tạo lịch hẹn"}
+            {isSetting ? "Đang lưu..." : "Lưu lịch hẹn"}
           </Button>
         </div>
       </DialogContent>
