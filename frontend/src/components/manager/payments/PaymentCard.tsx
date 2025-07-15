@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { PaymentResponse } from "@/api/types"
@@ -16,6 +16,18 @@ interface PaymentCardProps {
   isCanceling?: boolean
 }
 
+const statusText = {
+  PENDING: { label: "Chờ thanh toán", color: "bg-yellow-100 text-yellow-700" },
+  COMPLETED: { label: "Đã thanh toán", color: "bg-green-100 text-green-700" },
+  CANCELED: { label: "Đã hủy", color: "bg-red-100 text-red-700" },
+}
+
+const methodText = {
+  CASH: "Tiền mặt",
+  CREDIT_CARD: "Thẻ",
+  PAYPAL: "PayPal",
+}
+
 const PaymentCard: React.FC<PaymentCardProps> = ({
   payment,
   onViewDetails,
@@ -24,130 +36,104 @@ const PaymentCard: React.FC<PaymentCardProps> = ({
   isProcessing = false,
   isCanceling = false,
 }) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "COMPLETED":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      case "CANCELED":
-        return "bg-red-100 text-red-800 border-red-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
-
-  const getPaymentMethodColor = (method: string | null) => {
-    if (!method) return "bg-gray-100 text-gray-800"
-    switch (method) {
-      case "CASH":
-        return "bg-blue-100 text-blue-800"
-      case "CREDIT_CARD":
-        return "bg-purple-100 text-purple-800"
-      case "PAYPAL":
-        return "bg-indigo-100 text-indigo-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const isOverdue = payment.status === "PENDING" && new Date(payment.paymentDeadline) < new Date()
-
+  const status = statusText[payment.status as keyof typeof statusText]
   return (
-    <Card className={`hover:shadow-md transition-shadow ${isOverdue ? "border-red-200 bg-red-50" : ""}`}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">
+    <Card
+      className="rounded-xl px-6 py-4 mb-4 shadow-sm border border-gray-200 cursor-pointer hover:shadow transition"
+      onClick={() => onViewDetails(payment.id)}
+    >
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-base mb-1">
             Thanh toán #{payment.id.slice(-8)}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            <Badge className={getStatusColor(payment.status)}>
-              {payment.status === "PENDING" && "Chờ thanh toán"}
-              {payment.status === "COMPLETED" && "Đã thanh toán"}
-              {payment.status === "CANCELED" && "Đã hủy"}
-            </Badge>
-            {isOverdue && (
-              <Badge variant="destructive">Quá hạn</Badge>
+          </div>
+          {payment.description && (
+            <div className="text-gray-600 text-sm mb-1 line-clamp-2">{payment.description}</div>
+          )}
+          <div className="text-sm mb-1">
+            <span className="font-medium">Số tiền:</span>{" "}
+            <span className="font-semibold text-blue-700">{payment.amount.toLocaleString("vi-VN")} đ</span>
+          </div>
+          <div className="text-sm mb-1">
+            <span className="font-medium">Hạn thanh toán:</span>{" "}
+            {format(new Date(payment.paymentDeadline), "dd/MM/yyyy")}
+            {payment.paymentDate && (
+              <>
+                {"  "} <span className="font-medium">Đã thanh toán:</span>{" "}
+                {format(new Date(payment.paymentDate), "dd/MM/yyyy")}
+              </>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={e => {
+                e.stopPropagation()
+                onViewDetails(payment.id)
+              }}
+            >
+              Xem chi tiết
+            </Button>
+            {payment.status === "PENDING" && (
+              <>
+                <Button
+                  size="sm"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onProcessPayment(payment.id, "CASH")
+                  }}
+                  disabled={isProcessing}
+                  className="bg-green-50 text-green-700 hover:bg-green-100"
+                >
+                  {isProcessing ? "Đang xử lý..." : "Tiền mặt"}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onProcessPayment(payment.id, "CREDIT_CARD")
+                  }}
+                  disabled={isProcessing}
+                  className="bg-purple-50 text-purple-700 hover:bg-purple-100"
+                >
+                  {isProcessing ? "Đang xử lý..." : "Thẻ"}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onProcessPayment(payment.id, "PAYPAL")
+                  }}
+                  disabled={isProcessing}
+                  className="bg-blue-50 text-blue-700 hover:bg-blue-100"
+                >
+                  {isProcessing ? "Đang xử lý..." : "PayPal"}
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onCancelPayment(payment.id)
+                  }}
+                  disabled={isCanceling}
+                >
+                  {isCanceling ? "Đang hủy..." : "Hủy"}
+                </Button>
+              </>
             )}
           </div>
         </div>
-      </CardHeader>
-
-      <CardContent className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="font-semibold text-lg text-blue-700">
-            {payment.amount.toLocaleString("vi-VN")} đ
-          </span>
+        <div className="flex flex-col items-end gap-2 min-w-[110px] mt-1">
+          <Badge className={status.color + " font-normal"}>{status.label}</Badge>
           {payment.paymentMethod && (
-            <Badge className={getPaymentMethodColor(payment.paymentMethod)}>
-              {payment.paymentMethod === "CASH" && "Tiền mặt"}
-              {payment.paymentMethod === "CREDIT_CARD" && "Thẻ"}
-              {payment.paymentMethod === "PAYPAL" && "PayPal"}
+            <Badge className="bg-blue-50 text-blue-700 font-normal">
+              {methodText[payment.paymentMethod as keyof typeof methodText]}
             </Badge>
           )}
         </div>
-
-        {payment.description && (
-          <div className="text-sm text-gray-600 line-clamp-2">{payment.description}</div>
-        )}
-
-        <div className="flex flex-wrap gap-4 text-sm">
-          <div>
-            <span className="font-medium">Hạn thanh toán:</span>{" "}
-            <span className={isOverdue ? "text-red-600 font-semibold" : ""}>
-              {format(new Date(payment.paymentDeadline), "dd/MM/yyyy")}
-            </span>
-          </div>
-          {payment.paymentDate && (
-            <div>
-              <span className="font-medium">Đã thanh toán:</span>{" "}
-              {format(new Date(payment.paymentDate), "dd/MM/yyyy")}
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-2 pt-2">
-          <Button variant="outline" size="sm" onClick={() => onViewDetails(payment.id)}>
-            Xem chi tiết
-          </Button>
-          {payment.status === "PENDING" && (
-            <>
-              <Button
-                size="sm"
-                onClick={() => onProcessPayment(payment.id, "CASH")}
-                disabled={isProcessing}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isProcessing ? "Đang xử lý..." : "Tiền mặt"}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => onProcessPayment(payment.id, "CREDIT_CARD")}
-                disabled={isProcessing}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                {isProcessing ? "Đang xử lý..." : "Thẻ"}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => onProcessPayment(payment.id, "PAYPAL")}
-                disabled={isProcessing}
-                className="bg-indigo-600 hover:bg-indigo-700"
-              >
-                {isProcessing ? "Đang xử lý..." : "PayPal"}
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => onCancelPayment(payment.id)}
-                disabled={isCanceling}
-              >
-                {isCanceling ? "Đang hủy..." : "Hủy"}
-              </Button>
-            </>
-          )}
-        </div>
-      </CardContent>
+      </div>
     </Card>
   )
 }
