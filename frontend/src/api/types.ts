@@ -128,8 +128,6 @@ export interface PatientDrugResponse {
   dosage: string;
   usageInstructions: string;
   amount: number;
-  drugName: string;
-  drugPrice: number;
   startDate: string;
   endDate: string;
 }
@@ -432,10 +430,11 @@ export interface AssignDrugSetRequest{
 export interface DrugSetRequest{
   id: string|"",
   drugId: string,
-  usageInstructions: string,
+  inputId:string,
   name:string,
-  startDate: string,
-  endDate: string,
+  usageInstructions: string,
+  startDate: Date,
+  endDate: Date,
   dosage: string,
   amount: number
 }

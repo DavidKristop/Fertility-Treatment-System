@@ -45,7 +45,10 @@ export default function ScheduleList({
         {isSettable&&<Button
           variant="outline"
           size="sm"
-          onClick={()=>setIsScheduleDialogOpen(true)}
+          onClick={()=>{
+            setIsScheduleDialogOpen(true)
+            setSelectedSchedule(undefined)
+          }}
         >
           <Plus className="h-4 w-4 mr-2" />
           Tạo lịch hẹn mới
