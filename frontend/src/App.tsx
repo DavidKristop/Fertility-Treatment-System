@@ -31,6 +31,7 @@ import PatientDashboard from "./pages/patient/PatientDashboard";
 import RequestAppointment from "./pages/patient/RequestAppointment";
 import PatientContracts from "./pages/patient/contracts/PatientContracts";
 import PatientContractDetail from "./pages/patient/contracts/ContractDetail";
+import ContractSignPage from "./pages/patient/contracts/ContractSignPage";
 import PatientProfile from "./pages/patient/profile/PatientProfile";
 import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
 import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
@@ -168,6 +169,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <PatientContracts /> },
           { path: ":id", element: <PatientContractDetail /> },
+          { path: ":id/sign", element: <ContractSignPage /> }, // New route for signing contracts
         ],
       },
       { path: "profile", element: <PatientProfile /> },

@@ -1,6 +1,8 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { FileText, Download, Eye, PenTool, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { Download, Eye, PenTool, CheckCircle, Clock, AlertCircle } from "lucide-react"
 import type { ContractResponse } from "@/api/types"
 
 interface ContractCardProps {
@@ -11,12 +13,12 @@ interface ContractCardProps {
   showPatientInfo?: boolean
 }
 
-export default function ContractCard({ 
-  contract, 
-  onView, 
-  onSign, 
-  onDownload, 
-  showPatientInfo = false 
+export default function ContractCard({
+  contract,
+  onView,
+  onSign,
+  onDownload,
+  showPatientInfo = false,
 }: ContractCardProps) {
   const getStatusColor = (signed: boolean) => {
     return signed ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
@@ -38,7 +40,7 @@ export default function ContractCard({
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h3 className="text-lg font-semibold">
-              Hợp đồng điều trị - {contract.treatment.protocol.title}
+              Hợp đồng điều trị - {contract.treatment.protocol?.title || "Chưa xác định"}
             </h3>
             <Badge className={getStatusColor(contract.signed)}>
               <div className="flex items-center gap-1">
@@ -54,30 +56,28 @@ export default function ContractCard({
             )}
           </div>
 
-          <p className="text-gray-600 mb-3">{contract.treatment.description}</p>
+          <p className="text-gray-600 mb-3">{contract.treatment.description || "Không có mô tả"}</p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            {showPatientInfo && (
+            {showPatientInfo && contract.treatment.patient && (
               <div>
                 <span className="text-gray-500">Bệnh nhân:</span>
-                <div className="font-medium">{contract.treatment.patient.fullName}</div>
+                <div className="font-medium">{contract.treatment.patient.fullName || "Chưa cập nhật"}</div>
               </div>
             )}
             <div>
               <span className="text-gray-500">Bác sĩ:</span>
-              <div className="font-medium">{contract.treatment.doctor.fullName}</div>
+              <div className="font-medium">{contract.treatment.doctor?.fullName || "Chưa cập nhật"}</div>
             </div>
             <div>
               <span className="text-gray-500">Giá trị:</span>
               <div className="font-medium text-green-600">
-                {contract.treatment.protocol.estimatedPrice.toLocaleString("vi-VN")} VNĐ
+                {contract.treatment.protocol?.estimatedPrice?.toLocaleString("vi-VN") || "0"} VNĐ
               </div>
             </div>
             <div>
               <span className="text-gray-500">Hạn ký:</span>
-              <div className="font-medium">
-                {new Date(contract.signDeadline).toLocaleDateString("vi-VN")}
-              </div>
+              <div className="font-medium">{new Date(contract.signDeadline).toLocaleDateString("vi-VN")}</div>
             </div>
           </div>
         </div>
@@ -87,13 +87,6 @@ export default function ContractCard({
             <Eye className="h-4 w-4 mr-2" />
             Xem chi tiết
           </Button>
-
-          {!contract.signed && !isExpired && onSign && (
-            <Button size="sm" onClick={() => onSign(contract.id)}>
-              <PenTool className="h-4 w-4 mr-2" />
-              Ký hợp đồng
-            </Button>
-          )}
 
           {contract.signed && contract.contractUrl && (
             <Button variant="outline" size="sm" onClick={() => onDownload(contract.id)}>
