@@ -1,42 +1,43 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, FileText, User, Stethoscope, Calendar, DollarSign } from "lucide-react"
+import { RefreshCw, FileText, User, Stethoscope, Calendar, DollarSign, Download, PenTool } from "lucide-react"
 import { getPatientContractById, getManagerContractById } from "@/api/contract"
 import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 interface ContractDetailFormProps {
-  contract?: ContractResponse | null // Backward compatible
-  contractId?: string | null // New prop
+  contract?: ContractResponse | null
+  contractId?: string | null
   showPatientInfo?: boolean
   userRole?: "patient" | "manager"
   onRefresh?: () => void
 }
 
-export default function ContractDetailForm({ 
+export default function ContractDetailForm({
   contract: initialContract,
-  contractId, 
+  contractId,
   showPatientInfo = false,
   userRole = "patient",
-  onRefresh
+  onRefresh,
 }: ContractDetailFormProps) {
+  const navigate = useNavigate()
   const [contract, setContract] = useState<ContractResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (initialContract) {
-      // Trường hợp có contract object sẵn
       setContract(initialContract)
       setLoading(false)
       setError(null)
     } else if (contractId) {
-      // Trường hợp chỉ có contractId, cần fetch
       fetchContractDetail()
     } else {
-      // Không có gì
       setContract(null)
       setLoading(false)
       setError("Không có thông tin hợp đồng")
@@ -48,18 +49,13 @@ export default function ContractDetailForm({
       setError("Không có ID hợp đồng")
       return
     }
-    
+
     setLoading(true)
     setError(null)
     try {
-      console.log("Fetching contract detail for ID:", contractId, "Role:", userRole)
-      
-      const response = userRole === "manager" 
-        ? await getManagerContractById(contractId)
-        : await getPatientContractById(contractId)
-      
-      console.log("Contract detail response:", response)
-      
+      const response =
+        userRole === "manager" ? await getManagerContractById(contractId) : await getPatientContractById(contractId)
+
       if (response.payload) {
         setContract(response.payload)
       } else {
@@ -83,6 +79,25 @@ export default function ContractDetailForm({
       onRefresh()
     }
   }
+
+  const handleDownloadContract = () => {
+    if (contract?.contractUrl) {
+      window.open(contract.contractUrl, "_blank")
+    } else {
+      toast.error("Không tìm thấy file hợp đồng")
+    }
+  }
+
+  const handleSignContract = () => {
+    if (contract) {
+      const signPath =
+        userRole === "patient" ? `/patient/contracts/${contract.id}/sign` : `/manager/contracts/${contract.id}/sign`
+      navigate(signPath)
+    }
+  }
+
+  const isExpired = contract ? new Date(contract.signDeadline) < new Date() : false
+  const canSign = contract && !contract.signed && !isExpired && userRole === "patient"
 
   if (loading) {
     return (
@@ -129,10 +144,26 @@ export default function ContractDetailForm({
       {/* Contract Info */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Thông tin hợp đồng
-          </CardTitle>
+          <div className="flex justify-between items-start">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Thông tin hợp đồng
+            </CardTitle>
+            <div className="flex gap-2">
+              {canSign && (
+                <Button onClick={handleSignContract} size="sm">
+                  <PenTool className="h-4 w-4 mr-2" />
+                  Ký hợp đồng
+                </Button>
+              )}
+              {contract.signed && contract.contractUrl && (
+                <Button variant="outline" size="sm" onClick={handleDownloadContract}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Tải xuống
+                </Button>
+              )}
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -142,35 +173,22 @@ export default function ContractDetailForm({
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">Trạng thái</label>
-              <div className="mt-1">
+              <div className="mt-1 flex gap-2">
                 <Badge className={contract.signed ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
                   {contract.signed ? "Đã ký" : "Chờ ký"}
                 </Badge>
+                {isExpired && !contract.signed && <Badge className="bg-red-100 text-red-800">Hết hạn</Badge>}
               </div>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">Hạn ký</label>
-              <p className="font-medium text-gray-900">
-                {new Date(contract.signDeadline).toLocaleString("vi-VN", {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: false
-                })}
-              </p>
+              <p className="font-medium text-gray-900">{new Date(contract.signDeadline).toLocaleString("vi-VN")}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">File hợp đồng</label>
               <div className="mt-1">
                 {contract.contractUrl ? (
-                  <Button 
-                    variant="link" 
-                    className="p-0 h-auto text-blue-600"
-                    onClick={() => window.open(contract.contractUrl, '_blank')}
-                  >
+                  <Button variant="link" className="p-0 h-auto text-blue-600" onClick={handleDownloadContract}>
                     Tải xuống
                   </Button>
                 ) : (
@@ -182,7 +200,7 @@ export default function ContractDetailForm({
         </CardContent>
       </Card>
 
-      {/* Patient Info - Chỉ hiển thị cho Manager */}
+      {/* Patient Info - Only for Manager */}
       {showPatientInfo && contract.treatment?.patient && (
         <Card>
           <CardHeader>
@@ -195,23 +213,24 @@ export default function ContractDetailForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-sm font-medium text-gray-600">Họ tên</label>
-                <p className="font-medium text-gray-900">{contract.treatment.patient.fullName}</p>
+                <p className="font-medium text-gray-900">{contract.treatment.patient.fullName || "Chưa cập nhật"}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Email</label>
-                <p className="font-medium text-gray-900 break-all">{contract.treatment.patient.email}</p>
+                <p className="font-medium text-gray-900 break-all">
+                  {contract.treatment.patient.email || "Chưa cập nhật"}
+                </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Số điện thoại</label>
-                <p className="font-medium text-gray-900">{contract.treatment.patient.phone}</p>
+                <p className="font-medium text-gray-900">{contract.treatment.patient.phone || "Chưa cập nhật"}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Ngày sinh</label>
                 <p className="font-medium text-gray-900">
-                  {contract.treatment.patient.dateOfBirth ? 
-                    new Date(contract.treatment.patient.dateOfBirth).toLocaleDateString("vi-VN") : 
-                    "Chưa cập nhật"
-                  }
+                  {contract.treatment.patient.dateOfBirth
+                    ? new Date(contract.treatment.patient.dateOfBirth).toLocaleDateString("vi-VN")
+                    : "Chưa cập nhật"}
                 </p>
               </div>
             </div>
@@ -232,15 +251,17 @@ export default function ContractDetailForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-sm font-medium text-gray-600">Họ tên</label>
-                <p className="font-medium text-gray-900">{contract.treatment.doctor.fullName}</p>
+                <p className="font-medium text-gray-900">{contract.treatment.doctor.fullName || "Chưa cập nhật"}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Email</label>
-                <p className="font-medium text-gray-900 break-all">{contract.treatment.doctor.email}</p>
+                <p className="font-medium text-gray-900 break-all">
+                  {contract.treatment.doctor.email || "Chưa cập nhật"}
+                </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Số điện thoại</label>
-                <p className="font-medium text-gray-900">{contract.treatment.doctor.phone}</p>
+                <p className="font-medium text-gray-900">{contract.treatment.doctor.phone || "Chưa cập nhật"}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Chuyên khoa</label>
@@ -252,49 +273,56 @@ export default function ContractDetailForm({
       )}
 
       {/* Treatment Info */}
-      {contract.treatment && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Thông tin điều trị
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Thông tin điều trị
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-gray-600">Mô tả điều trị</label>
+              <p className="font-medium text-gray-900">{contract.treatment.description || "Chưa có mô tả"}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-600">Phác đồ điều trị</label>
+              <p className="font-medium text-gray-900">{contract.treatment.protocol?.title || "Chưa xác định"}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-600">Giá trị ước tính</label>
+              <p className="font-medium text-green-600 text-lg">
+                {contract.treatment.protocol?.estimatedPrice?.toLocaleString("vi-VN") || "0"} VNĐ
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-gray-600">Mô tả</label>
-                <p className="font-medium text-gray-900">{contract.treatment.description}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Protocol</label>
-                <p className="font-medium text-gray-900">{contract.treatment.protocol?.title}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Giá trị</label>
-                <p className="font-medium text-green-600 text-lg">
-                  {contract.treatment.protocol?.estimatedPrice?.toLocaleString("vi-VN")} VNĐ
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Thời gian điều trị</label>
+                <label className="text-sm font-medium text-gray-600">Ngày bắt đầu</label>
                 <p className="font-medium text-gray-900">
-                  {contract.treatment.startDate && contract.treatment.endDate ? 
-                    `${new Date(contract.treatment.startDate).toLocaleDateString("vi-VN")} - ${new Date(contract.treatment.endDate).toLocaleDateString("vi-VN")}` :
-                    "Chưa xác định"
-                  }
+                  {contract.treatment.startDate
+                    ? new Date(contract.treatment.startDate).toLocaleDateString("vi-VN")
+                    : "Chưa xác định"}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-600">Trạng thái điều trị</label>
-                <div className="mt-1">
-                  <Badge variant="outline">{contract.treatment.status}</Badge>
-                </div>
+                <label className="text-sm font-medium text-gray-600">Ngày kết thúc</label>
+                <p className="font-medium text-gray-900">
+                  {contract.treatment.endDate
+                    ? new Date(contract.treatment.endDate).toLocaleDateString("vi-VN")
+                    : "Chưa xác định"}
+                </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+            <div>
+              <label className="text-sm font-medium text-gray-600">Trạng thái điều trị</label>
+              <div className="mt-1">
+                <Badge variant="outline">{contract.treatment.status || "Chưa xác định"}</Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Protocol Phases */}
       {contract.treatment?.protocol?.phases && contract.treatment.protocol.phases.length > 0 && (
@@ -310,85 +338,73 @@ export default function ContractDetailForm({
               {contract.treatment.protocol.phases
                 .sort((a, b) => a.position - b.position)
                 .map((phase) => (
-                <div key={phase.id} className="border rounded-lg p-4 bg-gray-50">
-                  <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-semibold text-gray-900">
-                      Giai đoạn {phase.position}: {phase.title}
-                    </h4>
-                    {phase.phaseModifierPercentage && phase.phaseModifierPercentage !== 1 && (
-                      <Badge variant="outline" className="text-xs">
-                        Modifier: {(phase.phaseModifierPercentage * 100)}%
-                      </Badge>
+                  <div key={phase.id} className="border rounded-lg p-4 bg-gray-50">
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-semibold text-gray-900">
+                        Giai đoạn {phase.position}: {phase.title}
+                      </h4>
+                      {phase.phaseModifierPercentage && phase.phaseModifierPercentage !== 1 && (
+                        <Badge variant="outline" className="text-xs">
+                          Modifier: {phase.phaseModifierPercentage * 100}%
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">{phase.description}</p>
+
+                    {/* Services */}
+                    {phase.services && phase.services.length > 0 && (
+                      <div className="mb-4">
+                        <span className="text-sm font-medium text-gray-700 block mb-2">Dịch vụ:</span>
+                        <div className="space-y-2">
+                          {phase.services.map((service) => (
+                            <div
+                              key={service.id}
+                              className="flex justify-between items-center bg-white p-3 rounded border"
+                            >
+                              <div className="flex-1">
+                                <div className="font-medium text-sm">{service.name}</div>
+                                <div className="text-xs text-gray-500">{service.description}</div>
+                              </div>
+                              <div className="text-sm font-medium text-green-600">
+                                {service.price?.toLocaleString("vi-VN") || "0"} VNĐ
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Drugs */}
+                    {phase.drugs && phase.drugs.length > 0 && (
+                      <div className="mb-4">
+                        <span className="text-sm font-medium text-gray-700 block mb-2">Thuốc:</span>
+                        <div className="space-y-2">
+                          {phase.drugs.map((drug) => (
+                            <div
+                              key={drug.id}
+                              className="flex justify-between items-center bg-white p-3 rounded border"
+                            >
+                              <div className="flex-1">
+                                <div className="font-medium text-sm">{drug.name}</div>
+                                <div className="text-xs text-gray-500">{drug.description}</div>
+                              </div>
+                              <div className="text-sm font-medium text-blue-600">
+                                {drug.price?.toLocaleString("vi-VN") || "0"} VNĐ
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mb-4">{phase.description}</p>
-                  
-                  {/* Services */}
-                  {phase.services && phase.services.length > 0 && (
-                    <div className="mb-4">
-                      <span className="text-sm font-medium text-gray-700 block mb-2">Dịch vụ:</span>
-                      <div className="space-y-2">
-                        {phase.services.map(service => (
-                          <div key={service.id} className="flex justify-between items-center bg-white p-3 rounded border">
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{service.name}</div>
-                              <div className="text-xs text-gray-500">{service.description}</div>
-                            </div>
-                            <div className="text-sm font-medium text-green-600">
-                              {service.price?.toLocaleString("vi-VN")} VNĐ
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Drugs */}
-                  {phase.drugs && phase.drugs.length > 0 && (
-                    <div className="mb-4">
-                      <span className="text-sm font-medium text-gray-700 block mb-2">Thuốc:</span>
-                      <div className="space-y-2">
-                        {phase.drugs.map(drug => (
-                          <div key={drug.id} className="flex justify-between items-center bg-white p-3 rounded border">
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{drug.name}</div>
-                              <div className="text-xs text-gray-500">{drug.description}</div>
-                            </div>
-                            <div className="text-sm font-medium text-blue-600">
-                              {drug.price?.toLocaleString("vi-VN")} VNĐ
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Phase Total */}
-                  {((phase.services && phase.services.length > 0) || (phase.drugs && phase.drugs.length > 0)) && (
-                    <div className="pt-3 border-t border-gray-200">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-700">Tổng giai đoạn:</span>
-                        <span className="text-sm font-bold text-gray-900">
-                          {(() => {
-                            const servicesTotal = phase.services?.reduce((sum, service) => sum + (service.price || 0), 0) || 0;
-                            const drugsTotal = phase.drugs?.reduce((sum, drug) => sum + (drug.price || 0), 0) || 0;
-                            const phaseTotal = servicesTotal + drugsTotal;
-                            const finalTotal = phase.phaseModifierPercentage ? phaseTotal * phase.phaseModifierPercentage : phaseTotal;
-                            return finalTotal.toLocaleString("vi-VN");
-                          })()} VNĐ
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                ))}
 
               {/* Total */}
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-blue-900">Tổng giá trị phác đồ:</span>
                   <span className="font-bold text-xl text-blue-900">
-                    {contract.treatment.protocol.estimatedPrice?.toLocaleString("vi-VN")} VNĐ
+                    {contract.treatment.protocol.estimatedPrice?.toLocaleString("vi-VN") || "0"} VNĐ
                   </span>
                 </div>
               </div>
