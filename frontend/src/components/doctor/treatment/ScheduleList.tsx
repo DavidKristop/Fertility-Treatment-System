@@ -1,21 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil } from "lucide-react";
-import type { TreatmentScheduleResponse } from "@/api/types";
+import type { TreatmentScheduleResponse, TreatmentServiceResponse } from "@/api/types";
+import ScheduleSetDialog from "./ScheduleSetDialog";
+import { useState } from "react";
+
+function getStatusText(status: string) {
+  switch (status) {
+    case 'PENDING':
+      return 'Chờ xử lý';
+    case 'CHANGED':
+      return 'Đã thay đổi';
+    case 'CANCELLED':
+      return 'Đã hủy';
+    case 'DONE':
+      return 'Đã hoàn thành';
+    default:
+      return status;
+  }
+}
 
 interface ScheduleListProps {
+  unsetServices: TreatmentServiceResponse[];
   schedules: TreatmentScheduleResponse[];
-  onScheduleCreate: () => void;
-  onScheduleEdit: (schedule: TreatmentScheduleResponse) => void;
-  onScheduleDragStart: (e: React.DragEvent<HTMLDivElement>, scheduleId: string) => void;
+  phaseId:string;
 }
 
 export default function ScheduleList({
+  unsetServices,
   schedules,
-  onScheduleCreate,
-  onScheduleEdit,
-  onScheduleDragStart,
+  phaseId,
 }: ScheduleListProps) {
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -23,7 +40,7 @@ export default function ScheduleList({
         <Button
           variant="outline"
           size="sm"
-          onClick={onScheduleCreate}
+          onClick={()=>setIsScheduleDialogOpen(true)}
         >
           <Plus className="h-4 w-4 mr-2" />
           Tạo lịch hẹn mới
@@ -34,31 +51,49 @@ export default function ScheduleList({
         {schedules.map((schedule) => (
           <div
             key={schedule.id}
-            className="border rounded-md p-3 flex items-center justify-between bg-white"
-            draggable
-            onDragStart={(e) => onScheduleDragStart(e, schedule.id)}
+            className="border rounded-md p-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200"
+            style={{
+              backgroundColor: schedule.status === 'PENDING' ? '#FFF3E0' : 
+                        schedule.status === 'CANCELLED' ? '#FFE7E7' : 
+                        schedule.status === 'DONE' ? '#E8F5E9' : 
+                        schedule.status === 'CHANGED' ? '#FFF9C4' : '#fff',
+              color: schedule.status === 'PENDING' ? '#F57C00' : 
+                    schedule.status === 'CANCELLED' ? '#D32F2F' : 
+                    schedule.status === 'DONE' ? '#388E3C' : 
+                    schedule.status === 'CHANGED' ? '#F57F17' : '#000',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+            }}
           >
             <div>
-              <h5 className="font-medium">{schedule.title}</h5>
-              <p className="text-sm text-gray-500">
-                {new Date(schedule.appointmentDateTime).toLocaleString('vi-VN')}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">
-                {schedule.status}
-              </Badge>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onScheduleEdit(schedule)}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
+              <h5 className="font-medium text-lg mb-1">{schedule.title}</h5>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">
+                  {new Date(schedule.appointmentDateTime).toLocaleString('vi-VN')}
+                </span>
+                <Badge 
+                  variant="outline" 
+                  className={`px-2 py-1 text-sm ${
+                    schedule.status === 'PENDING' ? 'bg-orange-100 text-orange-800 border-orange-200' :
+                    schedule.status === 'CANCELLED' ? 'bg-red-100 text-red-800 border-red-200' :
+                    schedule.status === 'DONE' ? 'bg-green-100 text-green-800 border-green-200' :
+                    schedule.status === 'CHANGED' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : ''
+                  }`}
+                >
+                  {getStatusText(schedule.status || 'PENDING')}
+                </Badge>
+              </div>
             </div>
           </div>
         ))}
       </div>
+      {/* Schedule Dialog */}
+      <ScheduleSetDialog
+        isOpen={isScheduleDialogOpen}
+        onClose={() => setIsScheduleDialogOpen(false)}
+        unsetServices={unsetServices}
+        phaseId={phaseId}
+      />
     </div>
   );
 }

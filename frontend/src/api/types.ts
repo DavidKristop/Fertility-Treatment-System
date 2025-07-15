@@ -367,8 +367,8 @@ export interface TreatmentPhaseSetRequest{
 export interface ScheduleSetRequest{
   scheduleId: string|"",
   title: string,
-  appointmentDateTime: string,
-  estimatedTime: string,
+  appointmentDateTime: Date,
+  estimatedTime: Date,
   scheduleServices: (ScheduleServiceSetRequest)[]
 }
 

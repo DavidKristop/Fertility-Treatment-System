@@ -1,7 +1,7 @@
 import { Calendar, Views, type Event, type View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { dateFnsLocalizer } from 'react-big-calendar';
-import type { PatientDrugResponse, ScheduleDetailResponse, ScheduleStatus } from '@/api/types';
+import type { PatientDrugResponse, ScheduleDetailResponse, ScheduleResponse, ScheduleStatus } from '@/api/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { vi } from 'date-fns/locale';
@@ -21,10 +21,13 @@ const localizer = dateFnsLocalizer({
 interface CustomCalendarProps {
   schedules: ScheduleDetailResponse[];
   drugs: PatientDrugResponse[];
+  previewSchedule?:ScheduleResponse;
+  initialDate?: Date;
   initialView?: View;
   isDoctorPov?: boolean;
   hasFilterStatus?: boolean;
   canChangeView?: boolean;
+  hasDatePicker?:boolean;
   calendarStyle?: React.CSSProperties;
   onNavigate: (startDate: Date,endDate: Date,filterStatus?: ScheduleStatus | "ALL")=>void;
   onScheduleClick?: (schedule: ScheduleDetailResponse) => void;
@@ -62,17 +65,19 @@ function getStatusText(status: string) {
 }
 
 interface CalendarEvent extends Event {
-  type: 'schedule' | 'drug';
+  type: 'schedule' | 'drug' | 'preview-schedule';
   status?: string;
   drug?: PatientDrugResponse;
   schedule?: ScheduleDetailResponse;
+  previewSchedule?: ScheduleResponse;
 }
 
-export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,hasFilterStatus=false, calendarStyle, initialView=Views.MONTH, canChangeView=true }: CustomCalendarProps) {
+export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,hasFilterStatus=false, calendarStyle, initialView=Views.MONTH, canChangeView=true,initialDate,hasDatePicker }: CustomCalendarProps) {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [currView,setCurrView] = useState<View>(initialView)
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(initialDate || new Date());
   const [filterStatus, setFilterStatus] = useState<ScheduleStatus | "ALL">("ALL");
+  const [scrollToTime, setScrollToTime] = useState<Date>(currentDate)
 
   const getEventStyle = useCallback((event: CalendarEvent) => {
     const style = {
@@ -142,12 +147,11 @@ export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,o
 
   const handleChangeView=useCallback((view:View)=>{
     setCurrView(view)
-    handleNavigate(currentDate,view)
-  },[setCurrView,handleNavigate,currentDate])
+  },[setCurrView])
 
   useEffect(()=>{
     handleNavigate(currentDate,currView)
-  },[filterStatus])
+  },[filterStatus,currentDate,currView])
 
   useEffect(()=>{
     const scheduleEvents: CalendarEvent[] = schedules.map(schedule => ({
@@ -166,13 +170,27 @@ export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,o
       drug,
     }));
     const newEvents = [...scheduleEvents, ...drugEvents];
+
+    if(previewSchedule){
+      newEvents.push({
+        start: new Date(previewSchedule.appointmentDateTime),
+        end: new Date(previewSchedule.estimatedTime),
+        type: 'preview-schedule',
+        previewSchedule,
+      })
+      setScrollToTime(new Date(previewSchedule.appointmentDateTime))
+    }
+
     setEvents(newEvents);
-  },[schedules, drugs])
+  },[schedules, drugs, previewSchedule])
 
   return (
     <Card className='w-full'>
       <CardHeader className='flex justify-between items-center md:flex-row flex-col'>
         <CardTitle>Thời gian biểu</CardTitle>
+        {hasDatePicker && <div>
+          <input type="date" value={currentDate.toISOString().split('T')[0]} onChange={(e)=>setCurrentDate(new Date(e.target.value))}/>
+        </div>}
         <div className="flex items-center gap-2 mb-4 md:flex-row flex-col">
           {hasFilterStatus && <>
           <select
@@ -200,6 +218,7 @@ export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,o
         <Calendar
           style={{ height: `700px`, ...calendarStyle }}
           localizer={localizer}
+          scrollToTime={scrollToTime}
           events={events}
           onView={handleChangeView}
           views={canChangeView?[Views.WEEK, Views.MONTH, Views.DAY]:[currView]}
@@ -218,7 +237,7 @@ export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,o
             showMore:({events})=>(
               <p onClick={()=>{
                 setCurrView(Views.DAY)
-                handleNavigate(events[0]?.start || new Date(),Views.DAY)
+                setCurrentDate(events[0]?.start || new Date())
               }} className='text-sm text-blue-500 cursor-pointer'>
                 {events.length} thêm +
               </p>
@@ -236,6 +255,10 @@ export default function ScheduleCalendar({ schedules, drugs, isDoctorPov=false,o
                       <p className='text-xs'>{event.schedule?.title}</p>
                       <p className="text-xs">Bác sĩ: {event.schedule?.doctor?.fullName}</p>
                       <p className="text-xs">Bệnh nhân: {event.schedule?.patient?.fullName}</p>
+                    </>
+                    : event.type === 'preview-schedule'
+                    ? <>
+                      <p className='text-xs'>{event.previewSchedule?.title}</p>
                     </>
                     : <p className="text-xs">Thuốc: {event.drug?.drug?.name}</p>}
                 </div>

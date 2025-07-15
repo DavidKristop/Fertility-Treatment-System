@@ -26,7 +26,7 @@ export default function PatientDashboard() {
 
   const fetchSchedules =useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
     try {
-      const res = await getDoctorScheduleInAMonth(startDate, endDate, ["PENDING"]);
+      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
       setEvents(res.payload || []);
     } catch (err) {
       console.error(err);

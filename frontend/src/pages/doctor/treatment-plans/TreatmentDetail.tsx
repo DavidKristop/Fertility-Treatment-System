@@ -1,5 +1,5 @@
 import { getTreatmentDetaiICreated } from "@/api/treatment";
-import type { AssignDrugSetRequest, TreatmentPhaseSetRequest, TreatmentResponse } from "@/api/types";
+import type { TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { Button } from "@/components/ui/button";
@@ -11,22 +11,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FormSection from "@/components/doctor/common/FormSection";
-import { useFormik } from "formik";
+import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 
 export default function TreatmentDetail(){
   const [isLoading, setIsLoading] = useState(false)
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentResponse | undefined>()
-
-  const formik = useFormik<TreatmentPhaseSetRequest>({
-    initialValues: {
-      phaseId: "",
-      schedules: [],
-      assignDrugs: []
-    },
-    onSubmit:async(request)=>{
-
-    }
-  })
 
   const {id} = useParams<{id: string}>()
 
@@ -55,32 +44,6 @@ export default function TreatmentDetail(){
     if(id) fetchTreatmentDetail(id)
   },[id])
 
-  useEffect(()=>{
-    if(treatmentDetail){
-      const currentPhase = treatmentDetail.currentPhase
-      formik.setFieldValue("phaseId", currentPhase.id)
-      //Get all patientDrug that does not have a date yet and turn them into set request
-      const unsetDateDrug: AssignDrugSetRequest[] = []
-      currentPhase.assignDrugs?.forEach(assignDrug=>{
-        const unsetDrug: AssignDrugSetRequest = {
-          assignDrugId: assignDrug.id,
-          patientDrugs: []
-        }
-        assignDrug.patientDrugs.forEach(patientDrug=>{
-          if(!patientDrug.startDate){
-            unsetDrug.patientDrugs.push({
-                patientDrugId: patientDrug.id,
-                drugId: patientDrug.drug.id,
-                ...patientDrug
-              })  
-            }
-          })
-        unsetDateDrug.push(unsetDrug)
-      })
-      formik.setFieldValue("assignDrugs", unsetDateDrug)     
-    }
-  },[treatmentDetail])
-
   // Error state - schedule not found
   if (!isLoading && !treatmentDetail) {
     return (
@@ -99,28 +62,31 @@ export default function TreatmentDetail(){
     );
   }
 
-  return <DoctorLayout title="Chi tiết kế hoạch điều trị" breadcrumbs={breadcrumbs}>
-    <LoadingComponent isLoading={isLoading}>
-      <Grid container spacing={2}>
-        <Grid size={12}>
-          {/*This will display the info of the patient, doctor, the protocol title, end date/start date, the description and the status of the treatment */}
-          <FormSection title="Kế hoạch điều trị" icon={Clipboard}>
-            <TreatmentInfoCard treatment={treatmentDetail!} />
-          </FormSection>
-        </Grid>
-        <Grid size={12}>
-          <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
-            <TreatmentPhaseManager
-              treatment={treatmentDetail!}
-              initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
-            />
-          </FormSection>
-        </Grid>
-        {/*Have a toggle that switch between services and drugs */}
-        <Grid size={{xs: 12, md: 4}}>
+  return (
+    <TreatmentDetailProvider treatmentDetail={treatmentDetail || null} isLoading={isLoading} setTreatmentDetail={setTreatmentDetail}>
+      <DoctorLayout title="Chi tiết kế hoạch điều trị" breadcrumbs={breadcrumbs}>
+        <LoadingComponent isLoading={isLoading}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              {/*This will display the info of the patient, doctor, the protocol title, end date/start date, the description and the status of the treatment */}
+              <FormSection title="Kế hoạch điều trị" icon={Clipboard}>
+                <TreatmentInfoCard treatment={treatmentDetail!} />
+              </FormSection>
+            </Grid>
+            <Grid size={12}>
+              <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
+                <TreatmentPhaseManager
+                  initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
+                />
+              </FormSection>
+            </Grid>
+            {/*Have a toggle that switch between services and drugs */}
+            <Grid size={{xs: 12, md: 4}}>
 
-        </Grid>
-      </Grid>
-    </LoadingComponent>
-  </DoctorLayout>
+            </Grid>
+          </Grid>
+        </LoadingComponent>
+      </DoctorLayout>
+    </TreatmentDetailProvider>
+  );
 }

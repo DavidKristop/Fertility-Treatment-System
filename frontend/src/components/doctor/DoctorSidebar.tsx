@@ -58,25 +58,12 @@ const sidebarItems: SidebarItem[] = [
   },
 
   {
-    id: "patients",
-    label: "Bệnh nhân",
-    icon: Users,
-    path: "/doctor/patients",
-  },  
-
-  {
     id: "treatment-plans",
     label: "Kế hoạch điều trị",
     icon: Activity,
     path: "/doctor/treatment-plans",
   },
 
-  {
-    id: "notifications",
-    label: "Nhắc nhở & Thông báo",
-    icon: Bell,
-    path: "/doctor/notifications/reminders",
-  },
 ]
 
 interface DoctorSidebarProps {
