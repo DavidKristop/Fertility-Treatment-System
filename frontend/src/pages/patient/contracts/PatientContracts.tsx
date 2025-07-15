@@ -6,10 +6,8 @@ import PatientLayout from "@/components/patient/PatientLayout"
 import ContractHeader from "@/components/contracts/ContractHeader"
 import ContractFilters from "@/components/contracts/ContractFilters"
 import ContractList from "@/components/contracts/ContractList"
-import ContractSignModal from "@/components/contracts/ContractSignModal"
 import { getPatientContracts } from "@/api/contract"
 import { useContractManagement } from "@/hooks/useContractManagement"
-import { usePatientContractActions } from "@/hooks/usePatientContractActions"
 import { getPageTitle, getPageDescription } from "@/utils/contractHelpers"
 import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
@@ -18,29 +16,26 @@ export default function PatientContracts() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
 
-  // Business logic hooks
+  // Business logic hook
   const contractManager = useContractManagement({
     fetchFunction: getPatientContracts,
-    userRole: "patient"
+    userRole: "patient",
   })
 
-  const patientActions = usePatientContractActions(() => 
-    contractManager.fetchContracts(contractManager.currentPage)
-  )
-
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Hợp đồng điều trị" },
-  ]
+  const breadcrumbs = [{ label: "Trang tổng quan", path: "/patient/dashboard" }, { label: "Hợp đồng điều trị" }]
 
   const handleViewContract = (contract: ContractResponse) => {
     navigate(`/patient/contracts/${contract.id}`)
   }
 
+  const handleSignContract = (contractId: string) => {
+    navigate(`/patient/contracts/${contractId}/sign`)
+  }
+
   const handleDownloadContract = (contractId: string) => {
-    const contract = contractManager.contracts.find(c => c.id === contractId)
+    const contract = contractManager.contracts.find((c) => c.id === contractId)
     if (contract?.contractUrl) {
-      window.open(contract.contractUrl, '_blank')
+      window.open(contract.contractUrl, "_blank")
     } else {
       toast.error("Không tìm thấy file hợp đồng")
     }
@@ -55,7 +50,7 @@ export default function PatientContracts() {
           onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
           loading={contractManager.loading}
         />
-        
+
         <ContractFilters
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -63,7 +58,7 @@ export default function PatientContracts() {
           onStatusFilterChange={contractManager.setStatusFilter}
           searchPlaceholder="Tìm kiếm theo mô tả điều trị, protocol, hoặc bác sĩ..."
         />
-        
+
         <ContractList
           contracts={contractManager.contracts}
           loading={contractManager.loading}
@@ -74,7 +69,7 @@ export default function PatientContracts() {
           totalPages={contractManager.totalPages}
           totalElements={contractManager.totalElements}
           onViewContract={handleViewContract}
-          onSignContract={(contractId) => patientActions.handleSignContract(contractId, contractManager.contracts)}
+          onSignContract={handleSignContract}
           onDownloadContract={handleDownloadContract}
           onPageChange={contractManager.handlePageChange}
           onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
@@ -82,15 +77,6 @@ export default function PatientContracts() {
           userRole="patient"
         />
       </div>
-
-      {/* Modals */}
-      <ContractSignModal
-        contract={patientActions.signingContract}
-        isOpen={patientActions.isSignModalOpen}
-        onClose={patientActions.closeSignModal}
-        onConfirm={patientActions.handleConfirmSign}
-        isLoading={patientActions.isSigningLoading}
-      />
     </PatientLayout>
   )
 }

@@ -100,6 +100,12 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/services",
   },
   {
+    id: "payments",
+    label: "Quản lý thanh toán",
+    icon: DollarSign,
+    path: "/manager/payments",
+  },
+  {
     id: "create-doctor",
     label: "Tạo tài khoản bác sĩ",
     icon: User, // Hoặc icon nào khác phù hợp

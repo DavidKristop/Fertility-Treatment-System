@@ -34,6 +34,8 @@ export default function DrugDetailForm({
     )
   }
 
+  const canEdit = !drug.active
+
   return (
     <Card>
       <CardHeader>
@@ -109,39 +111,22 @@ export default function DrugDetailForm({
           {/* Actions */}
           <div className="border-t pt-4">
             <h4 className="text-sm font-medium text-gray-600 mb-3">Thao tác</h4>
+            
+            {/* ✅ Warning chỉ cho active drugs */}
+            {drug.active && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  Thuốc đang hoạt động - vô hiệu hóa trước khi có thể chỉnh sửa.
+                </p>
+              </div>
+            )}
+
             <div className="flex gap-3">
               {drug.active ? (
-                <>
-                  <Button
-                    onClick={onEdit}
-                    disabled={actionLoading}
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Chỉnh sửa thuốc
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    disabled={actionLoading}
-                    onClick={onDeactivate}
-                  >
-                    {actionLoading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Đang xử lý...
-                      </>
-                    ) : (
-                      <>
-                        <Ban className="h-4 w-4 mr-2" />
-                        Vô hiệu hóa thuốc
-                      </>
-                    )}
-                  </Button>
-                </>
-              ) : (
                 <Button
-                  variant="default"
+                  variant="destructive"
                   disabled={actionLoading}
-                  onClick={onReactivate}
+                  onClick={onDeactivate}
                 >
                   {actionLoading ? (
                     <>
@@ -150,13 +135,51 @@ export default function DrugDetailForm({
                     </>
                   ) : (
                     <>
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Kích hoạt lại thuốc
+                      <Ban className="h-4 w-4 mr-2" />
+                      Vô hiệu hóa thuốc
                     </>
                   )}
                 </Button>
+              ) : (
+                <>
+                  {/* ✅ HIỂN THỊ edit button cho inactive drugs */}
+                  <Button
+                    onClick={onEdit}
+                    disabled={actionLoading}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Chỉnh sửa thuốc
+                  </Button>
+                  
+                  <Button
+                    variant="default"
+                    disabled={actionLoading}
+                    onClick={onReactivate}
+                  >
+                    {actionLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Đang xử lý...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Kích hoạt lại thuốc
+                      </>
+                    )}
+                  </Button>
+                </>
               )}
             </div>
+
+            {/* ✅ Info cho inactive drugs */}
+            {!drug.active && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  ℹ️ Thuốc đã vô hiệu hóa. Có thể chỉnh sửa nếu đã đủ 120 ngày kể từ khi vô hiệu hóa.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
