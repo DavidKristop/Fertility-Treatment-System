@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil } from "lucide-react";
-import type { TreatmentScheduleResponse, TreatmentServiceResponse } from "@/api/types";
+import type { ScheduleSetRequest, TreatmentScheduleResponse, TreatmentServiceResponse } from "@/api/types";
 import ScheduleSetDialog from "./ScheduleSetDialog";
 import { useState } from "react";
 
@@ -32,6 +32,7 @@ export default function ScheduleList({
   phaseId,
 }: ScheduleListProps) {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleSetRequest | undefined>(undefined);
 
   return (
     <div className="space-y-4">
@@ -47,7 +48,7 @@ export default function ScheduleList({
         </Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2  h-[350px] overflow-y-auto">
         {schedules.map((schedule) => (
           <div
             key={schedule.id}
@@ -64,12 +65,26 @@ export default function ScheduleList({
               border: '1px solid #ccc',
               borderRadius: '4px',
             }}
+            onClick={()=>{
+              setIsScheduleDialogOpen(true)
+              setSelectedSchedule({
+                scheduleId:schedule.id,
+                title:schedule.title,
+                appointmentDateTime:new Date(schedule.appointmentDateTime),
+                estimatedTime:new Date(schedule.estimatedTime),
+                scheduleServices:schedule.services.map((service)=>({
+                  ...service,
+                  isUnset:false,
+                  inputId:crypto.randomUUID(),
+                }))
+              })
+            }}
           >
             <div>
               <h5 className="font-medium text-lg mb-1">{schedule.title}</h5>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">
-                  {new Date(schedule.appointmentDateTime).toLocaleString('vi-VN')}
+                  {new Date(schedule.appointmentDateTime).toLocaleString('vi-VN') + " - " + new Date(schedule.estimatedTime).toLocaleString('vi-VN')}
                 </span>
                 <Badge 
                   variant="outline" 
@@ -92,6 +107,7 @@ export default function ScheduleList({
         isOpen={isScheduleDialogOpen}
         onClose={() => setIsScheduleDialogOpen(false)}
         unsetServices={unsetServices}
+        schedule={selectedSchedule}
         phaseId={phaseId}
       />
     </div>

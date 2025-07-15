@@ -1,3 +1,4 @@
+import { getLocalDateFormat, getLocalDateTimeFormat } from "@/lib/utils";
 import { fetchWrapper } from "."
 import type { ApiPaginationResponse, ApiResponse, PhaseResponse, TreatmentCreateRequest, TreatmentPhaseSetRequest, TreatmentResponse } from "./types"
 // Lấy danh sách treatment của patient có phân trang
@@ -92,7 +93,14 @@ export const existByPatientId = async (
 export const setTreatmentPhase = async(phase: TreatmentPhaseSetRequest): Promise<ApiResponse<PhaseResponse>>=>{
   const response = await fetchWrapper(`treatment-phases/set`, {
     method: "PUT",
-    body: JSON.stringify(phase),
+    body: JSON.stringify({
+      ...phase,
+      schedules: phase.schedules.map((schedule) => ({
+        ...schedule,
+        appointmentDateTime: getLocalDateTimeFormat(schedule.appointmentDateTime),
+        estimatedTime: getLocalDateTimeFormat(schedule.estimatedTime),
+      })),
+    }),
   }, true)
 
   if (!response.ok) {

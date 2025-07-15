@@ -43,6 +43,7 @@ export default function ScheduleSetDialog({
     isUnset:true,
     inputId:crypto.randomUUID(),
   })))
+  const [isSetting,setIsSetting] = useState(false)
 
   const [searchServiceInput,setSearchServiceInput] = useState<string>("")
   const [services,setServices] = useState<ServiceResponse[]>([])
@@ -62,23 +63,33 @@ export default function ScheduleSetDialog({
         return;
       }
       else{
-        const res = await setTreatmentPhase({
-          phaseId,
-          schedules:[values],
-          assignDrugs:[],
-        })
-        if(res.payload){
-          const newPhase = res.payload
-          if(treatmentDetail)setTreatmentDetail({
-            ...treatmentDetail,
-            phases: treatmentDetail?.phases.map((phase:PhaseResponse)=>{
-              if(phase.id === newPhase.id){
-                return newPhase
-              }
-              return phase
-            })||[],
+        try{
+          setIsSetting(true)
+          const res = await setTreatmentPhase({
+            phaseId,
+            schedules:[values],
+            assignDrugs:[],
           })
-          onClose()
+          if(res.payload){
+            const newPhase = res.payload
+            if(treatmentDetail)setTreatmentDetail({
+              ...treatmentDetail,
+              phases: treatmentDetail?.phases.map((phase:PhaseResponse)=>{
+                if(phase.id === newPhase.id){
+                  return newPhase
+                }
+                return phase
+              })||[],
+            })
+            onClose()
+          }
+        }
+        catch(err){
+          console.error(err);
+          toast.error((err as Error).message || "Lỗi khi tạo lịch hẹn");
+        }
+        finally{
+          setIsSetting(false)
         }
       }
     },
@@ -326,8 +337,8 @@ export default function ScheduleSetDialog({
           <Button variant="outline" onClick={onClose}>
             Hủy
           </Button>
-          <Button className="cursor-pointer" type="submit" onClick={()=>formik.handleSubmit()}>
-            Tạo lịch hẹn
+          <Button disabled={isSetting} className="cursor-pointer" type="submit" onClick={()=>formik.handleSubmit()}>
+            {isSetting ? "Đang tạo..." : "Tạo lịch hẹn"}
           </Button>
         </div>
       </DialogContent>
