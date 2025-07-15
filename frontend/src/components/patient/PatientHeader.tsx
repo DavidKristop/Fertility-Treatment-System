@@ -11,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { me } from "@/api/auth"
-import { auth } from "@/api"
+import { logout, me } from "@/api/auth"
 
 interface PatientHeaderProps {
   title: string
@@ -39,7 +38,7 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
 
   const handleLogout = async () => {
     try {
-      await auth.logout() // POST /auth/logout
+      await logout() // POST /auth/logout
     } catch (err) {
       console.error("Logout API failed:", err)
     } finally {

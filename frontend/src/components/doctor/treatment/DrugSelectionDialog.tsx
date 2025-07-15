@@ -7,18 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Save, X } from "lucide-react"
 
-interface Drug {
-  id: string
-  name: string
-  price: number
-  unit: string
-}
+import type { DrugResponse } from "@/api/types";
 
 interface DrugSelectionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (data: { drugId: string; dosage: string; quantity: number }) => void
-  availableDrugs: Drug[]
+  availableDrugs: DrugResponse[]
   phaseType: string
 }
 
@@ -80,7 +75,7 @@ export default function DrugSelectionDialog({
                     <div className="flex flex-col">
                       <span>{drug.name}</span>
                       <span className="text-sm text-muted-foreground">
-                        {new Intl.NumberFormat("vi-VN").format(drug.price)} ₫/{drug.unit}
+                        {new Intl.NumberFormat("vi-VN").format(drug.price)} ₫/{drug.unit || 'viên'}
                       </span>
                     </div>
                   </SelectItem>

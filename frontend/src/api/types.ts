@@ -109,6 +109,10 @@ export interface ServiceResponse {
   active: boolean;
 }
 
+export interface TreatmentServiceResponse extends ServiceResponse{
+  serviceId:string
+}
+
 export interface DrugResponse {
   id: string;
   name: string;
@@ -138,6 +142,7 @@ export interface AssignDrugResponse {
   treatmentPhaseName?: string;
   patientName?: string;
   patientDrugs: PatientDrugResponse[];
+  payment: PaymentPreviewResponse;
 }
 
 export interface DrugCreateRequest {
@@ -155,12 +160,20 @@ export interface DrugUpdateRequest {
 }
 
 // ==================== SCHEDULE & APPOINTMENT TYPES ====================
-export interface TreatmentScheduleResponse{
+
+export interface TreatmentResponse {
   id: string;
-  appointmentDatetime: string; 
-  estimatedTime: string;
-  status: "PENDING" | "ACCEPTED" | "DENIED";
-  services?: ServiceResponse[];
+  startDate: string;
+  endDate: string;
+  description: string;
+  patient: PatientProfile;
+  doctor: DoctorProfile;
+  protocol: ProtocolResponse;
+  contractId: string;
+  signedContract: boolean;
+  phases: PhaseResponse[];
+  currentPhase: PhaseResponse;
+  status: TreatmentStatus;
 }
 
 export interface RequestAppointmentResponse {
@@ -169,8 +182,14 @@ export interface RequestAppointmentResponse {
   patient: PatientProfile;
   rejectedReason: string;
   appointmentDatetime: string;
-  status: "PENDING" | "ACCEPTED" | "DENIED";
-  schedule: TreatmentScheduleResponse;
+  status: AppointmentStatus;
+  schedule?: {
+    id: string;
+    title:string;
+    appointmentDateTime: string;
+    estimatedTime: string;
+    status: ScheduleStatus;
+  };
 }
 
 // ==================== PROTOCOL & PHASE TYPES ====================
@@ -180,12 +199,22 @@ export interface PhaseResponse {
   description: string;
   position: number;
   phaseModifierPercentage: number;
-  refundPercentage: number;
+  refundPercentage?: number;
+  schedules?: TreatmentScheduleResponse[];
+  complete?:boolean;
+  assignDrugs?: AssignDrugResponse[];
+  unsetServices?: TreatmentServiceResponse[];
+}
+
+export interface ProtocolPhaseResponse{
+  id: string;
+  title: string;
+  description: string;
+  position: number;
+  phaseModifierPercentage: number;
+  refundPercentage?: number;
   services?: ServiceResponse[];
   drugs?: DrugResponse[];
-  schedules?: ServiceResponse[];
-  assignDrugs?: AssignDrugResponse[];
-  unsetServices?: ServiceResponse[];
 }
 
 export interface CreateProtocolRequest {
@@ -208,30 +237,73 @@ export interface ProtocolResponse {
   description: string;
   createdAt: string;
   updatedAt: string;
-  phases: PhaseResponse[];
+  phases: ProtocolPhaseResponse[];
   estimatedPrice: number;
   active: boolean;
 }
 
-// ==================== TREATMENT TYPES ====================
-export interface Treatment {
+// ==================== SCHEDULES ==========================
+
+export interface ScheduleResponse{
   id: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  status: string;
+  title:string;
+  appointmentDateTime: string; 
+  estimatedTime: string;       
+  status: ScheduleStatus;
+}
+
+export interface TreatmentScheduleResponse extends ScheduleResponse{
+  services: TreatmentServiceResponse[];
+  payment: PaymentPreviewResponse[];
+}
+
+export interface ScheduleDetailResponse extends ScheduleResponse{
   patient: PatientProfile;
   doctor: DoctorProfile;
-  protocol: ProtocolResponse;
-  phases: PhaseResponse[];
+  scheduleResult: ScheduleResult;
+  services: ScheduleService[];
+  payment: PaymentPreviewResponse[];
+  treatment: TreatmentPreviewResponse;
+  treatmentPhase: TreatmentPhasePreviewResponse;
+  canMoveToNextPhase: boolean;
 }
+
+export interface PreviewScheduleResponse extends ScheduleResponse{
+  doctor: DoctorProfile;
+}
+
+export interface ScheduleService {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
+  active: boolean;
+}
+
+export interface ScheduleResult {
+  id?: string
+  doctorsNote: string
+  schedule_id: string
+  success: boolean
+  attachments?: ScheduleResultAttachment[]
+}
+
+export interface ScheduleResultAttachment {
+  id: string
+  attachment_url: string
+  schedule_result_id: string
+}
+
+
+// ==================== TREATMENT TYPES ====================
 
 export interface TreatmentPlan {
   id: string;
   startDate: string;
   endDate: string;
   description: string;
-  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+  status: TreatmentStatus;
 
   patient: {
     id: string;
@@ -261,7 +333,7 @@ export interface TreatmentPlan {
 export interface ContractResponse {
   id: string;
   signDeadline: string;
-  treatment: Treatment;
+  treatment: string;
   contractUrl: string;
   signed: boolean;
 }
@@ -279,6 +351,24 @@ export interface RefundResponse {
   updatedAt: string;
 }
 
+export interface TreatmentPreviewResponse{
+  id: string;
+  status: TreatmentStatus;
+  contractId: string;
+}
+
+export interface TreatmentPhasePreviewResponse{
+  id: string;
+  title:string;
+}
+
+export interface PaymentPreviewResponse {
+  id: string;
+  amount: number;
+  paymentDeadline: string;
+  status: PaymentStatus;
+}
+
 export interface PaymentResponse {
   id: string;
   amount: number;
@@ -286,7 +376,7 @@ export interface PaymentResponse {
   paymentDate: string;
   paymentDeadline: string;
   paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
-  status: "PENDING" | "COMPLETED" | "CANCELED";
+  status: PaymentStatus;
   userId: string;
   scheduleServices: ServiceResponse[];
   assignDrugs: AssignDrugResponse[];
@@ -311,9 +401,59 @@ export interface TreatmentCreateRequest{
   medicalHistory:string,
   description:string
 }
+
+export interface TreatmentPhaseSetRequest{
+  phaseId: string,
+  schedules: ScheduleSetRequest[],
+  assignDrugs: AssignDrugSetRequest[],
+}
+
+export interface ScheduleSetRequest{
+  scheduleId: string|"",
+  title: string,
+  appointmentDateTime: Date,
+  estimatedTime: Date,
+  scheduleServices: (ScheduleServiceSetRequest)[]
+}
+
+export interface ScheduleServiceSetRequest{
+  id: string|"",
+  serviceId: string,
+  name:string,
+  inputId:string,
+  isUnset:boolean
+}
+
+export interface AssignDrugSetRequest{
+  assignDrugId: string|"",
+  patientDrugs: (DrugSetRequest)[]
+}
+
+export interface DrugSetRequest{
+  id: string|"",
+  drugId: string,
+  usageInstructions: string,
+  name:string,
+  startDate: string,
+  endDate: string,
+  dosage: string,
+  amount: number
+}
 // ==================== DASHBOARD TYPES ====================
 export interface PatientDashboardPayloadResponse {
   requestAppointment: RequestAppointmentResponse;
-  treatment: Treatment;
+  treatment: TreatmentResponse;
 }
 
+
+// ==================== STATUS ENUMS ====================
+
+export type ScheduleStatus = "PENDING" | "CHANGED" | "CANCELLED" | "DONE";
+
+export type TreatmentStatus = "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "AWAITING_CONTRACT_SIGNED";
+
+export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
+
+export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
+
+export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELLED";

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Autocomplete, TextField } from "@mui/material";
-import type { PatientProfile, ProtocolReponse, ServiceReponse, DrugResponse, TreatmentCreateRequest } from "@/api/types";
+import type { PatientProfile,  DrugResponse, TreatmentCreateRequest, ProtocolResponse, ServiceResponse } from "@/api/types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -35,9 +35,9 @@ export function CreateTreatmentForm() {
   const [selectedPatient, setSelectedPatient] = useState<{ email: string; fullName: string; medicalHistory: string; id: string } | null>(null);
   const [patientSearch, setPatientSearch] = useState("");
   const [protocolSearch, setProtocolSearch] = useState("");
-  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolReponse | null>(null);
+  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolResponse | null>(null);
   const [patients, setPatients] = useState<{ email: string; fullName: string; medicalHistory: string; id: string }[]>([]);
-  const [protocols, setProtocols] = useState<ProtocolReponse[]>([]);
+  const [protocols, setProtocols] = useState<ProtocolResponse[]>([]);
   const [hasTreatment, setHasTreatment] = useState(false);
 
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ export function CreateTreatmentForm() {
       try {
         const response = await getProtocols(0, 10, protocolSearch);
         if (response?.payload?.content) {
-          setProtocols(response?.payload?.content as ProtocolReponse[]);
+          setProtocols(response?.payload?.content as ProtocolResponse[]);
         }
       } catch (error) {
         console.error("Error fetching protocols:", error);
@@ -161,7 +161,6 @@ export function CreateTreatmentForm() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Patient Email"
               placeholder="Search patient by email..."
               error={!!errors.patientEmail}
               helperText={errors.patientEmail?.message}
@@ -202,7 +201,6 @@ export function CreateTreatmentForm() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Protocol Title"
               placeholder="Search protocol by title..."
               error={!!errors.protocolTitle}
               helperText={errors.protocolTitle?.message}
@@ -250,7 +248,7 @@ export function CreateTreatmentForm() {
                               <div>
                                 <h3 className="font-medium">Services</h3>
                                 <ul className="list-disc list-inside space-y-2">
-                                  {phase.services.map((service: ServiceReponse) => (
+                                  {phase.services.map((service: ServiceResponse) => (
                                     <li key={service.id}>
                                       {service.name} - {service.price.toLocaleString("vi-VN")+" đ"}
                                     </li>

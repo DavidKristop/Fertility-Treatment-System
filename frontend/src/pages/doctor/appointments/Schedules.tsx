@@ -1,24 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
-import MyScheduler from "@/components/Scheduler";
-import {
-  getDoctorScheduleInAMonth,
-  type ScheduleResponse,
-} from "@/api/schedule";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
-import { Button } from "@/components/ui/button";
+import { getDoctorScheduleInAMonth } from "@/api/schedule";
+import ScheduleCalendar from "@/components/ScheduleCalendar";
+import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
+import { toast } from "react-toastify";
 
 export default function PatientDashboard() {
   const [doctorName, setDoctorName] = useState<string>("");
-  const [events, setEvents] = useState<any[]>([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [filterStatus, setFilterStatus] = useState<"ALL" | "PENDING" | "DONE">(
-    "ALL"
-  );
+  const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
   const navigate = useNavigate();
-  const initRef = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -31,43 +24,15 @@ export default function PatientDashboard() {
     })();
   }, [navigate]);
 
-  const handleScheduleNavigate = useCallback(
-    (newDate: Date) => {
-      setCurrentDate(newDate);
-    },
-    [setCurrentDate]
-  );
-
-  // Fetch và map tất cả các event (không còn filter status)
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
-        const res = await getDoctorScheduleInAMonth(year, month);
-
-        const mappedEvents = (res.payload || []).map(
-          (item: ScheduleResponse) => ({
-            id: item.id,
-            title: "Hẹn với bệnh nhân " + item.patient.fullName,
-            start: new Date(item.appointmentDateTime),
-            end: new Date(item.estimatedTime),
-            status: item.status, // vẫn giữ nếu bạn có dùng trong tooltip hay style
-          })
-        );
-
-        setEvents(mappedEvents);
-
-        if (!initRef.current && mappedEvents.length) {
-          setCurrentDate(mappedEvents[0].start);
-          initRef.current = true;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchSchedules();
-  }, [currentDate]);
+  const fetchSchedules =useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
+    try {
+      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
+      setEvents(res.payload || []);
+    } catch (err) {
+      console.error(err);
+      toast.error((err as Error).message || "Lỗi khi tải danh sách lịch hẹn");
+    }
+  }, []); 
 
   if (!doctorName) {
     return (
@@ -77,22 +42,6 @@ export default function PatientDashboard() {
     );
   }
 
-  interface CalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    status: string;
-  }
-
-  const filteredEvents = events.filter((e) =>
-    filterStatus === "ALL" ? true : e.status === filterStatus
-  );
-
-  const handleScheduleClick = (event: CalendarEvent) => {
-    navigate(`/doctor/schedule-result/${event.id}`);
-  };
-
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/doctor/dashboard" },
     { label: "Lịch khám" },
@@ -101,33 +50,14 @@ export default function PatientDashboard() {
   return (
     <DoctorLayout title="Lịch khám" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* BỘ LỌC STATUS */}
-        <div className="flex items-center gap-2 mb-4">
-          {(
-            [
-              { key: "ALL", label: "Tất cả" },
-              { key: "PENDING", label: "Chưa hoàn thành" },
-              { key: "DONE", label: "Đã hoàn thành" },
-            ] as const
-          ).map((opt) => (
-            <Button
-              key={opt.key}
-              size="sm"
-              variant={filterStatus === opt.key ? "default" : "outline"}
-              onClick={() =>
-                setFilterStatus(opt.key as "ALL" | "PENDING" | "DONE")
-              }
-            >
-              {opt.label}
-            </Button>
-          ))}
-        </div>
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <MyScheduler
-            events={filteredEvents}
-            date={currentDate}
-            onNavigate={handleScheduleNavigate}
-            onSelectEvent={handleScheduleClick}
+          <ScheduleCalendar
+            schedules={events}
+            isDoctorPov={true}
+            onNavigate={fetchSchedules}
+            onScheduleClick={(event)=>navigate(`/doctor/schedule-result/${event.id}`)}
+            drugs={[]}
+            hasFilterStatus={true}
           />
         </div>
         <Card>

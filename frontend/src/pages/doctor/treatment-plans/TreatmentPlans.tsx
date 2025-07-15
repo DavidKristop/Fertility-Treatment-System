@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTreatmentICreated } from "@/api/treatment";
-import type { Treatment } from "@/api/types";
+import type { TreatmentResponse } from "@/api/types";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
 import {
   Pagination,
@@ -40,7 +40,7 @@ export default function TreatmentPlans() {
   const statusParam = searchParams.get("status") as (typeof STATUS_OPTIONS)[number]["value"] | null;
   const pageParam = Number(searchParams.get("page"));
   const patientEmailParam = searchParams.get("patientEmail") || "";
-  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [treatments, setTreatments] = useState<TreatmentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
@@ -138,7 +138,7 @@ export default function TreatmentPlans() {
         ) : (
             <div className="space-y-4">
             {treatments.map((treatment) => (
-              <Link to={`/doctor/treatment-plans/${treatment.id}`}>
+              <Link key={treatment.id} to={`/doctor/treatment-plans/treatment-details/${treatment.id}`}>
                 <div
                   key={treatment.id}
                   className="border rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all duration-200 my-2"

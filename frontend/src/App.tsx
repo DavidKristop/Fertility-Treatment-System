@@ -225,11 +225,6 @@ const router = createBrowserRouter([
       },
       // Profile routes
       { path: "profile", element: <DoctorProfile /> },
-      // Notification routes
-      {
-        path: "notifications",
-        children: [{ path: "reminders", element: <ReminderHistory /> }],
-      },
       // fallback for doctor subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],

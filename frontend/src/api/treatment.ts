@@ -1,9 +1,12 @@
-import { fetchWrapper } from ".";
-import type { ApiResponse, Treatment, ApiPaginationResponse, TreatmentCreateRequest } from "@/api/types";
-
-export const getMyTreatments = async (
-  params?: { page?: number; size?: number; status?: string }
-): Promise<ApiPaginationResponse<Treatment>> => {
+import { getLocalDateFormat, getLocalDateTimeFormat } from "@/lib/utils";
+import { fetchWrapper } from "."
+import type { ApiPaginationResponse, ApiResponse, PhaseResponse, TreatmentCreateRequest, TreatmentPhaseSetRequest, TreatmentResponse } from "./types"
+// Lấy danh sách treatment của patient có phân trang
+export const getMyTreatments = async (params?: {
+  page?: number;
+  size?: number;
+  status?: string;
+}) => {
   const query = new URLSearchParams();
   if (params?.page !== undefined) query.append("page", String(params.page));
   if (params?.size !== undefined) query.append("size", String(params.size));
@@ -17,7 +20,7 @@ export const getMyTreatments = async (
 
   if (!res.ok) throw new Error("Failed to fetch treatments");
 
-  const data: ApiPaginationResponse<Treatment> = await res.json();
+  const data: ApiPaginationResponse<TreatmentResponse> = await res.json();
   return data;
 };
 
@@ -25,7 +28,7 @@ export const getMyTreatments = async (
 // Lấy chi tiết 1 treatment theo ID
 export const getTreatmentDetail = async (
   id: string
-): Promise<ApiResponse<Treatment>> => {
+): Promise<ApiResponse<TreatmentResponse>> => {
   const res = await fetchWrapper(
     `treatments/patient/${id}`,
     { method: "GET" },
@@ -34,13 +37,13 @@ export const getTreatmentDetail = async (
 
   if (!res.ok) throw new Error("Failed to fetch treatment detail");
 
-  const data: ApiResponse<Treatment> = await res.json();
+  const data: ApiResponse<TreatmentResponse> = await res.json();
   return data;
 };
 
 
 
-export const createTreatment = async (newTreatment: TreatmentCreateRequest): Promise<ApiResponse<Treatment>>=>{
+export const createTreatment = async (newTreatment: TreatmentCreateRequest): Promise<ApiResponse<TreatmentResponse>>=>{
   const response = await fetchWrapper("treatments", {
     method: "POST",
     body: JSON.stringify(newTreatment),
@@ -59,12 +62,22 @@ export const getTreatmentICreated = async (
   size = 10,
   patientEmail = "",
   status = ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
-): Promise<ApiPaginationResponse<Treatment>> => {
+): Promise<ApiPaginationResponse<TreatmentResponse>> => {
   const response = await fetchWrapper(`treatments/doctor?page=${page}&size=${size}&email=${patientEmail}&status=${status.join('&status=')}`, {}, true)
 
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to fetch treatments');
+  }
+  return response.json();
+}
+
+export const getTreatmentDetaiICreated = async(treatmentId:string):Promise<ApiResponse<TreatmentResponse>>=>{
+  const response = await fetchWrapper(`treatments/doctor/${treatmentId}`, {}, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch treatment detail');
   }
   return response.json();
 }
@@ -78,6 +91,26 @@ export const existByPatientId = async (
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to fetch treatments');
+  }
+  return response.json();
+}
+
+export const setTreatmentPhase = async(phase: TreatmentPhaseSetRequest): Promise<ApiResponse<PhaseResponse>>=>{
+  const response = await fetchWrapper(`treatment-phases/set`, {
+    method: "PUT",
+    body: JSON.stringify({
+      ...phase,
+      schedules: phase.schedules.map((schedule) => ({
+        ...schedule,
+        appointmentDateTime: getLocalDateTimeFormat(schedule.appointmentDateTime),
+        estimatedTime: getLocalDateTimeFormat(schedule.estimatedTime),
+      })),
+    }),
+  }, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to set treatment phase');
   }
   return response.json();
 }

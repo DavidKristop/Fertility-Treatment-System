@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
-  FileText,
   Pill,
   CreditCard,
   Bell,
@@ -80,7 +79,7 @@ const sidebarItemsProp: SidebarItem[] = [
     id: "prescriptions",
     label: "Đơn thuốc",
     icon: Pill,
-    path: "/patient/prescriptions/history",
+    path: "/patient/assign-drug"
   },
   {
     id: "payments",

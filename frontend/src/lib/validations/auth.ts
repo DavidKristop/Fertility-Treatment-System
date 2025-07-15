@@ -1,3 +1,4 @@
+import { addDays, startOfDay } from "date-fns";
 import { z } from "zod";
 
 const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,32}$/;
@@ -118,6 +119,28 @@ export const resetPasswordSchema = z.object({
   message: "Mật khẩu xác nhận không khớp",
   path: ["confirmPassword"],
 });
+
+export const scheduleSetRequestSchema = z.object({
+  title: z.string()
+    .trim()
+    .min(1, "Tiêu đề buổi hẹn là bắt buộc")
+    .max(50, "Tiêu đề buổi hẹn không được quá 50 ký tự"),
+  appointmentDateTime: z.date()
+    .min(addDays(startOfDay(new Date()),3), "Buổi hẹn phải được đặt ít nhất 3 ngày trước")
+    .refine((date)=>date.getDay()>=1 && date.getDay()<=5,"Buổi hẹn phải đặt trong tuần")
+    .refine((date)=> date.getHours()>=8 && date.getHours()<=18,"Buổi hẹn phải được đặt trong thời gian 8h-18h"),
+  estimatedTime: z.date()
+    .max(addDays(startOfDay(new Date()),120), "Buổi hẹn phải được đặt ít nhất 120 ngày trước")
+    .refine((date)=>date.getDay()>=1 && date.getDay()<=5,"Buổi hẹn phải đặt trong tuần")
+    .refine((date)=> date.getHours()>=8 && date.getHours()<=18,"Buổi hẹn phải được đặt trong thời gian 8h-18h"),
+}).refine((data) => {
+  const minEstimatedTime = new Date(data.appointmentDateTime.getTime() + 10 * 60 * 1000);
+  const maxEstimatedTime = new Date(data.appointmentDateTime.getTime() + 2 * 60 * 60 * 1000);
+  return data.estimatedTime >= minEstimatedTime && data.estimatedTime <= maxEstimatedTime;
+}, {
+  message: "Thời gian dự kiến phải cách thời gian hẹn ít nhất 10 phút",
+  path: ["estimatedTime"]
+})
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;

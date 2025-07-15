@@ -40,7 +40,6 @@ export default function ContractList({
   searchTerm,
   currentPage,
   totalPages,
-  totalElements,
   onViewContract,
   onSignContract,
   onDownloadContract,

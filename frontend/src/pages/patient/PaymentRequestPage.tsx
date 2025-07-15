@@ -149,7 +149,7 @@ export default function MyPaymentsPage() {
                           {payment.status === "COMPLETED" && (
                             <span className="text-green-600">Đã thanh toán</span>
                           )}
-                          {payment.status === "CANCELED" && (
+                          {payment.status === "CANCELLED" && (
                             <span className="text-red-600">Đã hủy</span>
                           )}
                         </div>
