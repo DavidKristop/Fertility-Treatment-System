@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import ManagerLayout from "@/components/manager/ManagerLayout"
@@ -17,22 +19,19 @@ export default function ManagerContracts() {
   // Business logic hook
   const contractManager = useContractManagement({
     fetchFunction: getContracts,
-    userRole: "manager"
+    userRole: "manager",
   })
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/manager/dashboard" },
-    { label: "Quản lý hợp đồng" },
-  ]
+  const breadcrumbs = [{ label: "Trang tổng quan", path: "/manager/dashboard" }, { label: "Quản lý hợp đồng" }]
 
   const handleViewContract = (contract: ContractResponse) => {
     navigate(`/manager/contracts/${contract.id}`)
   }
 
   const handleDownloadContract = (contractId: string) => {
-    const contract = contractManager.contracts.find(c => c.id === contractId)
+    const contract = contractManager.contracts.find((c) => c.id === contractId)
     if (contract?.contractUrl) {
-      window.open(contract.contractUrl, '_blank')
+      window.open(contract.contractUrl, "_blank")
     } else {
       toast.error("Không tìm thấy file hợp đồng")
     }
@@ -47,7 +46,7 @@ export default function ManagerContracts() {
           onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
           loading={contractManager.loading}
         />
-        
+
         <ContractFilters
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -55,7 +54,7 @@ export default function ManagerContracts() {
           onStatusFilterChange={contractManager.setStatusFilter}
           searchPlaceholder="Tìm kiếm theo tên bệnh nhân, bác sĩ, hoặc phác đồ..."
         />
-        
+
         <ContractList
           contracts={contractManager.contracts}
           loading={contractManager.loading}
@@ -73,7 +72,6 @@ export default function ManagerContracts() {
           userRole="manager"
         />
       </div>
-
     </ManagerLayout>
   )
 }
