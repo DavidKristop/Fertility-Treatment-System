@@ -3,6 +3,7 @@ import type { FC, ReactNode } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import {jwtDecode} from 'jwt-decode'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 
 interface ProtectedRouteProps {
   children: ReactNode
@@ -21,6 +22,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, allowedRoles }) => 
 
   // 1) Nếu chưa có token, ép về login
   if (!token) {
+    toast.error("Bạn cần đăng nhập để truy cập trang này.")
     return <Navigate to="/authorization/login" replace state={{ from: location }} />
   }
 
@@ -30,6 +32,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, allowedRoles }) => 
     payload = jwtDecode<JwtPayload>(token)
   } catch {
     localStorage.removeItem('token')
+    toast.error("Bạn cần đăng nhập để truy cập trang này.")
     return <Navigate to="/authorization/login" replace />
   }
 
@@ -40,6 +43,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children, allowedRoles }) => 
   useEffect(() => {
     if (!hasRole) {
       // quay lại trang trước đó trong lịch sử
+      toast.error("Bạn không có quyền truy cập trang này.")
       navigate(-1)
     }
   }, [hasRole, navigate])

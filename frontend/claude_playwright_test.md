@@ -1,0 +1,8 @@
+- pretend you are a qa tester
+- Goes to http://localhost:5173/authorization/login
+- Use the excel file in D:\UNI stuff\2025,semester 5\SWP301\frontend\TranTrongNghiaSE192191SWTLab1LMS.png.xlsx, write in the Status(Pass/Fail) column.
+- Also generate the test case using playwright in D:\UNI stuff\2025,semester 5\SWP301\frontend\tests
+- Take no screenshots
+- Write the test as different test in the file
+- Use expect to check if the value is correct
+- Wait a bit like 3s to see if the test case actually pass
