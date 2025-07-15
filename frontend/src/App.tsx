@@ -68,8 +68,8 @@ import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
 import CreateDoctorPage from "./pages/manager/CreateDoctorPage";
-//import PaymentManagement from "./pages/manager/payments/PaymentManagement";
-//import PaymentDetail from "./pages/manager/payments/PaymentDetail";
+import PaymentManagement from "./pages/manager/payments/PaymentManagement";
+import PaymentDetail from "./pages/manager/payments/PaymentDetail";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -288,13 +288,13 @@ const router = createBrowserRouter([
           { path: "edit/:id", element: <EditDrug />, },
         ],
       },
-      // {
-      //   path: "payments",
-      //   children: [
-      //     { index: true, element: <PaymentManagement /> },
-      //     { path: ":id", element: <PaymentDetail /> },
-      //   ],
-      // },
+      {
+        path: "payments",
+        children: [
+          { index: true, element: <PaymentManagement /> },
+          { path: ":id", element: <PaymentDetail /> },
+        ],
+      },
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
