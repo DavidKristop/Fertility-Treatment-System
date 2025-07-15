@@ -119,6 +119,8 @@ export interface DrugResponse {
 }
 
 export interface PatientDrugResponse {
+  id: string;
+  drug: DrugResponse;
   dosage: string;
   usageInstructions: string;
   amount: number;
@@ -283,8 +285,8 @@ export interface PaymentResponse {
   description: string;
   paymentDate: string;
   paymentDeadline: string;
-  paymentMethod: string;
-  status: string;
+  paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
+  status: "PENDING" | "COMPLETED" | "CANCELED";
   userId: string;
   scheduleServices: ServiceResponse[];
   assignDrugs: AssignDrugResponse[];

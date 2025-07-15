@@ -45,11 +45,11 @@ export default function Navbar() {
       case "ROLE_DOCTOR":
         navigate("/doctor/dashboard");
         break;
-      case "ROLE_ADMIN":
-        navigate("/admin/dashboard");
-        break;
       case "ROLE_MANAGER":
         navigate("/manager/dashboard");
+        break;
+      case "ROLE_ADMIN":
+        navigate("/admin/dashboard");
         break;
       default:
         navigate("/");
