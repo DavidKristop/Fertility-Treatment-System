@@ -333,7 +333,7 @@ export interface TreatmentPlan {
 export interface ContractResponse {
   id: string;
   signDeadline: string;
-  treatment: string;
+  treatmentId: string;
   contractUrl: string;
   signed: boolean;
 }
