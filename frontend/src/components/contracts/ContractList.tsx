@@ -51,18 +51,7 @@ export default function ContractList({
   // Filter contracts by search term
   const filteredContracts = contracts.filter(contract => {
     if (searchTerm === "") return true
-    
-    const searchLower = searchTerm.toLowerCase()
-    const searchFields = [
-      contract.treatment?.description,
-      contract.treatment?.protocol?.title,
-      contract.treatment?.doctor?.fullName,
-      ...(showPatientInfo ? [contract.treatment?.patient?.fullName] : [])
-    ]
-    
-    return searchFields.some(field => 
-      field?.toLowerCase().includes(searchLower)
-    )
+    return contract.treatmentId?.toLowerCase().includes(searchTerm.toLowerCase())
   })
 
   const getEmptyMessage = () => {

@@ -4,11 +4,11 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, FileText, User, Stethoscope, Calendar, DollarSign, Download, PenTool } from "lucide-react"
+import { RefreshCw, FileText, Download, PenTool } from "lucide-react"
 import { getPatientContractById, getManagerContractById } from "@/api/contract"
 import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 interface ContractDetailFormProps {
   contract?: ContractResponse | null
@@ -168,11 +168,35 @@ export default function ContractDetailForm({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-600">Mã hợp đồng</label>
+              <label className="text-sm font-medium text-gray-600">Contract ID</label>
               <p className="font-medium text-gray-900 break-all">{contract.id}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-600">Trạng thái</label>
+              <label className="text-sm font-medium text-gray-600">Treatment ID</label>
+              <p className="font-medium text-gray-900 break-all">
+                {contract.treatmentId ? (
+                  userRole === "patient" ? (
+                    <Link
+                      to={`/patient/treatment/${contract.treatmentId}`}
+                      className="text-blue-600 underline hover:text-blue-800 transition"
+                      title="Xem chi tiết điều trị"
+                    >
+                      {contract.treatmentId}
+                    </Link>
+                  ) : (
+                    contract.treatmentId
+                  )
+                ) : (
+                  <span className="text-gray-400">Không có</span>
+                )}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-600">Sign Deadline</label>
+              <p className="font-medium text-gray-900">{new Date(contract.signDeadline).toLocaleString("vi-VN")}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-600">Status</label>
               <div className="mt-1 flex gap-2">
                 <Badge className={contract.signed ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
                   {contract.signed ? "Đã ký" : "Chờ ký"}
@@ -181,11 +205,7 @@ export default function ContractDetailForm({
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-600">Hạn ký</label>
-              <p className="font-medium text-gray-900">{new Date(contract.signDeadline).toLocaleString("vi-VN")}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">File hợp đồng</label>
+              <label className="text-sm font-medium text-gray-600">Contract File</label>
               <div className="mt-1">
                 {contract.contractUrl ? (
                   <Button variant="link" className="p-0 h-auto text-blue-600" onClick={handleDownloadContract}>
@@ -199,219 +219,6 @@ export default function ContractDetailForm({
           </div>
         </CardContent>
       </Card>
-
-      {/* Patient Info - Only for Manager */}
-      {showPatientInfo && contract.treatment?.patient && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Thông tin bệnh nhân
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-gray-600">Họ tên</label>
-                <p className="font-medium text-gray-900">{contract.treatment.patient.fullName || "Chưa cập nhật"}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Email</label>
-                <p className="font-medium text-gray-900 break-all">
-                  {contract.treatment.patient.email || "Chưa cập nhật"}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Số điện thoại</label>
-                <p className="font-medium text-gray-900">{contract.treatment.patient.phone || "Chưa cập nhật"}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Ngày sinh</label>
-                <p className="font-medium text-gray-900">
-                  {contract.treatment.patient.dateOfBirth
-                    ? new Date(contract.treatment.patient.dateOfBirth).toLocaleDateString("vi-VN")
-                    : "Chưa cập nhật"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Doctor Info */}
-      {contract.treatment?.doctor && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Stethoscope className="h-5 w-5" />
-              Thông tin bác sĩ
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-gray-600">Họ tên</label>
-                <p className="font-medium text-gray-900">{contract.treatment.doctor.fullName || "Chưa cập nhật"}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Email</label>
-                <p className="font-medium text-gray-900 break-all">
-                  {contract.treatment.doctor.email || "Chưa cập nhật"}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Số điện thoại</label>
-                <p className="font-medium text-gray-900">{contract.treatment.doctor.phone || "Chưa cập nhật"}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Chuyên khoa</label>
-                <p className="font-medium text-gray-900">{contract.treatment.doctor.specialty || "Chưa cập nhật"}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Treatment Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Thông tin điều trị
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-600">Mô tả điều trị</label>
-              <p className="font-medium text-gray-900">{contract.treatment.description || "Chưa có mô tả"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Phác đồ điều trị</label>
-              <p className="font-medium text-gray-900">{contract.treatment.protocol?.title || "Chưa xác định"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Giá trị ước tính</label>
-              <p className="font-medium text-green-600 text-lg">
-                {contract.treatment.protocol?.estimatedPrice?.toLocaleString("vi-VN") || "0"} VNĐ
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-gray-600">Ngày bắt đầu</label>
-                <p className="font-medium text-gray-900">
-                  {contract.treatment.startDate
-                    ? new Date(contract.treatment.startDate).toLocaleDateString("vi-VN")
-                    : "Chưa xác định"}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">Ngày kết thúc</label>
-                <p className="font-medium text-gray-900">
-                  {contract.treatment.endDate
-                    ? new Date(contract.treatment.endDate).toLocaleDateString("vi-VN")
-                    : "Chưa xác định"}
-                </p>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Trạng thái điều trị</label>
-              <div className="mt-1">
-                <Badge variant="outline">{contract.treatment.status || "Chưa xác định"}</Badge>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Protocol Phases */}
-      {contract.treatment?.protocol?.phases && contract.treatment.protocol.phases.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              Các giai đoạn điều trị
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {contract.treatment.protocol.phases
-                .sort((a, b) => a.position - b.position)
-                .map((phase) => (
-                  <div key={phase.id} className="border rounded-lg p-4 bg-gray-50">
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="font-semibold text-gray-900">
-                        Giai đoạn {phase.position}: {phase.title}
-                      </h4>
-                      {phase.phaseModifierPercentage && phase.phaseModifierPercentage !== 1 && (
-                        <Badge variant="outline" className="text-xs">
-                          Modifier: {phase.phaseModifierPercentage * 100}%
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mb-4">{phase.description}</p>
-
-                    {/* Services */}
-                    {phase.services && phase.services.length > 0 && (
-                      <div className="mb-4">
-                        <span className="text-sm font-medium text-gray-700 block mb-2">Dịch vụ:</span>
-                        <div className="space-y-2">
-                          {phase.services.map((service) => (
-                            <div
-                              key={service.id}
-                              className="flex justify-between items-center bg-white p-3 rounded border"
-                            >
-                              <div className="flex-1">
-                                <div className="font-medium text-sm">{service.name}</div>
-                                <div className="text-xs text-gray-500">{service.description}</div>
-                              </div>
-                              <div className="text-sm font-medium text-green-600">
-                                {service.price?.toLocaleString("vi-VN") || "0"} VNĐ
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Drugs */}
-                    {phase.drugs && phase.drugs.length > 0 && (
-                      <div className="mb-4">
-                        <span className="text-sm font-medium text-gray-700 block mb-2">Thuốc:</span>
-                        <div className="space-y-2">
-                          {phase.drugs.map((drug) => (
-                            <div
-                              key={drug.id}
-                              className="flex justify-between items-center bg-white p-3 rounded border"
-                            >
-                              <div className="flex-1">
-                                <div className="font-medium text-sm">{drug.name}</div>
-                                <div className="text-xs text-gray-500">{drug.description}</div>
-                              </div>
-                              <div className="text-sm font-medium text-blue-600">
-                                {drug.price?.toLocaleString("vi-VN") || "0"} VNĐ
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-              {/* Total */}
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-blue-900">Tổng giá trị phác đồ:</span>
-                  <span className="font-bold text-xl text-blue-900">
-                    {contract.treatment.protocol.estimatedPrice?.toLocaleString("vi-VN") || "0"} VNĐ
-                  </span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
