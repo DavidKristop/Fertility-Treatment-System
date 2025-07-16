@@ -52,9 +52,10 @@ export default function AssignDrugList({
         )}
       </div>
 
-      <Accordion type="single" collapsible>
+      <div className="space-y-2 flex flex-col gap-2">
         {assignDrugs.map((drug) => (
-          <div
+          <div 
+            key={drug.id}
             className={`w-full cursor-pointer flex items-center justify-between p-4 border rounded-md bg-white hover:bg-gray-50 transition-colors duration-200`}
             style={{
               backgroundColor: drug.status === 'PENDING' ? '#FFF3E0' :
@@ -65,8 +66,10 @@ export default function AssignDrugList({
                     drug.status === 'COMPLETED' ? '#388E3C' : '#000',
             }}
             onClick={() => {
-              setIsDrugDialogOpen(true);
-              setSelectedDrug(drug);
+              if(!isSettable){
+                setIsDrugDialogOpen(true);
+                setSelectedDrug(drug);
+              }
             }}
           >
             <div className="flex items-center justify-between w-full">
@@ -102,20 +105,20 @@ export default function AssignDrugList({
             </div>
           </div>
         ))}
-      </Accordion>
+      </div>
       <DrugSelectionDialog 
         open={isDrugDialogOpen}
         onClose={()=>setIsDrugDialogOpen(false)}
         assignDrug={{
           assignDrugId: selectedDrug?.id || "",
           patientDrugs: selectedDrug?.patientDrugs.map((patientDrug)=>({
-            id: patientDrug.id,
+            patientDrugId: patientDrug.id,
             drugId: patientDrug.drug.id,
             inputId: crypto.randomUUID(),
             name: patientDrug.drug.name,
             usageInstructions: patientDrug.usageInstructions,
-            startDate: new Date(patientDrug.startDate),
-            endDate: new Date(patientDrug.endDate),
+            startDate: patientDrug.startDate? new Date(patientDrug.startDate):new Date(),
+            endDate: patientDrug.endDate? new Date(patientDrug.endDate):new Date(),
             dosage: patientDrug.dosage,
             amount: patientDrug.amount,
           })) || [],

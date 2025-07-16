@@ -24,14 +24,12 @@ function getStatusText(status: ScheduleStatus) {
 interface ScheduleListProps {
   unsetServices: TreatmentServiceResponse[];
   schedules: TreatmentScheduleResponse[];
-  phaseId:string;
   isSettable?:boolean;
 }
 
 export default function ScheduleList({
   unsetServices,
   schedules,
-  phaseId,
   isSettable=true,
 }: ScheduleListProps) {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
@@ -119,7 +117,6 @@ export default function ScheduleList({
         onClose={() => setIsScheduleDialogOpen(false)}
         unsetServices={unsetServices}
         schedule={selectedSchedule}
-        phaseId={phaseId}
       />
     </div>
   );

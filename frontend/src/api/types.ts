@@ -428,13 +428,13 @@ export interface AssignDrugSetRequest{
 }
 
 export interface DrugSetRequest{
-  id: string|"",
+  patientDrugId: string|"",
   drugId: string,
   inputId:string,
   name:string,
   usageInstructions: string,
-  startDate: Date,
-  endDate: Date,
+  startDate: Date | null,
+  endDate: Date | null,
   dosage: string,
   amount: number
 }

@@ -3,15 +3,18 @@ import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { ArrowDown, ExpandIcon, Save, X, Trash } from "lucide-react"
+import { ArrowDown, Save, X, Trash } from "lucide-react"
 import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, TextField, Typography } from "@mui/material"
 import { toFormikValidationSchema } from "zod-formik-adapter"
 import { assignDrugSetRequestSchema } from "@/lib/validations/auth"
-import type { AssignDrugSetRequest, DrugResponse, DrugSetRequest } from "@/api/types"
+import type { AssignDrugSetRequest, DrugResponse, DrugSetRequest, PhaseResponse } from "@/api/types"
 import { getDrugs } from "@/api/drug"
 import { useFormik } from "formik"
 import type { FormikProps, FormikErrors, FormikTouched } from "formik"
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateField } from '@mui/x-date-pickers/DateField';
+import { toast } from "react-toastify"
+import { useTreatmentDetail } from "@/lib/context/TreatmentDetailContext"
+import { setTreatmentPhase } from "@/api/treatment"
 
 
 interface DrugSelectionDialogProps {
@@ -25,6 +28,7 @@ export default function DrugSelectionDialog({
   onClose,
   assignDrug
 }: DrugSelectionDialogProps) {
+  const {treatmentDetail,setTreatmentDetail} = useTreatmentDetail()
 
   const formik = useFormik<AssignDrugSetRequest>({
     validationSchema: toFormikValidationSchema(assignDrugSetRequestSchema),
@@ -32,7 +36,38 @@ export default function DrugSelectionDialog({
       assignDrugId:"",
       patientDrugs:[]
     },
-    onSubmit:()=>{}
+    onSubmit:async(values)=>{
+      if(values.patientDrugs.length === 0){
+        toast.error("Lịch hẹn phải có ít nhất một dịch vụ");
+        return;
+      }
+      else{
+        try{
+          const res = await setTreatmentPhase({
+            phaseId:treatmentDetail?.currentPhase.id||"",
+            schedules:[],
+            assignDrugs:[values],
+          })
+          if(res.payload){
+            const newPhase = res.payload
+            if(treatmentDetail)setTreatmentDetail({
+              ...treatmentDetail,
+              phases: treatmentDetail?.phases.map((phase:PhaseResponse)=>{
+                if(phase.id === newPhase.id){
+                  return newPhase
+                }
+                return phase
+              })||[],
+            })
+            onClose()
+          }
+        }
+        catch(err){
+          console.error(err);
+          toast.error((err as Error).message || "Lỗi khi tạo lịch hẹn");
+        }
+      }
+    }
   })
   
   const [drugList, setDrugList] = useState<DrugResponse[]>([])
@@ -70,7 +105,7 @@ export default function DrugSelectionDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Drug Selection */}
+          {!formik.values.assignDrugId&&
             <div>
               <Label htmlFor="drug">Chọn thuốc</Label>
               <Autocomplete
@@ -83,7 +118,7 @@ export default function DrugSelectionDialog({
                 onChange={(_, newValue) => {
                   if (newValue) {
                     const newPatientDrug:DrugSetRequest = {
-                      id:"",
+                      patientDrugId:"",
                       drugId:newValue.id,
                       name:newValue.name,
                       dosage:"",
@@ -103,12 +138,14 @@ export default function DrugSelectionDialog({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    placeholder="Nhập dịch vụ..."
+                    placeholder="Nhập thuốc để thêm..."
                     className="w-full"
                   />
                 )}
               />
             </div>
+          }
+          {/* Drug Selection */}
             <div className="max-h-[300px] overflow-y-auto">
               {formik.values.patientDrugs.map((patientDrug)=>
                 <Accordion key={patientDrug.inputId}>
@@ -135,7 +172,7 @@ export default function DrugSelectionDialog({
             <X className="h-4 w-4 mr-2" />
             Hủy
           </Button>
-          <Button type="submit" disabled={formik.isSubmitting} onClick={()=>formik.handleSubmit()}>
+          <Button className="cursor-pointer" type="submit" disabled={formik.isSubmitting} onClick={()=>formik.handleSubmit()}>
             <Save className="h-4 w-4 mr-2" />
             Lưu toa thuốc
           </Button>
@@ -166,28 +203,30 @@ const PatientDrugForm = ({
   return(
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleRemoveDrug}
-          className="text-red-500 hover:text-red-600"
-        >
-          <Trash className="h-5 w-5" />
-        </Button>
+        {!patientDrug.patientDrugId&&
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRemoveDrug}
+            className="text-red-500 hover:text-red-600"
+          >
+            <Trash className="h-5 w-5" />
+          </Button>
+        }
       </div>
       <div className="space-y-2 flex flex-col gap-2">
         <TextField
           fullWidth
           label="Hướng dẫn sử dụng"
-          value={patientDrug.usageInstructions}
+          value={patientDrug.usageInstructions||""}
           error={drugTouched?.usageInstructions && Boolean(drugErrors?.usageInstructions)}
           helperText={drugTouched?.usageInstructions && drugErrors?.usageInstructions}
           onChange={(e) => {
             const newPatientDrugs = [...formik.values.patientDrugs];
-            newPatientDrugs[index] = {
-              ...newPatientDrugs[index],
-              usageInstructions: e.target.value
-            };
+            const newPatientDrug = newPatientDrugs.find((drug)=>drug.inputId===patientDrug.inputId);
+            if(newPatientDrug){
+              newPatientDrug.usageInstructions = e.target.value;
+            }
             formik.setFieldValue("patientDrugs", newPatientDrugs);
           }}
         />
@@ -196,15 +235,15 @@ const PatientDrugForm = ({
         <TextField
           fullWidth
           label="Liều lượng"
-          value={patientDrug.dosage}
+          value={patientDrug.dosage||""}
           error={drugTouched?.dosage && Boolean(drugErrors?.dosage)}
           helperText={drugTouched?.dosage && drugErrors?.dosage}
           onChange={(e) => {
             const newPatientDrugs = [...formik.values.patientDrugs];
-            newPatientDrugs[index] = {
-              ...newPatientDrugs[index],
-              dosage: e.target.value
-            };
+            const newPatientDrug = newPatientDrugs.find((drug)=>drug.inputId===patientDrug.inputId);
+            if(newPatientDrug){
+              newPatientDrug.dosage = e.target.value;
+            }
             formik.setFieldValue("patientDrugs", newPatientDrugs);
           }}
         />
@@ -214,47 +253,52 @@ const PatientDrugForm = ({
           fullWidth
           label="Số lượng"
           type="number"
-          disabled={!formik.values.assignDrugId&&!patientDrug.id}
-          value={patientDrug.amount}
+          disabled={Boolean(patientDrug.patientDrugId)}
+          value={patientDrug.amount||""}
           error={drugTouched?.amount && Boolean(drugErrors?.amount)}
           helperText={drugTouched?.amount && drugErrors?.amount}
           onChange={(e) => {
             const newPatientDrugs = [...formik.values.patientDrugs];
             const amount = parseInt(e.target.value);
             if (!isNaN(amount)) {
-              newPatientDrugs[index] = {
-                ...newPatientDrugs[index],
-                amount: amount
-              };
+              const newPatientDrug = newPatientDrugs.find((drug)=>drug.inputId===patientDrug.inputId);
+              if(newPatientDrug){
+                newPatientDrug.amount = amount;
+              }
+              formik.setFieldValue("patientDrugs", newPatientDrugs);
               formik.setFieldValue("patientDrugs", newPatientDrugs);
             }
           }}
         />
 
         {/* Start Date */}
-        <DatePicker
+        <DateField
           value={patientDrug.startDate}
           format="dd/MM/yyyy"
+          error={drugTouched?.startDate && Boolean(drugErrors?.startDate)}
+          helperText={drugTouched?.startDate && drugErrors?.startDate}
           onChange={(e) => {
             const newPatientDrugs = [...formik.values.patientDrugs];
-            newPatientDrugs[index] = {
-              ...newPatientDrugs[index],
-              startDate: e
-            };
+            const newPatientDrug = newPatientDrugs.find((drug)=>drug.inputId===patientDrug.inputId);
+            if(newPatientDrug){
+              newPatientDrug.startDate = e;
+            }
             formik.setFieldValue("patientDrugs", newPatientDrugs);
           }}
         />
 
         {/* End Date */}
-        <DatePicker
+        <DateField
           value={patientDrug.endDate}
           format="dd/MM/yyyy"
+          error={drugTouched?.endDate && Boolean(drugErrors?.endDate)}
+          helperText={drugTouched?.endDate && drugErrors?.endDate}
           onChange={(e) => {
             const newPatientDrugs = [...formik.values.patientDrugs];
-            newPatientDrugs[index] = {
-              ...newPatientDrugs[index],
-              endDate: e
-            };
+            const newPatientDrug = newPatientDrugs.find((drug)=>drug.inputId===patientDrug.inputId);
+            if(newPatientDrug){
+              newPatientDrug.endDate = e;
+            }
             formik.setFieldValue("patientDrugs", newPatientDrugs);
           }}
         />
