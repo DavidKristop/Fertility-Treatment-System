@@ -86,9 +86,14 @@ const PaymentManagement: React.FC = () => {
         setPayments((prev) =>
           prev.map((payment) =>
             payment.id === paymentId
-              ? { ...payment, status: "COMPLETED" as const, paymentMethod, paymentDate: new Date().toISOString() }
-              : payment,
-          ),
+              ? {
+                  ...payment,
+                  status: "COMPLETED",
+                  paymentMethod,
+                  paymentDate: new Date().toISOString(),
+                }
+              : payment
+          )
         )
       } else {
         setError("Xử lý thanh toán thất bại")
