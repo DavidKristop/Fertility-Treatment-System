@@ -132,6 +132,7 @@ export interface AssignDrugResponse {
 
 export interface TreatmentResponse {
   id: string;
+  title:string;
   startDate: string;
   endDate: string;
   description: string;
@@ -351,6 +352,7 @@ export interface Reminder{
 }
 
 export interface TreatmentCreateRequest{
+  title:string,
   paymentMode: "FULL" | "BY_PHASE",
   protocolId: string,
   userId:string,
@@ -382,6 +384,7 @@ export interface ScheduleServiceSetRequest{
 
 export interface AssignDrugSetRequest{
   assignDrugId: string|"",
+  title:string,
   patientDrugs: (DrugSetRequest)[]
 }
 

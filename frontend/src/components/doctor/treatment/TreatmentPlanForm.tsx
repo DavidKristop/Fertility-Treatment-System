@@ -27,6 +27,7 @@ const formSchema = z.object({
   medicalHistory: z.string().min(1, "Medical history is required").max(500),
   paymentType: z.enum(["FULL", "BY_PHASE"]),
   description: z.string().min(1, "Description is required").max(500),
+  title: z.string().min(1, "Title is required").max(50),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -47,6 +48,7 @@ export function CreateTreatmentForm() {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -116,6 +118,7 @@ export function CreateTreatmentForm() {
 
       const treatmentData = {
         paymentMode: data.paymentType as "FULL" | "BY_PHASE",
+        title: data.title,
         protocolId: selectedProtocol.id,
         userId: selectedPatient.id,
         medicalHistory: data.medicalHistory,
@@ -124,11 +127,7 @@ export function CreateTreatmentForm() {
 
       await createTreatment(treatmentData);
       // Reset form after successful submission
-      setValue("patientEmail", "");
-      setValue("protocolTitle", "");
-      setValue("medicalHistory", "");
-      setValue("description", "");
-      setValue("paymentType", "FULL");
+      reset();
       setSelectedPatient(null);
       setSelectedProtocol(null);
       setPatientSearch("");
@@ -167,6 +166,17 @@ export function CreateTreatmentForm() {
             />
           )}
           className="w-full"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="title">Treatment Title</Label>
+        <TextField
+          fullWidth
+          {...register("title")}
+          placeholder="Enter title"
+          error={!!errors.title}
+          helperText={errors.title?.message}
         />
       </div>
 
