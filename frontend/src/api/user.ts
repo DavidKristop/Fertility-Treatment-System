@@ -1,5 +1,5 @@
 import { fetchWrapper } from '.'
-import type { UserProfile, ManagedUserResponse } from './types'
+import type { UserProfile, ManagedUserResponse, RegisterRequest, AuthResponse } from './types'
 import type { ApiPaginationResponse } from "./types";
 
 
@@ -83,4 +83,20 @@ export const getUserById = async (id: string): Promise<ManagedUserResponse> => {
   }
 
   return await response.json();
+};
+
+type RegistrationRequest = Omit<RegisterRequest, "confirmPassword">;
+
+export const createManager = async (data: RegistrationRequest): Promise<AuthResponse> => {
+  const response = await fetchWrapper("admin/new-manager", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  }, true);
+  if (!response.ok) {
+    throw new Error("Failed to create manager");
+  }
+  return response.json();
 };
