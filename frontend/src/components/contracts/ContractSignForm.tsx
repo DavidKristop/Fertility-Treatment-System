@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { RefreshCw, FileText, AlertCircle, CheckCircle, PenTool, Download } from "lucide-react"
 import { getPatientContractById, signContract } from "@/api/contract"
 import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
 
 interface ContractSignFormProps {
   contractId: string
@@ -112,7 +112,9 @@ export default function ContractSignForm({ contractId, onSignSuccess, onCancel }
     )
   }
 
-  const isExpired = new Date(contract.signDeadline) < new Date()
+  const isExpired = contract
+    ? new Date(contract.signDeadline).setHours(23, 59, 59, 999) < new Date().getTime()
+    : false
   const canSign = !contract.signed && !isExpired
 
   if (contract.signed) {
@@ -124,21 +126,6 @@ export default function ContractSignForm({ contractId, onSignSuccess, onCancel }
             Hợp đồng đã được ký
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Hợp đồng đã được ký thành công</h3>
-            <p className="text-gray-600 mb-6">
-              Hợp đồng điều trị "{contract.treatment.protocol?.title}" đã được ký và có hiệu lực.
-            </p>
-            {contract.contractUrl && (
-              <Button onClick={handleDownloadContract} variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Tải xuống hợp đồng
-              </Button>
-            )}
-          </div>
-        </CardContent>
       </Card>
     )
   }
@@ -187,34 +174,23 @@ export default function ContractSignForm({ contractId, onSignSuccess, onCancel }
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="text-sm font-medium text-gray-600">Phác đồ điều trị</label>
-              <p className="font-medium text-gray-900">{contract.treatment.protocol?.title || "Chưa xác định"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Bác sĩ phụ trách</label>
-              <p className="font-medium text-gray-900">{contract.treatment.doctor?.fullName || "Chưa xác định"}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Giá trị hợp đồng</label>
-              <p className="font-medium text-green-600 text-lg">
-                {contract.treatment.protocol?.estimatedPrice?.toLocaleString("vi-VN") || "0"} VNĐ
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Hạn ký</label>
-              <p className="font-medium text-gray-900">{new Date(contract.signDeadline).toLocaleString("vi-VN")}</p>
-            </div>
-          </div>
-
-          {contract.treatment.description && (
-            <div className="mt-4">
-              <label className="text-sm font-medium text-gray-600">Mô tả điều trị</label>
-              <p className="font-medium text-gray-900">{contract.treatment.description}</p>
-            </div>
-          )}
-        </CardContent>
+        <div>
+          <label className="text-sm font-medium text-gray-600">Treatment ID</label>
+          <p className="font-medium text-gray-900 break-all">
+            {contract.treatmentId ? (
+              <Link
+                to={`/patient/treatment/${contract.treatmentId}`}
+                className="text-blue-600 underline hover:text-blue-800 transition"
+                title="Xem chi tiết điều trị"
+              >
+                {contract.treatmentId}
+              </Link>
+            ) : (
+              <span className="text-gray-400">Không có</span>
+            )}
+          </p>
+        </div>
+      </CardContent>
       </Card>
 
       {/* Contract File */}
