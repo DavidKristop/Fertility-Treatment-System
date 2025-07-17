@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getAllAssignedDrugsForManager, cancelAssignDrug, markAssignDrugAsTaken } from "@/api/assignDrug";
-import type { AssignDrugResponse } from "@/api/types";
-import ManagerLayout from "@/components/manager/ManagerLayout";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getAllAssignedDrugsForDoctor } from "@/api/assignDrug";
+import type { AssignDrugDetailResponse } from "@/api/types";
+import DoctorLayout from "@/components/doctor/DoctorLayout";
 import {
   Pagination,
   PaginationContent,
@@ -11,6 +11,8 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
+import AssignDrugDisplay from "@/components/doctor/assignDrug/AssignDrugDisplay";
+import { TextField } from "@mui/material";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ hoàn thành" },
@@ -19,7 +21,7 @@ const STATUS_OPTIONS = [
   { value: "ALL", label: "Tất cả" },
 ];
 
-export default function ManagerAssignedDrugPage() {
+export default function MyAssignDrugPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusParam = searchParams.get("status") as
     | "PENDING"
@@ -30,7 +32,7 @@ export default function ManagerAssignedDrugPage() {
   const keywordParam = searchParams.get("keyword") || "";
   const pageParam = Number(searchParams.get("page"));
 
-  const [assignDrugs, setAssignDrugs] = useState<AssignDrugResponse[]>([]);
+  const [assignDrugs, setAssignDrugs] = useState<AssignDrugDetailResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
@@ -39,16 +41,21 @@ export default function ManagerAssignedDrugPage() {
     "PENDING" | "COMPLETED" | "CANCELLED" | "ALL"
   >(statusParam || "ALL");
   const [keyword, setKeyword] = useState(keywordParam);
+  const navigate = useNavigate();
+  const breadcrumbs = [
+    { label: "Trang chủ", path: "/doctor/dashboard" },
+    { label: "Danh sách đơn thuốc", path: "/doctor/assigned-drugs" },
+  ];
 
   const fetchAssignDrugs = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await getAllAssignedDrugsForManager({ 
+      const res = await getAllAssignedDrugsForDoctor({ 
         page,
         size: 10,
-        status,
-        keyword,
+        status: status === "ALL" ? ["PENDING", "COMPLETED", "CANCELLED"] : [status],
+        title: keyword,
       });
       setAssignDrugs(res.payload.content);
       setTotalPages(res.payload.totalPages);
@@ -67,19 +74,9 @@ export default function ManagerAssignedDrugPage() {
     fetchAssignDrugs();
   }, [status, keyword, page]);
 
-  const handleCancel = async (id: string) => {
-    await cancelAssignDrug(id);
-    fetchAssignDrugs();
-  };
-
-  const handleMarkTaken = async (id: string) => {
-    await markAssignDrugAsTaken(id);
-    fetchAssignDrugs();
-  };
-
   return (
-    <ManagerLayout title="Quản lý đơn thuốc">
-      <div className="max-w-4xl mx-auto p-4">
+    <DoctorLayout title="Quản lý đơn thuốc" breadcrumbs={breadcrumbs}>
+      <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Danh sách đơn thuốc</h2>
 
         <div className="flex gap-2 mb-4">
@@ -98,9 +95,10 @@ export default function ManagerAssignedDrugPage() {
             ))}
           </select>
 
-          <input
+          <TextField
+            fullWidth
             type="text"
-            placeholder="Tìm theo tên bệnh nhân"
+            placeholder="Tìm theo tiêu đề"
             value={keyword}
             onChange={(e) => {
               setKeyword(e.target.value);
@@ -118,46 +116,7 @@ export default function ManagerAssignedDrugPage() {
         )}
 
         {!loading && assignDrugs.length > 0 && (
-          <div className="grid gap-4">
-            {assignDrugs.map((assign) => (
-              <div key={assign.id} className="p-4 border rounded shadow bg-white">
-                <div className="font-medium text-sm mb-2">
-                  {assign.treatmentPhaseName} - <span className="text-blue-700">{assign.patientName}</span>
-                </div>
-                <div className="mb-2">
-                  <span className="font-semibold">Trạng thái:</span> {assign.status}
-                </div>
-                {assign.patientDrugs.map((drug, i) => (
-                  <div key={i} className="text-sm pl-4 mb-2 border-l border-gray-300">
-                    <div><strong>Tên thuốc:</strong> {drug.drug.name}</div>
-                    <div><strong>Liều lượng:</strong> {drug.dosage}</div>
-                    <div><strong>Cách dùng:</strong> {drug.usageInstructions}</div>
-                    <div><strong>Số lượng:</strong> {drug.amount}</div>
-                    <div><strong>Giá:</strong> {drug.drug.price.toLocaleString("vi-VN")} đ</div>
-                  </div>
-                ))}
-
-                <div className="flex gap-2 mt-2">
-                  {assign.status === "PENDING" && (
-                    <>
-                      <button
-                        onClick={() => handleMarkTaken(assign.id)}
-                        className="px-3 py-1 bg-green-600 text-white rounded text-sm"
-                      >
-                        Đánh dấu đã dùng
-                      </button>
-                      <button
-                        onClick={() => handleCancel(assign.id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded text-sm"
-                      >
-                        Hủy thuốc
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug) => navigate(`/doctor/assigned-drugs/${assignDrug.id}`)} />
         )}
 
         {totalPages > 1 && (
@@ -189,6 +148,6 @@ export default function ManagerAssignedDrugPage() {
           </div>
         )}
       </div>
-    </ManagerLayout>
+    </DoctorLayout>
   );
 }

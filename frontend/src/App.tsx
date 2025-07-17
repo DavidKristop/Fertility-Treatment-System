@@ -49,7 +49,6 @@ import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail";
 import RecordResults from "./pages/doctor/results/RecordResults";
 import ResultsHistory from "./pages/doctor/results/ResultsHistory";
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile";
-import ReminderHistory from "./pages/doctor/notifications/ReminderHistory";
 
 // Manager pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
@@ -59,7 +58,7 @@ import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
 import DrugDetail from "./pages/manager/drugs/DrugDetail";
 import EditDrug from "./pages/manager/drugs/EditDrug";
-import ManagerAssignedDrugPage from "@/pages/manager/ManagerAssignDrugPage";
+import ManagerAssignedDrugPage from "@/pages/manager/AssignDrug/ManagerAssignDrugPage";
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
 import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
 import ManagerServiceUpdatePage from "./pages/manager/servicePages/ManagerServiceUpdatePage";
@@ -85,6 +84,9 @@ import DoctorAppointmentRequest from "./pages/doctor/DoctorAppointmentRequests";
 import MyRemindersPage from "./pages/patient/MyRemindersPage";
 import VerifyEmailPage from "./pages/authorization/VerifyEmailPage";
 import DoctorScheduleResult from "./pages/doctor/appointments/ScheduleResult";
+import ManagerAssignDrugDetailPage from "./pages/manager/AssignDrug/ManagerAssignDrugDetailPage";
+import MyAssignDrugPage from "./pages/doctor/MyAssignDrugPage";
+import MyAssignDrugDetailPage from "./pages/doctor/MyAssignDrugDetailPage";
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -175,7 +177,8 @@ const router = createBrowserRouter([
       { path: "profile", element: <PatientProfile /> },
       { path: "treatment", element: <TreatmentPage /> },
       { path: "treatment/:id", element: <TreatmentDetailPage /> },
-      { path: "prescriptions/history", element: <MyAssignDrugsPage /> },
+      { path: "assigned-drugs", element: <MyAssignDrugsPage /> },
+      { path: "assigned-drugs/:id", element: <MyAssignDrugDetailPage /> },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -197,6 +200,9 @@ const router = createBrowserRouter([
         path: "schedule-result/:scheduleId",
         element: <DoctorScheduleResult />,
       },
+      { path: "assigned-drugs", element: <MyAssignDrugPage /> },
+      { path: "assigned-drugs/:id", element: <MyAssignDrugDetailPage /> },
+      { path: "pending", element: <DoctorAppointmentRequest /> },
       { path: "pending", element: <DoctorAppointmentRequest /> },
       // Patient routes
       {
@@ -241,6 +247,10 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
       { path: "assigned-drugs", element: <ManagerAssignedDrugPage /> },
+      { 
+        path: "assigned-drugs/:id", 
+        element: <ManagerAssignDrugDetailPage />,
+      },
       { 
         path: "services", 
         children: [

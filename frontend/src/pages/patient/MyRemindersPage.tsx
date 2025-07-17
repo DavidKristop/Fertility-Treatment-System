@@ -78,7 +78,7 @@ export default function MyRemindersPage() {
 
   return (
     <PatientLayout title="Danh sách nhắc nhở" breadcrumbs={breadcrumbs}>
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Các thông báo của bạn</h2>
 
         {error && (

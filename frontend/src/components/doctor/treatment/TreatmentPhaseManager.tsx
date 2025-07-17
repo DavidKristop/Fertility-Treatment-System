@@ -19,6 +19,7 @@ export default function TreatmentPhaseManager({
     <div className="space-y-4">
       {treatmentDetail&&
         <>
+          <div className="text-md font-semibold text-center">Giai đoạn đang điều trị hiện tại: {treatmentDetail.currentPhase.position+1}</div>
           {/* Current Phase Display */}
           <div className="flex items-center gap-4">
             <Button
@@ -32,7 +33,7 @@ export default function TreatmentPhaseManager({
             </Button>
             <div className="flex-grow text-center">
               <h3 className="text-lg font-semibold">
-                {treatmentDetail?.phases[currentPhasePosition - 1].title}
+                Giai đoạn {currentPhasePosition+": "+treatmentDetail?.phases[currentPhasePosition - 1].title}
               </h3>
                 {treatmentDetail?.currentPhase.id===treatmentDetail?.phases[currentPhasePosition - 1].id && <p className="text-sm text-yellow-500">Đang diễn ra</p>}
                 {treatmentDetail?.phases[currentPhasePosition-1].complete&&treatmentDetail?.phases[currentPhasePosition-1].id!==treatmentDetail?.currentPhase.id? <p className="text-sm text-green-500">Hoàn thành</p>: <p className="text-sm text-red-500">Chưa hoàn thành</p>}

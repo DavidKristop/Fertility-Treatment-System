@@ -20,6 +20,8 @@ import type { ScheduleDetailResponse } from "@/api/types";
 import { getPatientScheduleById } from "@/api/schedule";
 import { toast } from "react-toastify";
 import TreatmentStatusBadge from "@/components/doctor/common/TreatmentStatusBadge";
+import UnSignedContract from "@/components/common/UnSignedContract";
+import UnPaidPayment from "@/components/common/UnPaidPayment";
 
 export default function PatientScheduleResult() {
   const [loading, setLoading] = useState(true);
@@ -98,33 +100,12 @@ export default function PatientScheduleResult() {
 
           {/* Contract not signed */}
           {schedule?.treatment && schedule?.treatment.status !== "AWAITING_CONTRACT_SIGNED" && (
-            <FormSection title="Hợp đồng" icon={FileText}>
-              <div className="border border-gray-200 rounded-lg bg-white p-6">
-                <h3 className="text-lg font-medium mb-4">
-                  Hợp đồng chưa được ký: <Link to={``}><span className="text-red-500">Ký hợp đồng</span></Link>
-                </h3>
-              </div>
-            </FormSection>
+            <UnSignedContract contractUrl={`/patient/contracts/${schedule.treatment.contractId}`} />
           )}
 
           {/*Unpaid payments */}
           {schedule?.payment?.some(p => p.status === "PENDING") && (
-            <FormSection title="Thanh toán" icon={Receipt}>
-              <div className="border border-gray-200 rounded-lg bg-white p-6">
-              <h3 className="text-lg font-medium mb-4">
-                Các thanh toán chưa hoàn thành
-              </h3>
-              <div className="space-y-4">
-                {schedule?.payment?.filter(p => p.status === "PENDING")?.map(p => (
-                  <div key={p.id} className="flex items-center gap-4">
-                    <Link to={`/patient/payments/payment-detail/${p.id}`}>
-                      <p className="font-medium text-red-500">Thanh toán {p.id} ({p.amount.toLocaleString("vi-VN")}₫)</p>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-            </FormSection>
+           <UnPaidPayment payments={schedule.payment.filter(p => p.status === "PENDING")} onClick={(payment) => navigate(`/patient/payments/payment-detail/${payment.id}`)} />
           )}
 
           {/* Appointment Details */}

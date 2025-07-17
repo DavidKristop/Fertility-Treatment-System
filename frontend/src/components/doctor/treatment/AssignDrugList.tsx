@@ -66,7 +66,7 @@ export default function AssignDrugList({
                     drug.status === 'COMPLETED' ? '#388E3C' : '#000',
             }}
             onClick={() => {
-              if(isSettable){
+              if(isSettable||drug.status==='PENDING'||drug.status==="COMPLETED"){
                 setIsDrugDialogOpen(true);
                 setSelectedDrug(drug);
               }

@@ -68,7 +68,7 @@ export default function PaymentDetailPage() {
   return (
     <PatientLayout title="Chi tiết thanh toán" breadcrumbs={breadcrumbs}>
       <LoadingComponent isLoading={loading}>
-        <div className="max-w-3xl mx-auto p-4">
+        <div className="mx-auto p-4">
             <div className="space-y-6">
               <div className="border rounded-lg p-4 bg-white shadow">
                 <h2 className="text-xl font-bold mb-2">
@@ -108,7 +108,7 @@ export default function PaymentDetailPage() {
                   {payment?.status === "COMPLETED" && (
                     <span className="text-green-600">Đã thanh toán</span>
                   )}
-                  {payment?.status === "CANCELLED" && (
+                  {payment?.status === "CANCELED" && (
                     <span className="text-red-600">Đã hủy</span>
                   )}
                 </div>

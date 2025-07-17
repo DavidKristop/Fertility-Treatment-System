@@ -72,7 +72,7 @@ export default function ScheduleList({
               borderRadius: '4px',
             }}
             onClick={()=>{
-              if(isSettable) {
+              if(isSettable||schedule.status==='PENDING') {
                 setIsScheduleDialogOpen(true)
                 setSelectedSchedule({
                     scheduleId:schedule.id,

@@ -13,7 +13,7 @@ export default function CreateTreatmentPlans() {
 
   return (
     <DoctorLayout title="Kế hoạch điều trị mới" breadcrumbs={breadcrumbs}>
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="mx-auto p-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tạo kế hoạch điều trị mới</h1>
         </div>

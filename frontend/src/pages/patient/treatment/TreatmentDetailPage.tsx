@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Treatment } from "@/api/types";
+import type { TreatmentResponse } from "@/api/types";
 import { fetchWrapper } from "@/api/index";
 import { Card } from "@/components/ui/card";
 import PatientLayout from "@/components/patient/PatientLayout";
 
 export default function TreatmentDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [treatment, setTreatment] = useState<Treatment | null>(null);
+  const [treatment, setTreatment] = useState<TreatmentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();

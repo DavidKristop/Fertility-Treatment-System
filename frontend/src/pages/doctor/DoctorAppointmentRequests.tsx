@@ -139,7 +139,7 @@ export default function DoctorAppointmentRequest() {
 
   return (
     <DoctorLayout title="Yêu cầu đặt lịch" breadcrumbs={breadcrumbs}>
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Lịch sử yêu cầu đặt lịch</h2>
         <form className="flex gap-2 mb-4" onSubmit={handleSearch}>
           <input

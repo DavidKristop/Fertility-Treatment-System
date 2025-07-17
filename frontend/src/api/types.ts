@@ -135,12 +135,26 @@ export interface PatientDrugResponse {
 export interface AssignDrugResponse {
   id: string;
   title:string;
-  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  status: AssignDrugStatus;
   completeDate?: string;
   createdAt?: string;
   treatmentPhaseName?: string;
   patientName?: string;
   patientDrugs: PatientDrugResponse[];
+  payment: PaymentPreviewResponse;
+}
+
+export interface AssignDrugDetailResponse{
+  id: string;
+  title: string;
+  status: AssignDrugStatus;
+  createdAt: string;
+  patient: PatientProfile;
+  doctor: DoctorProfile;
+  patientDrugs: PatientDrugResponse[];
+  treatment: TreatmentPreviewResponse;
+  treatmentPhase: TreatmentPhasePreviewResponse;
+  contract: ContractPreviewResponse;
   payment: PaymentPreviewResponse;
 }
 
@@ -265,6 +279,7 @@ export interface ScheduleDetailResponse extends ScheduleResponse{
   payment: PaymentPreviewResponse[];
   treatment: TreatmentPreviewResponse;
   treatmentPhase: TreatmentPhasePreviewResponse;
+  contract: ContractPreviewResponse;
   canMoveToNextPhase: boolean;
 }
 
@@ -367,6 +382,12 @@ export interface PaymentPreviewResponse {
   amount: number;
   paymentDeadline: string;
   status: PaymentStatus;
+}
+
+export interface ContractPreviewResponse{
+  id: string;
+  signed: boolean;
+  contractUrl: string;
 }
 
 export interface PaymentResponse {

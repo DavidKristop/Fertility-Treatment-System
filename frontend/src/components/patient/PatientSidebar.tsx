@@ -76,10 +76,10 @@ const sidebarItemsProp: SidebarItem[] = [
     path: "/patient/contracts",
   },
   {
-    id: "prescriptions",
+    id: "assigned-drugs",
     label: "Đơn thuốc",
     icon: Pill,
-    path: "/patient/assign-drug"
+    path: "/patient/assigned-drugs"
   },
   {
     id: "payments",
