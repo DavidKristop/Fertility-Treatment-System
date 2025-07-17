@@ -85,6 +85,9 @@ import DoctorAppointmentRequest from "./pages/doctor/DoctorAppointmentRequests";
 import MyRemindersPage from "./pages/patient/MyRemindersPage";
 import VerifyEmailPage from "./pages/authorization/VerifyEmailPage";
 import DoctorScheduleResult from "./pages/doctor/appointments/ScheduleResult";
+import ManageUserPage from "./pages/admin/ManageUsersPage";
+import UserDetailPage from "./pages/admin/UserDetailPage";
+import CreateManagerPage from "./pages/admin/CreateManagerPage";
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -312,6 +315,19 @@ const router = createBrowserRouter([
       {
         path: "patients",
         element: <PatientList />,
+      },
+
+      {
+        path: "/admin/manage-users",
+        element: <ManageUserPage />,
+      },
+      {
+        path: "/admin/manage-users/:id",
+        element: <UserDetailPage />,
+      },
+      {
+        path: "/admin/create-manager",
+        element: <CreateManagerPage />,
       },
       // fallback for admin subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },

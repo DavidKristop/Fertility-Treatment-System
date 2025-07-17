@@ -16,6 +16,7 @@ import {
   FileText,
   MessageSquare,
   User,
+  PlusIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -47,20 +48,18 @@ const sidebarItems: SidebarItem[] = [
     id: "users",
     label: "Quản lý người dùng",
     icon: Users,
-    badge: 2,
+    path: "/admin/manage-users",
+  },
+  {
+    id: "account",
+    label: "Tạo tài khoản",
+    icon: User,
     children: [
       {
-        id: "patient-management",
-        label: "Quản lý bệnh nhân",
-        icon: User,
-        path: "/admin/users/patients",
-      },
-      {
-        id: "staff-management",
-        label: "Quản lý nhân viên",
-        icon: Users,
-        path: "/admin/users/staff",
-        badge: 2,
+        id: "account-manager",
+        label: "Tạo tài khoản Quản lý",
+        icon: PlusIcon,
+        path: "/admin/create-manager",
       },
     ],
   },
