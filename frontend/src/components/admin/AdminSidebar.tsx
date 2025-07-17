@@ -47,22 +47,7 @@ const sidebarItems: SidebarItem[] = [
     id: "users",
     label: "Quản lý người dùng",
     icon: Users,
-    badge: 2,
-    children: [
-      {
-        id: "patient-management",
-        label: "Quản lý bệnh nhân",
-        icon: User,
-        path: "/admin/users/patients",
-      },
-      {
-        id: "staff-management",
-        label: "Quản lý nhân viên",
-        icon: Users,
-        path: "/admin/users/staff",
-        badge: 2,
-      },
-    ],
+    path: "/admin/manage-users",
   },
   {
     id: "analytics",
