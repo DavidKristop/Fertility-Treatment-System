@@ -78,6 +78,21 @@ export interface DoctorResponse {
   yearsOfExperience: number;
   licenseNumber: string;
 }
+
+export interface ManagedUserResponse {
+  id: string;
+  email: string;
+  phone: string | null;
+  fullName: string;
+  dateOfBirth: string;
+  address: string | null;
+  verify: boolean;
+  role: string;
+  active: boolean;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
 // ==================== API RESPONSE TYPES ====================
 export interface ApiResponse<T = any> {
   success: boolean;
