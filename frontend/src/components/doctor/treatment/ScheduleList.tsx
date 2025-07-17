@@ -25,12 +25,14 @@ interface ScheduleListProps {
   unsetServices: TreatmentServiceResponse[];
   schedules: TreatmentScheduleResponse[];
   isSettable?:boolean;
+  role:"doctor"|"patient"
 }
 
 export default function ScheduleList({
   unsetServices,
   schedules,
   isSettable=true,
+  role="doctor"
 }: ScheduleListProps) {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleSetRequest | undefined>(undefined);
@@ -72,7 +74,7 @@ export default function ScheduleList({
               borderRadius: '4px',
             }}
             onClick={()=>{
-              if(isSettable||schedule.status==='PENDING') {
+              if(isSettable&&(schedule.status==='PENDING'||schedule.status==='CHANGED')) {
                 setIsScheduleDialogOpen(true)
                 setSelectedSchedule({
                     scheduleId:schedule.id,
@@ -86,7 +88,7 @@ export default function ScheduleList({
                   }))
                 })
               }
-              else navigate(`/doctor/schedule-result/${schedule.id}`)
+              else navigate(`/${role}/schedule-result/${schedule.id}`)
             }}
           >
             <div>
@@ -112,12 +114,14 @@ export default function ScheduleList({
         ))}
       </div>
       {/* Schedule Dialog */}
-      <ScheduleSetDialog
-        isOpen={isScheduleDialogOpen}
-        onClose={() => setIsScheduleDialogOpen(false)}
-        unsetServices={unsetServices}
-        schedule={selectedSchedule}
-      />
+      {isSettable&&
+        <ScheduleSetDialog
+          isOpen={isScheduleDialogOpen}
+          onClose={() => setIsScheduleDialogOpen(false)}
+          unsetServices={unsetServices}
+          schedule={selectedSchedule}
+        />
+      }
     </div>
   );
 }

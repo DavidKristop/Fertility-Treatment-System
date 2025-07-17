@@ -47,7 +47,7 @@ export default function TreatmentDetail(){
   // Error state - schedule not found
   if (!isLoading && !treatmentDetail) {
     return (
-      <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={[]}>
+      <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={breadcrumbs}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <p className="text-gray-500 mb-4">Không tìm thấy kế hoạch điều trị</p>
@@ -76,6 +76,7 @@ export default function TreatmentDetail(){
             <Grid size={12}>
               <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
                 <TreatmentPhaseManager
+                  role="doctor"
                   initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
                 />
               </FormSection>

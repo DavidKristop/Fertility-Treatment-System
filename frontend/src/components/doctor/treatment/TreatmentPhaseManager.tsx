@@ -7,10 +7,14 @@ import AssignDrugList from "./AssignDrugList";
 
 interface TreatmentPhaseManagerProps {
   initialPhasePosition: number;
+  role:"doctor"|"patient";
+  isSettable?: boolean;
 }
 
 export default function TreatmentPhaseManager({
   initialPhasePosition = 1,
+  role="doctor",
+  isSettable=true,
 }: TreatmentPhaseManagerProps) {
   const {treatmentDetail} = useTreatmentDetail()
   const [currentPhasePosition, setCurrentPhasePosition] = useState(initialPhasePosition);
@@ -53,17 +57,19 @@ export default function TreatmentPhaseManager({
           <ScheduleList
             schedules={treatmentDetail?.phases[currentPhasePosition - 1].schedules || []}
             unsetServices={treatmentDetail?.phases[currentPhasePosition - 1].unsetServices||[]}
-            isSettable={treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
-              && treatmentDetail.status==='IN_PROGRESS'
+            isSettable={(treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
+              && treatmentDetail.status==='IN_PROGRESS') && isSettable
             }
+            role={role}
           />
 
           {/* Assign Drug Management */}
           <AssignDrugList
             assignDrugs={treatmentDetail?.phases[currentPhasePosition - 1].assignDrugs || []}
-            isSettable={treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
-              && treatmentDetail.status==='IN_PROGRESS'
+            isSettable={(treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
+              && treatmentDetail.status==='IN_PROGRESS') && isSettable
             }
+            role={role}
           />
         </>
       }

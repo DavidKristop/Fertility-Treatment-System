@@ -23,11 +23,13 @@ function getStatusText(status: AssignDrugStatus) {
 interface AssignDrugListProps {
   assignDrugs: AssignDrugResponse[];
   isSettable?: boolean;
+  role: "doctor" | "patient"
 }
 
 export default function AssignDrugList({
   assignDrugs,
   isSettable = true,
+  role="patient"
 }: AssignDrugListProps) {
   const [isDrugDialogOpen, setIsDrugDialogOpen] = useState(false);
   const [selectedDrug, setSelectedDrug] = useState<AssignDrugResponse | undefined>(undefined);
@@ -66,10 +68,10 @@ export default function AssignDrugList({
                     drug.status === 'COMPLETED' ? '#388E3C' : '#000',
             }}
             onClick={() => {
-              if(isSettable||drug.status==='PENDING'||drug.status==="COMPLETED"){
+              if(isSettable&&(drug.status==='PENDING'||drug.status==="COMPLETED")){
                 setIsDrugDialogOpen(true);
                 setSelectedDrug(drug);
-              }
+              }else navigate(`/${role}/assigned-drugs/${drug.id}`)
             }}
           >
             <div className="flex items-center justify-between w-full">
@@ -109,25 +111,27 @@ export default function AssignDrugList({
           </div>
         ))}
       </div>
-      <DrugSelectionDialog 
-        open={isDrugDialogOpen}
-        onClose={()=>setIsDrugDialogOpen(false)}
-        assignDrug={{
-          assignDrugId: selectedDrug?.id || "",
-          title:selectedDrug?.title || "",
-          patientDrugs: selectedDrug?.patientDrugs.map((patientDrug)=>({
-            patientDrugId: patientDrug.id,
-            drugId: patientDrug.drug.id,
-            inputId: crypto.randomUUID(),
-            name: patientDrug.drug.name,
-            usageInstructions: patientDrug.usageInstructions,
-            startDate: patientDrug.startDate? new Date(patientDrug.startDate):new Date(),
-            endDate: patientDrug.endDate? new Date(patientDrug.endDate):new Date(),
-            dosage: patientDrug.dosage,
-            amount: patientDrug.amount,
-          })) || [],
-        }}
-      />
+      {isSettable&&
+        <DrugSelectionDialog 
+          open={isDrugDialogOpen}
+          onClose={()=>setIsDrugDialogOpen(false)}
+          assignDrug={{
+            assignDrugId: selectedDrug?.id || "",
+            title:selectedDrug?.title || "",
+            patientDrugs: selectedDrug?.patientDrugs.map((patientDrug)=>({
+              patientDrugId: patientDrug.id,
+              drugId: patientDrug.drug.id,
+              inputId: crypto.randomUUID(),
+              name: patientDrug.drug.name,
+              usageInstructions: patientDrug.usageInstructions,
+              startDate: patientDrug.startDate? new Date(patientDrug.startDate):new Date(),
+              endDate: patientDrug.endDate? new Date(patientDrug.endDate):new Date(),
+              dosage: patientDrug.dosage,
+              amount: patientDrug.amount,
+            })) || [],
+          }}
+        />
+      }
     </div>
   );
 }
