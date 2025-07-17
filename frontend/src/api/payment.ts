@@ -1,5 +1,5 @@
 import { fetchWrapper } from "."
-import type { ApiPaginationResponse, ApiResponse, PaymentResponse } from "./types";
+import type { ApiPaginationResponse, ApiResponse, PaymentResponse, PaymentStatus } from "./types";
 
 
 export const getPaymentDetail = async (id: string): Promise<ApiResponse<PaymentResponse>>=>{
@@ -17,7 +17,7 @@ export const getAllOfMyPatientPayment = async ({
 }: {
     page: number,
     size: number,
-    statuses: ("PENDING" | "COMPLETED" | "CANCELED")[]
+    statuses: (PaymentStatus)[]
 }): Promise<ApiPaginationResponse<PaymentResponse>> =>{
     const response = await fetchWrapper(`payments/patient?page=${page}&size=${size}&status=${statuses.join('&status=')}`,
         {}, true)

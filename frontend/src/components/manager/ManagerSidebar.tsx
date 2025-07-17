@@ -49,43 +49,23 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/dashboard",
   },
   {
-    id: "createprotocols",
-    label: "Tạo phác đồ điều trị",
-    icon: Plus,
-    path: "/manager/createprotocols",
-  },
-  {
-    id: "protocols",
-    label: "Danh sách phác đồ điều trị",
-    icon: ListCollapse,
-    path: "/manager/protocols",
-  },
-  {
-    id: "staff",
-    label: "Quản lý nhân viên",
-    icon: Users,
-    badge: 1,
-    children: [
+    id: "protocol",
+    label: "Phác đồ điều trị",
+    icon: FileText,
+    children:[
       {
-        id: "staff-schedules",
-        label: "Lịch trực nhân viên",
-        icon: Calendar,
-        path: "/manager/staff/schedules",
-        badge: 1,
+        id: "createprotocols",
+        label: "Tạo phác đồ điều trị",
+        icon: Plus,
+        path: "/manager/createprotocols",
       },
       {
-        id: "staff-profiles",
-        label: "Hồ sơ nhân viên",
-        icon: User,
-        path: "/manager/staff/profiles",
+        id: "protocols",
+        label: "Danh sách phác đồ điều trị",
+        icon: ListCollapse,
+        path: "/manager/protocols",
       },
-    ],
-  },
-  {
-    id: "appointments",
-    label: "Lịch hẹn",
-    icon: Calendar,
-    path: "/manager/appointments",
+    ]
   },
   {
     id: "assigned-drugs",
@@ -94,10 +74,23 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/assigned-drugs",
   },
   {
-    id: "services",
-    label: "Quản lý dịch vụ",
-    icon: FileText,
-    path: "/manager/services",
+    id:"drugsAndServicesManagement",
+    label:"Quản lý thuốc & Dịch vụ",
+    icon:FileText,
+    children:[
+      {
+        id:"drugs",
+        label:"Quản lý thuốc",
+        icon:Pill,
+        path:"/manager/drugs",
+      },
+      {
+        id:"services",
+        label:"Quản lý dịch vụ",
+        icon:FileText,
+        path:"/manager/services",
+      },
+    ]
   },
   {
     id: "payments",
@@ -106,61 +99,16 @@ const sidebarItems: SidebarItem[] = [
     path: "/manager/payments",
   },
   {
-    id: "create-doctor",
-    label: "Tạo tài khoản bác sĩ",
-    icon: User, // Hoặc icon nào khác phù hợp
-    path: "/manager/doctors/create",
-  },
-  {
-    id: "reports",
-    label: "Báo cáo vận hành",
-    icon: BarChart,
-    children: [
-      {
-        id: "appointment-reports",
-        label: "Báo cáo lịch hẹn",
-        icon: FileText,
-        path: "/manager/reports/appointments",
-      },
-      {
-        id: "financial-reports",
-        label: "Báo cáo tài chính",
-        icon: DollarSign,
-        path: "/manager/reports/financial",
-      },
-    ],
-  },
-  {
     id: "contracts",
     label: "Hợp đồng",
     icon: FileText,
     path: "/manager/contracts",
   },
   {
-    id: "drugs",
-    label: "Quản lý thuốc",
-    icon: Pill,
-    path: "/manager/drugs",
-  },
-  {
-    id: "facility",
-    label: "Cảnh báo cơ sở vật chất",
-    icon: AlertTriangle,
-    badge: 2,
-    path: "/manager/facility/alerts",
-  },
-  {
-    id: "notifications",
-    label: "Thông báo",
-    icon: Bell,
-    badge: 3,
-    path: "/manager/notifications",
-  },
-  {
-    id: "support",
-    label: "Hỗ trợ & tư vấn",
-    icon: MessageSquare,
-    path: "/manager/support",
+    id: "create-doctor",
+    label: "Tạo tài khoản bác sĩ",
+    icon: User, // Hoặc icon nào khác phù hợp
+    path: "/manager/doctors/create",
   },
   {
     id: "profile",

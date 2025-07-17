@@ -1,4 +1,4 @@
-import { addDays, startOfDay } from "date-fns";
+import { addDays, startOfDay, subDays } from "date-fns";
 import { z } from "zod";
 
 const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,32}$/;
@@ -36,12 +36,12 @@ export const loginSchema = z.object({
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
   })
-    .regex(passwordRegex, "Mật khẩu phải bắt đầu bằng chữ hoa")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
-    .refine(hasSpecialCharacter, {
-      message: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (ví dụ: !, @, #, $, %, ^, &, *, ?, _)",
-    }),
+  .regex(passwordRegex, "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt và không chứa khoảng trắng")
+  .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+  .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
+  .refine(hasSpecialCharacter, {
+    message: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (ví dụ: !, @, #, $, %, ^, &, *, ?, _)",
+  }),
 });
 
 export const registerSchema = loginSchema.extend({
@@ -140,6 +140,28 @@ export const scheduleSetRequestSchema = z.object({
 }, {
   message: "Thời gian dự kiến phải cách thời gian hẹn ít nhất 10 phút",
   path: ["estimatedTime"]
+})
+
+
+export const patientDrugSetRequestSchema = z.object({
+  amount:z.number().min(1,"Số lượng phải lớn hơn 0"),
+  dosage:z.string()
+  .min(1, "Độ lượng phải có ít nhất 1 kí tự")
+  .max(50, "Độ lượng không được quá 50 ký tự"),
+  usageInstructions:z.string()
+  .min(1, "Hướng dẫn sử dụng phải có ít nhất 1 kí tự")
+  .max(200, "Hướng dẫn sử dụng không được quá 200 ký tự"),
+  startDate: z.date()
+  .min(subDays(startOfDay(new Date()), 1),"Ngày bắt đầu phải từ ngày hôm nay"),
+  endDate: z.date()
+  .min(subDays(startOfDay(new Date()), 1),"Ngày kết thúc phải từ ngày hôm nay"),
+}).refine((data)=>data.startDate<=data.endDate,{
+  message:"Ngày kết thúc phải sau ngày bắt đầu",
+  path:["endDate"]
+})
+
+export const assignDrugSetRequestSchema = z.object({
+  patientDrugs:z.array(patientDrugSetRequestSchema)
 })
 
 export type LoginFormValues = z.infer<typeof loginSchema>;

@@ -52,7 +52,6 @@ export default function TreatmentPhaseManager({
           <ScheduleList
             schedules={treatmentDetail?.phases[currentPhasePosition - 1].schedules || []}
             unsetServices={treatmentDetail?.phases[currentPhasePosition - 1].unsetServices||[]}
-            phaseId={treatmentDetail?.phases[currentPhasePosition - 1].id}
             isSettable={treatmentDetail?.phases[currentPhasePosition - 1].id===treatmentDetail?.currentPhase.id
               && treatmentDetail.status==='IN_PROGRESS'
             }

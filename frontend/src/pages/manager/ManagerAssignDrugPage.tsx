@@ -129,11 +129,11 @@ export default function ManagerAssignedDrugPage() {
                 </div>
                 {assign.patientDrugs.map((drug, i) => (
                   <div key={i} className="text-sm pl-4 mb-2 border-l border-gray-300">
-                    <div><strong>Tên thuốc:</strong> {drug.drugName}</div>
+                    <div><strong>Tên thuốc:</strong> {drug.drug.name}</div>
                     <div><strong>Liều lượng:</strong> {drug.dosage}</div>
                     <div><strong>Cách dùng:</strong> {drug.usageInstructions}</div>
                     <div><strong>Số lượng:</strong> {drug.amount}</div>
-                    <div><strong>Giá:</strong> {drug.drugPrice.toLocaleString("vi-VN")} đ</div>
+                    <div><strong>Giá:</strong> {drug.drug.price.toLocaleString("vi-VN")} đ</div>
                   </div>
                 ))}
 

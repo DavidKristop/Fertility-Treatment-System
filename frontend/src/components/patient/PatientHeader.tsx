@@ -81,21 +81,6 @@ export default function PatientHeader({ title, breadcrumbs }: PatientHeaderProps
 
         {/* Utilities */}
         <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input placeholder="Tìm bác sĩ, đơn thuốc, lịch hẹn..." className="pl-10 w-80" />
-          </div>
-
-          {/* Notifications */}
-          <Link to="/patient/notifications">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">
-                3
-              </Badge>
-            </Button>
-          </Link>
 
           {/* Profile Dropdown */}
           <DropdownMenu>

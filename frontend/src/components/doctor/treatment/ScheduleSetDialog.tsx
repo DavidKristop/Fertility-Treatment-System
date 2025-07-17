@@ -23,7 +23,6 @@ interface ScheduleSetDialog {
   isOpen: boolean;
   unsetServices: TreatmentServiceResponse[];
   schedule?:ScheduleSetRequest;
-  phaseId:string;
   onClose: () => void;
 }
 
@@ -31,7 +30,6 @@ export default function ScheduleSetDialog({
   isOpen,
   unsetServices,
   schedule,
-  phaseId,
   onClose,
 }: ScheduleSetDialog) {
   const {treatmentDetail,setTreatmentDetail} = useTreatmentDetail()
@@ -68,7 +66,7 @@ export default function ScheduleSetDialog({
         try{
           setIsSetting(true)
           const res = await setTreatmentPhase({
-            phaseId,
+            phaseId:treatmentDetail?.currentPhase.id||"",
             schedules:[values],
             assignDrugs:[],
           })

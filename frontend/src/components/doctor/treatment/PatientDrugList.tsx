@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
-import type { AssignDrugResponse, AssignDrugStatus, PatientDrugResponse } from "@/api/types";
-import { useState } from "react";
+import type { AssignDrugResponse, AssignDrugStatus } from "@/api/types";
 import { useNavigate } from "react-router-dom";
 
 function getStatusText(status: AssignDrugStatus) {
@@ -26,7 +25,6 @@ interface PatientDrugListProps {
 
 export default function PatientDrugList({
   assignDrugs,
-  phaseId,
   isSettable = true,
 }: PatientDrugListProps) {
   const navigate = useNavigate();

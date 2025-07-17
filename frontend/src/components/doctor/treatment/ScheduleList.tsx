@@ -24,14 +24,12 @@ function getStatusText(status: ScheduleStatus) {
 interface ScheduleListProps {
   unsetServices: TreatmentServiceResponse[];
   schedules: TreatmentScheduleResponse[];
-  phaseId:string;
   isSettable?:boolean;
 }
 
 export default function ScheduleList({
   unsetServices,
   schedules,
-  phaseId,
   isSettable=true,
 }: ScheduleListProps) {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
@@ -45,7 +43,10 @@ export default function ScheduleList({
         {isSettable&&<Button
           variant="outline"
           size="sm"
-          onClick={()=>setIsScheduleDialogOpen(true)}
+          onClick={()=>{
+            setIsScheduleDialogOpen(true)
+            setSelectedSchedule(undefined)
+          }}
         >
           <Plus className="h-4 w-4 mr-2" />
           Tạo lịch hẹn mới
@@ -116,7 +117,6 @@ export default function ScheduleList({
         onClose={() => setIsScheduleDialogOpen(false)}
         unsetServices={unsetServices}
         schedule={selectedSchedule}
-        phaseId={phaseId}
       />
     </div>
   );
