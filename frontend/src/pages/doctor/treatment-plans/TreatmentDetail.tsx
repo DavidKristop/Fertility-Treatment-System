@@ -37,7 +37,7 @@ export default function TreatmentDetail(){
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/doctor/dashboard" },
     { label: "Kế hoạch điều trị", path: "/doctor/treatment-plans" },
-    { label: "Chi tiết kế hoạch điều trị" },
+    { label: treatmentDetail?.title || "Chi tiết kế hoạch điều trị" },
   ]
 
   useEffect(()=>{
@@ -64,7 +64,7 @@ export default function TreatmentDetail(){
 
   return (
     <TreatmentDetailProvider treatmentDetail={treatmentDetail || null} isLoading={isLoading} setTreatmentDetail={setTreatmentDetail}>
-      <DoctorLayout title="Chi tiết kế hoạch điều trị" breadcrumbs={breadcrumbs}>
+      <DoctorLayout title={treatmentDetail?.title || "Chi tiết kế hoạch điều trị"} breadcrumbs={breadcrumbs}>
         <LoadingComponent isLoading={isLoading}>
           <Grid container spacing={2}>
             <Grid size={12}>
@@ -79,10 +79,6 @@ export default function TreatmentDetail(){
                   initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
                 />
               </FormSection>
-            </Grid>
-            {/*Have a toggle that switch between services and drugs */}
-            <Grid size={{xs: 12, md: 4}}>
-
             </Grid>
           </Grid>
         </LoadingComponent>

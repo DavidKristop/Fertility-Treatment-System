@@ -66,7 +66,7 @@ export default function AssignDrugList({
                     drug.status === 'COMPLETED' ? '#388E3C' : '#000',
             }}
             onClick={() => {
-              if(!isSettable){
+              if(isSettable){
                 setIsDrugDialogOpen(true);
                 setSelectedDrug(drug);
               }
@@ -75,19 +75,22 @@ export default function AssignDrugList({
             <div className="flex items-center justify-between w-full">
               <div>
                 <h5 className="font-medium text-lg mb-1">
+                  {drug.title}
+                </h5>
+                <p>
                   {drug.patientDrugs.length > 0 && (
                     <span>
                       Từ:
-                      {drug.patientDrugs.reduce((earliest, current) => 
+                       {drug.patientDrugs.reduce((earliest, current) => 
                         new Date(current.startDate) < new Date(earliest.startDate) ? current : earliest
                       ).startDate} - 
                       Tới:
-                      {drug.patientDrugs.reduce((latest, current) => 
+                       {drug.patientDrugs.reduce((latest, current) => 
                         new Date(current.endDate) > new Date(latest.endDate) ? current : latest
                       ).endDate}
                     </span>
                   )}
-                </h5>
+                </p>
                 <div className="flex items-center gap-2">
                   <Badge 
                     variant="outline" 
@@ -111,6 +114,7 @@ export default function AssignDrugList({
         onClose={()=>setIsDrugDialogOpen(false)}
         assignDrug={{
           assignDrugId: selectedDrug?.id || "",
+          title:selectedDrug?.title || "",
           patientDrugs: selectedDrug?.patientDrugs.map((patientDrug)=>({
             patientDrugId: patientDrug.id,
             drugId: patientDrug.drug.id,
