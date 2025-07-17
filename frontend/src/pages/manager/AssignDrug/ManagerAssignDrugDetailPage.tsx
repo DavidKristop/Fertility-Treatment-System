@@ -210,6 +210,7 @@ export default function ManagerAssignDrugDetailPage() {
               <TreatmentInfo 
                 treatment={assignDrug?.treatment || { id: "", status: getDefaultTreatmentStatus(), contractId: "" }}
                 phase={assignDrug?.treatmentPhase || { id: "", title: "" }}
+                treatmentUrl={`/manager/treatments/${assignDrug?.treatment.id}`}
               />
             </FormSection>
 

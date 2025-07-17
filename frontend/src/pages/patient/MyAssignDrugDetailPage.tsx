@@ -96,15 +96,6 @@ export default function MyAssignDrugDetailPage() {
             />
           )}
 
-          {/* Treatment Info */}
-          <FormSection title="Thông tin điều trị" icon={Calendar}>
-            <TreatmentInfo 
-              treatment={assignDrug?.treatment || { id: "", status: "AWAITING_CONTRACT_SIGNED", contractId: "" }}
-              phase={assignDrug?.treatmentPhase || { id: "", title: "" }}
-              treatmentUrl={`/patient/treatment/${assignDrug?.treatment.id}`}
-            />
-          </FormSection>
-
           {/* Patient Info */}
           <FormSection title="Thông tin bệnh nhân" icon={Calendar}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -129,6 +120,15 @@ export default function MyAssignDrugDetailPage() {
                 </div>
               </div>
             </div>
+          </FormSection>
+
+          {/* Treatment Info */}
+          <FormSection title="Thông tin điều trị" icon={Calendar}>
+            <TreatmentInfo 
+              treatment={assignDrug?.treatment || { id: "", status: "AWAITING_CONTRACT_SIGNED", contractId: "" }}
+              phase={assignDrug?.treatmentPhase || { id: "", title: "" }}
+              treatmentUrl={`/patient/treatment/${assignDrug?.treatment.id}`}
+            />
           </FormSection>
 
           {/* Drug List */}

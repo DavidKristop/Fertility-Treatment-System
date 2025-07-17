@@ -1,4 +1,4 @@
-import { getTreatmentDetaiICreated, getTreatmentDetail } from "@/api/treatment";
+import { getTreatmentDetail } from "@/api/treatment";
 import type { TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FormSection from "@/components/doctor/common/FormSection";
 import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
+import PatientLayout from "@/components/patient/PatientLayout";
 
 export default function TreatmentDetailPage(){
   const [isLoading, setIsLoading] = useState(false)
@@ -64,7 +65,7 @@ export default function TreatmentDetailPage(){
 
   return (
     <TreatmentDetailProvider treatmentDetail={treatmentDetail || null} isLoading={isLoading} setTreatmentDetail={setTreatmentDetail}>
-      <DoctorLayout title={treatmentDetail?.title || "Chi tiết kế hoạch điều trị"} breadcrumbs={breadcrumbs}>
+      <PatientLayout title={treatmentDetail?.title || "Chi tiết kế hoạch điều trị"} breadcrumbs={breadcrumbs}>
         <LoadingComponent isLoading={isLoading}>
           <Grid container spacing={2}>
             <Grid size={12}>
@@ -84,7 +85,7 @@ export default function TreatmentDetailPage(){
             </Grid>
           </Grid>
         </LoadingComponent>
-      </DoctorLayout>
+      </PatientLayout>
     </TreatmentDetailProvider>
   );
 }

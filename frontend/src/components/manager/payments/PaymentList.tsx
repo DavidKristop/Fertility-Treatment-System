@@ -21,7 +21,7 @@ interface PaymentListProps {
   totalElements: number
   onPageChange: (page: number) => void
   onViewDetails: (paymentId: string) => void
-  onProcessPayment: (paymentId: string, paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL") => void
+  onProcessPayment: (paymentId: string) => void
   onCancelPayment: (paymentId: string) => void
   isLoading?: boolean
   processingPaymentId?: string
