@@ -146,11 +146,12 @@ export default function TreatmentPlans() {
                   <div className="flex flex-col gap-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{treatment?.protocol?.title}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">{treatment.title}</h3>
                         <div className="mt-2 space-y-2">
                           <p className="text-sm text-gray-600">
                             <span className="font-medium">Bệnh nhân:</span> {treatment?.patient?.fullName}
                             <span className="text-gray-500"> (Email: {treatment?.patient?.email})</span>
+                            <span className="text-gray-500"> Giao thức điều trị: {treatment?.protocol?.title}</span>
                           </p>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-600 font-medium">Trạng thái:</span>

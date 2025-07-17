@@ -163,6 +163,7 @@ export interface DrugUpdateRequest {
 
 export interface TreatmentResponse {
   id: string;
+  title:string;
   startDate: string;
   endDate: string;
   description: string;
@@ -375,7 +376,7 @@ export interface PaymentResponse {
   description: string;
   paymentDate: string;
   paymentDeadline: string;
-  paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
+  paymentMethod: PaymentMethod;
   status: PaymentStatus;
   userId: string;
   scheduleServices: ServiceResponse[];
@@ -395,6 +396,7 @@ export interface Reminder{
 }
 
 export interface TreatmentCreateRequest{
+  title:string,
   paymentMode: "FULL" | "BY_PHASE",
   protocolId: string,
   userId:string,
@@ -426,6 +428,7 @@ export interface ScheduleServiceSetRequest{
 
 export interface AssignDrugSetRequest{
   assignDrugId: string|"",
+  title:string,
   patientDrugs: (DrugSetRequest)[]
 }
 
@@ -445,6 +448,10 @@ export interface PatientDashboardPayloadResponse {
   treatment: TreatmentResponse;
 }
 
+export interface PatientEventResponse{
+  treatmentPatientDrugResponse: PatientDrugResponse[];
+  scheduleResponse: ScheduleDetailResponse[]
+}
 
 // ==================== STATUS ENUMS ====================
 
@@ -456,4 +463,6 @@ export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
 export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 
-export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELLED";
+export type PaymentMethod = "CASH" | "CREDIT_CARD";
+
+export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";

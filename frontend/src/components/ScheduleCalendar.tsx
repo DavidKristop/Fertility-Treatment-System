@@ -136,7 +136,7 @@ export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDo
           onNavigate(startOfMonth(newDate), endOfMonth(newDate),filterStatus)
         break;
       case Views.WEEK:
-          onNavigate(startOfWeek(newDate, { weekStartsOn: 1 }), endOfWeek(newDate, { weekStartsOn: 1 }),filterStatus)
+          onNavigate(startOfWeek(newDate, { weekStartsOn: 0 }), endOfWeek(newDate, { weekStartsOn: 0 }),filterStatus)
         break;
       case Views.DAY:
           onNavigate(newDate, newDate,filterStatus)

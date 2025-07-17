@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllOfMyPatientPayment } from "@/api/payment";
-import type { PaymentResponse } from "@/api/types";
+import type { PaymentResponse, PaymentStatus } from "@/api/types";
 import PatientLayout from "@/components/patient/PatientLayout";
 import {
   Pagination,
@@ -23,14 +23,14 @@ export default function MyPaymentsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Read from query params, fallback to defaults
-  const statusParam = searchParams.get("status") as "PENDING" | "COMPLETED" | "CANCELED" | "ALL" | null;
+  const statusParam = searchParams.get("status") as PaymentStatus | "ALL" | null;
   const pageParam = Number(searchParams.get("page"));
   const [payments, setPayments] = useState<PaymentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState<"PENDING" | "COMPLETED" | "CANCELED" | "ALL">(statusParam || "ALL");
+  const [status, setStatus] = useState<PaymentStatus | "ALL">(statusParam || "ALL");
 
 
   const breadcrumbs = [
@@ -77,7 +77,7 @@ export default function MyPaymentsPage() {
   }, [page, status]);
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value as "PENDING" | "COMPLETED" | "CANCELED" | "ALL");
+    setStatus(e.target.value as PaymentStatus | "ALL");
     setPage(0);
   };
 
@@ -149,7 +149,7 @@ export default function MyPaymentsPage() {
                           {payment.status === "COMPLETED" && (
                             <span className="text-green-600">Đã thanh toán</span>
                           )}
-                          {payment.status === "CANCELLED" && (
+                          {payment.status === "CANCELED" && (
                             <span className="text-red-600">Đã hủy</span>
                           )}
                         </div>
