@@ -478,6 +478,6 @@ export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
 export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 
-export type PaymentMethod = "CASH" | "CREDIT_CARD";
+export type PaymentMethod = "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
 
 export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";
