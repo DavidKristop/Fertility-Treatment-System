@@ -9,7 +9,8 @@ import {
   getPatientScheduleInAMonth,
 } from "@/api/schedule";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
-import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
+import type { PatientEventResponse, ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
+import { getEvents } from "@/api/patient-management";
 
 // Mock data
 const hasActiveTreatment = true;
@@ -28,7 +29,7 @@ const treatmentProgress = {
 
 export default function PatientDashboard() {
   const [patientName, setPatientName] = useState<string>("");
-  const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
+  const [events, setEvents] = useState<PatientEventResponse>();
 
   const navigate = useNavigate();
 
@@ -57,8 +58,8 @@ export default function PatientDashboard() {
 
   const fetchSchedules = useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
     try {
-      const res = await getPatientScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
-      setEvents(res.payload || []);
+      const res = await getEvents(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
+      setEvents(res.payload);
     } catch (err) {
       console.error(err);
     }
@@ -159,11 +160,11 @@ export default function PatientDashboard() {
         </Card>
         <div className="flex flex-col lg:flex-row gap-4 justify-between">
           <ScheduleCalendar
-            schedules={events}
+            schedules={events?.scheduleResponse || []}
             onNavigate={fetchSchedules}
             onScheduleClick={(event)=>navigate(`/patient/schedule-result/${event.id}`)}
             hasFilterStatus={true}
-            drugs={[]}
+            drugs={events?.treatmentPatientDrugResponse || []}
           />
         </div>
         <Card>

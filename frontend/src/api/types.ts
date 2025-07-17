@@ -331,7 +331,7 @@ export interface PaymentResponse {
   description: string;
   paymentDate: string;
   paymentDeadline: string;
-  paymentMethod: string;
+  paymentMethod: PaymentMethod;
   status: PaymentStatus;
   userId: string;
   scheduleServices: ServiceResponse[];
@@ -401,6 +401,10 @@ export interface PatientDashboardPayloadResponse {
   treatment: TreatmentResponse;
 }
 
+export interface PatientEventResponse{
+  treatmentPatientDrugResponse: PatientDrugResponse[];
+  scheduleResponse: ScheduleDetailResponse[]
+}
 
 // ==================== STATUS ENUMS ====================
 
@@ -412,4 +416,6 @@ export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
 export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 
-export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELLED";
+export type PaymentMethod = "CASH" | "CREDIT_CARD";
+
+export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";

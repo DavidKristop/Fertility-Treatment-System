@@ -36,12 +36,12 @@ export const loginSchema = z.object({
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
   })
-    .regex(passwordRegex, "Mật khẩu phải bắt đầu bằng chữ hoa")
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
-    .refine(hasSpecialCharacter, {
-      message: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (ví dụ: !, @, #, $, %, ^, &, *, ?, _)",
-    }),
+  .regex(passwordRegex, "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt và không chứa khoảng trắng")
+  .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+  .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự")
+  .refine(hasSpecialCharacter, {
+    message: "Mật khẩu phải chứa ít nhất một ký tự đặc biệt (ví dụ: !, @, #, $, %, ^, &, *, ?, _)",
+  }),
 });
 
 export const registerSchema = loginSchema.extend({

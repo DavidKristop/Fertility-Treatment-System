@@ -80,10 +80,6 @@ export default function TreatmentDetail(){
                 />
               </FormSection>
             </Grid>
-            {/*Have a toggle that switch between services and drugs */}
-            <Grid size={{xs: 12, md: 4}}>
-
-            </Grid>
           </Grid>
         </LoadingComponent>
       </DoctorLayout>
