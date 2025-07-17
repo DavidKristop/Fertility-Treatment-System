@@ -60,23 +60,6 @@ export default function PatientDashboard() {
             hasFilterStatus={true}
           />
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Chú thích</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                <span className="text-sm">Ngày uống thuốc</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                <span className="text-sm">Ngày có hẹn với bác sĩ</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </DoctorLayout>
   );

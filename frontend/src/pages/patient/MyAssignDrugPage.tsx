@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getAllAssignedDrugsForManager, getAllMyAssignedDrugs } from "@/api/assignDrug";
+import { getAllMyAssignedDrugs } from "@/api/assignDrug";
 import type { AssignDrugDetailResponse } from "@/api/types";
-import ManagerLayout from "@/components/manager/ManagerLayout";
 import {
   Pagination,
   PaginationContent,
@@ -11,7 +10,7 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
-import AssignDrugDisplay from "@/components/doctor/assignDrug/AssignDrugDisplay";
+import AssignDrugDisplay from "@/components/assignDrug/AssignDrugDisplay";
 import { TextField } from "@mui/material";
 import PatientLayout from "@/components/patient/PatientLayout";
 

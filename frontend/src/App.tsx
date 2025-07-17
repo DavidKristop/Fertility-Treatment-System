@@ -85,8 +85,10 @@ import MyRemindersPage from "./pages/patient/MyRemindersPage";
 import VerifyEmailPage from "./pages/authorization/VerifyEmailPage";
 import DoctorScheduleResult from "./pages/doctor/appointments/ScheduleResult";
 import ManagerAssignDrugDetailPage from "./pages/manager/AssignDrug/ManagerAssignDrugDetailPage";
-import MyAssignDrugPage from "./pages/doctor/MyAssignDrugPage";
-import MyAssignDrugDetailPage from "./pages/doctor/MyAssignDrugDetailPage";
+import MyAssignDrugDetailPage from "./pages/patient/MyAssignDrugDetailPage";
+import DoctorAssignDrugsPage from "./pages/doctor/assignDrugs/DoctorAssignDrugsPage";
+import DoctorAssignDrugDetailPage from "./pages/doctor/assignDrugs/DoctorAssignDrugDetailPage";
+import MySchedulePage from "./pages/patient/MySchedulePage";
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -157,6 +159,7 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <PatientDashboard /> },
       { path: "appointments/schedule", element: <RequestAppointment /> },
       { path: "appointments/my-request", element: <MyAppointmentRequests /> },
+      { path: "appointments/schedules", element: <MySchedulePage /> },
       { path: "payments", element: <MyPaymentsPage /> },
       {
         path: "schedule-result/:scheduleId",
@@ -195,14 +198,12 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <DoctorDashboard /> },
       { path: "schedule", element: <Schedules /> },
-      // { path: "scheduledetail", element: <SchedulesDetail />, },
       {
         path: "schedule-result/:scheduleId",
         element: <DoctorScheduleResult />,
       },
-      { path: "assigned-drugs", element: <MyAssignDrugPage /> },
-      { path: "assigned-drugs/:id", element: <MyAssignDrugDetailPage /> },
-      { path: "pending", element: <DoctorAppointmentRequest /> },
+      { path: "assigned-drugs", element: <DoctorAssignDrugsPage /> },
+      { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage />},
       { path: "pending", element: <DoctorAppointmentRequest /> },
       // Patient routes
       {

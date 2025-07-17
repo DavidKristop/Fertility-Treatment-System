@@ -50,6 +50,12 @@ const sidebarItemsProp: SidebarItem[] = [
     icon: Calendar,
     children: [
       {
+        id: "schedules",
+        label: "Lịch khám",
+        icon: CalendarCheck,
+        path: "/patient/appointments/schedules",
+      },
+      {
         id: "schedule-appointment",
         label: "Đặt lịch hẹn",
         icon: CalendarPlus,

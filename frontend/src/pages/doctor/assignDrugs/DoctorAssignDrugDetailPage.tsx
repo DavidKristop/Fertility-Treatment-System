@@ -6,34 +6,32 @@ import { ArrowLeft } from "lucide-react";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import FormSection from "@/components/doctor/common/FormSection";
 import { Calendar } from "lucide-react";
-import UnSignedContract from "@/components/common/UnSignedContract";
-import UnPaidPayment from "@/components/common/UnPaidPayment";
 import DrugList from "@/components/manager/assignDrug/DrugList";
 import TreatmentInfo from "@/components/manager/assignDrug/TreatmentInfo";
 import type { AssignDrugDetailResponse } from "@/api/types";
-import { getAssignDrugById } from "@/api/assignDrug";
-import PatientLayout from "@/components/patient/PatientLayout";
+import { getAssignDrugById, getAssignDrugByIdForDoctor } from "@/api/assignDrug";
+import DoctorLayout from "@/components/doctor/DoctorLayout";
 
-export default function MyAssignDrugDetailPage() {
+export default function DoctorAssignDrugsPage() {
   const [loading, setLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [assignDrug, setAssignDrug] = useState<AssignDrugDetailResponse | undefined>();
   const navigate = useNavigate();
   const breadCrumb = [
-    { label: "Trang chủ", path: "/patient/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/patient/assigned-drugs" },
-    { label: assignDrug?.title || "Chi tiết đơn thuốc", path: `/patient/assigned-drugs/${id}` },
+    { label: "Trang chủ", path: "/doctor/dashboard" },
+    { label: "Danh sách đơn thuốc", path: "/doctor/assigned-drugs" },
+    { label: assignDrug?.title || "Chi tiết đơn thuốc", path: `/doctor/assigned-drugs/${id}` },
   ];
 
   useEffect(() => {
     if (!id) {
-      navigate("/patient/assigned-drugs", { replace: true });
+      navigate("/doctor/assigned-drugs", { replace: true });
       return;
     }
     const fetchAssignDrug = async () => {
       setLoading(true);
       try {
-        const response = await getAssignDrugById(id);
+        const response = await getAssignDrugByIdForDoctor(id);
         setAssignDrug(response.payload);
       } catch (err) {
         console.error(err);
@@ -51,7 +49,7 @@ export default function MyAssignDrugDetailPage() {
         <div className="text-center">
           <p className="text-gray-500 mb-4">Không tìm thấy đơn thuốc</p>
           <Button
-            onClick={() => navigate("/patient/assigned-drugs")}
+            onClick={() => navigate("/doctor/assigned-drugs")}
             variant="outline"
           >
             Quay lại danh sách
@@ -64,14 +62,14 @@ export default function MyAssignDrugDetailPage() {
 
 
   return (
-    <PatientLayout title={assignDrug?.title||"Chi tiết đơn thuốc"} breadcrumbs={breadCrumb}>
+    <DoctorLayout title={assignDrug?.title||"Chi tiết đơn thuốc"} breadcrumbs={breadCrumb}>
       <LoadingComponent isLoading={loading}>
         <div className="space-y-6">
           {/* Header with back button */}
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
-              onClick={() => navigate("/patient/assigned-drugs")}
+              onClick={() => navigate("/doctor/assigned-drugs")}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -83,25 +81,13 @@ export default function MyAssignDrugDetailPage() {
             </div>
           </div>
 
-          {/* Contract not signed */}
-          {assignDrug?.contract && !assignDrug.contract.signed && (
-            <UnSignedContract contractUrl={`/patient/contracts/${assignDrug.contract.id}`} />
-          )}
-
-          {/* Unpaid payment */}
-          {assignDrug?.payment.status === "PENDING" && (
-            <UnPaidPayment 
-              payments={[assignDrug.payment]} 
-              onClick={(payment) => navigate(`/patient/payments/payment-detail/${payment.id}`)} 
-            />
-          )}
 
           {/* Treatment Info */}
           <FormSection title="Thông tin điều trị" icon={Calendar}>
             <TreatmentInfo 
               treatment={assignDrug?.treatment || { id: "", status: "AWAITING_CONTRACT_SIGNED", contractId: "" }}
               phase={assignDrug?.treatmentPhase || { id: "", title: "" }}
-              treatmentUrl={`/patient/treatment/${assignDrug?.treatment.id}`}
+              treatmentUrl={`/doctor/treatment-plans/treatment-details/${assignDrug?.treatment.id}`}
             />
           </FormSection>
 
@@ -138,6 +124,6 @@ export default function MyAssignDrugDetailPage() {
 
         </div>
       </LoadingComponent>
-    </PatientLayout>
+    </DoctorLayout>
   );
 }

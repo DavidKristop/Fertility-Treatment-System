@@ -11,7 +11,7 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
-import AssignDrugDisplay from "@/components/doctor/assignDrug/AssignDrugDisplay";
+import AssignDrugDisplay from "@/components/assignDrug/AssignDrugDisplay";
 import { TextField } from "@mui/material";
 
 const STATUS_OPTIONS = [

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getAllAssignedDrugsForDoctor } from "@/api/assignDrug";
+import { getAllAssignedDrugsForDoctor, getAllMyAssignedDrugs, getAssignDrugByIdForDoctor } from "@/api/assignDrug";
 import type { AssignDrugDetailResponse } from "@/api/types";
-import DoctorLayout from "@/components/doctor/DoctorLayout";
 import {
   Pagination,
   PaginationContent,
@@ -11,8 +10,10 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/components/ui/pagination";
-import AssignDrugDisplay from "@/components/doctor/assignDrug/AssignDrugDisplay";
+import AssignDrugDisplay from "@/components/assignDrug/AssignDrugDisplay";
 import { TextField } from "@mui/material";
+import PatientLayout from "@/components/patient/PatientLayout";
+import DoctorLayout from "@/components/doctor/DoctorLayout";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ hoàn thành" },
@@ -21,7 +22,7 @@ const STATUS_OPTIONS = [
   { value: "ALL", label: "Tất cả" },
 ];
 
-export default function MyAssignDrugPage() {
+export default function DoctorAssignDrugsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusParam = searchParams.get("status") as
     | "PENDING"
@@ -41,7 +42,7 @@ export default function MyAssignDrugPage() {
     "PENDING" | "COMPLETED" | "CANCELLED" | "ALL"
   >(statusParam || "ALL");
   const [keyword, setKeyword] = useState(keywordParam);
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const breadcrumbs = [
     { label: "Trang chủ", path: "/doctor/dashboard" },
     { label: "Danh sách đơn thuốc", path: "/doctor/assigned-drugs" },
@@ -54,7 +55,7 @@ export default function MyAssignDrugPage() {
       const res = await getAllAssignedDrugsForDoctor({ 
         page,
         size: 10,
-        status: status === "ALL" ? ["PENDING", "COMPLETED", "CANCELLED"] : [status],
+        status: status === "ALL" ? undefined : [status],
         title: keyword,
       });
       setAssignDrugs(res.payload.content);
@@ -116,7 +117,7 @@ export default function MyAssignDrugPage() {
         )}
 
         {!loading && assignDrugs.length > 0 && (
-          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug) => navigate(`/doctor/assigned-drugs/${assignDrug.id}`)} />
+          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/doctor/assigned-drugs/${assignDrug.id}`)}/>
         )}
 
         {totalPages > 1 && (
