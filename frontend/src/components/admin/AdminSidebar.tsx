@@ -16,6 +16,7 @@ import {
   FileText,
   MessageSquare,
   User,
+  PlusIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -48,6 +49,19 @@ const sidebarItems: SidebarItem[] = [
     label: "Quản lý người dùng",
     icon: Users,
     path: "/admin/manage-users",
+  },
+  {
+    id: "account",
+    label: "Tạo tài khoản",
+    icon: User,
+    children: [
+      {
+        id: "account-manager",
+        label: "Tạo tài khoản Quản lý",
+        icon: PlusIcon,
+        path: "/admin/create-manager",
+      },
+    ],
   },
   {
     id: "analytics",
