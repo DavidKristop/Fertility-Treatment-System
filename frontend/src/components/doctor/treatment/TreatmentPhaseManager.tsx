@@ -39,8 +39,8 @@ export default function TreatmentPhaseManager({
               <h3 className="text-lg font-semibold">
                 Giai đoạn {currentPhasePosition+": "+treatmentDetail?.phases[currentPhasePosition - 1].title}
               </h3>
-                {treatmentDetail?.currentPhase.id===treatmentDetail?.phases[currentPhasePosition - 1].id && <p className="text-sm text-yellow-500">Đang diễn ra</p>}
-                {treatmentDetail?.phases[currentPhasePosition-1].complete&&treatmentDetail?.phases[currentPhasePosition-1].id!==treatmentDetail?.currentPhase.id? <p className="text-sm text-green-500">Hoàn thành</p>: <p className="text-sm text-red-500">Chưa hoàn thành</p>}
+              {treatmentDetail?.currentPhase.id===treatmentDetail?.phases[currentPhasePosition - 1].id && treatmentDetail.status==="IN_PROGRESS" && <p className="text-sm text-yellow-500">Đang diễn ra</p>}
+              {(treatmentDetail?.phases[currentPhasePosition-1].complete&&treatmentDetail?.phases[currentPhasePosition-1].id!==treatmentDetail?.currentPhase.id) || treatmentDetail?.status==="COMPLETED"? <p className="text-sm text-green-500">Hoàn thành</p>: <p className="text-sm text-red-500">Chưa hoàn thành</p>}
             </div>
             <Button
               variant="outline"
