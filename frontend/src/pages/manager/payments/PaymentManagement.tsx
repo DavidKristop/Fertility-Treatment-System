@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import PaymentList from "@/components/manager/payments/PaymentList"
 import PaymentFilters from "@/components/manager/payments/PaymentFilters"
-import type { PaymentResponse } from "@/api/types"
+import type { PaymentMethod, PaymentResponse } from "@/api/types"
 import { getManagerPayments, processPaymentByManager, cancelPaymentByManager } from "@/api/payment"
 import ManagerLayout from "@/components/manager/ManagerLayout"
 
@@ -74,26 +74,21 @@ const PaymentManagement: React.FC = () => {
     navigate(`/manager/payments/${paymentId}`)
   }
 
-  const handleProcessPayment = async (paymentId: string, paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL") => {
+  const handleProcessPayment = async (paymentId: string) => {
     try {
       setProcessingPaymentId(paymentId)
       setError(null)
       setSuccessMessage(null)
-      const response = await processPaymentByManager(paymentId, paymentMethod)
+      const response = await processPaymentByManager(paymentId, "CASH")
 
       if (response.success) {
         setSuccessMessage("Xử lý thanh toán thành công")
         setPayments((prev) =>
           prev.map((payment) =>
             payment.id === paymentId
-              ? {
-                  ...payment,
-                  status: "COMPLETED",
-                  paymentMethod,
-                  paymentDate: new Date().toISOString(),
-                }
-              : payment
-          )
+              ? { ...payment, status: "COMPLETED" as const, paymentMethod: "CASH" as const, paymentDate: new Date().toISOString() }
+              : payment,
+          ),
         )
       } else {
         setError("Xử lý thanh toán thất bại")

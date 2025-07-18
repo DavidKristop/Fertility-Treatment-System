@@ -121,7 +121,7 @@ export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDo
   const handleEventClick = useCallback((event: CalendarEvent) => {
     if (event.type === 'schedule' && onScheduleClick) {
       onScheduleClick(event.schedule as ScheduleDetailResponse);
-    } else if (onDrugClick) {
+    } else if (onDrugClick && event.type === 'drug') {
       onDrugClick(event.drug as PatientDrugResponse);
     }
   },[onScheduleClick, onDrugClick]);

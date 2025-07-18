@@ -197,7 +197,7 @@ export default function RequestAppointment() {
 
   return (
     <PatientLayout title="Đặt lịch hẹn" breadcrumbs={breadcrumbs}>
-      <div className="max-w-4xl mx-auto">
+      <div className="mmax-w-4xl x-auto">
         <h1 className="text-2xl font-bold text-center mb-6">Thời gian và ngày nào phù hợp với bạn?</h1>
 
         <div className="flex justify-center gap-8">

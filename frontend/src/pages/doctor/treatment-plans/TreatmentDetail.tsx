@@ -1,4 +1,4 @@
-import { getTreatmentDetaiICreated } from "@/api/treatment";
+import { getTreatmentDetaiICreated, moveToNextPhase } from "@/api/treatment";
 import type { TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
@@ -15,6 +15,7 @@ import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 
 export default function TreatmentDetail(){
   const [isLoading, setIsLoading] = useState(false)
+  const [isMovingToNextPhase, setIsMovingToNextPhase] = useState(false)
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentResponse | undefined>()
 
   const {id} = useParams<{id: string}>()
@@ -34,6 +35,20 @@ export default function TreatmentDetail(){
     }
   }
 
+  const changePhase = async (id: string) => {
+    setIsMovingToNextPhase(true)
+    try {
+      const res = await moveToNextPhase(id)
+      setTreatmentDetail(res.payload)
+      toast.success(res.payload?.status === "COMPLETED" ? "Hoàn thành kế hoạch điều trị thành công" : "Chuyển giai đoạn thành công")
+    } catch (error) {
+      console.log(error)
+      toast.error(error instanceof Error ? error.message : "Lỗi khi chuyển giai đoạn")
+    } finally {
+      setIsMovingToNextPhase(false)
+    }
+  }
+
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/doctor/dashboard" },
     { label: "Kế hoạch điều trị", path: "/doctor/treatment-plans" },
@@ -47,7 +62,7 @@ export default function TreatmentDetail(){
   // Error state - schedule not found
   if (!isLoading && !treatmentDetail) {
     return (
-      <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={[]}>
+      <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={breadcrumbs}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <p className="text-gray-500 mb-4">Không tìm thấy kế hoạch điều trị</p>
@@ -76,8 +91,15 @@ export default function TreatmentDetail(){
             <Grid size={12}>
               <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
                 <TreatmentPhaseManager
+                  role="doctor"
                   initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
                 />
+                {treatmentDetail?.canMoveToNextPhase && (<Button onClick={() => changePhase(treatmentDetail!.id!)} disabled={isMovingToNextPhase}>
+                  {isMovingToNextPhase ? "Đang thực hiện thao tác..." : 
+                    treatmentDetail?.currentPhase.position === treatmentDetail?.phases.length - 1 ? "Hoàn thành kế hoạch điều trị" :
+                    "Di chuyển đến giai đoạn tiếp theo"
+                  }
+                </Button>)}
               </FormSection>
             </Grid>
           </Grid>

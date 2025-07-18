@@ -6,14 +6,13 @@ import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   Calendar,
-  Users,
-  Bell,
   LogOut,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
   Activity,
   ClipboardList,
+  Pill,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -48,6 +47,13 @@ const sidebarItems: SidebarItem[] = [
     label: "Lịch khám",
     icon: Calendar,
     path: "/doctor/schedule",
+  },
+
+  {
+    id: "assigned-drugs",
+    label: "Đơn thuốc",
+    icon: Pill,
+    path: "/doctor/assigned-drugs",
   },
 
   {

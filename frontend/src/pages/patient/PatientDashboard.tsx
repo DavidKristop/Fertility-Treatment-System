@@ -29,7 +29,6 @@ const treatmentProgress = {
 
 export default function PatientDashboard() {
   const [patientName, setPatientName] = useState<string>("");
-  const [events, setEvents] = useState<PatientEventResponse>();
 
   const navigate = useNavigate();
 
@@ -56,14 +55,6 @@ export default function PatientDashboard() {
   }, [navigate]);
 
 
-  const fetchSchedules = useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
-    try {
-      const res = await getEvents(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
-      setEvents(res.payload);
-    } catch (err) {
-      console.error(err);
-    }
-  }, []); 
 
   if (!patientName) {
     return (
@@ -156,32 +147,6 @@ export default function PatientDashboard() {
                 </Link>
               </div>
             )}
-          </CardContent>
-        </Card>
-        <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <ScheduleCalendar
-            schedules={events?.scheduleResponse || []}
-            onNavigate={fetchSchedules}
-            onScheduleClick={(event)=>navigate(`/patient/schedule-result/${event.id}`)}
-            hasFilterStatus={true}
-            drugs={events?.treatmentPatientDrugResponse || []}
-          />
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Chú thích</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                <span className="text-sm">Ngày uống thuốc</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                <span className="text-sm">Ngày có hẹn với bác sĩ</span>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

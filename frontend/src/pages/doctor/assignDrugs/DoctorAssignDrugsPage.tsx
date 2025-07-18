@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getAllMyAssignedDrugs } from "@/api/assignDrug";
+import { getAllAssignedDrugsForDoctor, getAllMyAssignedDrugs, getAssignDrugByIdForDoctor } from "@/api/assignDrug";
 import type { AssignDrugDetailResponse } from "@/api/types";
 import {
   Pagination,
@@ -13,6 +13,7 @@ import {
 import AssignDrugDisplay from "@/components/assignDrug/AssignDrugDisplay";
 import { TextField } from "@mui/material";
 import PatientLayout from "@/components/patient/PatientLayout";
+import DoctorLayout from "@/components/doctor/DoctorLayout";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ hoàn thành" },
@@ -21,7 +22,7 @@ const STATUS_OPTIONS = [
   { value: "ALL", label: "Tất cả" },
 ];
 
-export default function MyAssignDrugPage() {
+export default function DoctorAssignDrugsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusParam = searchParams.get("status") as
     | "PENDING"
@@ -43,15 +44,15 @@ export default function MyAssignDrugPage() {
   const [keyword, setKeyword] = useState(keywordParam);
   const navigate = useNavigate()
   const breadcrumbs = [
-    { label: "Trang chủ", path: "/patient/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/patient/assigned-drugs" },
+    { label: "Trang chủ", path: "/doctor/dashboard" },
+    { label: "Danh sách đơn thuốc", path: "/doctor/assigned-drugs" },
   ];
 
   const fetchAssignDrugs = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await getAllMyAssignedDrugs({ 
+      const res = await getAllAssignedDrugsForDoctor({ 
         page,
         size: 10,
         status: status === "ALL" ? undefined : [status],
@@ -75,7 +76,7 @@ export default function MyAssignDrugPage() {
   }, [status, keyword, page]);
 
   return (
-    <PatientLayout title="Quản lý đơn thuốc" breadcrumbs={breadcrumbs}>
+    <DoctorLayout title="Quản lý đơn thuốc" breadcrumbs={breadcrumbs}>
       <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Danh sách đơn thuốc</h2>
 
@@ -116,7 +117,7 @@ export default function MyAssignDrugPage() {
         )}
 
         {!loading && assignDrugs.length > 0 && (
-          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/patient/assigned-drugs/${assignDrug.id}`)}/>
+          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/doctor/assigned-drugs/${assignDrug.id}`)}/>
         )}
 
         {totalPages > 1 && (
@@ -148,6 +149,6 @@ export default function MyAssignDrugPage() {
           </div>
         )}
       </div>
-    </PatientLayout>
+    </DoctorLayout>
   );
 }

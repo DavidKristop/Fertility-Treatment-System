@@ -1,19 +1,21 @@
-import { getLocalDateFormat, getLocalDateTimeFormat } from "@/lib/utils";
+import { getLocalDateTimeFormat } from "@/lib/utils";
 import { fetchWrapper } from "."
-import type { ApiPaginationResponse, ApiResponse, PhaseResponse, TreatmentCreateRequest, TreatmentPhaseSetRequest, TreatmentResponse } from "./types"
+import type { ApiPaginationResponse, ApiResponse, PhaseResponse, TreatmentCreateRequest, TreatmentPhaseSetRequest, TreatmentResponse, TreatmentStatus } from "./types"
 // Lấy danh sách treatment của patient có phân trang
-export const getMyTreatments = async (params?: {
+export const getMyTreatments = async ({
+  page =0,
+  size = 10,
+  title = "",
+  status = ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
+}: {
   page?: number;
   size?: number;
-  status?: string;
-}) => {
-  const query = new URLSearchParams();
-  if (params?.page !== undefined) query.append("page", String(params.page));
-  if (params?.size !== undefined) query.append("size", String(params.size));
-  if (params?.status) query.append("status", params.status);
+  title?: string;
+  status?: TreatmentStatus[];
+}): Promise<ApiPaginationResponse<TreatmentResponse>> => {
 
   const res = await fetchWrapper(
-    `treatments/patient?${query.toString()}`,
+    `treatments/patient?page=${page}&size=${size}&title=${title}&status=${status.join('&status=')}`,
     { method: "GET" },
     true
   );
@@ -60,10 +62,10 @@ export const createTreatment = async (newTreatment: TreatmentCreateRequest): Pro
 export const getTreatmentICreated = async (
   page = 0,
   size = 10,
-  patientEmail = "",
+  title = "",
   status = ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
 ): Promise<ApiPaginationResponse<TreatmentResponse>> => {
-  const response = await fetchWrapper(`treatments/doctor?page=${page}&size=${size}&email=${patientEmail}&status=${status.join('&status=')}`, {}, true)
+  const response = await fetchWrapper(`treatments/doctor?page=${page}&size=${size}&title=${title}&status=${status.join('&status=')}`, {}, true)
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -111,6 +113,17 @@ export const setTreatmentPhase = async(phase: TreatmentPhaseSetRequest): Promise
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to set treatment phase');
+  }
+  return response.json();
+}
+
+
+export const moveToNextPhase = async(treatmentId:string):Promise<ApiResponse<TreatmentResponse>>=>{
+  const response = await fetchWrapper(`treatments/next-phase/${treatmentId}`, {method: "PUT"}, true)
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to move to next phase');
   }
   return response.json();
 }

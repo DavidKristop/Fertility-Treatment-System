@@ -148,22 +148,6 @@ const PaymentDetailForm: React.FC<PaymentDetailFormProps> = ({
                 {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : null}
                 Xử lý (Tiền mặt)
               </Button>
-              <Button
-                onClick={() => onProcessPayment("CREDIT_CARD")}
-                disabled={isProcessing}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : null}
-                Xử lý (Thẻ)
-              </Button>
-              <Button
-                onClick={() => onProcessPayment("PAYPAL")}
-                disabled={isProcessing}
-                className="bg-indigo-600 hover:bg-indigo-700"
-              >
-                {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : null}
-                Xử lý (PayPal)
-              </Button>
               <Button variant="destructive" onClick={onCancelPayment} disabled={isCanceling}>
                 {isCanceling ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : null}
                 Hủy thanh toán

@@ -39,13 +39,13 @@ export default function TreatmentPlans() {
   // Read from query params, fallback to defaults
   const statusParam = searchParams.get("status") as (typeof STATUS_OPTIONS)[number]["value"] | null;
   const pageParam = Number(searchParams.get("page"));
-  const patientEmailParam = searchParams.get("patientEmail") || "";
+  const titleParam = searchParams.get("title") || "";
   const [treatments, setTreatments] = useState<TreatmentResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]["value"]>(statusParam || "ALL");
-  const [patientEmail, setPatientEmail] = useState(patientEmailParam);
+  const [title, setTitle] = useState(titleParam);
 
   const breadcrumbs = [
     { label: "Trang tổng quan", path: "/doctor/dashboard" },
@@ -58,7 +58,7 @@ export default function TreatmentPlans() {
       const res = await getTreatmentICreated(
         pageNum,
         10,
-        patientEmail,
+        title,
         statusVal === "ALL" 
           ? ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
           : [statusVal]
@@ -74,36 +74,36 @@ export default function TreatmentPlans() {
 
   // Update query params when status, page, or patientEmail changes
   useEffect(() => {
-    setSearchParams({ status, page: String(page), patientEmail });
+    setSearchParams({ status, page: String(page), title });
     // eslint-disable-next-line
-  }, [status, page, patientEmail]);
+  }, [status, page, title]);
 
   // Keep state in sync with query params (for back/forward navigation)
   useEffect(() => {
     if (statusParam && statusParam !== status) setStatus(statusParam);
     if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
-    if (patientEmailParam !== patientEmail) setPatientEmail(patientEmailParam);
+    if (titleParam !== title) setTitle(titleParam);
     // eslint-disable-next-line
-  }, [statusParam, pageParam, patientEmailParam]);
+  }, [statusParam, pageParam, titleParam]);
 
   useEffect(() => {
     fetchTreatments(page, status);
     // eslint-disable-next-line
-  }, [page, status, patientEmail]);
+  }, [page, status, title]);
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatus(e.target.value as (typeof STATUS_OPTIONS)[number]["value"]);
     setPage(0);
   };
 
-  const handlePatientEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPatientEmail(e.target.value);
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
     setPage(0);
   };
 
   return (
     <DoctorLayout title="Danh sách điều trị" breadcrumbs={breadcrumbs}>
-      <div className="max-w-4xl mx-auto p-4">
+      <div className="mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold mb-4">Danh sách điều trị</h2>
           <Link to="/doctor/treatment-plans/create">
@@ -115,9 +115,9 @@ export default function TreatmentPlans() {
         <div className="flex gap-4 mb-4">
           <div className="flex-1">
             <Input
-              placeholder="Tìm kiếm theo email bệnh nhân..."
-              value={patientEmail}
-              onChange={handlePatientEmailChange}
+              placeholder="Tìm kiếm theo tiêu đề..."
+              value={title}
+              onChange={handleTitleChange}
             />
           </div>
           <select
@@ -151,7 +151,9 @@ export default function TreatmentPlans() {
                           <p className="text-sm text-gray-600">
                             <span className="font-medium">Bệnh nhân:</span> {treatment?.patient?.fullName}
                             <span className="text-gray-500"> (Email: {treatment?.patient?.email})</span>
-                            <span className="text-gray-500"> Giao thức điều trị: {treatment?.protocol?.title}</span>
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Giao thức điều trị:</span> {treatment?.protocol?.title}
                           </p>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-600 font-medium">Trạng thái:</span>

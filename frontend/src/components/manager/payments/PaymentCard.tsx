@@ -10,7 +10,7 @@ import { format } from "date-fns"
 interface PaymentCardProps {
   payment: PaymentResponse
   onViewDetails: (paymentId: string) => void
-  onProcessPayment: (paymentId: string, paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL") => void
+  onProcessPayment: (paymentId: string) => void
   onCancelPayment: (paymentId: string) => void
   isProcessing?: boolean
   isCanceling?: boolean
@@ -61,66 +61,6 @@ const PaymentCard: React.FC<PaymentCardProps> = ({
               <>
                 {"  "} <span className="font-medium">Đã thanh toán:</span>{" "}
                 {format(new Date(payment.paymentDate), "dd/MM/yyyy")}
-              </>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2 mt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={e => {
-                e.stopPropagation()
-                onViewDetails(payment.id)
-              }}
-            >
-              Xem chi tiết
-            </Button>
-            {payment.status === "PENDING" && (
-              <>
-                <Button
-                  size="sm"
-                  onClick={e => {
-                    e.stopPropagation()
-                    onProcessPayment(payment.id, "CASH")
-                  }}
-                  disabled={isProcessing}
-                  className="bg-green-50 text-green-700 hover:bg-green-100"
-                >
-                  {isProcessing ? "Đang xử lý..." : "Tiền mặt"}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={e => {
-                    e.stopPropagation()
-                    onProcessPayment(payment.id, "CREDIT_CARD")
-                  }}
-                  disabled={isProcessing}
-                  className="bg-purple-50 text-purple-700 hover:bg-purple-100"
-                >
-                  {isProcessing ? "Đang xử lý..." : "Thẻ"}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={e => {
-                    e.stopPropagation()
-                    onProcessPayment(payment.id, "PAYPAL")
-                  }}
-                  disabled={isProcessing}
-                  className="bg-blue-50 text-blue-700 hover:bg-blue-100"
-                >
-                  {isProcessing ? "Đang xử lý..." : "PayPal"}
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={e => {
-                    e.stopPropagation()
-                    onCancelPayment(payment.id)
-                  }}
-                  disabled={isCanceling}
-                >
-                  {isCanceling ? "Đang hủy..." : "Hủy"}
-                </Button>
               </>
             )}
           </div>

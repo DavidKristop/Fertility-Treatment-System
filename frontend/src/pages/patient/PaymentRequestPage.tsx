@@ -83,7 +83,7 @@ export default function MyPaymentsPage() {
 
   return (
     <PatientLayout title="Lịch sử thanh toán" breadcrumbs={breadcrumbs}>
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Lịch sử thanh toán</h2>
         <div className="flex gap-2 mb-4">
           <select

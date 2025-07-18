@@ -1,142 +1,91 @@
+import { getTreatmentDetail } from "@/api/treatment";
+import type { TreatmentResponse } from "@/api/types";
+import LoadingComponent from "@/components/common/LoadingComponent";
+import DoctorLayout from "@/components/doctor/DoctorLayout";
+import { Button } from "@/components/ui/button";
+import { Grid } from "@mui/material";
+import { Clipboard, ClipboardPlus } from "lucide-react";
+import TreatmentPhaseManager from "@/components/doctor/treatment/TreatmentPhaseManager";
+import TreatmentInfoCard from "@/components/doctor/treatment/TreatmentInfoCard";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Treatment } from "@/api/types";
-import { fetchWrapper } from "@/api/index";
-import { Card } from "@/components/ui/card";
+import { toast } from "react-toastify";
+import FormSection from "@/components/doctor/common/FormSection";
+import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 import PatientLayout from "@/components/patient/PatientLayout";
 
-export default function TreatmentDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const [treatment, setTreatment] = useState<Treatment | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+export default function TreatmentDetailPage(){
+  const [isLoading, setIsLoading] = useState(false)
+  const [treatmentDetail, setTreatmentDetail] = useState<TreatmentResponse | undefined>()
 
-  useEffect(() => {
-    const fetchTreatment = async () => {
-      try {
-        const response = await fetchWrapper(`treatments/patient/${id}`, {}, true);
-        if (!response.ok) {
-          throw new Error("Không thể lấy thông tin điều trị");
-        }
-        const data = await response.json();
-        setTreatment(data.payload);
-      } catch (err: any) {
-        setError(err.message || "Lỗi không xác định");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {id} = useParams<{id: string}>()
 
-    fetchTreatment();
-  }, [id]);
+  const navigate = useNavigate()
+
+  const fetchTreatmentDetail = async (id: string) => {
+    setIsLoading(true)
+    try {
+      const res = await getTreatmentDetail(id)
+      setTreatmentDetail(res.payload)
+    } catch (error) {
+      console.log(error)
+      toast.error(error instanceof Error ? error.message : "Lỗi khi tải dữ liệu")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Điều trị", path: "/patient/treatment" },
-    { label: "Chi tiết điều trị", path: `/patient/treatment/${id}` },
-  ];
+    { label: "Trang tổng quan", path: "/patient/dashboard" },
+    { label: "Kế hoạch điều trị", path: "/patient/treatment-plans" },
+    { label: treatmentDetail?.title || "Chi tiết kế hoạch điều trị" },
+  ]
+
+  useEffect(()=>{
+    if(id) fetchTreatmentDetail(id)
+  },[id])
+
+  // Error state - schedule not found
+  if (!isLoading && !treatmentDetail) {
+    return (
+      <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={breadcrumbs}>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-gray-500 mb-4">Không tìm thấy kế hoạch điều trị</p>
+            <Button
+              onClick={() => navigate("/patient/treatment-plans")}
+            >
+              Quay lại kế hoạch điều trị
+            </Button>
+          </div>
+        </div>
+      </DoctorLayout>
+    );
+  }
 
   return (
-    <PatientLayout title="Chi tiết điều trị" breadcrumbs={breadcrumbs}>
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
-        {/* Button quay lại */}
-        <div>
-          <button
-            onClick={() => navigate("/patient/treatment")}
-            className="mb-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm border border-gray-300 transition"
-          >
-            ← Quay lại danh sách điều trị
-          </button>
-        </div>
-
-        {/* Trạng thái tải */}
-        {loading && (
-          <p className="text-center mt-6 text-gray-500 italic">
-            Đang tải thông tin điều trị...
-          </p>
-        )}
-        {error && (
-          <p className="text-center mt-6 text-red-500">{error}</p>
-        )}
-        {!loading && !error && !treatment && (
-          <p className="text-center mt-6 text-gray-500 italic">
-            Không tìm thấy điều trị
-          </p>
-        )}
-
-        {/* Nội dung điều trị */}
-        {treatment && (
-          <>
-            {/* Thông tin chính */}
-            <Card className="p-6 space-y-2">
-              <h2 className="text-xl font-semibold text-blue-900 mb-4">
-                Thông tin điều trị
-              </h2>
-              <p className="text-gray-700">
-                <span className="font-medium">Mô tả:</span> {treatment.description || "Không có mô tả"}
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Trạng thái:</span> {treatment.status}
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Ngày bắt đầu:</span> {treatment.startDate}
-              </p>
-              {treatment.endDate && (
-                <p className="text-gray-700">
-                  <span className="font-medium">Ngày kết thúc:</span> {treatment.endDate}
-                </p>
-              )}
-            </Card>
-
-            {/* Thông tin bác sĩ */}
-            <Card className="p-6 space-y-2">
-              <h2 className="text-xl font-semibold text-blue-900 mb-4">
-                Bác sĩ phụ trách
-              </h2>
-              <p className="text-gray-700">
-                <span className="font-medium">Họ tên:</span> {treatment.doctor.fullName}
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Email:</span> {treatment.doctor.email}
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Chuyên môn:</span> {treatment.doctor.specialty}
-              </p>
-            </Card>
-
-            {/* Phác đồ điều trị */}
-            <Card className="p-6 space-y-2">
-              <h2 className="text-xl font-semibold text-blue-900 mb-4">
-                Thông tin phác đồ
-              </h2>
-              <p className="text-gray-700">
-                <span className="font-medium">Tiêu đề:</span> {treatment.protocol.title}
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Giá ước tính:</span>{" "}
-                {treatment.protocol.estimatedPrice.toLocaleString()} VNĐ
-              </p>
-            </Card>
-
-            {/* Các giai đoạn */}
-            {treatment.phases?.length > 0 && (
-              <Card className="p-6 space-y-2">
-                <h2 className="text-xl font-semibold text-blue-900 mb-4">
-                  Giai đoạn điều trị
-                </h2>
-                <ul className="list-disc list-inside space-y-2 text-gray-700">
-                  {treatment.phases.map((phase, index) => (
-                    <li key={index}>
-                      <span className="font-medium">{phase.title}</span>: {phase.description}
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            )}
-          </>
-        )}
-      </div>
-    </PatientLayout>
+    <TreatmentDetailProvider treatmentDetail={treatmentDetail || null} isLoading={isLoading} setTreatmentDetail={setTreatmentDetail}>
+      <PatientLayout title={treatmentDetail?.title || "Chi tiết kế hoạch điều trị"} breadcrumbs={breadcrumbs}>
+        <LoadingComponent isLoading={isLoading}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              {/*This will display the info of the patient, doctor, the protocol title, end date/start date, the description and the status of the treatment */}
+              <FormSection title="Kế hoạch điều trị" icon={Clipboard}>
+                <TreatmentInfoCard treatment={treatmentDetail!} />
+              </FormSection>
+            </Grid>
+            <Grid size={12}>
+              <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
+                <TreatmentPhaseManager
+                  role="patient"
+                  initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
+                  isSettable={false}
+                />
+              </FormSection>
+            </Grid>
+          </Grid>
+        </LoadingComponent>
+      </PatientLayout>
+    </TreatmentDetailProvider>
   );
 }

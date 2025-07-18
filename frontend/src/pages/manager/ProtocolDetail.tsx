@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import ManagerLayout from "@/components/manager/ManagerLayout";
 import { fetchProtocolById } from "@/api/auth";
-import type { ProtocolResponse, PhaseResponse } from "@/api/types";
+import type { ProtocolResponse } from "@/api/types";
 
 export default function ProtocolDetail() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +30,7 @@ export default function ProtocolDetail() {
 
   return (
     <ManagerLayout title="Chi tiết Protocol" breadcrumbs={breadcrumbs}>
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="mx-auto p-4">
         {loading && <p>Đang tải chi tiết…</p>}
         {error && <p className="text-red-500">{error}</p>}
 
@@ -70,13 +70,13 @@ export default function ProtocolDetail() {
 
             {/* Phases */}
             <div className="space-y-6">
-              {protocol.phases.map((phase: PhaseResponse) => (
+              {protocol.phases.map((phase) => (
                 <div
                   key={phase.id}
                   className="border rounded-lg p-4 bg-white shadow-sm"
                 >
                   <h3 className="text-xl font-semibold mb-1">
-                    Phase {phase.position+1}: {phase.title}
+                    Giai đoạn {phase.position}: {phase.title}
                   </h3>
                   <p className="text-gray-700 mb-2">{phase.description}</p>
                   <div className="text-sm mb-2">

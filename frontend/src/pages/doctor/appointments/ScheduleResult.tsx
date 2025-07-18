@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -221,14 +221,15 @@ const haveUnpaidPayment = (schedule: ScheduleDetailResponse) => {
 
                 {schedule?.treatment?.id && (
                   <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate(`/doctor/treatment/${schedule.treatment.id}`)}
-                      className="flex items-center gap-2"
-                    >
-                      <FileText className="h-4 w-4" />
-                      Xem chi tiết điều trị
-                    </Button>
+                    <Link to={`/doctor/treatment-plans/treatment-details/${schedule.treatment.id}`}>
+                      <Button
+                        variant="outline"
+                        className="flex items-center gap-2"
+                      >
+                        <FileText className="h-4 w-4" />
+                        Xem chi tiết điều trị
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>
