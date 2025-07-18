@@ -286,14 +286,6 @@ const haveUnpaidPayment = (schedule: ScheduleDetailResponse) => {
                     }
                   </Button>
                 )}
-                {schedule?.canMoveToNextPhase && (
-                  <Button
-                    disabled={saving}
-                    className="mb-4 cursor-pointer"
-                  >
-                    Di chuyển đến giai đoạn tiếp theo
-                  </Button>
-                )}
               </div>
             </div>
           </FormSection>

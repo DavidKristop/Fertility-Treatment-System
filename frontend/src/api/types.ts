@@ -201,6 +201,7 @@ export interface TreatmentResponse {
   contractId: string;
   signedContract: boolean;
   phases: PhaseResponse[];
+  payment:PaymentPreviewResponse[];
   currentPhase: PhaseResponse;
   status: TreatmentStatus;
   canMoveToNextPhase: boolean;

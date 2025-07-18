@@ -208,6 +208,7 @@ export default function RequestAppointment() {
             new Date(), 
             new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
             new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
+            new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
             {before: new Date()},
             {after: new Date(new Date().getTime() + 120 * 24 * 60 * 60 * 1000)}]}
             navLayout="around"

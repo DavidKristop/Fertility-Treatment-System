@@ -89,7 +89,7 @@ export default function MyAssignDrugDetailPage() {
           )}
 
           {/* Unpaid payment */}
-          {assignDrug?.payment.status === "PENDING" && (
+          {assignDrug?.payment?.status === "PENDING" && (
             <UnPaidPayment 
               payments={[assignDrug.payment]} 
               onClick={(payment) => navigate(`/patient/payments/payment-detail/${payment.id}`)} 

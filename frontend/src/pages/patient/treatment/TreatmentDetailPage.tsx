@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import FormSection from "@/components/doctor/common/FormSection";
 import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 import PatientLayout from "@/components/patient/PatientLayout";
+import UnSignedContract from "@/components/common/UnSignedContract";
+import UnPaidPayment from "@/components/common/UnPaidPayment";
 
 export default function TreatmentDetailPage(){
   const [isLoading, setIsLoading] = useState(false)
@@ -67,6 +69,20 @@ export default function TreatmentDetailPage(){
     <TreatmentDetailProvider treatmentDetail={treatmentDetail || null} isLoading={isLoading} setTreatmentDetail={setTreatmentDetail}>
       <PatientLayout title={treatmentDetail?.title || "Chi tiết kế hoạch điều trị"} breadcrumbs={breadcrumbs}>
         <LoadingComponent isLoading={isLoading}>
+          {/* Contract not signed */}
+          {treatmentDetail?.status === "AWAITING_CONTRACT_SIGNED" && (
+            <div className="my-2">
+              <UnSignedContract contractUrl={`/patient/contracts/${treatmentDetail.contractId}`} />
+            </div>
+          )}
+          {treatmentDetail?.payment?.some((payment) => payment.status === "PENDING") && (
+            <div className="my-2">
+              <UnPaidPayment 
+                payments={treatmentDetail?.payment}
+                onClick={(payment) => navigate(`/patient/payments/payment-detail/${payment.id}`)} 
+              />
+            </div>
+          )}
           <Grid container spacing={2}>
             <Grid size={12}>
               {/*This will display the info of the patient, doctor, the protocol title, end date/start date, the description and the status of the treatment */}

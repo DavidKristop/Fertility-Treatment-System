@@ -135,12 +135,12 @@ export default function ManagerAssignDrugDetailPage() {
             </div>
 
             {/* Contract Section */}
-            {assignDrug?.contract && (
+            {assignDrug?.contract?.signed === false && (
                 <UnSignedContract contractUrl={`manager/contracts/${assignDrug.contract.id}`} />
             )}
 
             {/* Payment Section */}
-            {assignDrug?.payment && (
+            {assignDrug?.payment?.status === "PENDING" && (
                 <UnPaidPayment 
                     payments={assignDrug?.payment ? [assignDrug.payment] : []}
                     onClick={(payment) => {
