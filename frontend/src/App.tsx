@@ -89,6 +89,9 @@ import MyAssignDrugDetailPage from "./pages/patient/MyAssignDrugDetailPage";
 import DoctorAssignDrugsPage from "./pages/doctor/assignDrugs/DoctorAssignDrugsPage";
 import DoctorAssignDrugDetailPage from "./pages/doctor/assignDrugs/DoctorAssignDrugDetailPage";
 import MySchedulePage from "./pages/patient/MySchedulePage";
+import ManageUserPage from "./pages/admin/ManageUsersPage";
+import UserDetailPage from "./pages/admin/UserDetailPage";
+import CreateManagerPage from "./pages/admin/CreateManagerPage";
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -323,6 +326,19 @@ const router = createBrowserRouter([
       {
         path: "patients",
         element: <PatientList />,
+      },
+
+      {
+        path: "/admin/manage-users",
+        element: <ManageUserPage />,
+      },
+      {
+        path: "/admin/manage-users/:id",
+        element: <UserDetailPage />,
+      },
+      {
+        path: "/admin/create-manager",
+        element: <CreateManagerPage />,
       },
       // fallback for admin subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
