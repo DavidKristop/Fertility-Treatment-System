@@ -99,7 +99,7 @@ export default function PatientScheduleResult() {
           </div>
 
           {/* Contract not signed */}
-          {schedule?.treatment && schedule?.treatment.status !== "AWAITING_CONTRACT_SIGNED" && (
+          {schedule?.treatment && schedule?.treatment.status === "AWAITING_CONTRACT_SIGNED" && (
             <UnSignedContract contractUrl={`/patient/contracts/${schedule.treatment.contractId}`} />
           )}
 

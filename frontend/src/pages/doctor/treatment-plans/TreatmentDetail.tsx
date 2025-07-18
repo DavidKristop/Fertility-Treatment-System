@@ -1,4 +1,4 @@
-import { getTreatmentDetaiICreated } from "@/api/treatment";
+import { getTreatmentDetaiICreated, moveToNextPhase } from "@/api/treatment";
 import type { TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import DoctorLayout from "@/components/doctor/DoctorLayout";
@@ -15,6 +15,7 @@ import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 
 export default function TreatmentDetail(){
   const [isLoading, setIsLoading] = useState(false)
+  const [isMovingToNextPhase, setIsMovingToNextPhase] = useState(false)
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentResponse | undefined>()
 
   const {id} = useParams<{id: string}>()
@@ -31,6 +32,20 @@ export default function TreatmentDetail(){
       toast.error(error instanceof Error ? error.message : "Lỗi khi tải dữ liệu")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const changePhase = async (id: string) => {
+    setIsMovingToNextPhase(true)
+    try {
+      const res = await moveToNextPhase(id)
+      setTreatmentDetail(res.payload)
+      toast.success(res.payload?.status === "COMPLETED" ? "Hoàn thành kế hoạch điều trị thành công" : "Chuyển giai đoạn thành công")
+    } catch (error) {
+      console.log(error)
+      toast.error(error instanceof Error ? error.message : "Lỗi khi chuyển giai đoạn")
+    } finally {
+      setIsMovingToNextPhase(false)
     }
   }
 
@@ -79,6 +94,12 @@ export default function TreatmentDetail(){
                   role="doctor"
                   initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
                 />
+                {treatmentDetail?.canMoveToNextPhase && (<Button onClick={() => changePhase(treatmentDetail!.id!)} disabled={isMovingToNextPhase}>
+                  {isMovingToNextPhase ? "Đang thực hiện thao tác..." : 
+                    treatmentDetail?.currentPhase.position === treatmentDetail?.phases.length - 1 ? "Hoàn thành kế hoạch điều trị" :
+                    "Di chuyển đến giai đoạn tiếp theo"
+                  }
+                </Button>)}
               </FormSection>
             </Grid>
           </Grid>

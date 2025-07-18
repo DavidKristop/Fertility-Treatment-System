@@ -188,6 +188,7 @@ export interface TreatmentResponse {
   phases: PhaseResponse[];
   currentPhase: PhaseResponse;
   status: TreatmentStatus;
+  canMoveToNextPhase: boolean;
 }
 
 export interface RequestAppointmentResponse {

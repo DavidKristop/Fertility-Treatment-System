@@ -55,6 +55,9 @@ export default function AssignDrugList({
       </div>
 
       <div className="space-y-2 flex flex-col gap-2">
+        {assignDrugs.length===0&&(
+          <p className="text-center text-gray-500">Không có thuốc</p>
+        )}
         {assignDrugs.map((drug) => (
           <div 
             key={drug.id}
