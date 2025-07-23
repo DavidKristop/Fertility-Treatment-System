@@ -38,6 +38,9 @@ import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
 import MyAssignDrugsPage from "@/pages/patient/MyAssignDrugPage";
 import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleResult";
 
+// Staff pages
+import StaffDashboard from "./pages/staff/StaffDashboard";
+
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import Schedules from "./pages/doctor/appointments/Schedules";
@@ -185,6 +188,22 @@ const router = createBrowserRouter([
       { path: "treatment/:id", element: <TreatmentDetailPage /> },
       { path: "assigned-drugs", element: <MyAssignDrugsPage /> },
       { path: "assigned-drugs/:id", element: <MyAssignDrugDetailPage /> },
+      // fallback for patient subpaths
+      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+    ],
+  },
+
+  // Patient routes (ROLE_STAFF only)
+  {
+    path: "staff",
+    element: (
+      <ProtectedRoute allowedRoles={["ROLE_STAFF"]}>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { index: true, element: <Navigate to="dashboard" replace /> },
+      { path: "dashboard", element: <StaffDashboard /> },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],

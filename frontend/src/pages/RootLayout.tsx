@@ -3,7 +3,6 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import ScrollToTop from '@/components/ScrollToTop';
-import { ToastContainer } from 'react-toastify';
 
 export default function RootLayout() {
   return (
