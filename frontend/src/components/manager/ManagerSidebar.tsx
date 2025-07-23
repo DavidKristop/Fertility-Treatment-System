@@ -4,9 +4,7 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Calendar,
   FileText,
-  Users,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -99,12 +97,6 @@ const sidebarItems: SidebarItem[] = [
     label: "Hợp đồng",
     icon: FileText,
     path: "/manager/contracts",
-  },
-  {
-    id: "create-doctor",
-    label: "Tạo tài khoản bác sĩ",
-    icon: User,
-    path: "/manager/doctors/create",
   },
   {
     id: "profile",

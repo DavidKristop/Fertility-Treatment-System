@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createDoctor } from "@/api/doctor-management";
-import ManagerLayout from "@/components/manager/ManagerLayout";
+import StaffLayout from "@/components/staff/StaffLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -32,14 +32,12 @@ export default function CreateDoctorPage() {
     e.preventDefault();
     setLoading(true);
     try {
-        await createDoctor({
+      await createDoctor({
         ...formData,
         yearsOfExperience: Number(formData.yearsOfExperience),
-        });
-        toast.success("Tạo tài khoản bác sĩ thành công!");
-
-        // Reset lại form
-        setFormData({
+      });
+      toast.success("Tạo tài khoản bác sĩ thành công!");
+      setFormData({
         fullName: "",
         email: "",
         phone: "",
@@ -50,13 +48,14 @@ export default function CreateDoctorPage() {
         degree: "",
         yearsOfExperience: "",
         licenseNumber: "",
-        });
+      });
+      navigate("/staff/dashboard");
     } catch (err: any) {
-        toast.error(err.message || "Không thể tạo tài khoản bác sĩ");
+      toast.error(err.message || "Không thể tạo tài khoản bác sĩ");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   const fields = [
     { name: "fullName", label: "Họ tên" },
@@ -72,7 +71,7 @@ export default function CreateDoctorPage() {
   ];
 
   return (
-    <ManagerLayout title="Tạo tài khoản bác sĩ mới">
+    <StaffLayout title="Tạo tài khoản bác sĩ mới">
       <form
         onSubmit={handleSubmit}
         className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow space-y-4"
@@ -95,6 +94,6 @@ export default function CreateDoctorPage() {
           {loading ? "Đang tạo..." : "Tạo bác sĩ"}
         </Button>
       </form>
-    </ManagerLayout>
+    </StaffLayout>
   );
 }

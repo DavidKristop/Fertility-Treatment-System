@@ -9,9 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
-  ListCollapse,
-  Plus,
-  Pill,
   DollarSign,
   User,
 } from "lucide-react";
@@ -42,67 +39,26 @@ const sidebarItems: SidebarItem[] = [
     icon: LayoutDashboard,
     path: "/manager/dashboard",
   },
-  {
-    id: "protocol",
-    label: "Phác đồ điều trị",
-    icon: FileText,
-    children: [
-      {
-        id: "createprotocols",
-        label: "Tạo phác đồ điều trị",
-        icon: Plus,
-        path: "/manager/createprotocols",
-      },
-      {
-        id: "protocols",
-        label: "Danh sách phác đồ điều trị",
-        icon: ListCollapse,
-        path: "/manager/protocols",
-      },
-    ],
-  },
+
   {
     id: "assigned-drugs",
     label: "Quản lý đơn thuốc",
     icon: FileText,
     path: "/manager/assigned-drugs",
   },
-  {
-    id: "drugsAndServicesManagement",
-    label: "Quản lý thuốc & Dịch vụ",
-    icon: FileText,
-    children: [
-      {
-        id: "drugs",
-        label: "Quản lý thuốc",
-        icon: Pill,
-        path: "/manager/drugs",
-      },
-      {
-        id: "services",
-        label: "Quản lý dịch vụ",
-        icon: FileText,
-        path: "/manager/services",
-      },
-    ],
-  },
+
   {
     id: "payments",
     label: "Quản lý thanh toán",
     icon: DollarSign,
     path: "/manager/payments",
   },
-  {
-    id: "contracts",
-    label: "Hợp đồng",
-    icon: FileText,
-    path: "/manager/contracts",
-  },
+
   {
     id: "create-doctor",
     label: "Tạo tài khoản bác sĩ",
     icon: User,
-    path: "/manager/doctors/create",
+    path: "/staff/doctors/create",
   },
   {
     id: "profile",

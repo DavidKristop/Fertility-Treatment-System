@@ -40,6 +40,7 @@ import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleR
 
 // Staff pages
 import StaffDashboard from "./pages/staff/StaffDashboard";
+import CreateDoctorPage from "./pages/staff/CreateDoctorPage";
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -69,7 +70,6 @@ import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServic
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
-import CreateDoctorPage from "./pages/manager/CreateDoctorPage";
 import PaymentManagement from "./pages/manager/payments/PaymentManagement";
 import PaymentDetail from "./pages/manager/payments/PaymentDetail";
 
@@ -204,6 +204,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <StaffDashboard /> },
+      { path: "doctors/create",  element: <CreateDoctorPage /> },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -295,7 +296,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-      { path: "doctors/create",  element: <CreateDoctorPage /> },
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
