@@ -41,6 +41,7 @@ import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleR
 // Staff pages
 import StaffDashboard from "./pages/staff/StaffDashboard";
 import CreateDoctorPage from "./pages/staff/CreateDoctorPage";
+import PaymentManagement from "./pages/staff/PaymentManagement";
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -70,7 +71,6 @@ import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServic
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
-import PaymentManagement from "./pages/manager/payments/PaymentManagement";
 import PaymentDetail from "./pages/manager/payments/PaymentDetail";
 
 // Admin pages
@@ -175,8 +175,8 @@ const router = createBrowserRouter([
       { path: "notifications", element: <MyRemindersPage /> },
       { path: "payments/success", element: <PaymentSuccessPage /> },
       { path: "payments/failure", element: <PaymentFailurePage /> },
-      { 
-        path: "contracts", 
+      {
+        path: "contracts",
         children: [
           { index: true, element: <PatientContracts /> },
           { path: ":id", element: <PatientContractDetail /> },
@@ -204,7 +204,14 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <StaffDashboard /> },
-      { path: "doctors/create",  element: <CreateDoctorPage /> },
+      { path: "doctors/create", element: <CreateDoctorPage /> },
+      {
+        path: "payments",
+        children: [
+          { index: true, element: <PaymentManagement /> },
+          { path: ":id", element: <PaymentDetail /> },
+        ],
+      },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -226,7 +233,7 @@ const router = createBrowserRouter([
         element: <DoctorScheduleResult />,
       },
       { path: "assigned-drugs", element: <DoctorAssignDrugsPage /> },
-      { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage />},
+      { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage /> },
       { path: "pending", element: <DoctorAppointmentRequest /> },
       // Patient routes
       {
@@ -271,58 +278,52 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
       { path: "assigned-drugs", element: <ManagerAssignedDrugPage /> },
-      { 
-        path: "assigned-drugs/:id", 
+      {
+        path: "assigned-drugs/:id",
         element: <ManagerAssignDrugDetailPage />,
       },
-      { 
-        path: "services", 
+      {
+        path: "services",
         children: [
-          { 
+          {
             index: true,
-            element: <ManagerServicePage />
+            element: <ManagerServicePage />,
           },
           {
             path: "create",
-            element: <ManagerServiceCreatePage />
+            element: <ManagerServiceCreatePage />,
           },
           {
             path: ":id",
-            element: <ManagerServiceDetailPage />
+            element: <ManagerServiceDetailPage />,
           },
           {
             path: ":id/edit",
-            element: <ManagerServiceUpdatePage />
+            element: <ManagerServiceUpdatePage />,
           },
         ],
       },
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
-      { path: "patients", element: <PatientList />, },
-      { 
-        path: "contracts", 
+      { path: "patients", element: <PatientList /> },
+      {
+        path: "contracts",
         children: [
           { index: true, element: <ManagerContracts /> },
           { path: ":id", element: <ManagerContractDetail /> },
-        ], 
+        ],
       },
       {
         path: "drugs",
         children: [
           { index: true, element: <DrugsManagement /> },
-          { path: "create", element: <CreateDrug />, },
-          { path: ":id", element: <DrugDetail />, },
-          { path: "edit/:id", element: <EditDrug />, },
+          { path: "create", element: <CreateDrug /> },
+          { path: ":id", element: <DrugDetail /> },
+          { path: "edit/:id", element: <EditDrug /> },
         ],
       },
-      {
-        path: "payments",
-        children: [
-          { index: true, element: <PaymentManagement /> },
-          { path: ":id", element: <PaymentDetail /> },
-        ],
-      },
+
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],

@@ -70,8 +70,13 @@ export default function CreateDoctorPage() {
     { name: "licenseNumber", label: "Mã chứng chỉ hành nghề" },
   ];
 
+  const breadcrumbs = [
+    { label: "Trang tổng quan", path: "/staff/dashboard" },
+    { label: "Tạo tài khoản bác sĩ" },
+  ];
+
   return (
-    <StaffLayout title="Tạo tài khoản bác sĩ mới">
+    <StaffLayout title="Tạo tài khoản bác sĩ mới" breadcrumbs={breadcrumbs}>
       <form
         onSubmit={handleSubmit}
         className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow space-y-4"

@@ -38,7 +38,7 @@ export const getVNPayPaymentUrl = async (paymentId:string): Promise<ApiResponse<
     return response.json();
 }
 
-export const getManagerPayments = async ({
+export const getStaffPayments = async ({
     page = 0, 
     size = 10, 
     email = "", 
@@ -77,7 +77,7 @@ export const getManagerPaymentDetail = async (id: string): Promise<ApiResponse<P
     return response.json();
 }
 
-export const processPaymentByManager = async (
+export const processPaymentByStaff = async (
     paymentId: string,
     paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL"
 ): Promise<ApiResponse<PaymentResponse>> => {
@@ -97,7 +97,7 @@ export const processPaymentByManager = async (
     return response.json();
 }
 
-export const cancelPaymentByManager = async (paymentId: string): Promise<ApiResponse<PaymentResponse>> => {
+export const cancelPaymentByStaff = async (paymentId: string): Promise<ApiResponse<PaymentResponse>> => {
     const response = await fetchWrapper(
         `payments/manager/cancel/${paymentId}`,
         {

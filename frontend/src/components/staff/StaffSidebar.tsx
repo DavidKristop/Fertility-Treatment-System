@@ -51,7 +51,7 @@ const sidebarItems: SidebarItem[] = [
     id: "payments",
     label: "Quản lý thanh toán",
     icon: DollarSign,
-    path: "/manager/payments",
+    path: "/staff/payments",
   },
 
   {

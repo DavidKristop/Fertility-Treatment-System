@@ -12,7 +12,6 @@ import {
   ListCollapse,
   Plus,
   Pill,
-  DollarSign,
   User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -86,12 +85,7 @@ const sidebarItems: SidebarItem[] = [
       },
     ],
   },
-  {
-    id: "payments",
-    label: "Quản lý thanh toán",
-    icon: DollarSign,
-    path: "/manager/payments",
-  },
+
   {
     id: "contracts",
     label: "Hợp đồng",
