@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getAllAssignedDrugsForManager } from "@/api/assignDrug";
+import { getAllAssignedDrugsForStaff } from "@/api/assignDrug";
 import type { AssignDrugDetailResponse } from "@/api/types";
-import ManagerLayout from "@/components/manager/ManagerLayout";
+import StaffLayout from "@/components/staff/StaffLayout";
 import {
   Pagination,
   PaginationContent,
@@ -21,7 +21,7 @@ const STATUS_OPTIONS = [
   { value: "ALL", label: "Tất cả" },
 ];
 
-export default function ManagerAssignedDrugPage() {
+export default function StaffAssignedDrugPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusParam = searchParams.get("status") as
     | "PENDING"
@@ -43,15 +43,15 @@ export default function ManagerAssignedDrugPage() {
   const [keyword, setKeyword] = useState(keywordParam);
   const navigate = useNavigate()
   const breadCrumb = [
-    { label: "Trang chủ", path: "/manager/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/manager/assigned-drugs" },
+    { label: "Trang tổng quan", path: "/staff/dashboard" },
+    { label: "Danh sách đơn thuốc", path: "/staff/assigned-drugs" },
   ]
 
   const fetchAssignDrugs = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await getAllAssignedDrugsForManager({ 
+      const res = await getAllAssignedDrugsForStaff({ 
         page,
         size: 10,
         status: status === "ALL" ? undefined : [status],
@@ -75,7 +75,7 @@ export default function ManagerAssignedDrugPage() {
   }, [status, keyword, page]);
 
   return (
-    <ManagerLayout title="Quản lý đơn thuốc" breadcrumbs={breadCrumb}>
+    <StaffLayout title="Quản lý đơn thuốc" breadcrumbs={breadCrumb}>
       <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Danh sách đơn thuốc</h2>
 
@@ -116,7 +116,7 @@ export default function ManagerAssignedDrugPage() {
         )}
 
         {!loading && assignDrugs.length > 0 && (
-          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/manager/assigned-drugs/${assignDrug.id}`)}/>
+          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/staff/assigned-drugs/${assignDrug.id}`)}/>
         )}
 
         {totalPages > 1 && (
@@ -148,6 +148,6 @@ export default function ManagerAssignedDrugPage() {
           </div>
         )}
       </div>
-    </ManagerLayout>
+    </StaffLayout>
   );
 }

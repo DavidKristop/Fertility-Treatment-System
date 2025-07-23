@@ -60,7 +60,7 @@ export const getAllAssignedDrugsForDoctor = async({
 };
 
 // Manager: lấy danh sách thuốc được kê
-export const getAllAssignedDrugsForManager = async ({
+export const getAllAssignedDrugsForStaff = async ({
   page = 0,
   size = 10,
   status = ["PENDING", "COMPLETED", "CANCELLED"],
@@ -82,7 +82,7 @@ export const getAllAssignedDrugsForManager = async ({
   return response.json();
 };
 
-export const getAssignDrugByIdForManager = async (id: string): Promise<ApiResponse<AssignDrugDetailResponse>> => {
+export const getAssignDrugByIdForStaff = async (id: string): Promise<ApiResponse<AssignDrugDetailResponse>> => {
   const response = await fetchWrapper(`assign-drug/manager/${id}`, {}, true);
 
   if (!response.ok) {

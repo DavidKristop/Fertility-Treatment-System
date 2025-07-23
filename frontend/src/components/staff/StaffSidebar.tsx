@@ -44,7 +44,7 @@ const sidebarItems: SidebarItem[] = [
     id: "assigned-drugs",
     label: "Quản lý đơn thuốc",
     icon: FileText,
-    path: "/manager/assigned-drugs",
+    path: "/staff/assigned-drugs",
   },
 
   {

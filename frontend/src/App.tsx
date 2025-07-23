@@ -63,7 +63,7 @@ import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
 import DrugDetail from "./pages/manager/drugs/DrugDetail";
 import EditDrug from "./pages/manager/drugs/EditDrug";
-import ManagerAssignedDrugPage from "@/pages/manager/AssignDrug/ManagerAssignDrugPage";
+import StaffAssignedDrugPage from "@/pages/staff/AssignDrug/StaffAssignDrugPage";
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
 import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
 import ManagerServiceUpdatePage from "./pages/manager/servicePages/ManagerServiceUpdatePage";
@@ -71,7 +71,7 @@ import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServic
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
-import PaymentDetail from "./pages/manager/payments/PaymentDetail";
+import PaymentDetail from "./pages/staff/PaymentDetail";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -87,7 +87,7 @@ import DoctorAppointmentRequest from "./pages/doctor/DoctorAppointmentRequests";
 import MyRemindersPage from "./pages/patient/MyRemindersPage";
 import VerifyEmailPage from "./pages/authorization/VerifyEmailPage";
 import DoctorScheduleResult from "./pages/doctor/appointments/ScheduleResult";
-import ManagerAssignDrugDetailPage from "./pages/manager/AssignDrug/ManagerAssignDrugDetailPage";
+import StaffAssignDrugDetailPage from "./pages/staff/AssignDrug/StaffAssignDrugDetailPage";
 import MyAssignDrugDetailPage from "./pages/patient/MyAssignDrugDetailPage";
 import DoctorAssignDrugsPage from "./pages/doctor/assignDrugs/DoctorAssignDrugsPage";
 import DoctorAssignDrugDetailPage from "./pages/doctor/assignDrugs/DoctorAssignDrugDetailPage";
@@ -212,6 +212,8 @@ const router = createBrowserRouter([
           { path: ":id", element: <PaymentDetail /> },
         ],
       },
+      { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
+      { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],
@@ -277,11 +279,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
-      { path: "assigned-drugs", element: <ManagerAssignedDrugPage /> },
-      {
-        path: "assigned-drugs/:id",
-        element: <ManagerAssignDrugDetailPage />,
-      },
+
       {
         path: "services",
         children: [

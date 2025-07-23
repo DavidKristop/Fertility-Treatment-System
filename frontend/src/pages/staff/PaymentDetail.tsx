@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import PaymentDetailForm from "@/components/staff/payments/PaymentDetailForm"
 import type { PaymentResponse } from "@/api/types"
-import { getManagerPaymentDetail, processPaymentByStaff, cancelPaymentByStaff } from "@/api/payment"
+import { getStaffPaymentDetail, processPaymentByStaff, cancelPaymentByStaff } from "@/api/payment"
 import { ArrowLeft, RefreshCw } from "lucide-react"
-import ManagerLayout from "@/components/manager/ManagerLayout"
+import StaffLayout from "@/components/staff/StaffLayout"
 
 const PaymentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -25,6 +25,7 @@ const PaymentDetail: React.FC = () => {
     if (id) {
       fetchPaymentDetail()
     }
+    // eslint-disable-next-line
   }, [id])
 
   const fetchPaymentDetail = async () => {
@@ -34,17 +35,17 @@ const PaymentDetail: React.FC = () => {
       setLoading(true)
       setError(null)
       setSuccessMessage(null)
-      const response = await getManagerPaymentDetail(id)
+      const response = await getStaffPaymentDetail(id)
 
       if (response.success && response.payload) {
         setPayment(response.payload)
       } else {
         setError("Không tìm thấy thanh toán")
-        navigate("/manager/payments")
+        navigate("/staff/payments")
       }
     } catch (error) {
       setError("Lỗi khi tải chi tiết thanh toán")
-      navigate("/manager/payments")
+      navigate("/staff/payments")
     } finally {
       setLoading(false)
     }
@@ -95,12 +96,12 @@ const PaymentDetail: React.FC = () => {
   }
 
   const handleBack = () => {
-    navigate("/manager/payments")
+    navigate("/staff/payments")
   }
 
   const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/manager/dashboard" },
-    { label: "Quản lý thanh toán", path: "/manager/payments" },
+    { label: "Trang tổng quan", path: "/staff/dashboard" },
+    { label: "Quản lý thanh toán", path: "/staff/payments" },
     { label: "Chi tiết thanh toán" },
   ]
 
@@ -146,7 +147,7 @@ const PaymentDetail: React.FC = () => {
   }
 
   return (
-    <ManagerLayout title="Chi tiết thanh toán" breadcrumbs={breadcrumbs}>
+    <StaffLayout title="Chi tiết thanh toán" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -186,7 +187,7 @@ const PaymentDetail: React.FC = () => {
           isCanceling={isCanceling}
         />
       </div>
-    </ManagerLayout>
+    </StaffLayout>
   )
 }
 

@@ -11,44 +11,35 @@ import UnPaidPayment from "@/components/common/UnPaidPayment";
 import DrugList from "@/components/manager/assignDrug/DrugList";
 import TreatmentInfo from "@/components/manager/assignDrug/TreatmentInfo";
 import type { AssignDrugDetailResponse, TreatmentStatus, PaymentStatus } from "@/api/types";
-import { getAssignDrugByIdForManager, markAssignDrugAsTaken, cancelAssignDrug } from "@/api/assignDrug";
-import ManagerLayout from "@/components/manager/ManagerLayout";
+import { getAssignDrugByIdForStaff, markAssignDrugAsTaken, cancelAssignDrug } from "@/api/assignDrug";
+import StaffLayout from "@/components/staff/StaffLayout";
 
-export default function ManagerAssignDrugDetailPage() {
+export default function StaffAssignDrugDetailPage() {
   const [loading, setLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [assignDrug, setAssignDrug] = useState<AssignDrugDetailResponse | undefined>();
-  const breadcrumbs = [
-    { label: "Trang chủ", path: "/manager/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/manager/assigned-drugs" },
-    { label: assignDrug?.title || "Chi tiết đơn thuốc", path: `/manager/assigned-drugs/${id}` },
-  ];
   const navigate = useNavigate();
+
+  const breadcrumbs = [
+    { label: "Trang tổng quan", path: "/staff/dashboard" },
+    { label: "Danh sách đơn thuốc", path: "/staff/assigned-drugs" },
+    { label: assignDrug?.title || "Chi tiết đơn thuốc", path: `/staff/assigned-drugs/${id}` },
+  ];
 
   // Helper function to get default treatment status
   const getDefaultTreatmentStatus = (): TreatmentStatus => {
     return "AWAITING_CONTRACT_SIGNED";
   };
 
-  // Helper function to get default payment status
-  const getDefaultPaymentStatus = (): PaymentStatus => {
-    return "PENDING";
-  };
-  const breadCrumb= [
-    { label: "Trang chủ", path: "/manager/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/manager/assigned-drugs" },
-    { label: assignDrug?.title || "Chi tiết đơn thuốc", path: `/manager/assigned-drugs/${id}` },
-  ];
-
   useEffect(() => {
     if (!id) {
-      navigate("/manager/assigned-drugs", { replace: true });
+      navigate("/staff/assigned-drugs", { replace: true });
       return;
     }
     const fetchAssignDrug = async () => {
       setLoading(true);
       try {
-        const response = await getAssignDrugByIdForManager(id);
+        const response = await getAssignDrugByIdForStaff(id);
         setAssignDrug(response.payload);
       } catch (err) {
         console.error(err);
@@ -65,7 +56,7 @@ export default function ManagerAssignDrugDetailPage() {
     try {
       await markAssignDrugAsTaken(assignDrug.id);
       toast.success("Đã cập nhật trạng thái thuốc");
-      navigate("/manager/assigned-drugs");
+      navigate("/staff/assigned-drugs");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     }
@@ -76,7 +67,7 @@ export default function ManagerAssignDrugDetailPage() {
     try {
       await cancelAssignDrug(assignDrug.id);
       toast.success("Đã hủy đơn thuốc");
-      navigate("/manager/assigned-drugs"); 
+      navigate("/staff/assigned-drugs"); 
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     }
@@ -88,7 +79,7 @@ export default function ManagerAssignDrugDetailPage() {
         <div className="text-center">
           <p className="text-gray-500 mb-4">Không tìm thấy đơn thuốc</p>
           <Button
-            onClick={() => navigate("/manager/assigned-drugs")}
+            onClick={() => navigate("/staff/assigned-drugs")}
             variant="outline"
           >
             Quay lại danh sách
@@ -99,7 +90,7 @@ export default function ManagerAssignDrugDetailPage() {
   }
 
   return (
-    <ManagerLayout title={assignDrug?.title || "Chi tiết đơn thuốc"} breadcrumbs={breadcrumbs}>
+    <StaffLayout title={assignDrug?.title || "Chi tiết đơn thuốc"} breadcrumbs={breadcrumbs}>
       <div className="container mx-auto py-6">
         <LoadingComponent isLoading={loading}>
           <div className="space-y-6">
@@ -107,7 +98,7 @@ export default function ManagerAssignDrugDetailPage() {
             <div className="flex items-center gap-4">
               <Button
                 variant="outline"
-                onClick={() => navigate("/manager/assigned-drugs")}
+                onClick={() => navigate("/staff/assigned-drugs")}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -136,7 +127,7 @@ export default function ManagerAssignDrugDetailPage() {
 
             {/* Contract Section */}
             {assignDrug?.contract?.signed === false && (
-                <UnSignedContract contractUrl={`manager/contracts/${assignDrug.contract.id}`} />
+                <UnSignedContract contractUrl={`staff/contracts/${assignDrug.contract.id}`} />
             )}
 
             {/* Payment Section */}
@@ -144,7 +135,7 @@ export default function ManagerAssignDrugDetailPage() {
                 <UnPaidPayment 
                     payments={assignDrug?.payment ? [assignDrug.payment] : []}
                     onClick={(payment) => {
-                        navigate(`manager/payments/${payment.id}`)
+                        navigate(`/staff/payments/${payment.id}`)
                     }}  
                 />
             )}
@@ -210,7 +201,7 @@ export default function ManagerAssignDrugDetailPage() {
               <TreatmentInfo 
                 treatment={assignDrug?.treatment || { id: "", status: getDefaultTreatmentStatus(), contractId: "" }}
                 phase={assignDrug?.treatmentPhase || { id: "", title: "" }}
-                treatmentUrl={`/manager/treatments/${assignDrug?.treatment.id}`}
+                treatmentUrl={`/staff/treatments/${assignDrug?.treatment.id}`}
               />
             </FormSection>
 
@@ -226,13 +217,13 @@ export default function ManagerAssignDrugDetailPage() {
                   disabled={assignDrug.payment.status === "PENDING"}
                   onClick={() => handleComplete()}
                 >
-                  {assignDrug.payment.status !== "PENDING"?"Hoàn thành":"Đang chờ thanh toán"}
+                  {assignDrug.payment.status !== "PENDING" ? "Hoàn thành" : "Đang chờ thanh toán"}
                 </Button>
               )}
             </div>
           </div>
         </LoadingComponent>
       </div>
-    </ManagerLayout>
+    </StaffLayout>
   );
 }

@@ -66,7 +66,7 @@ export const getStaffPayments = async ({
     return response.json();
 }
 
-export const getManagerPaymentDetail = async (id: string): Promise<ApiResponse<PaymentResponse>> => {
+export const getStaffPaymentDetail = async (id: string): Promise<ApiResponse<PaymentResponse>> => {
     const response = await fetchWrapper(`payments/manager/${id}`, {}, true);
     
     if (!response.ok) {
