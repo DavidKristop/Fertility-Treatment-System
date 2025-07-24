@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Bell, User, Menu, LogOut } from "lucide-react"
+import { User, Menu, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -94,15 +93,6 @@ export default function StaffHeader({
 
         {/* Right side - Notifications, Profile */}
         <div className="flex items-center gap-2 lg:gap-4">
-          {/* Notifications */}
-          <Link to="/staff/notifications">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">
-                7
-              </Badge>
-            </Button>
-          </Link>
 
           {/* Profile Dropdown */}
           <DropdownMenu>
@@ -129,7 +119,7 @@ export default function StaffHeader({
                 className="text-red-600 cursor-pointer"
                 onClick={handleLogout}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="text-red h-4 w-4" />
                 Đăng xuất
               </DropdownMenuItem>
             </DropdownMenuContent>

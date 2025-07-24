@@ -95,6 +95,7 @@ import MySchedulePage from "./pages/patient/MySchedulePage";
 import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
+import StaffProfile from "./pages/staff/StaffProfile";
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -214,6 +215,7 @@ const router = createBrowserRouter([
       },
       { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
       { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
+      { path: "profile", element: <StaffProfile /> },
       // fallback for patient subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],

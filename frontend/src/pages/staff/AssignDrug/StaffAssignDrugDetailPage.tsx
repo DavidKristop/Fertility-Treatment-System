@@ -10,8 +10,8 @@ import UnSignedContract from "@/components/common/UnSignedContract";
 import UnPaidPayment from "@/components/common/UnPaidPayment";
 import DrugList from "@/components/manager/assignDrug/DrugList";
 import TreatmentInfo from "@/components/manager/assignDrug/TreatmentInfo";
-import type { AssignDrugDetailResponse, TreatmentStatus, PaymentStatus } from "@/api/types";
-import { getAssignDrugByIdForStaff, markAssignDrugAsTaken, cancelAssignDrug } from "@/api/assignDrug";
+import type { AssignDrugDetailResponse, TreatmentStatus } from "@/api/types";
+import { getAssignDrugByIdForStaff, markAssignDrugAsTaken } from "@/api/assignDrug";
 import StaffLayout from "@/components/staff/StaffLayout";
 
 export default function StaffAssignDrugDetailPage() {
@@ -62,16 +62,6 @@ export default function StaffAssignDrugDetailPage() {
     }
   };
 
-  const handleCancel = async () => {
-    if (!assignDrug) return;
-    try {
-      await cancelAssignDrug(assignDrug.id);
-      toast.success("Đã hủy đơn thuốc");
-      navigate("/staff/assigned-drugs"); 
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi");
-    }
-  };
 
   if (!loading && !assignDrug) {
     return (

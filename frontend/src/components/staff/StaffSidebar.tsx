@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   DollarSign,
   User,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +38,7 @@ const sidebarItems: SidebarItem[] = [
     id: "dashboard",
     label: "Trang tổng quan",
     icon: LayoutDashboard,
-    path: "/manager/dashboard",
+    path: "/staff/dashboard",
   },
 
   {
@@ -57,28 +58,28 @@ const sidebarItems: SidebarItem[] = [
   {
     id: "create-doctor",
     label: "Tạo tài khoản bác sĩ",
-    icon: User,
+    icon: Plus,
     path: "/staff/doctors/create",
   },
   {
     id: "profile",
     label: "Hồ sơ & Cài đặt",
     icon: User,
-    path: "/manager/profile",
+    path: "/staff/profile",
   },
 ];
 
-interface ManagerSidebarProps {
+interface StaffSidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
   isMobile?: boolean;
 }
 
-export default function ManagerSidebar({
+export default function StaffSidebar({
   isCollapsed,
   onToggle,
   isMobile = false,
-}: ManagerSidebarProps) {
+}: StaffSidebarProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -130,21 +131,17 @@ export default function ManagerSidebar({
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        {(!isCollapsed || isMobile) && (
-          <div className="flex items-center gap-2">
-            <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-8" />
-            <span className="font-bold text-[#004c77] text-lg">UCARE</span>
-          </div>
+        {!isCollapsed && (
+          <Link to={"/"}>
+            <div className="flex items-center gap-1">
+              <img src={logo || "/placeholder.svg"} alt="UCARE" className="h-7" />
+              <span className="font-bold text-[#004c77] text-lg">UCARE</span>
+            </div>
+          </Link>
         )}
-        {!isMobile && (
-          <Button variant="ghost" size="sm" onClick={onToggle} className="p-1">
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </Button>
-        )}
+        <Button variant="ghost" size="sm" onClick={onToggle} className="p-1">
+          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </Button>
       </div>
 
       {/* Navigation */}

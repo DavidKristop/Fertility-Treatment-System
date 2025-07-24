@@ -60,12 +60,7 @@ const sidebarItems: SidebarItem[] = [
       },
     ],
   },
-  {
-    id: "assigned-drugs",
-    label: "Quản lý đơn thuốc",
-    icon: FileText,
-    path: "/manager/assigned-drugs",
-  },
+
   {
     id: "drugsAndServicesManagement",
     label: "Quản lý thuốc & Dịch vụ",
