@@ -51,6 +51,9 @@ export default function Navbar() {
       case "ROLE_ADMIN":
         navigate("/admin/dashboard");
         break;
+      case "ROLE_STAFF":
+        navigate("/staff/dashboard");
+        break;
       default:
         navigate("/");
     }

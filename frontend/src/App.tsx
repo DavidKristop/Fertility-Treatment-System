@@ -38,6 +38,13 @@ import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
 import MyAssignDrugsPage from "@/pages/patient/MyAssignDrugPage";
 import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleResult";
 
+// Staff pages
+import StaffDashboard from "./pages/staff/StaffDashboard";
+import CreateDoctorPage from "./pages/staff/CreateDoctorPage";
+import PaymentManagement from "./pages/staff/PaymentManagement";
+import StaffProfile from "./pages/staff/StaffProfile";
+import ScheduleDetail from "./pages/staff/ScheduleDetail";
+
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import Schedules from "./pages/doctor/appointments/Schedules";
@@ -54,7 +61,7 @@ import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
 import DrugDetail from "./pages/manager/drugs/DrugDetail";
 import EditDrug from "./pages/manager/drugs/EditDrug";
-import ManagerAssignedDrugPage from "@/pages/manager/AssignDrug/ManagerAssignDrugPage";
+import StaffAssignedDrugPage from "@/pages/staff/AssignDrug/StaffAssignDrugPage";
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
 import ManagerServiceCreatePage from "@/pages/manager/servicePages/ManagerServiceCreatePage";
 import ManagerServiceUpdatePage from "./pages/manager/servicePages/ManagerServiceUpdatePage";
@@ -62,9 +69,7 @@ import ManagerServiceDetailPage from "./pages/manager/servicePages/ManagerServic
 import ProtocolsList from "./pages/manager/ManagerProtocolsPage";
 import ProtocolDetailPage from "./pages/manager/ProtocolDetail";
 import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
-import CreateDoctorPage from "./pages/manager/CreateDoctorPage";
-import PaymentManagement from "./pages/manager/payments/PaymentManagement";
-import PaymentDetail from "./pages/manager/payments/PaymentDetail";
+import PaymentDetail from "./pages/staff/PaymentDetail";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -80,7 +85,7 @@ import DoctorAppointmentRequest from "./pages/doctor/DoctorAppointmentRequests";
 import MyRemindersPage from "./pages/patient/MyRemindersPage";
 import VerifyEmailPage from "./pages/guest/authorization/VerifyEmailPage";
 import DoctorScheduleResult from "./pages/doctor/appointments/ScheduleResult";
-import ManagerAssignDrugDetailPage from "./pages/manager/AssignDrug/ManagerAssignDrugDetailPage";
+import StaffAssignDrugDetailPage from "./pages/staff/AssignDrug/StaffAssignDrugDetailPage";
 import MyAssignDrugDetailPage from "./pages/patient/MyAssignDrugDetailPage";
 import DoctorAssignDrugsPage from "./pages/doctor/assignDrugs/DoctorAssignDrugsPage";
 import DoctorAssignDrugDetailPage from "./pages/doctor/assignDrugs/DoctorAssignDrugDetailPage";
@@ -89,9 +94,11 @@ import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
-import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
+import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
 
 
+
+// Layout for authenticated dashboards (no header/footer)
 
 const router = createBrowserRouter([
   // Public routes under RootLayout
@@ -169,8 +176,8 @@ const router = createBrowserRouter([
       { path: "notifications", element: <MyRemindersPage /> },
       { path: "payments/success", element: <PaymentSuccessPage /> },
       { path: "payments/failure", element: <PaymentFailurePage /> },
-      { 
-        path: "contracts", 
+      {
+        path: "contracts",
         children: [
           { index: true, element: <PatientContracts /> },
           { path: ":id", element: <PatientContractDetail /> },
@@ -187,6 +194,34 @@ const router = createBrowserRouter([
     ],
   },
 
+  // Patient routes (ROLE_STAFF only)
+  {
+    path: "staff",
+    element: (
+      <ProtectedRoute allowedRoles={["ROLE_STAFF"]}>
+        <Layout sideBarItemsProp={staffSidebarItemsProp} children={<Outlet />} />
+      </ProtectedRoute>
+    ),
+    children: [
+      { index: true, element: <Navigate to="dashboard" replace /> },
+      { path: "dashboard", element: <StaffDashboard /> },
+      { path: "schedule-detail/:scheduleId", element: <ScheduleDetail />, },
+      { path: "doctors/create", element: <CreateDoctorPage /> },
+      {
+        path: "payments",
+        children: [
+          { index: true, element: <PaymentManagement /> },
+          { path: ":id", element: <PaymentDetail /> },
+        ],
+      },
+      { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
+      { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
+      { path: "profile", element: <StaffProfile /> },
+      // fallback for patient subpaths
+      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+    ],
+  },
+
   // Doctor routes (ROLE_DOCTOR only)
   {
     path: "doctor",
@@ -198,12 +233,9 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <DoctorDashboard /> },
       { path: "schedule", element: <Schedules /> },
-      {
-        path: "schedule-result/:scheduleId",
-        element: <DoctorScheduleResult />,
-      },
+      { path: "schedule-result/:scheduleId", element: <DoctorScheduleResult />, },
       { path: "assigned-drugs", element: <DoctorAssignDrugsPage /> },
-      { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage />},
+      { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage /> },
       { path: "pending", element: <DoctorAppointmentRequest /> },
       // Treatment Plan routes
       {
@@ -231,33 +263,28 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <ManagerDashboard /> },
-      { path: "assigned-drugs", element: <ManagerAssignedDrugPage /> },
-      { 
-        path: "assigned-drugs/:id", 
-        element: <ManagerAssignDrugDetailPage />,
-      },
-      { 
-        path: "services", 
+
+      {
+        path: "services",
         children: [
-          { 
+          {
             index: true,
-            element: <ManagerServicePage />
+            element: <ManagerServicePage />,
           },
           {
             path: "create",
-            element: <ManagerServiceCreatePage />
+            element: <ManagerServiceCreatePage />,
           },
           {
             path: ":id",
-            element: <ManagerServiceDetailPage />
+            element: <ManagerServiceDetailPage />,
           },
           {
             path: ":id/edit",
-            element: <ManagerServiceUpdatePage />
+            element: <ManagerServiceUpdatePage />,
           },
         ],
       },
-      { path: "doctors/create",  element: <CreateDoctorPage /> },
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
@@ -266,24 +293,18 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <ManagerContracts /> },
           { path: ":id", element: <ManagerContractDetail /> },
-        ], 
+        ],
       },
       {
         path: "drugs",
         children: [
           { index: true, element: <DrugsManagement /> },
-          { path: "create", element: <CreateDrug />, },
-          { path: ":id", element: <DrugDetail />, },
-          { path: "edit/:id", element: <EditDrug />, },
+          { path: "create", element: <CreateDrug /> },
+          { path: ":id", element: <DrugDetail /> },
+          { path: "edit/:id", element: <EditDrug /> },
         ],
       },
-      {
-        path: "payments",
-        children: [
-          { index: true, element: <PaymentManagement /> },
-          { path: ":id", element: <PaymentDetail /> },
-        ],
-      },
+
       // fallback for manager subpaths
       { path: "*", element: <Navigate to="/authorization/login" replace /> },
     ],

@@ -3,10 +3,10 @@
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
-import PaymentList from "@/components/manager/payments/PaymentList"
-import PaymentFilters from "@/components/manager/payments/PaymentFilters"
+import PaymentList from "@/components/staff/payments/PaymentList"
+import PaymentFilters from "@/components/staff/payments/PaymentFilters"
 import type { PaymentResponse } from "@/api/types"
-import { getManagerPayments, processPaymentByManager, cancelPaymentByManager } from "@/api/payment"
+import { getStaffPayments, processPaymentByStaff, cancelPaymentByStaff } from "@/api/payment"
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 type PaymentStatusFilter = "all" | "pending" | "completed" | "canceled"
@@ -39,7 +39,7 @@ const PaymentManagement: React.FC = () => {
       try {
         setLoading(true)
         setError(null)
-        const response = await getManagerPayments({
+        const response = await getStaffPayments({
           page,
           size: 10,
           email: searchTerm,
@@ -72,7 +72,7 @@ const PaymentManagement: React.FC = () => {
   }
 
   const handleViewDetails = (paymentId: string) => {
-    navigate(`/manager/payments/${paymentId}`)
+    navigate(`/staff/payments/${paymentId}`)
   }
 
   const handleProcessPayment = async (paymentId: string) => {
@@ -80,7 +80,7 @@ const PaymentManagement: React.FC = () => {
       setProcessingPaymentId(paymentId)
       setError(null)
       setSuccessMessage(null)
-      const response = await processPaymentByManager(paymentId, "CASH")
+      const response = await processPaymentByStaff(paymentId, "CASH")
 
       if (response.success) {
         setSuccessMessage("Xử lý thanh toán thành công")
@@ -106,7 +106,7 @@ const PaymentManagement: React.FC = () => {
       setCancelingPaymentId(paymentId)
       setError(null)
       setSuccessMessage(null)
-      const response = await cancelPaymentByManager(paymentId)
+      const response = await cancelPaymentByStaff(paymentId)
 
       if (response.success) {
         setSuccessMessage("Hủy thanh toán thành công")
@@ -126,7 +126,7 @@ const PaymentManagement: React.FC = () => {
   useEffect(()=>{
     setTitle("Quản lý thanh toán")
     setBreadCrumbs([
-      { label: "Trang tổng quan", path: "/manager/dashboard" },
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
       { label: "Quản lý thanh toán" },
     ])
   },[])

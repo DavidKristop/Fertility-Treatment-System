@@ -6,6 +6,7 @@ const HOME_BY_ROLE: Record<string,string> = {
   ROLE_DOCTOR:  '/doctor/dashboard',
   ROLE_MANAGER: '/manager/dashboard',
   ROLE_ADMIN:   '/admin/dashboard',
+  ROLE_STAFF:   '/staff/dashboard'
 }
 
 export default function ProtectedRoute({

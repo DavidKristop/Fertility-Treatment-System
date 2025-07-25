@@ -10,41 +10,32 @@ import UnSignedContract from "@/components/common/UnSignedContract";
 import UnPaidPayment from "@/components/common/UnPaidPayment";
 import DrugList from "@/components/manager/assignDrug/DrugList";
 import TreatmentInfo from "@/components/manager/assignDrug/TreatmentInfo";
-import type { AssignDrugDetailResponse, TreatmentStatus, PaymentStatus } from "@/api/types";
-import { getAssignDrugByIdForManager, markAssignDrugAsTaken, cancelAssignDrug } from "@/api/assignDrug";
+import type { AssignDrugDetailResponse, TreatmentStatus } from "@/api/types";
+import { getAssignDrugByIdForStaff, markAssignDrugAsTaken } from "@/api/assignDrug";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
-export default function ManagerAssignDrugDetailPage() {
+export default function StaffAssignDrugDetailPage() {
   const [loading, setLoading] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [assignDrug, setAssignDrug] = useState<AssignDrugDetailResponse | undefined>();
   const {setTitle,setBreadCrumbs} = useAuthHeader()
   const navigate = useNavigate();
 
+
   // Helper function to get default treatment status
   const getDefaultTreatmentStatus = (): TreatmentStatus => {
     return "AWAITING_CONTRACT_SIGNED";
   };
 
-  // Helper function to get default payment status
-  const getDefaultPaymentStatus = (): PaymentStatus => {
-    return "PENDING";
-  };
-  const breadCrumb= [
-    { label: "Trang chủ", path: "/manager/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/manager/assigned-drugs" },
-    { label: assignDrug?.title || "Chi tiết đơn thuốc", path: `/manager/assigned-drugs/${id}` },
-  ];
-
   useEffect(() => {
     if (!id) {
-      navigate("/manager/assigned-drugs", { replace: true });
+      navigate("/staff/assigned-drugs", { replace: true });
       return;
     }
     const fetchAssignDrug = async () => {
       setLoading(true);
       try {
-        const response = await getAssignDrugByIdForManager(id);
+        const response = await getAssignDrugByIdForStaff(id);
         setAssignDrug(response.payload);
       } catch (err) {
         console.error(err);
@@ -61,22 +52,12 @@ export default function ManagerAssignDrugDetailPage() {
     try {
       await markAssignDrugAsTaken(assignDrug.id);
       toast.success("Đã cập nhật trạng thái thuốc");
-      navigate("/manager/assigned-drugs");
+      navigate("/staff/assigned-drugs");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     }
   };
 
-  const handleCancel = async () => {
-    if (!assignDrug) return;
-    try {
-      await cancelAssignDrug(assignDrug.id);
-      toast.success("Đã hủy đơn thuốc");
-      navigate("/manager/assigned-drugs"); 
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi");
-    }
-  };
 
   
   useEffect(()=>{
@@ -94,7 +75,7 @@ export default function ManagerAssignDrugDetailPage() {
         <div className="text-center">
           <p className="text-gray-500 mb-4">Không tìm thấy đơn thuốc</p>
           <Button
-            onClick={() => navigate("/manager/assigned-drugs")}
+            onClick={() => navigate("/staff/assigned-drugs")}
             variant="outline"
           >
             Quay lại danh sách

@@ -36,3 +36,21 @@ export const createDoctor = async (payload: {
 
   return res.json();
 };
+
+export interface DoctorBasic {
+  id: string;
+  fullName: string;
+}
+
+export async function getAllDoctors(): Promise<ApiResponse<DoctorBasic[]>> {
+  const response = await fetchWrapper("doctor-management/patient/all-doctors?page=0&size=100", {}, true); // giả định trả đủ 100 bác sĩ
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Không thể lấy danh sách bác sĩ");
+  }
+  const data = await response.json();
+  return {
+    ...data,
+    payload: data.payload.content // vì backend trả Page<...>
+  };
+}

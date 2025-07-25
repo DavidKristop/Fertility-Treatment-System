@@ -46,14 +46,12 @@ export default function CreateDoctorPage() {
     e.preventDefault();
     setLoading(true);
     try {
-        await createDoctor({
+      await createDoctor({
         ...formData,
         yearsOfExperience: Number(formData.yearsOfExperience),
-        });
-        toast.success("Tạo tài khoản bác sĩ thành công!");
-
-        // Reset lại form
-        setFormData({
+      });
+      toast.success("Tạo tài khoản bác sĩ thành công!");
+      setFormData({
         fullName: "",
         email: "",
         phone: "",
@@ -64,18 +62,21 @@ export default function CreateDoctorPage() {
         degree: "",
         yearsOfExperience: "",
         licenseNumber: "",
-        });
+      });
+      navigate("/staff/dashboard");
     } catch (err: any) {
-        toast.error(err.message || "Không thể tạo tài khoản bác sĩ");
+      toast.error(err.message || "Không thể tạo tài khoản bác sĩ");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(()=>{
     setTitle("Tạo tài khoản bác sĩ mới")
     setBreadCrumbs([
-      { label: "Trang tổng quan", path: "/manager/dashboard" },
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
+      { label: "Tạo tài khoản bác sĩ mới"},
+
     ])
   },[])
 

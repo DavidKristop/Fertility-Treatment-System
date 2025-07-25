@@ -5,9 +5,9 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import PaymentDetailForm from "@/components/manager/payments/PaymentDetailForm"
+import PaymentDetailForm from "@/components/staff/payments/PaymentDetailForm"
 import type { PaymentResponse } from "@/api/types"
-import { getManagerPaymentDetail, processPaymentByManager, cancelPaymentByManager } from "@/api/payment"
+import { getStaffPaymentDetail, processPaymentByStaff, cancelPaymentByStaff } from "@/api/payment"
 import { ArrowLeft, RefreshCw } from "lucide-react"
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
@@ -29,17 +29,17 @@ const PaymentDetail: React.FC = () => {
       setLoading(true)
       setError(null)
       setSuccessMessage(null)
-      const response = await getManagerPaymentDetail(id)
+      const response = await getStaffPaymentDetail(id)
 
       if (response.success && response.payload) {
         setPayment(response.payload)
       } else {
         setError("Không tìm thấy thanh toán")
-        navigate("/manager/payments")
+        navigate("/staff/payments")
       }
     } catch (error) {
       setError("Lỗi khi tải chi tiết thanh toán")
-      navigate("/manager/payments")
+      navigate("/staff/payments")
     } finally {
       setLoading(false)
     }
@@ -52,7 +52,7 @@ const PaymentDetail: React.FC = () => {
       setIsProcessing(true)
       setError(null)
       setSuccessMessage(null)
-      const response = await processPaymentByManager(id, paymentMethod)
+      const response = await processPaymentByStaff(id, paymentMethod)
 
       if (response.success && response.payload) {
         setPayment(response.payload)
@@ -74,7 +74,7 @@ const PaymentDetail: React.FC = () => {
       setIsCanceling(true)
       setError(null)
       setSuccessMessage(null)
-      const response = await cancelPaymentByManager(id)
+      const response = await cancelPaymentByStaff(id)
 
       if (response.success && response.payload) {
         setPayment(response.payload)
@@ -90,7 +90,7 @@ const PaymentDetail: React.FC = () => {
   }
 
   const handleBack = () => {
-    navigate("/manager/payments")
+    navigate("/staff/payments")
   }
 
 

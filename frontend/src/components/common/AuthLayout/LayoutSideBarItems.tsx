@@ -266,3 +266,40 @@ export const managerSideBarItemProps: SidebarItem[] = [
       path: "/manager/profile",
     },
 ];
+
+//staff
+export const staffSidebarItemsProp: SidebarItem[] = [
+  {
+    id: "dashboard",
+    label: "Trang tổng quan",
+    icon: LayoutDashboard,
+    path: "/staff/dashboard",
+  },
+
+  {
+    id: "assigned-drugs",
+    label: "Quản lý đơn thuốc",
+    icon: FileText,
+    path: "/staff/assigned-drugs",
+  },
+
+  {
+    id: "payments",
+    label: "Quản lý thanh toán",
+    icon: DollarSign,
+    path: "/staff/payments",
+  },
+
+  {
+    id: "create-doctor",
+    label: "Tạo tài khoản bác sĩ",
+    icon: Plus,
+    path: "/staff/doctors/create",
+  },
+  {
+    id: "profile",
+    label: "Hồ sơ & Cài đặt",
+    icon: User,
+    path: "/staff/profile",
+  },
+];

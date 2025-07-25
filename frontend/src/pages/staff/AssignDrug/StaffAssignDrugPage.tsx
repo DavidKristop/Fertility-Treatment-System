@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getAllAssignedDrugsForManager } from "@/api/assignDrug";
+import { getAllAssignedDrugsForStaff } from "@/api/assignDrug";
 import type { AssignDrugDetailResponse } from "@/api/types";
 import {
   Pagination,
@@ -21,7 +21,7 @@ const STATUS_OPTIONS = [
   { value: "ALL", label: "Tất cả" },
 ];
 
-export default function ManagerAssignedDrugPage() {
+export default function StaffAssignedDrugPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusParam = searchParams.get("status") as
     | "PENDING"
@@ -49,7 +49,7 @@ export default function ManagerAssignedDrugPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await getAllAssignedDrugsForManager({ 
+      const res = await getAllAssignedDrugsForStaff({ 
         page,
         size: 10,
         status: status === "ALL" ? undefined : [status],
@@ -75,8 +75,8 @@ export default function ManagerAssignedDrugPage() {
   useEffect(()=>{
     setTitle("Danh sách đơn thuốc")
     setBreadCrumbs([
-      { label: "Trang chủ", path: "/manager/dashboard" },
-      { label: "Danh sách đơn thuốc", path: "/manager/assigned-drugs" },
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
+      { label: "Danh sách đơn thuốc", path: "/staff/assigned-drugs" },
     ])
   },[])
 
