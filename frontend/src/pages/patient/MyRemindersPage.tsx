@@ -16,7 +16,7 @@ export default function MyRemindersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const {setBreadCrumbs} = useAuthHeader()
+  const {setBreadCrumbs,setTitle} = useAuthHeader()
 
   const fetchReminders = async (pageNum = 0) => {
     setLoading(true);
@@ -77,6 +77,7 @@ export default function MyRemindersPage() {
       { label: "Nhắc nhở" },
       { label: "Danh sách nhắc nhở" },
     ])
+    setTitle("Thông báo")
   },[])
 
   return (

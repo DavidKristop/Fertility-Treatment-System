@@ -12,17 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { logout, me } from "@/api/auth"
 import type { HeaderProps } from "@/api/types"
-import { useBreadCrumb } from "@/lib/context/AuthHeaderContext"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 export default function Header({
-  title,
   onMenuClick,
   showMenuButton = false,
 }: HeaderProps) {
   const navigate = useNavigate()
   const [userName, setUserName] = useState<string>("")
   const [userRole, setUserRole] = useState<string>("")
-  const {breadCrumbs} = useBreadCrumb()
+  const {breadCrumbs,title} = useAuthHeader()
 
   useEffect(() => {
     ;(async () => {

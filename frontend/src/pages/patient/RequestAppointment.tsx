@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import PatientLayout from "@/components/patient/PatientLayout"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -22,6 +21,7 @@ import { DayPicker } from "react-day-picker"
 import "react-day-picker/style.css";
 import { vi } from "date-fns/locale"
 import { toast } from "react-toastify"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 
 export default function RequestAppointment() {
@@ -38,6 +38,7 @@ export default function RequestAppointment() {
   const [hasPendingRequest, setHasPendingRequest] = useState(false)
   const [hasInProgressTreatment, setHasInProgressTreatment] = useState(false)
   const [hasPendingRequestSchedule, setHasPendingRequestSchedule] = useState(false)
+  const {setTitle, setBreadCrumbs} = useAuthHeader()
   const navigate = useNavigate()
 
   const fetchPatientDashBoardStatus = async()=>{
@@ -189,130 +190,131 @@ export default function RequestAppointment() {
     fetchPatientDashBoardStatus()
   }, []) 
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Lịch hẹn" },
-    { label: "Đặt lịch hẹn" },
-  ]
+  useEffect(()=>{
+    setTitle("Đặt lịch hẹn")
+    setBreadCrumbs([
+        {label:"Trang tổng quan",path:"/patient/dashboard"},
+        {label:"Lịch hẹn"},
+        {label:"Đặt lịch hẹn"},
+    ])
+  },[])
 
   return (
-    <PatientLayout title="Đặt lịch hẹn" breadcrumbs={breadcrumbs}>
-      <div className="mmax-w-4xl x-auto">
-        <h1 className="text-2xl font-bold text-center mb-6">Thời gian và ngày nào phù hợp với bạn?</h1>
+    <div className="mmax-w-4xl x-auto">
+      <h1 className="text-2xl font-bold text-center mb-6">Thời gian và ngày nào phù hợp với bạn?</h1>
 
-        <div className="flex justify-center gap-8">
-          {/* Calendar */}
-          <DayPicker
-            locale={vi}
-            disabled={[{dayOfWeek:[0,6]}, 
-            new Date(), 
-            new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-            new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
-            new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
-            {before: new Date()},
-            {after: new Date(new Date().getTime() + 120 * 24 * 60 * 60 * 1000)}]}
-            navLayout="around"
-            animate
-            mode="single"
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-          />
+      <div className="flex justify-center gap-8">
+        {/* Calendar */}
+        <DayPicker
+          locale={vi}
+          disabled={[{dayOfWeek:[0,6]}, 
+          new Date(), 
+          new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
+          new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
+          {before: new Date()},
+          {after: new Date(new Date().getTime() + 120 * 24 * 60 * 60 * 1000)}]}
+          navLayout="around"
+          animate
+          mode="single"
+          selected={selectedDate}
+          onSelect={setSelectedDate}
+        />
 
-          {/* Time Slots and Doctor Selection */}
-          <div className="bg-white p-4 rounded-lg shadow w-64">
-            { hasInProgressTreatment ? (
-              <p className="text-center text-blue-500">Bạn đang trong một khóa điều trị.</p>
-            ): hasPendingRequestSchedule ? (
-              <p className="text-center text-blue-500">Bác sĩ bạn chọn đã chấp nhận yêu cầu tư vấn và khám tổng quát của bạn.</p>
-            ) : hasPendingRequest ? (
-              <p className="text-center text-blue-500">Bạn đã có một yêu cầu đang chờ xử lý. <Link className="text-red-500" to="/patient/appointments/my-request">Xem lịch hẹn đặt của bạn tại đây</Link></p>
-            ) : !selectedDate ? (
-              <p className="text-center">Vui lòng chọn 1 ngày</p>
-            ) : (
-              <>
-                <div className="mb-4">
-                  <h3 className="font-semibold">Chọn bác sĩ</h3>
-                  <Select onValueChange={setSelectedDoctor} value={selectedDoctor || undefined}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Chọn bác sĩ" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {doctors.map((doctor) => (
-                      <SelectItem key={doctor.id} value={doctor.id}>
-                        {doctor.fullName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {loading ? (
-                <p className="text-center">Đang tải...</p>
-              ) : !selectedDoctor ? (
-                <p className="text-center">Vui lòng chọn bác sĩ</p>
-              ) : (
-                <Accordion 
-                  type="single" 
-                  collapsible 
-                  className="border rounded-lg p-4 mb-4"
-                >
-                  {["Morning", "Afternoon", "Evening"].map((session) => (
-                    <AccordionItem key={session} value={session} className="border-b my-2 last:border-b-0">
-                      <AccordionTrigger className="cursor-pointer">
-                        <h3 className="font-semibold">
-                          {session === "Morning"
-                            ? "Buổi sáng"
-                            : session === "Afternoon"
-                            ? "Buổi chiều"
-                            : "Buổi tối"}
-                        </h3>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="flex flex-wrap gap-2 mt-2 overflow-y-auto max-h-40">
-                          {timeSlots[session].length ? (
-                            timeSlots[session].map((time) => (
-                              <button
-                                key={time}
-                                type="button"
-                                className={`px-3 py-1 w-full rounded-full border ${
-                                  selectedTime === time
-                                    ? "bg-blue-500 text-white border-blue-500"
-                                    : "bg-white text-gray-800 border-gray-300 hover:bg-blue-100"
-                                }`}
-                                onClick={() => setSelectedTime(time)}
-                              >
-                                {time}
-                              </button>
-                            ))
-                          ) : (
-                            <span className="text-gray-400 text-sm">Không có khung giờ nào khả dụng</span>
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
+        {/* Time Slots and Doctor Selection */}
+        <div className="bg-white p-4 rounded-lg shadow w-64">
+          { hasInProgressTreatment ? (
+            <p className="text-center text-blue-500">Bạn đang trong một khóa điều trị.</p>
+          ): hasPendingRequestSchedule ? (
+            <p className="text-center text-blue-500">Bác sĩ bạn chọn đã chấp nhận yêu cầu tư vấn và khám tổng quát của bạn.</p>
+          ) : hasPendingRequest ? (
+            <p className="text-center text-blue-500">Bạn đã có một yêu cầu đang chờ xử lý. <Link className="text-red-500" to="/patient/appointments/my-request">Xem lịch hẹn đặt của bạn tại đây</Link></p>
+          ) : !selectedDate ? (
+            <p className="text-center">Vui lòng chọn 1 ngày</p>
+          ) : (
+            <>
+              <div className="mb-4">
+                <h3 className="font-semibold">Chọn bác sĩ</h3>
+                <Select onValueChange={setSelectedDoctor} value={selectedDoctor || undefined}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Chọn bác sĩ" />
+                </SelectTrigger>
+                <SelectContent>
+                  {doctors.map((doctor) => (
+                    <SelectItem key={doctor.id} value={doctor.id}>
+                      {doctor.fullName}
+                    </SelectItem>
                   ))}
-                 </Accordion>
-              )}
-            </>)}
-          </div>
-        </div>
-
-        <div className="text-center mt-6 text-gray-600">
-          Lưu ý: Nếu yêu cầu của bạn được chấp nhận, bạn sẽ phải <span className="text-red-500">trả phí 250.000 đ</span> cho phí siêu âm trong <span className="text-red-500">48h</span> kể từ khi bác sĩ đã chấp nhận yêu cầu của bạn.
-        </div>
-
-        <div className="mt-6 text-center space-x-4">
-          <Button variant="outline" className="px-6 py-2" onClick={handleBack}>
-            Quay lại
-          </Button>
-          <Button
-            className="px-6 py-2"
-            onClick={handleSubmit}
-            disabled={!selectedDate || !selectedTime || !selectedDoctor || loading}
-          >
-            Đặt lịch
-          </Button>
+                </SelectContent>
+              </Select>
+            </div>
+            {loading ? (
+              <p className="text-center">Đang tải...</p>
+            ) : !selectedDoctor ? (
+              <p className="text-center">Vui lòng chọn bác sĩ</p>
+            ) : (
+              <Accordion 
+                type="single" 
+                collapsible 
+                className="border rounded-lg p-4 mb-4"
+              >
+                {["Morning", "Afternoon", "Evening"].map((session) => (
+                  <AccordionItem key={session} value={session} className="border-b my-2 last:border-b-0">
+                    <AccordionTrigger className="cursor-pointer">
+                      <h3 className="font-semibold">
+                        {session === "Morning"
+                          ? "Buổi sáng"
+                          : session === "Afternoon"
+                          ? "Buổi chiều"
+                          : "Buổi tối"}
+                      </h3>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="flex flex-wrap gap-2 mt-2 overflow-y-auto max-h-40">
+                        {timeSlots[session].length ? (
+                          timeSlots[session].map((time) => (
+                            <button
+                              key={time}
+                              type="button"
+                              className={`px-3 py-1 w-full rounded-full border ${
+                                selectedTime === time
+                                  ? "bg-blue-500 text-white border-blue-500"
+                                  : "bg-white text-gray-800 border-gray-300 hover:bg-blue-100"
+                              }`}
+                              onClick={() => setSelectedTime(time)}
+                            >
+                              {time}
+                            </button>
+                          ))
+                        ) : (
+                          <span className="text-gray-400 text-sm">Không có khung giờ nào khả dụng</span>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+                </Accordion>
+            )}
+          </>)}
         </div>
       </div>
-    </PatientLayout>
+
+      <div className="text-center mt-6 text-gray-600">
+        Lưu ý: Nếu yêu cầu của bạn được chấp nhận, bạn sẽ phải <span className="text-red-500">trả phí 250.000 đ</span> cho phí siêu âm trong <span className="text-red-500">48h</span> kể từ khi bác sĩ đã chấp nhận yêu cầu của bạn.
+      </div>
+
+      <div className="mt-6 text-center space-x-4">
+        <Button variant="outline" className="px-6 py-2" onClick={handleBack}>
+          Quay lại
+        </Button>
+        <Button
+          className="px-6 py-2"
+          onClick={handleSubmit}
+          disabled={!selectedDate || !selectedTime || !selectedDoctor || loading}
+        >
+          Đặt lịch
+        </Button>
+      </div>
+    </div>
   )
 }

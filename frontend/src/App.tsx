@@ -12,8 +12,8 @@ import RootLayout from "./pages/RootLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 // pages
 import Home from "./pages/Home";
-import Company from "./pages/about/Company";
-import Team from "./pages/about/Team";
+import Company from "./pages/guest/about/Company";
+import Team from "./pages/guest/about/Team";
 import Services from "./pages/pricing/Services";
 import Insurance from "./pages/pricing/Insurance";
 import Financing from "./pages/pricing/Financing";
@@ -72,7 +72,7 @@ import PaymentDetail from "./pages/manager/payments/PaymentDetail";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import Story from "./pages/about/Story";
+import Story from "./pages/guest/about/Story";
 import BlogPage from "./pages/blog/page";
 import BlogPostPage from "./pages/blog/[id]/page";
 import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage";

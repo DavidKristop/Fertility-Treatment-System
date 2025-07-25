@@ -11,7 +11,7 @@ export default function MySchedulePage(){
     const [events, setEvents] = useState<PatientEventResponse>();
     const [open,setOpen] = useState(false)
     const [drug,setDrug] = useState<PatientDrugResponse>();
-    const {setBreadCrumbs} = useAuthHeader()
+    const {setBreadCrumbs,setTitle} = useAuthHeader()
     const navigate = useNavigate()
 
 
@@ -30,6 +30,7 @@ export default function MySchedulePage(){
             {label:"Trang tổng quan",path:"/patient/dashboard"},
             {label:"Lịch khám"}
         ])
+        setTitle("Lịch khám")
     },[])
 
     return <div className="space-y-6">

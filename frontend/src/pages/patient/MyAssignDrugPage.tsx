@@ -41,7 +41,7 @@ export default function MyAssignDrugPage() {
     "PENDING" | "COMPLETED" | "CANCELLED" | "ALL"
   >(statusParam || "ALL");
   const [keyword, setKeyword] = useState(keywordParam);
-  const {setBreadCrumbs} = useAuthHeader()
+  const {setBreadCrumbs,setTitle} = useAuthHeader()
 
   const navigate = useNavigate()
 
@@ -77,6 +77,7 @@ export default function MyAssignDrugPage() {
       { label: "Trang chủ", path: "/patient/dashboard" },
       { label: "Danh sách đơn thuốc", path: "/patient/assigned-drugs" },
     ])
+    setTitle("Danh sách đơn thuốc")
   },[])
 
   return (
