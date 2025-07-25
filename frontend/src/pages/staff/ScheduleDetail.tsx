@@ -223,19 +223,6 @@ export default function PatientScheduleResult() {
                       </div>
                     </div>
 
-                    {schedule?.treatment?.id && (
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="outline"
-                          onClick={() => navigate(`/patient/treatment/${schedule.treatment.id}`)}
-                          className="flex items-center gap-2"
-                        >
-                          <FileText className="h-4 w-4" />
-                          Xem chi tiết điều trị
-                        </Button>
-                      </div>
-                    )}
-
                     <div className="flex flex-items-center gap-3">
                       <Receipt className="h-5 w-5 text-gray-500"/>
                       <div>

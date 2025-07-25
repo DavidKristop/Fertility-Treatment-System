@@ -17,13 +17,9 @@ const ScheduleCardList: React.FC<ScheduleCardListProps> = ({
   currentPage,
   totalPages,
   onPageChange,
-  isLoading,
 }) => {
   return (
     <div>
-      {isLoading ? (
-        <p className="text-gray-500">Đang tải dữ liệu...</p>
-      ) : (
         <>
           {schedules.map((schedule) => (
             <ScheduleCard
@@ -50,7 +46,6 @@ const ScheduleCardList: React.FC<ScheduleCardListProps> = ({
             </div>
           )}
         </>
-      )}
     </div>
   )
 }
