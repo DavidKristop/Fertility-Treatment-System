@@ -504,3 +504,44 @@ export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 export type PaymentMethod = "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
 
 export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";
+
+
+//  ==================== UI TYPES ====================
+
+export interface SidebarItem {
+  id: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  path?: string
+  badge?: number
+  children?: {
+    id: string
+    label: string
+    icon: React.ComponentType<{ className?: string }>
+    path: string
+    badge?: number
+  }[]
+}
+
+export interface SidebarProps {
+  isCollapsed: boolean
+  isMobile?: boolean
+  sideBarItemsProp: SidebarItem[]
+  onToggle: () => void
+}
+
+
+export interface HeaderProps {
+  onMenuClick?: () => void
+  showMenuButton?: boolean
+}
+
+export interface LayoutProps {
+  children: React.ReactNode
+  sideBarItemsProp: SidebarItem[]
+}
+
+export interface BreadCrumb{
+  label:string,
+  path?:string
+}

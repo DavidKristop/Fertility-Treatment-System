@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTreatmentICreated } from "@/api/treatment";
 import type { TreatmentResponse } from "@/api/types";
-import DoctorLayout from "@/components/doctor/DoctorLayout";
 import {
   Pagination,
   PaginationContent,
@@ -14,6 +13,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 // Helper function for date formatting
 const formatDate = (date: string | null | undefined): string => {
@@ -45,12 +45,8 @@ export default function TreatmentPlans() {
   const [page, setPage] = useState(Number.isNaN(pageParam) ? 0 : pageParam);
   const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]["value"]>(statusParam || "ALL");
-  const [title, setTitle] = useState(titleParam);
-
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/doctor/dashboard" },
-    { label: "Danh sách điều trị" },
-  ];
+  const [treatmentTitle, setTreatmentTitle] = useState(titleParam);
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
 
   const fetchTreatments = async (pageNum = 0, statusVal = status) => {
     setLoading(true);
@@ -58,7 +54,7 @@ export default function TreatmentPlans() {
       const res = await getTreatmentICreated(
         pageNum,
         10,
-        title,
+        treatmentTitle,
         statusVal === "ALL" 
           ? ["IN_PROGRESS", "COMPLETED", "CANCELLED", "AWAITING_CONTRACT_SIGNED"]
           : [statusVal]
@@ -72,144 +68,150 @@ export default function TreatmentPlans() {
     }
   };
 
-  // Update query params when status, page, or patientEmail changes
-  useEffect(() => {
-    setSearchParams({ status, page: String(page), title });
-    // eslint-disable-next-line
-  }, [status, page, title]);
-
-  // Keep state in sync with query params (for back/forward navigation)
-  useEffect(() => {
-    if (statusParam && statusParam !== status) setStatus(statusParam);
-    if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
-    if (titleParam !== title) setTitle(titleParam);
-    // eslint-disable-next-line
-  }, [statusParam, pageParam, titleParam]);
-
-  useEffect(() => {
-    fetchTreatments(page, status);
-    // eslint-disable-next-line
-  }, [page, status, title]);
-
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatus(e.target.value as (typeof STATUS_OPTIONS)[number]["value"]);
     setPage(0);
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+    setTreatmentTitle(e.target.value);
     setPage(0);
   };
 
-  return (
-    <DoctorLayout title="Danh sách điều trị" breadcrumbs={breadcrumbs}>
-      <div className="mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold mb-4">Danh sách điều trị</h2>
-          <Link to="/doctor/treatment-plans/create">
-            <Button className="cursor-pointer">
-              + Tạo kế hoạch điều trị mới
-            </Button>
-          </Link>
-        </div>
-        <div className="flex gap-4 mb-4">
-          <div className="flex-1">
-            <Input
-              placeholder="Tìm kiếm theo tiêu đề..."
-              value={title}
-              onChange={handleTitleChange}
-            />
-          </div>
-          <select
-            className="border rounded px-2 py-1"
-            value={status}
-            onChange={handleStatusChange}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+  // Update query params when status, page, or patientEmail changes
+  useEffect(() => {
+    setSearchParams({ status, page: String(page), title:treatmentTitle });
+    // eslint-disable-next-line
+  }, [status, page, treatmentTitle]);
 
-        {loading ? (
-          <div className="text-center py-4">Đang tải...</div>
-        ) : (
-            <div className="space-y-4">
-            {treatments.map((treatment) => (
-              <Link key={treatment.id} to={`/doctor/treatment-plans/treatment-details/${treatment.id}`}>
-                <div
-                  key={treatment.id}
-                  className="border rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all duration-200 my-2"
-                >
-                  <div className="flex flex-col gap-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{treatment.title}</h3>
-                        <div className="mt-2 space-y-2">
+  // Keep state in sync with query params (for back/forward navigation)
+  useEffect(() => {
+    if (statusParam && statusParam !== status) setStatus(statusParam);
+    if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
+    if (titleParam !== treatmentTitle) setTreatmentTitle(titleParam);
+    // eslint-disable-next-line
+  }, [statusParam, pageParam, titleParam]);
+
+  useEffect(() => {
+    fetchTreatments(page, status);
+    // eslint-disable-next-line
+  }, [page, status, treatmentTitle]);
+
+  useEffect(()=>{
+    setTitle("Danh sách điều trị")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/doctor/dashboard" },
+      { label: "Danh sách điều trị" },
+    ])
+  },[])
+
+  return (
+    <div className="mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold mb-4">Danh sách điều trị</h2>
+        <Link to="/doctor/treatment-plans/create">
+          <Button className="cursor-pointer">
+            + Tạo kế hoạch điều trị mới
+          </Button>
+        </Link>
+      </div>
+      <div className="flex gap-4 mb-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Tìm kiếm theo tiêu đề..."
+            value={treatmentTitle}
+            onChange={handleTitleChange}
+          />
+        </div>
+        <select
+          className="border rounded px-2 py-1"
+          value={status}
+          onChange={handleStatusChange}
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-4">Đang tải...</div>
+      ) : (
+          <div className="space-y-4">
+          {treatments.map((treatment) => (
+            <Link key={treatment.id} to={`/doctor/treatment-plans/treatment-details/${treatment.id}`}>
+              <div
+                key={treatment.id}
+                className="border rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all duration-200 my-2"
+              >
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{treatment.title}</h3>
+                      <div className="mt-2 space-y-2">
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Bệnh nhân:</span> {treatment?.patient?.fullName}
+                          <span className="text-gray-500"> (Email: {treatment?.patient?.email})</span>
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Giao thức điều trị:</span> {treatment?.protocol?.title}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600 font-medium">Trạng thái:</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium
+                            ${treatment.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
+                            treatment.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                            treatment.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                            treatment.status === 'AWAITING_CONTRACT_SIGNED' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'}`}
+                          >
+                            {treatment.status}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-1">
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium">Bệnh nhân:</span> {treatment?.patient?.fullName}
-                            <span className="text-gray-500"> (Email: {treatment?.patient?.email})</span>
+                            <span className="font-medium">Ngày bắt đầu:</span> {formatDate(treatment.startDate)}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium">Giao thức điều trị:</span> {treatment?.protocol?.title}
+                            <span className="font-medium">Ngày kết thúc:</span> {formatDate(treatment.endDate)}
                           </p>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 font-medium">Trạng thái:</span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium
-                              ${treatment.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                              treatment.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                              treatment.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-                              treatment.status === 'AWAITING_CONTRACT_SIGNED' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'}`}
-                            >
-                              {treatment.status}
-                            </span>
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            <p className="text-sm text-gray-600">
-                              <span className="font-medium">Ngày bắt đầu:</span> {formatDate(treatment.startDate)}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              <span className="font-medium">Ngày kết thúc:</span> {formatDate(treatment.endDate)}
-                            </p>
-                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        <div className="mt-6 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious onClick={() => setPage(page - 1)} />
-              </PaginationItem>
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <PaginationItem key={index}>
-                  <PaginationLink
-                    onClick={() => setPage(index)}
-                    isActive={page === index}
-                  >
-                    {index + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setPage(page + 1)}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+              </div>
+            </Link>
+          ))}
         </div>
+      )}
+
+      <div className="mt-6 flex justify-center">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious onClick={() => setPage(page - 1)} />
+            </PaginationItem>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  onClick={() => setPage(index)}
+                  isActive={page === index}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage(page + 1)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
-    </DoctorLayout>
+    </div>
   );
 }

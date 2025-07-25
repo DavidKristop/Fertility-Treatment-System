@@ -1,4 +1,4 @@
-import doctorImg from "../../assets/doctor1.jpg";
+import doctorImg from "../../../assets/doctor1.jpg";
 
 export default function DoctorDetail() {
   return (

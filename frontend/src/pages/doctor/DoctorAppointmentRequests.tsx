@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
-import DoctorLayout from "@/components/doctor/DoctorLayout";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Đang chờ" },
@@ -43,11 +43,7 @@ export default function DoctorAppointmentRequest() {
   const [rejectReason, setRejectReason] = useState("");
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
-
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/doctor/dashboard" },
-    { label: "Yêu cầu đặt lịch" },
-  ];
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
 
   const fetchRequests = async (pageNum = 0, statusVal = status, email = patientEmail) => {
     setLoading(true);
@@ -102,6 +98,17 @@ export default function DoctorAppointmentRequest() {
     }
   }
 
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value as "PENDING" | "ACCEPTED" | "DENIED");
+    setPage(0);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPatientEmail(search.trim());
+    setPage(0);
+  };
+
   useEffect(() => {
     const params: Record<string, string> = {};
     if (status) params.status = status;
@@ -126,19 +133,16 @@ export default function DoctorAppointmentRequest() {
     // eslint-disable-next-line
   }, [page, status, patientEmail]);
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value as "PENDING" | "ACCEPTED" | "DENIED");
-    setPage(0);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPatientEmail(search.trim());
-    setPage(0);
-  };
+  useEffect(()=>{
+    setTitle("Yêu cầu đặt lịch")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/doctor/dashboard" },
+      { label: "Yêu cầu đặt lịch" },
+    ])
+  },[])
 
   return (
-    <DoctorLayout title="Yêu cầu đặt lịch" breadcrumbs={breadcrumbs}>
+    <>
       <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Lịch sử yêu cầu đặt lịch</h2>
         <form className="flex gap-2 mb-4" onSubmit={handleSearch}>
@@ -341,8 +345,6 @@ export default function DoctorAppointmentRequest() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </DoctorLayout>
-
-
+    </>
   );
 }

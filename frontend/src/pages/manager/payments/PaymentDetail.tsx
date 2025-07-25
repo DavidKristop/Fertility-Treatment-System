@@ -9,7 +9,7 @@ import PaymentDetailForm from "@/components/manager/payments/PaymentDetailForm"
 import type { PaymentResponse } from "@/api/types"
 import { getManagerPaymentDetail, processPaymentByManager, cancelPaymentByManager } from "@/api/payment"
 import { ArrowLeft, RefreshCw } from "lucide-react"
-import ManagerLayout from "@/components/manager/ManagerLayout"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 const PaymentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -20,12 +20,7 @@ const PaymentDetail: React.FC = () => {
   const [isCanceling, setIsCanceling] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (id) {
-      fetchPaymentDetail()
-    }
-  }, [id])
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
 
   const fetchPaymentDetail = async () => {
     if (!id) return
@@ -98,11 +93,21 @@ const PaymentDetail: React.FC = () => {
     navigate("/manager/payments")
   }
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/manager/dashboard" },
-    { label: "Quản lý thanh toán", path: "/manager/payments" },
-    { label: "Chi tiết thanh toán" },
-  ]
+
+  useEffect(() => {
+    if (id) {
+      fetchPaymentDetail()
+    }
+  }, [id])
+
+  useEffect(()=>{
+    setTitle("Chi tiết thanh toán")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/manager/dashboard" },
+      { label: "Quản lý thanh toán", path: "/manager/payments" },
+      { label: "Chi tiết thanh toán" },
+    ])
+  },[])
 
   if (loading) {
     return (
@@ -146,47 +151,45 @@ const PaymentDetail: React.FC = () => {
   }
 
   return (
-    <ManagerLayout title="Chi tiết thanh toán" breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={handleBack}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Quay lại danh sách
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Chi tiết thanh toán</h1>
-              <p className="text-gray-600">Thanh toán #{payment.id.slice(-8)}</p>
-            </div>
-          </div>
-
-          <Button variant="outline" onClick={fetchPaymentDetail} disabled={loading}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-            Làm mới
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={handleBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Quay lại danh sách
           </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Chi tiết thanh toán</h1>
+            <p className="text-gray-600">Thanh toán #{payment.id.slice(-8)}</p>
+          </div>
         </div>
 
-        {/* Thông báo lỗi/thành công */}
-        {(error || successMessage) && (
-          <Card>
-            <CardContent className="py-3">
-              {error && <div className="text-red-600 font-medium">{error}</div>}
-              {successMessage && <div className="text-green-600 font-medium">{successMessage}</div>}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Payment Detail Form */}
-        <PaymentDetailForm
-          payment={payment}
-          onProcessPayment={handleProcessPayment}
-          onCancelPayment={handleCancelPayment}
-          isProcessing={isProcessing}
-          isCanceling={isCanceling}
-        />
+        <Button variant="outline" onClick={fetchPaymentDetail} disabled={loading}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          Làm mới
+        </Button>
       </div>
-    </ManagerLayout>
+
+      {/* Thông báo lỗi/thành công */}
+      {(error || successMessage) && (
+        <Card>
+          <CardContent className="py-3">
+            {error && <div className="text-red-600 font-medium">{error}</div>}
+            {successMessage && <div className="text-green-600 font-medium">{successMessage}</div>}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Payment Detail Form */}
+      <PaymentDetailForm
+        payment={payment}
+        onProcessPayment={handleProcessPayment}
+        onCancelPayment={handleCancelPayment}
+        isProcessing={isProcessing}
+        isCanceling={isCanceling}
+      />
+    </div>
   )
 }
 

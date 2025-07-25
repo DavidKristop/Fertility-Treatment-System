@@ -12,19 +12,19 @@ import RootLayout from "./pages/RootLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 // pages
 import Home from "./pages/Home";
-import Company from "./pages/about/Company";
-import Team from "./pages/about/Team";
-import Services from "./pages/pricing/Services";
-import Insurance from "./pages/pricing/Insurance";
-import Financing from "./pages/pricing/Financing";
-import Iui from "./pages/services/iui";
-import Ivf from "./pages/services/ivf";
-import DoctorListPage from "./pages/doctorList/DoctorListPage";
-import DoctorDetailPage from "./pages/doctorList/DoctorDetailPage";
-import LoginPage from "./pages/authorization/LoginPage";
-import RegisterPage from "./pages/authorization/RegisterPage";
-import ForgotPasswordPage from "./pages/authorization/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/authorization/ResetPasswordPage";
+import Company from "./pages/guest/about/Company";
+import Team from "./pages/guest/about/Team";
+import Services from "./pages/guest/pricing/Services";
+import Insurance from "./pages/guest/pricing/Insurance";
+import Financing from "./pages/guest/pricing/Financing";
+import Iui from "./pages/guest/services/iui";
+import Ivf from "./pages/guest/services/ivf";
+import DoctorListPage from "./pages/guest/doctorList/DoctorListPage";
+import DoctorDetailPage from "./pages/guest/doctorList/DoctorDetailPage";
+import LoginPage from "./pages/guest/authorization/LoginPage";
+import RegisterPage from "./pages/guest/authorization/RegisterPage";
+import ForgotPasswordPage from "./pages/guest/authorization/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/guest/authorization/ResetPasswordPage";
 
 // Patient pages
 import PatientDashboard from "./pages/patient/PatientDashboard";
@@ -41,13 +41,9 @@ import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleR
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import Schedules from "./pages/doctor/appointments/Schedules";
-import PatientList from "./pages/doctor/patients/PatientList";
-import PatientDetail from "./pages/doctor/patients/PatientDetail";
 import TreatmentPlans from "./pages/doctor/treatment-plans/TreatmentPlans";
 import CreateTreatmentPlans from "./pages/doctor/treatment-plans/CreateTreatmentPlans";
 import TreatmentDetail from "./pages/doctor/treatment-plans/TreatmentDetail";
-import RecordResults from "./pages/doctor/results/RecordResults";
-import ResultsHistory from "./pages/doctor/results/ResultsHistory";
 import DoctorProfile from "./pages/doctor/profile/DoctorProfile";
 
 // Manager pages
@@ -72,7 +68,7 @@ import PaymentDetail from "./pages/manager/payments/PaymentDetail";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import Story from "./pages/about/Story";
+import Story from "./pages/guest/about/Story";
 import BlogPage from "./pages/blog/page";
 import BlogPostPage from "./pages/blog/[id]/page";
 import MyAppointmentRequests from "./pages/patient/MyAppointmentRequestsPage";
@@ -82,7 +78,7 @@ import PaymentFailurePage from "./pages/patient/Payment/PaymentFailure";
 import PaymentSuccessPage from "./pages/patient/Payment/PaymentSuccess";
 import DoctorAppointmentRequest from "./pages/doctor/DoctorAppointmentRequests";
 import MyRemindersPage from "./pages/patient/MyRemindersPage";
-import VerifyEmailPage from "./pages/authorization/VerifyEmailPage";
+import VerifyEmailPage from "./pages/guest/authorization/VerifyEmailPage";
 import DoctorScheduleResult from "./pages/doctor/appointments/ScheduleResult";
 import ManagerAssignDrugDetailPage from "./pages/manager/AssignDrug/ManagerAssignDrugDetailPage";
 import MyAssignDrugDetailPage from "./pages/patient/MyAssignDrugDetailPage";
@@ -92,9 +88,10 @@ import MySchedulePage from "./pages/patient/MySchedulePage";
 import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
+import Layout from "./components/common/AuthLayout/Layout";
+import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
 
-// Layout for authenticated dashboards (no header/footer)
-const DashboardLayout = () => <Outlet />;
+
 
 const router = createBrowserRouter([
   // Public routes under RootLayout
@@ -154,7 +151,7 @@ const router = createBrowserRouter([
     path: "patient",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_PATIENT"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={patientSidebarItemsProp} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -195,7 +192,7 @@ const router = createBrowserRouter([
     path: "doctor",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_DOCTOR"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={doctorSidebarItemsProp} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -208,14 +205,6 @@ const router = createBrowserRouter([
       { path: "assigned-drugs", element: <DoctorAssignDrugsPage /> },
       { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage />},
       { path: "pending", element: <DoctorAppointmentRequest /> },
-      // Patient routes
-      {
-        path: "patients",
-        children: [
-          { index: true, element: <PatientList /> },
-          { path: ":id", element: <PatientDetail /> },
-        ],
-      },
       // Treatment Plan routes
       {
         path: "treatment-plans",
@@ -223,14 +212,6 @@ const router = createBrowserRouter([
           { index: true, element: <TreatmentPlans /> },
           { path: "create", element: <CreateTreatmentPlans /> },
           { path: "treatment-details/:id", element: <TreatmentDetail /> },
-        ],
-      },
-      // Results routes
-      {
-        path: "results",
-        children: [
-          { path: "record", element: <RecordResults /> },
-          { path: "history", element: <ResultsHistory /> },
         ],
       },
       // Profile routes
@@ -245,7 +226,7 @@ const router = createBrowserRouter([
     path: "manager",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_MANAGER"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={managerSideBarItemProps} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -280,7 +261,6 @@ const router = createBrowserRouter([
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
-      { path: "patients", element: <PatientList />, },
       { 
         path: "contracts", 
         children: [
@@ -314,7 +294,7 @@ const router = createBrowserRouter([
     path: "admin",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={admindSideBarItemsProp} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -322,12 +302,6 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <AdminDashboard />,
       },
-
-      {
-        path: "patients",
-        element: <PatientList />,
-      },
-
       {
         path: "/admin/manage-users",
         element: <ManageUserPage />,

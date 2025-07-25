@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/pagination";
 import AssignDrugDisplay from "@/components/assignDrug/AssignDrugDisplay";
 import { TextField } from "@mui/material";
-import PatientLayout from "@/components/patient/PatientLayout";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ hoàn thành" },
@@ -41,11 +41,9 @@ export default function MyAssignDrugPage() {
     "PENDING" | "COMPLETED" | "CANCELLED" | "ALL"
   >(statusParam || "ALL");
   const [keyword, setKeyword] = useState(keywordParam);
+  const {setBreadCrumbs,setTitle} = useAuthHeader()
+
   const navigate = useNavigate()
-  const breadcrumbs = [
-    { label: "Trang chủ", path: "/patient/dashboard" },
-    { label: "Danh sách đơn thuốc", path: "/patient/assigned-drugs" },
-  ];
 
   const fetchAssignDrugs = async () => {
     setLoading(true);
@@ -74,80 +72,86 @@ export default function MyAssignDrugPage() {
     fetchAssignDrugs();
   }, [status, keyword, page]);
 
+  useEffect(()=>{
+    setBreadCrumbs([
+      { label: "Trang chủ", path: "/patient/dashboard" },
+      { label: "Danh sách đơn thuốc", path: "/patient/assigned-drugs" },
+    ])
+    setTitle("Danh sách đơn thuốc")
+  },[])
+
   return (
-    <PatientLayout title="Quản lý đơn thuốc" breadcrumbs={breadcrumbs}>
-      <div className="mx-auto p-4">
-        <h2 className="text-xl font-bold mb-4">Danh sách đơn thuốc</h2>
+    <div className="mx-auto p-4">
+      <h2 className="text-xl font-bold mb-4">Danh sách đơn thuốc</h2>
 
-        <div className="flex gap-2 mb-4">
-          <select
-            className="border rounded px-2 py-1"
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value as any);
-              setPage(0);
-            }}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+      <div className="flex gap-2 mb-4">
+        <select
+          className="border rounded px-2 py-1"
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value as any);
+            setPage(0);
+          }}
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
 
-          <TextField
-            fullWidth
-            type="text"
-            placeholder="Tìm theo tiêu đề"
-            value={keyword}
-            onChange={(e) => {
-              setKeyword(e.target.value);
-              setPage(0);
-            }}
-            className="border px-2 py-1 rounded"
-          />
-        </div>
-
-        {loading && <p>Đang tải dữ liệu...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-
-        {!loading && assignDrugs.length === 0 && (
-          <div className="text-gray-500 italic">Không có dữ liệu</div>
-        )}
-
-        {!loading && assignDrugs.length > 0 && (
-          <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/patient/assigned-drugs/${assignDrug.id}`)}/>
-        )}
-
-        {totalPages > 1 && (
-          <div className="mt-6 flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }).map((_, idx) => (
-                  <PaginationItem key={idx}>
-                    <PaginationLink
-                      isActive={page === idx}
-                      onClick={() => setPage(idx)}
-                    >
-                      {idx + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
+        <TextField
+          fullWidth
+          type="text"
+          placeholder="Tìm theo tiêu đề"
+          value={keyword}
+          onChange={(e) => {
+            setKeyword(e.target.value);
+            setPage(0);
+          }}
+          className="border px-2 py-1 rounded"
+        />
       </div>
-    </PatientLayout>
+
+      {loading && <p>Đang tải dữ liệu...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      {!loading && assignDrugs.length === 0 && (
+        <div className="text-gray-500 italic">Không có dữ liệu</div>
+      )}
+
+      {!loading && assignDrugs.length > 0 && (
+        <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/patient/assigned-drugs/${assignDrug.id}`)}/>
+      )}
+
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }).map((_, idx) => (
+                <PaginationItem key={idx}>
+                  <PaginationLink
+                    isActive={page === idx}
+                    onClick={() => setPage(idx)}
+                  >
+                    {idx + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+    </div>
   );
 }
