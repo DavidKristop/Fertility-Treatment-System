@@ -45,7 +45,7 @@
     "quill": "^2.0.3",
     "react": "^19.1.0",
     "react-big-calendar": "^1.19.4",
-    "react-day-picker": "^9.7.0",
+    "react-day-picker": "^9.8.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
     "react-select": "^5.10.2",

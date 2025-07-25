@@ -10,13 +10,18 @@ import { usePagination } from "@/hooks/usePagination"
 import { Input } from "@/components/ui/input"
 import LoadingComponent from "@/components/common/LoadingComponent"
 
-// Mock blog data
+// Sửa mock data
 const ALL_BLOG_POSTS = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
-  title: `Blog Post ${i + 1}: ${["Understanding IVF", "Fertility Tips", "Success Stories", "Health Advice", "Treatment Options"][i % 5]}`,
-  excerpt:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.",
-  author: ["Dr. Jane Smith", "Dr. John Doe", "Dr. Sarah Wilson"][i % 3],
+  title: `Bài viết ${i + 1}: ${[
+    "Tìm hiểu về IVF", 
+    "Lời khuyên về sinh sản", 
+    "Câu chuyện thành công", 
+    "Lời khuyên sức khỏe", 
+    "Các phương pháp điều trị"
+  ][i % 5]}`,
+  excerpt: "Mô tả ngắn về bài viết sẽ xuất hiện ở đây...",
+  author: ["BS. Nguyễn Văn A", "BS. Trần Thị B", "BS. Lê Văn C"][i % 3],
   date: `${Math.floor(Math.random() * 28) + 1}/${Math.floor(Math.random() * 12) + 1}/2023`,
   image: "",
 }))
@@ -101,10 +106,9 @@ export default function BlogPage() {
       <section className="bg-slate-50 py-16 md:py-24 outer-container">
         <div className="max-container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Blog</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">Blog Sức Khỏe</h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Stay informed with the latest news, research, and insights about fertility treatments, reproductive
-              health, and patient stories.
+              Cập nhật thông tin mới nhất về điều trị vô sinh, sức khỏe sinh sản và các câu chuyện của bệnh nhân.
             </p>
 
             {/* Search Bar */}
@@ -113,7 +117,7 @@ export default function BlogPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   type="text"
-                  placeholder="Search articles..."
+                  placeholder="Tìm kiếm bài viết..."
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10 pr-10"
@@ -132,14 +136,14 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Blog Posts */}
+      {/* Blog Posts Section */}
       <section className="py-16 md:py-24 outer-container">
         <div className="max-container mx-auto px-4">
             {/* Search Results Info */}
             <div className="mb-8 text-center">
                 <p className="text-muted-foreground">
-                Found {data?.total || 0} article(s)
-                {searchTerm && ` for "${searchTerm}"`}
+                Tìm thấy {data?.total || 0} bài viết
+                {searchTerm && ` với từ khóa "${searchTerm}"`}
                 </p>
             </div>
 
