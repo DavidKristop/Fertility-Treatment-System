@@ -89,7 +89,7 @@ export default function ManagerDashboard() {
     <ManagerLayout title="Bảng điều khiển quản lý" breadcrumbs={[{ label: "Trang chủ" }]}>
       <div className="space-y-6">
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Tổng lịch hẹn hôm nay</CardTitle>
@@ -122,10 +122,10 @@ export default function ManagerDashboard() {
               <p className="text-xs text-muted-foreground">Tính đến 08:00</p>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
 
         {/* Staff Schedules */}
-        <Card>
+        {/* <Card>
           <CardHeader className="flex justify-between items-center">
             <CardTitle>Lịch trực nhân viên</CardTitle>
             <Button size="sm" variant="outline">Quản lý lịch trực</Button>
@@ -146,7 +146,7 @@ export default function ManagerDashboard() {
         </Card>
 
         {/* Operational Reports */}
-        <Card>
+        {/* <Card>
           <CardHeader className="flex justify-between items-center">
             <CardTitle>Báo cáo vận hành</CardTitle>
             <Button size="sm" variant="outline">Xem chi tiết</Button>
@@ -164,10 +164,10 @@ export default function ManagerDashboard() {
               </div>
             ))}
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Facility Alerts */}
-        <Card>
+        {/* <Card>
           <CardHeader className="flex justify-between items-center">
             <CardTitle>Cảnh báo cơ sở vật chất</CardTitle>
             <Button size="sm" variant="outline">Xem tất cả</Button>
@@ -186,7 +186,7 @@ export default function ManagerDashboard() {
               </div>
             ))}
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </ManagerLayout>
   )

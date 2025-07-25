@@ -1,47 +1,13 @@
 import PatientLayout from "@/components/patient/PatientLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { startOfWeek, endOfWeek } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
-import {
-  getPatientScheduleInAMonth,
-} from "@/api/schedule";
-import ScheduleCalendar from "@/components/ScheduleCalendar";
-import type { PatientEventResponse, ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
-import { getEvents } from "@/api/patient-management";
-
-// Mock data
-const hasActiveTreatment = true;
-const treatmentProgress = {
-  currentStage: "Giai đoạn 2: Kích thích buồng trứng",
-  completed: 2,
-  total: 5,
-  phases: [
-    { name: "Khám sơ bộ", status: "completed" },
-    { name: "Kích thích buồng trứng", status: "current" },
-    { name: "Thu thập trứng", status: "pending" },
-    { name: "Thụ tinh", status: "pending" },
-    { name: "Chuyển phôi", status: "pending" },
-  ],
-};
 
 export default function PatientDashboard() {
   const [patientName, setPatientName] = useState<string>("");
 
   const navigate = useNavigate();
-
-  const getPhaseStatus = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-500";
-      case "current":
-        return "bg-blue-500";
-      default:
-        return "bg-gray-300";
-    }
-  };
 
   useEffect(() => {
     (async () => {
@@ -80,7 +46,7 @@ export default function PatientDashboard() {
         {/* Treatments */}
         <Card className="p-6">
           <CardContent className="p-0">
-            {hasActiveTreatment ? (
+            {/* {hasActiveTreatment ? (
               <div className="text-center">
                 <h2 className="text-lg font-medium mb-4">
                   Điều trị hiện tại của bạn và các giai đoạn
@@ -146,7 +112,7 @@ export default function PatientDashboard() {
                   <Button className="cursor-pointer">Đặt lịch hẹn</Button>
                 </Link>
               </div>
-            )}
+            )} */}
           </CardContent>
         </Card>
       </div>

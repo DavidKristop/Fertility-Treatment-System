@@ -92,9 +92,10 @@ import MySchedulePage from "./pages/patient/MySchedulePage";
 import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
+import Layout from "./components/common/AuthLayout/Layout";
+import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
 
-// Layout for authenticated dashboards (no header/footer)
-const DashboardLayout = () => <Outlet />;
+
 
 const router = createBrowserRouter([
   // Public routes under RootLayout
@@ -154,7 +155,7 @@ const router = createBrowserRouter([
     path: "patient",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_PATIENT"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={patientSidebarItemsProp} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -195,7 +196,7 @@ const router = createBrowserRouter([
     path: "doctor",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_DOCTOR"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={doctorSidebarItemsProp} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -245,7 +246,7 @@ const router = createBrowserRouter([
     path: "manager",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_MANAGER"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={managerSideBarItemProps} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
@@ -314,7 +315,7 @@ const router = createBrowserRouter([
     path: "admin",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-        <DashboardLayout />
+        <Layout sideBarItemsProp={admindSideBarItemsProp} children={<Outlet />} />
       </ProtectedRoute>
     ),
     children: [
