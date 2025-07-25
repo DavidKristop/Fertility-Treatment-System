@@ -42,6 +42,8 @@ import PatientScheduleResult from "./pages/patient/appointments/PatientScheduleR
 import StaffDashboard from "./pages/staff/StaffDashboard";
 import CreateDoctorPage from "./pages/staff/CreateDoctorPage";
 import PaymentManagement from "./pages/staff/PaymentManagement";
+import StaffProfile from "./pages/staff/StaffProfile";
+import ScheduleDetail from "./pages/staff/ScheduleDetail";
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -95,7 +97,7 @@ import MySchedulePage from "./pages/patient/MySchedulePage";
 import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
-import StaffProfile from "./pages/staff/StaffProfile";
+
 
 // Layout for authenticated dashboards (no header/footer)
 const DashboardLayout = () => <Outlet />;
@@ -205,6 +207,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <StaffDashboard /> },
+      { path: "schedule-detail/:scheduleId", element: <ScheduleDetail />, },
       { path: "doctors/create", element: <CreateDoctorPage /> },
       {
         path: "payments",
@@ -232,10 +235,7 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <DoctorDashboard /> },
       { path: "schedule", element: <Schedules /> },
-      {
-        path: "schedule-result/:scheduleId",
-        element: <DoctorScheduleResult />,
-      },
+      { path: "schedule-result/:scheduleId", element: <DoctorScheduleResult />, },
       { path: "assigned-drugs", element: <DoctorAssignDrugsPage /> },
       { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage /> },
       { path: "pending", element: <DoctorAppointmentRequest /> },

@@ -28,7 +28,7 @@ import {
 import FormSection from "@/components/doctor/common/FormSection";
 import AppointmentStatusBadge from "@/components/doctor/common/AppointmentStatusBadge";
 import LoadingComponent from "@/components/common/LoadingComponent";
-import type { PaymentPreviewResponse, ScheduleDetailResponse } from "@/api/types";
+import type { ScheduleDetailResponse } from "@/api/types";
 import { toast } from "react-toastify";
 
 // Mock patient medical history data

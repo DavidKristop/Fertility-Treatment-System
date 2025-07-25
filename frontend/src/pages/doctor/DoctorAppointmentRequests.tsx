@@ -73,7 +73,7 @@ export default function DoctorAppointmentRequest() {
     
     setIsAccepting(true);
     try {
-      const res = await acceptRequestAppointment(requestId)
+      await acceptRequestAppointment(requestId)
       toast.success("Đã chấp nhận yêu cầu thành công");
       setIsAcceptDialogOpen(false);
       setSelectedRequestId(null);
@@ -90,7 +90,7 @@ export default function DoctorAppointmentRequest() {
     
     setIsRejecting(true);
     try {
-      const res = await rejectRequestAppointment(requestId, rejectReason)
+      await rejectRequestAppointment(requestId, rejectReason)
       toast.success("Đã từ chối yêu cầu thành công");
       setIsRejectDialogOpen(false);
       setSelectedRequestId(null);

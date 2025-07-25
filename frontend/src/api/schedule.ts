@@ -220,6 +220,33 @@ export const getDoctorScheduleInAMonth = async (from: Date, to: Date, status: st
   return response.json();
 }
 
+export const getStaffSchedule = async (
+  from: Date,
+  to: Date,
+  status: string[] = ["PENDING", "CHANGED", "CANCELLED", "DONE"],
+  doctorId?: string // thêm tùy chọn doctorId (chỉ staff dùng)
+): Promise<ApiResponse<ScheduleDetailResponse[]>> => {
+
+  const params = new URLSearchParams();
+
+  params.append("from", getLocalDateFormat(from));
+  params.append("to", getLocalDateFormat(to));
+  status.forEach(s => params.append("status", s));
+  if (doctorId) params.append("doctorId", doctorId); // thêm dòng này
+
+  const response = await fetchWrapper(`schedules/doctor?${params.toString()}`, {}, true);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch schedules');
+  }
+
+  return response.json();
+}
+
+
+
+
 export const getPatientScheduleById = async (scheduleId:string):Promise<ApiResponse<ScheduleDetailResponse>>=>{
   const response = await fetchWrapper(`schedules/patient/${scheduleId}`,{},true)
 
@@ -241,6 +268,21 @@ export const getDoctorScheduleById = async (scheduleId:string):Promise<ApiRespon
 
   return response.json();
 }
+
+export const getStaffScheduleDetail = async (
+  scheduleId: string
+): Promise<ApiResponse<ScheduleDetailResponse>> => {
+  const response = await fetchWrapper(`schedules/manager/${scheduleId}`, {}, true)
+
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData.message || "Failed to fetch schedule")
+  }
+
+  const data: ApiResponse<ScheduleDetailResponse> = await response.json()
+  return data
+}
+
 
 export async function markScheduleDone(
   scheduleId: string

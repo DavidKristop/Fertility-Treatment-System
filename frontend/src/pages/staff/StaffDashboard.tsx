@@ -1,70 +1,129 @@
+"use client"
+
+import { useCallback, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { me } from "@/api/auth"
+import { getAllDoctors } from "@/api/doctor-management"
+import { getStaffSchedule } from "@/api/schedule"
+import type { DoctorBasic } from "@/api/doctor-management"
+import type { ScheduleDetailResponse } from "@/api/types"
 import StaffLayout from "@/components/staff/StaffLayout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import ScheduleCardList from "@/components/staff/schedules/ScheduleCardList"
+import DoctorFilter from "@/components/staff/schedules/DoctorFilter"
+import { toast } from "react-toastify"
 
-const appointments = [
-	{
-		id: 1,
-		patient: "Nguyễn Văn A",
-		doctor: "BS. Trần Minh",
-		time: "08:30 23/07/2025",
-		status: "Đã xác nhận",
-	},
-	{
-		id: 2,
-		patient: "Trần Thị B",
-		doctor: "BS. Trần Minh",
-		time: "09:00 23/07/2025",
-		status: "Chờ xác nhận",
-	},
-	{
-		id: 3,
-		patient: "Phạm Văn C",
-		doctor: "BS. Lê Hoa",
-		time: "10:00 23/07/2025",
-		status: "Đã xác nhận",
-	},
-]
+const StaffDashboard = () => {
+  const navigate = useNavigate()
+  const [staffName, setStaffName] = useState("")
+  const [schedules, setSchedules] = useState<ScheduleDetailResponse[]>([])
+  const [doctors, setDoctors] = useState<DoctorBasic[]>([])
+  const [selectedDoctorId, setSelectedDoctorId] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const pageSize = 10
 
-export default function StaffDashboard() {
-	return (
-		<StaffLayout
-			title="Trang tổng quan"
-			breadcrumbs={[{ label: "Trang tổng quan" }]}
-		>
-			<div className="space-y-6">
-				<Card>
-					<CardHeader>
-						<CardTitle>Lịch hẹn bệnh nhân & bác sĩ</CardTitle>
-					</CardHeader>
-					<CardContent className="space-y-3">
-						{appointments.map((appt) => (
-							<div
-								key={appt.id}
-								className="flex items-center justify-between p-3 border rounded-lg"
-							>
-								<div>
-									<div className="font-medium">{appt.patient}</div>
-									<div className="text-sm text-muted-foreground">
-										Bác sĩ: {appt.doctor}
-									</div>
-									<div className="text-xs text-gray-500">{appt.time}</div>
-								</div>
-								<Badge
-									variant={
-										appt.status === "Đã xác nhận" ? "default" : "secondary"
-									}
-								>
-									{appt.status}
-								</Badge>
-							</div>
-						))}
-						{appointments.length === 0 && (
-							<div className="text-gray-500 italic">Không có lịch hẹn nào</div>
-						)}
-					</CardContent>
-				</Card>
-			</div>
-		</StaffLayout>
-	)
+  const breadcrumbs = [
+    { label: "Trang tổng quan", path: "/staff/dashboard" },
+    { label: "Lịch khám theo bác sĩ" },
+  ]
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const user = await me()
+        setStaffName(user.fullName)
+      } catch {
+        navigate("/authorization/login", { replace: true })
+      }
+    })()
+  }, [navigate])
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getAllDoctors()
+        setDoctors(res.payload || [])
+      } catch {
+        toast.error("Không thể tải danh sách bác sĩ")
+      }
+    })()
+  }, [])
+
+  const fetchSchedules = useCallback(
+    async (page: number = 0) => {
+      if (!selectedDoctorId) return
+
+      try {
+        setLoading(true)
+        setError(null)
+
+        const today = new Date()
+        const from = new Date(today.getFullYear(), today.getMonth(), 1)
+        const to = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+
+        const res = await getStaffSchedule(from, to, undefined, selectedDoctorId)
+
+        if (res.success && res.payload) {
+          setSchedules(res.payload)
+          setCurrentPage(page)
+        } else {
+          setError("Không có dữ liệu lịch hẹn")
+        }
+      } catch {
+        setError("Lỗi khi tải lịch hẹn")
+      } finally {
+        setLoading(false)
+      }
+    },
+    [selectedDoctorId]
+  )
+
+  useEffect(() => {
+    if (selectedDoctorId) fetchSchedules(0)
+  }, [selectedDoctorId, fetchSchedules])
+
+  const handleViewDetails = (scheduleId: string) => {
+    navigate(`/staff/schedule-detail/${scheduleId}`)
+  }
+
+  const paginatedSchedules = schedules.slice(
+    currentPage * pageSize,
+    (currentPage + 1) * pageSize
+  )
+
+  const totalPages = Math.ceil(schedules.length / pageSize)
+
+  return (
+    <StaffLayout title="Lịch khám" breadcrumbs={breadcrumbs}>
+      <div className="space-y-6">
+        {staffName && (
+          <div className="text-lg font-semibold text-gray-700">
+            Xin chào, {staffName}
+          </div>
+        )}
+
+        <DoctorFilter
+          doctors={doctors}
+          selectedDoctorId={selectedDoctorId}
+          onDoctorChange={setSelectedDoctorId}
+        />
+
+        {error && (
+          <div className="rounded bg-gray-50 border p-3 text-red-600 font-medium">{error}</div>
+        )}
+
+        <ScheduleCardList
+          schedules={paginatedSchedules}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          onViewDetails={handleViewDetails}
+          isLoading={loading}
+        />
+      </div>
+    </StaffLayout>
+  )
 }
+
+export default StaffDashboard
