@@ -46,7 +46,7 @@ export default function Layout({ children, sideBarItemsProp }: LayoutProps) {
         <div className="min-h-screen bg-gray-50 flex relative">
         {/* Mobile Overlay */}
         {isMobile && sidebarOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={handleOverlayClick} />
+            <div className="fixed inset-0 bg-gray-50 opacity-50 z-40 lg:hidden" onClick={handleOverlayClick} />
         )}
 
         {/* Sidebar */}

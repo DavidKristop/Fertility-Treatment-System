@@ -75,7 +75,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobile = false, sideB
   }, []);
   return (
     <div
-      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col sticky top-0 max-h-screen ${
+      className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col sticky top-0 max-h-screen h-full ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >

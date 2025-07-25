@@ -7,11 +7,21 @@ import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 import { toast } from "react-toastify";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
-export default function PatientDashboard() {
+export default function Schedules() {
   const [doctorName, setDoctorName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
   const navigate = useNavigate();
   const {setTitle,setBreadCrumbs} = useAuthHeader()
+
+  const fetchSchedules =useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
+    try {
+      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
+      setEvents(res.payload || []);
+    } catch (err) {
+      console.error(err);
+      toast.error((err as Error).message || "Lỗi khi tải danh sách lịch hẹn");
+    }
+  }, []); 
 
   useEffect(() => {
     (async () => {
@@ -24,22 +34,6 @@ export default function PatientDashboard() {
     })();
   }, [navigate]);
 
-  const fetchSchedules =useCallback(async (startDate:Date, endDate:Date, filterStatus?: ScheduleStatus | "ALL") => {
-    try {
-      const res = await getDoctorScheduleInAMonth(startDate, endDate, filterStatus==="ALL" || !filterStatus ? undefined : [filterStatus]);
-      setEvents(res.payload || []);
-    } catch (err) {
-      console.error(err);
-      toast.error((err as Error).message || "Lỗi khi tải danh sách lịch hẹn");
-    }
-  }, []); 
-
-  if (!doctorName) {
-    return (
-      <div>Đang tải thông tin người dùng…</div>
-    );
-  }
-
   useEffect(() => {
     setTitle("Lịch khám")
     setBreadCrumbs([
@@ -47,6 +41,13 @@ export default function PatientDashboard() {
       { label: "Lịch khám" },
     ])
   },[])
+
+  if (!doctorName) {
+    return (
+      <div>Đang tải thông tin người dùng…</div>
+    );
+  }
+
 
   return (
     <div className="space-y-6">
