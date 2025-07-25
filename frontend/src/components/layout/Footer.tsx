@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import {
   Facebook,
   Instagram,
@@ -12,7 +13,6 @@ export default function Footer() {
         {/* Liên hệ */}
         <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-bold text-[19px]">Liên hệ chúng tôi</h4>
-          <p>Giữ liên lạc với Ucare:</p>
           <p>0903 123 1234</p>
           <p>info@ucare.vn</p>
           <div className="flex justify-center sm:justify-start gap-4 pt-2">
@@ -27,15 +27,26 @@ export default function Footer() {
         <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-bold text-[19px]">Giới thiệu</h4>
           <ul className="space-y-1 text-sm">
-            <li>Giới thiệu chung</li>
-            <li>Chất lượng lâm sàng</li>
-            <li>Chuyên gia của chúng tôi</li>
-            <li>Ban lãnh đạo</li>
-            <li>Câu chuyện Ucare</li>
-            <li>Báo chí</li>
-            <li>Tuyển dụng</li>
-            <li>Câu hỏi thường gặp (FAQ)</li>
-            <li>Blog</li>
+            <li>
+              <Link to="/about/company" className="hover:underline">
+                Về UCare
+              </Link>
+            </li>
+            <li>
+              <Link to="doctors" className="hover:underline">
+                Đội ngũ bác sĩ
+              </Link>
+            </li>
+            <li>
+              <Link to="/about/story" className="hover:underline">
+                Câu chuyện UCare
+              </Link>
+            </li>
+            <li>
+              <Link to="blog" className="hover:underline">
+                Blog
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -44,8 +55,6 @@ export default function Footer() {
           <h4 className="font-bold text-[19px]">Chi phí</h4>
           <ul className="space-y-1 text-sm">
             <li>Dịch vụ & Bảng giá</li>
-            <li>Bảo hiểm</li>
-            <li>Tài chính hỗ trợ</li>
           </ul>
         </div>
 
@@ -53,8 +62,16 @@ export default function Footer() {
         <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-bold text-[19px]">Dịch vụ</h4>
           <ul className="space-y-1 text-sm">
-            <li>Dịch vụ IUI</li>
-            <li>Dịch vụ IVF</li>
+            <li>
+              <Link to="/services/iui" className="hover:underline">
+                Dịch vụ IUI
+              </Link>
+            </li>
+            <li>
+              <Link to="/services/ivf" className="hover:underline">
+                Dịch vụ IVF
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -62,10 +79,7 @@ export default function Footer() {
         <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-bold text-[19px]">Địa điểm</h4>
           <ul className="space-y-1 text-sm">
-            <li>TP. Hồ Chí Minh</li>
-            <li>Thủ đô Hà Nội</li>
-            <li>TP. Đà Nẵng</li>
-            <li>TP. Nha Trang</li>
+            <li>123 Đường D1, Phường 9, Quận Thủ Đức</li>
           </ul>
         </div>
       </div>
@@ -73,11 +87,6 @@ export default function Footer() {
       {/* Gạch chia */}
       <div className="border-t border-white/70 mt-12 pt-4 text-sm flex flex-col sm:flex-row justify-between items-center gap-y-2 max-w-6xl mx-auto text-center sm:text-left">
         <p>© 2025 Ucare</p>
-        <div className="flex gap-6">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Use</a>
-          <a href="#">SMS Terms</a>
-        </div>
       </div>
     </footer>
   )

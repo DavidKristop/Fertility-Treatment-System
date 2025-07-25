@@ -26,9 +26,9 @@ export default function Ivf() {
                 <Phone className="w-4 h-4" />
                 Đặt Lịch Tư Vấn
               </Button>
-              <Button variant="outline" size="lg">
+              {/* <Button variant="outline" size="lg">
                 Tìm Hiểu Thêm
-              </Button>
+              </Button> */}
             </div>
           </div>
 
@@ -349,9 +349,9 @@ export default function Ivf() {
                 <Phone className="w-4 h-4" />
                 Đặt Lịch Tư Vấn
               </Button>
-              <Button size="lg" variant="secondary">
+              {/* <Button size="lg" variant="secondary">
                 Gọi (028) 1234-5678
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

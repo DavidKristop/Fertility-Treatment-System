@@ -7,10 +7,10 @@ import { getAllDoctors } from "@/api/doctor-management"
 import { getStaffSchedule } from "@/api/schedule"
 import type { DoctorBasic } from "@/api/doctor-management"
 import type { ScheduleDetailResponse } from "@/api/types"
-import StaffLayout from "@/components/staff/StaffLayout"
 import ScheduleCardList from "@/components/staff/schedules/ScheduleCardList"
 import DoctorFilter from "@/components/staff/schedules/DoctorFilter"
 import { toast } from "react-toastify"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 const StaffDashboard = () => {
   const navigate = useNavigate()
@@ -21,12 +21,16 @@ const StaffDashboard = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
+  
+  useEffect(() => {
+    setTitle("Trang tổng quan")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
+    ])
+  }, [setTitle, setBreadCrumbs])
   const pageSize = 10
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/staff/dashboard" },
-    { label: "Lịch khám theo bác sĩ" },
-  ]
 
   useEffect(() => {
     (async () => {
@@ -95,7 +99,6 @@ const StaffDashboard = () => {
   const totalPages = Math.ceil(schedules.length / pageSize)
 
   return (
-    <StaffLayout title="Lịch khám" breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {staffName && (
           <div className="text-lg font-semibold text-gray-700">
@@ -122,7 +125,6 @@ const StaffDashboard = () => {
           isLoading={loading}
         />
       </div>
-    </StaffLayout>
   )
 }
 

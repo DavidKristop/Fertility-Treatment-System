@@ -1,7 +1,6 @@
 import { getTreatmentDetail } from "@/api/treatment";
 import type { TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
-import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { Button } from "@/components/ui/button";
 import { Grid } from "@mui/material";
 import { Clipboard, ClipboardPlus } from "lucide-react";
@@ -12,15 +11,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FormSection from "@/components/doctor/common/FormSection";
 import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
-import PatientLayout from "@/components/patient/PatientLayout";
 import UnSignedContract from "@/components/common/UnSignedContract";
 import UnPaidPayment from "@/components/common/UnPaidPayment";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 export default function TreatmentDetailPage(){
   const [isLoading, setIsLoading] = useState(false)
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentResponse | undefined>()
 
   const {id} = useParams<{id: string}>()
+  const {setTitle, setBreadCrumbs} = useAuthHeader()
 
   const navigate = useNavigate()
 
@@ -37,11 +37,12 @@ export default function TreatmentDetailPage(){
     }
   }
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Kế hoạch điều trị", path: "/patient/treatment-plans" },
-    { label: treatmentDetail?.title || "Chi tiết kế hoạch điều trị" },
-  ]
+  useEffect(()=>{
+    setBreadCrumbs([{ label: "Trang tổng quan", path: "/patient/dashboard" },
+      { label: "Kế hoạch điều trị", path: "/patient/treatment-plans" },
+      { label: treatmentDetail?.title || "Chi tiết kế hoạch điều trị" },])
+    setTitle("Chi tiết kế hoạch điều trị")
+  },[])
 
   useEffect(()=>{
     if(id) fetchTreatmentDetail(id)
@@ -50,58 +51,54 @@ export default function TreatmentDetailPage(){
   // Error state - schedule not found
   if (!isLoading && !treatmentDetail) {
     return (
-      <DoctorLayout title="Ghi nhận lịch hẹn" breadcrumbs={breadcrumbs}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <p className="text-gray-500 mb-4">Không tìm thấy kế hoạch điều trị</p>
-            <Button
-              onClick={() => navigate("/patient/treatment-plans")}
-            >
-              Quay lại kế hoạch điều trị
-            </Button>
-          </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">Không tìm thấy kế hoạch điều trị</p>
+          <Button
+            onClick={() => navigate("/patient/treatment-plans")}
+          >
+            Quay lại kế hoạch điều trị
+          </Button>
         </div>
-      </DoctorLayout>
+      </div>
     );
   }
 
   return (
     <TreatmentDetailProvider treatmentDetail={treatmentDetail || null} isLoading={isLoading} setTreatmentDetail={setTreatmentDetail}>
-      <PatientLayout title={treatmentDetail?.title || "Chi tiết kế hoạch điều trị"} breadcrumbs={breadcrumbs}>
-        <LoadingComponent isLoading={isLoading}>
-          {/* Contract not signed */}
-          {treatmentDetail?.status === "AWAITING_CONTRACT_SIGNED" && (
-            <div className="my-2">
-              <UnSignedContract contractUrl={`/patient/contracts/${treatmentDetail.contractId}`} />
-            </div>
-          )}
-          {treatmentDetail?.payment?.some((payment) => payment.status === "PENDING") && (
-            <div className="my-2">
-              <UnPaidPayment 
-                payments={treatmentDetail?.payment}
-                onClick={(payment) => navigate(`/patient/payments/payment-detail/${payment.id}`)} 
-              />
-            </div>
-          )}
-          <Grid container spacing={2}>
-            <Grid size={12}>
-              {/*This will display the info of the patient, doctor, the protocol title, end date/start date, the description and the status of the treatment */}
-              <FormSection title="Kế hoạch điều trị" icon={Clipboard}>
-                <TreatmentInfoCard treatment={treatmentDetail!} />
-              </FormSection>
-            </Grid>
-            <Grid size={12}>
-              <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
-                <TreatmentPhaseManager
-                  role="patient"
-                  initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
-                  isSettable={false}
-                />
-              </FormSection>
-            </Grid>
+      <LoadingComponent isLoading={isLoading}>
+        {/* Contract not signed */}
+        {treatmentDetail?.status === "AWAITING_CONTRACT_SIGNED" && (
+          <div className="my-2">
+            <UnSignedContract contractUrl={`/patient/contracts/${treatmentDetail.contractId}`} />
+          </div>
+        )}
+        {treatmentDetail?.payment?.some((payment) => payment.status === "PENDING") && (
+          <div className="my-2">
+            <UnPaidPayment 
+              payments={treatmentDetail?.payment}
+              onClick={(payment) => navigate(`/patient/payments/payment-detail/${payment.id}`)} 
+            />
+          </div>
+        )}
+        <Grid container spacing={2}>
+          <Grid size={12}>
+            {/*This will display the info of the patient, doctor, the protocol title, end date/start date, the description and the status of the treatment */}
+            <FormSection title="Kế hoạch điều trị" icon={Clipboard}>
+              <TreatmentInfoCard treatment={treatmentDetail!} />
+            </FormSection>
           </Grid>
-        </LoadingComponent>
-      </PatientLayout>
+          <Grid size={12}>
+            <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
+              <TreatmentPhaseManager
+                role="patient"
+                initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
+                isSettable={false}
+              />
+            </FormSection>
+          </Grid>
+        </Grid>
+      </LoadingComponent>
     </TreatmentDetailProvider>
   );
 }

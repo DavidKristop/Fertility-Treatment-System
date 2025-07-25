@@ -7,7 +7,7 @@ import PaymentList from "@/components/staff/payments/PaymentList"
 import PaymentFilters from "@/components/staff/payments/PaymentFilters"
 import type { PaymentResponse } from "@/api/types"
 import { getStaffPayments, processPaymentByStaff, cancelPaymentByStaff } from "@/api/payment"
-import StaffLayout from "@/components/staff/StaffLayout"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 type PaymentStatusFilter = "all" | "pending" | "completed" | "canceled"
 
@@ -26,6 +26,7 @@ const PaymentManagement: React.FC = () => {
   // Filter states
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<PaymentStatusFilter>("all")
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
 
   // Map statusFilter to statuses array for API
   const getStatuses = (filter: PaymentStatusFilter) => {
@@ -122,43 +123,44 @@ const PaymentManagement: React.FC = () => {
     }
   }
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/staff/dashboard" },
-    { label: "Quản lý thanh toán" },
-  ]
+  useEffect(()=>{
+    setTitle("Quản lý thanh toán")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
+      { label: "Quản lý thanh toán" },
+    ])
+  },[])
 
   return (
-    <StaffLayout title="Quản lý thanh toán" breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
-        <PaymentFilters
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
-        />
+    <div className="space-y-6">
+      <PaymentFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
 
-        {(error || successMessage) && (
-          <div className="rounded bg-gray-50 border p-3">
-            {error && <div className="text-red-600 font-medium">{error}</div>}
-            {successMessage && <div className="text-green-600 font-medium">{successMessage}</div>}
-          </div>
-        )}
+      {(error || successMessage) && (
+        <div className="rounded bg-gray-50 border p-3">
+          {error && <div className="text-red-600 font-medium">{error}</div>}
+          {successMessage && <div className="text-green-600 font-medium">{successMessage}</div>}
+        </div>
+      )}
 
-        <PaymentList
-          payments={payments}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalElements={totalElements}
-          onPageChange={handlePageChange}
-          onViewDetails={handleViewDetails}
-          onProcessPayment={handleProcessPayment}
-          onCancelPayment={handleCancelPayment}
-          isLoading={loading}
-          processingPaymentId={processingPaymentId}
-          cancelingPaymentId={cancelingPaymentId}
-        />
-      </div>
-    </StaffLayout>
+      <PaymentList
+        payments={payments}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        onPageChange={handlePageChange}
+        onViewDetails={handleViewDetails}
+        onProcessPayment={handleProcessPayment}
+        onCancelPayment={handleCancelPayment}
+        isLoading={loading}
+        processingPaymentId={processingPaymentId}
+        cancelingPaymentId={cancelingPaymentId}
+      />
+    </div>
   )
 }
 

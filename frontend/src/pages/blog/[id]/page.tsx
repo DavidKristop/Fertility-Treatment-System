@@ -8,32 +8,24 @@ import placeholder_img from "@/assets/placeholder.png"
 // Mock blog data - same as in blog/page.tsx
 const BLOG_POSTS = Array.from({ length: 23 }, (_, i) => ({
   id: i + 1,
-  title: `Blog Post ${i + 1}`,
-  excerpt:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.",
+  title: `Bài viết ${i + 1}`,
+  excerpt: "Mô tả ngắn về bài viết sẽ xuất hiện ở đây...",
   content: `
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.</p>
-    <p>Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.</p>
-    <h2>Understanding Fertility Treatments</h2>
-    <p>Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.</p>
-    <p>Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.</p>
-    <h2>The Journey to Parenthood</h2>
-    <p>Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.</p>
-    <p>Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eu aliquam nisl nisl sit amet nisl.</p>
+    <h2>Hiểu về điều trị vô sinh</h2>
+    <p>Nội dung chi tiết về phương pháp điều trị...</p>
+    <h2>Hành trình làm cha mẹ</h2>
+    <p>Chia sẻ kinh nghiệm và câu chuyện thành công...</p>
   `,
-  author: "Dr. Jane Smith",
-  authorTitle: "Reproductive Endocrinologist",
+  author: "BS. Nguyễn Văn A",
+  authorTitle: "Bác sĩ chuyên khoa sinh sản",
   authorImage: "",
   date: `${Math.floor(Math.random() * 28) + 1}/${Math.floor(Math.random() * 12) + 1}/2023`,
   image: ``,
-  relatedPosts: [1, 2, 3].map((n) => {
-    const relatedId = ((i + n) % 23) + 1
-    return {
-      id: relatedId,
-      title: `Blog Post ${relatedId}`,
-      image: ``,
-    }
-  }),
+  relatedPosts: [1, 2, 3].map((n) => ({
+    id: ((i + n) % 23) + 1,
+    title: `Bài viết liên quan ${((i + n) % 23) + 1}`,
+    image: ``,
+  })),
 }))
 
 export default function BlogPostPage() {
@@ -57,7 +49,7 @@ export default function BlogPostPage() {
             <Link to="/blog">
               <Button variant="ghost" className="mb-6 pl-0 hover:bg-transparent hover:text-blue-600">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Blog
+                Quay lại Blog
               </Button>
             </Link>
 
@@ -101,7 +93,7 @@ export default function BlogPostPage() {
                   </div>
 
                   <div className="p-6 bg-slate-50 rounded-xl">
-                    <h3 className="font-semibold mb-4">Share This Article</h3>
+                    <h3 className="font-semibold mb-4">Chia sẻ bài viết</h3>
                     <div className="flex justify-center gap-4">
                       <Link to={`http://www.facebook.com/share.php?u=${window.location.href}`} className="cursor-pointer">
                         <Button variant="outline" size="icon" className="rounded-full">
@@ -134,7 +126,7 @@ export default function BlogPostPage() {
 
                 {/* Related Posts */}
                 <div>
-                  <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
+                  <h2 className="text-2xl font-bold mb-6">Bài viết liên quan</h2>
                   <div className="grid sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-6">
                     {post?.relatedPosts.map((relatedPost) => (
                       <Link key={relatedPost.id} to={`/blog/${relatedPost.id}`}>
@@ -150,7 +142,7 @@ export default function BlogPostPage() {
                             <h3 className="font-medium group-hover:text-blue-600 transition-colors">
                               {relatedPost.title}
                             </h3>
-                            <p className="text-sm text-muted-foreground">Read Article</p>
+                            <p className="text-sm text-muted-foreground">Xem bài viết</p>
                           </div>
                         </div>
                       </Link>

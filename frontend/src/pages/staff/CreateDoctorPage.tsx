@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createDoctor } from "@/api/doctor-management";
-import StaffLayout from "@/components/staff/StaffLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 export default function CreateDoctorPage() {
   const navigate = useNavigate();
@@ -22,6 +22,20 @@ export default function CreateDoctorPage() {
     licenseNumber: "",
   });
   const [loading, setLoading] = useState(false);
+
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
+  const fields = [
+    { name: "fullName", label: "Họ tên" },
+    { name: "email", label: "Email" },
+    { name: "phone", label: "Số điện thoại" },
+    { name: "address", label: "Địa chỉ" },
+    { name: "dateOfBirth", label: "Ngày sinh", type: "date" },
+    { name: "password", label: "Mật khẩu", type: "password" },
+    { name: "specialty", label: "Chuyên khoa" },
+    { name: "degree", label: "Bằng cấp" },
+    { name: "yearsOfExperience", label: "Số năm kinh nghiệm" },
+    { name: "licenseNumber", label: "Mã chứng chỉ hành nghề" },
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,48 +71,37 @@ export default function CreateDoctorPage() {
     }
   };
 
-  const fields = [
-    { name: "fullName", label: "Họ tên" },
-    { name: "email", label: "Email" },
-    { name: "phone", label: "Số điện thoại" },
-    { name: "address", label: "Địa chỉ" },
-    { name: "dateOfBirth", label: "Ngày sinh", type: "date" },
-    { name: "password", label: "Mật khẩu", type: "password" },
-    { name: "specialty", label: "Chuyên khoa" },
-    { name: "degree", label: "Bằng cấp" },
-    { name: "yearsOfExperience", label: "Số năm kinh nghiệm" },
-    { name: "licenseNumber", label: "Mã chứng chỉ hành nghề" },
-  ];
+  useEffect(()=>{
+    setTitle("Tạo tài khoản bác sĩ mới")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
+      { label: "Tạo tài khoản bác sĩ mới"},
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/staff/dashboard" },
-    { label: "Tạo tài khoản bác sĩ" },
-  ];
+    ])
+  },[])
 
   return (
-    <StaffLayout title="Tạo tài khoản bác sĩ mới" breadcrumbs={breadcrumbs}>
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow space-y-4"
-      >
-        {fields.map(({ name, label, type = "text" }) => (
-          <div key={name}>
-            <Label htmlFor={name}>{label}</Label>
-            <Input
-              id={name}
-              name={name}
-              type={type}
-              value={(formData as any)[name]}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        ))}
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow space-y-4"
+    >
+      {fields.map(({ name, label, type = "text" }) => (
+        <div key={name}>
+          <Label htmlFor={name}>{label}</Label>
+          <Input
+            id={name}
+            name={name}
+            type={type}
+            value={(formData as any)[name]}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      ))}
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Đang tạo..." : "Tạo bác sĩ"}
-        </Button>
-      </form>
-    </StaffLayout>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Đang tạo..." : "Tạo bác sĩ"}
+      </Button>
+    </form>
   );
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMyAppointmentRequests } from "@/api/request-appointment";
-import PatientLayout from "@/components/patient/PatientLayout";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
 import { useSearchParams } from "react-router-dom";
 import type { RequestAppointmentResponse } from "@/api/types";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Đang chờ" },
@@ -29,12 +29,7 @@ export default function MyAppointmentRequests() {
   const [status, setStatus] = useState<"PENDING" | "ACCEPTED" | "DENIED" | "ALL">(statusParam || "ALL");
   const [doctorEmail, setDoctorEmail] = useState(doctorEmailParam);
   const [search, setSearch] = useState(doctorEmailParam);
-
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/patient/dashboard" },
-    { label: "Lịch hẹn" },
-    { label: "Lịch hẹn đã đặt" },
-  ];
+  const {setBreadCrumbs,setTitle} = useAuthHeader()
 
   const fetchRequests = async (pageNum = 0, statusVal = status, email = doctorEmail) => {
     setLoading(true);
@@ -53,6 +48,18 @@ export default function MyAppointmentRequests() {
     } finally {
       setLoading(false);
     }
+  };
+
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value as "PENDING" | "ACCEPTED" | "DENIED");
+    setPage(0);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setDoctorEmail(search.trim());
+    setPage(0);
   };
 
   useEffect(() => {
@@ -79,19 +86,17 @@ export default function MyAppointmentRequests() {
     // eslint-disable-next-line
   }, [page, status, doctorEmail]);
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value as "PENDING" | "ACCEPTED" | "DENIED");
-    setPage(0);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setDoctorEmail(search.trim());
-    setPage(0);
-  };
+  useEffect(() => {
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/patient/dashboard" },
+      { label: "Lịch hẹn" },
+      { label: "Lịch hẹn đã đặt" },
+    ]);
+    setTitle("Lịch hẹn đã đặt");
+    // eslint-disable-next-line
+  }, []);
 
   return (
-    <PatientLayout title="Lịch hẹn đã đặt" breadcrumbs={breadcrumbs}>
       <div className="mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">Lịch sử yêu cầu đặt lịch</h2>
         <form className="flex gap-2 mb-4" onSubmit={handleSearch}>
@@ -194,6 +199,5 @@ export default function MyAppointmentRequests() {
           </>
         )}
       </div>
-    </PatientLayout>
   );
 }

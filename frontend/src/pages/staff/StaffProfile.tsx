@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import  Avatar  from "@/assets/avatar.png";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 import {
   User,
   Mail,
@@ -17,7 +18,6 @@ import {
   Camera,
 } from "lucide-react";
 import { me } from "@/api/auth";
-import StaffLayout from "@/components/staff/StaffLayout";
 
 // Mock data for patient profile
 const patientData = {
@@ -39,6 +39,14 @@ const patientData = {
 export default function PatientProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(patientData);
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
+  useEffect(() => {
+    setTitle("Hồ sơ nhân viên")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/staff/dashboard" },
+      { label: "Hồ sơ nhân viên" },
+    ])
+  }, [setTitle, setBreadCrumbs])
   const [user, setUser] = useState<{ fullName: string; role: string; email: string; phone: string; address: string; dateOfBirth: string } | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
@@ -78,7 +86,6 @@ export default function PatientProfile() {
     });
   };
 
-  const breadcrumbs = [{ label: "Trang tổng quan", path: "/staff/dashboard" }, { label: "Hồ sơ cá nhân" }];
 
     useEffect(() => {
       (async () => {
@@ -97,8 +104,6 @@ export default function PatientProfile() {
         return <p>Đang tải...</p>;
       }
   return (
-    <StaffLayout title="Hồ sơ cá nhân" breadcrumbs={breadcrumbs}>
-
       <div className="space-y-6">
         {/* Header Card with Avatar */}
         <Card>
@@ -261,6 +266,5 @@ export default function PatientProfile() {
           
         </div>
       </div>
-    </StaffLayout>
   );
 }

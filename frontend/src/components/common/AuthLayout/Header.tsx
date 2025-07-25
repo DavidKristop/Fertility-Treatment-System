@@ -11,23 +11,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logout, me } from "@/api/auth"
+import type { HeaderProps } from "@/api/types"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
-interface ManagerHeaderProps {
-  title: string
-  breadcrumbs?: { label: string; path?: string }[]
-  onMenuClick?: () => void
-  showMenuButton?: boolean
-}
-
-export default function ManagerHeader({
-  title,
-  breadcrumbs,
+export default function Header({
   onMenuClick,
   showMenuButton = false,
-}: ManagerHeaderProps) {
+}: HeaderProps) {
   const navigate = useNavigate()
   const [userName, setUserName] = useState<string>("")
   const [userRole, setUserRole] = useState<string>("")
+  const {breadCrumbs,title} = useAuthHeader()
 
   useEffect(() => {
     ;(async () => {
@@ -56,8 +50,19 @@ export default function ManagerHeader({
     ROLE_DOCTOR: "Bác sĩ",
     ROLE_MANAGER: "Quản lý",
     ROLE_ADMIN: "Admin",
+    ROLE_STAFF: "Nhân viên",
   }
   const roleLabel = roleLabelMap[userRole] ?? userRole
+
+  const profilePathMap: Record<string, string> = {
+  ROLE_PATIENT: "/patient/profile",
+  ROLE_DOCTOR: "/doctor/profile",
+  ROLE_MANAGER: "/manager/profile",
+  ROLE_ADMIN: "/admin/profile",
+  ROLE_STAFF: "/staff/profile",
+}
+
+const profilePath = profilePathMap[userRole] ?? "/"
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
@@ -72,9 +77,9 @@ export default function ManagerHeader({
 
           <div>
             <h1 className="text-xl lg:text-2xl font-bold text-gray-900">{title}</h1>
-            {breadcrumbs && breadcrumbs.length > 0 && (
+            {breadCrumbs && breadCrumbs.length > 0 && (
               <nav className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
-                {breadcrumbs.map((crumb, index) => (
+                {breadCrumbs.map((crumb, index) => (
                   <span key={index} className="flex items-center">
                     {index > 0 && <span className="mx-2">/</span>}
                     {crumb.path ? (
@@ -94,7 +99,7 @@ export default function ManagerHeader({
         {/* Right side - Notifications, Profile */}
         <div className="flex items-center gap-2 lg:gap-4">
           {/* Notifications */}
-          <Link to="/manager/notifications">
+          <Link to="/patient/notifications">
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">
@@ -118,7 +123,7 @@ export default function ManagerHeader({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem asChild className="cursor-pointer">
-                <Link to="/manager/profile" className="flex items-center gap-2">
+                <Link to={profilePath} className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Hồ sơ cá nhân
                 </Link>
@@ -128,7 +133,7 @@ export default function ManagerHeader({
                 className="text-red-600 cursor-pointer"
                 onClick={handleLogout}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="text-red h-4 w-4" />
                 Đăng xuất
               </DropdownMenuItem>
             </DropdownMenuContent>
