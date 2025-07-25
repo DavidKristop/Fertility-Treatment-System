@@ -1,17 +1,17 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { me } from "@/api/auth";
-import DoctorLayout from "@/components/doctor/DoctorLayout";
 import { getDoctorScheduleInAMonth } from "@/api/schedule";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
 import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 import { toast } from "react-toastify";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 export default function PatientDashboard() {
   const [doctorName, setDoctorName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
   const navigate = useNavigate();
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
 
   useEffect(() => {
     (async () => {
@@ -36,31 +36,30 @@ export default function PatientDashboard() {
 
   if (!doctorName) {
     return (
-      <DoctorLayout title="Lịch khám">
-        <div>Đang tải thông tin người dùng…</div>
-      </DoctorLayout>
+      <div>Đang tải thông tin người dùng…</div>
     );
   }
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/doctor/dashboard" },
-    { label: "Lịch khám" },
-  ];
+  useEffect(() => {
+    setTitle("Lịch khám")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/doctor/dashboard" },
+      { label: "Lịch khám" },
+    ])
+  },[])
 
   return (
-    <DoctorLayout title="Lịch khám" breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
-        <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <ScheduleCalendar
-            schedules={events}
-            isDoctorPov={true}
-            onNavigate={fetchSchedules}
-            onScheduleClick={(event)=>navigate(`/doctor/schedule-result/${event.id}`)}
-            drugs={[]}
-            hasFilterStatus={true}
-          />
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-col lg:flex-row gap-4 justify-between">
+        <ScheduleCalendar
+          schedules={events}
+          isDoctorPov={true}
+          onNavigate={fetchSchedules}
+          onScheduleClick={(event)=>navigate(`/doctor/schedule-result/${event.id}`)}
+          drugs={[]}
+          hasFilterStatus={true}
+        />
       </div>
-    </DoctorLayout>
+    </div>
   );
 }
