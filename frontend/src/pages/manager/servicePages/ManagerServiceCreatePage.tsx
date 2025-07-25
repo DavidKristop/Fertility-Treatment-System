@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createService } from "@/api/service";
-import ManagerLayout from "@/components/manager/ManagerLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 export default function ManagerServiceCreatePage() {
   const [name, setName] = useState("");
@@ -12,6 +12,7 @@ export default function ManagerServiceCreatePage() {
   const [price, setPrice] = useState<number | string>("");
   const [unit, setUnit] = useState("");
   const [loading, setLoading] = useState(false);
+  const {setTitle,setBreadCrumbs} = useAuthHeader()
 
   const navigate = useNavigate();
 
@@ -36,43 +37,49 @@ export default function ManagerServiceCreatePage() {
     }
   };
 
+  useEffect(()=>{
+    setTitle("Thêm dịch vụ mới")
+    setBreadCrumbs([
+      { label: "Trang tổng quan", path: "/manager/dashboard" },
+      { label: "Quản lý dịch vụ" },
+    ])
+  },[])
+
   return (
-    <ManagerLayout title="Thêm dịch vụ mới">
-      <div className="max-w-xl p-4 space-y-4">
-        <Input
-          placeholder="Tên dịch vụ"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Input
-          placeholder="Mô tả"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <Input
-          placeholder="Giá (VND)"
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-        <Input
-          placeholder="Đơn vị (lần / buổi / gói...)"
-          value={unit}
-          onChange={(e) => setUnit(e.target.value)}
-        />
+    <div className="max-w-xl p-4 space-y-4">
+      <Input
+        placeholder="Tên dịch vụ"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <Input
+        placeholder="Mô tả"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <Input
+        placeholder="Giá (VND)"
+        type="number"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
+      <Input
+        placeholder="Đơn vị (lần / buổi / gói...)"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      />
 
-        <Button onClick={handleSubmit} disabled={loading}>
-          {loading ? "Đang tạo..." : "Tạo dịch vụ"}
-        </Button>
+      <Button onClick={handleSubmit} disabled={loading}>
+        {loading ? "Đang tạo..." : "Tạo dịch vụ"}
+      </Button>
 
-        <Button
-            variant="outline"
-            onClick={() => navigate("/manager/services")}
-            disabled={loading}
-        >
-            Quay lại danh sách
-        </Button>
-      </div>
-    </ManagerLayout>
+      <Button
+          variant="outline"
+          onClick={() => navigate("/manager/services")}
+          disabled={loading}
+      >
+          Quay lại danh sách
+      </Button>
+    </div>
   );
 }
