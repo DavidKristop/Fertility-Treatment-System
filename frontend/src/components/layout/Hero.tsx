@@ -29,7 +29,7 @@ export default function Hero() {
                 <Button
                     className="text-[#004c77] bg-white text-2xl font-bold px-12 py-8 rounded-full uppercase hover:bg-[#004c77] hover:text-white cursor-pointer"
                     >
-                    Lên lịch
+                    Đặt lịch tư vấn
                 </Button>
               </Link>
                 
