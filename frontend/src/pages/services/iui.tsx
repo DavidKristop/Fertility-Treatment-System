@@ -28,9 +28,9 @@ export default function Iui() {
                 <Phone className="w-4 h-4" />
                 Đặt lịch tư vấn
               </Button>
-              <Button variant="outline" size="lg">
+              {/* <Button variant="outline" size="lg">
                 Tìm hiểu thêm
-              </Button>
+              </Button> */}
             </div>
           </div>
 
@@ -262,17 +262,18 @@ export default function Iui() {
           <div className="flex flex-col items-center">
             {/* Content */}
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Sẵn sàng cho hành trình làm cha mẹ?</h2>
-            <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-              Hãy để đội ngũ chuyên gia của chúng tôi đồng hành cùng bạn. Đặt lịch tư vấn ngay hôm nay để tìm hiểu IUI có phù hợp với bạn không.
+            <p className="text-lg text-slate-300 mb-8 leading-relaxed text-center max-w-2xl">
+              Hãy thực hiện bước đầu tiên hướng tới việc làm cha mẹ cùng với đội ngũ chuyên gia sinh sản tận tâm của
+              chúng tôi. Đặt lịch tư vấn ngay hôm nay để tìm hiểu xem IUI có phù hợp với bạn không.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="secondary" className="gap-2">
                 <Phone className="w-4 h-4" />
                 Đặt lịch tư vấn
               </Button>
-              <Button size="lg" variant="secondary">
+              {/* <Button size="lg" variant="secondary">
                 Gọi (028) 1234 5678
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

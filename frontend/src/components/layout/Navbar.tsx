@@ -102,8 +102,8 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className="hidden custom:flex items-center gap-10 mr-20">
-        <nav className="flex items-center text-[#004c77]">
+      <div className="hidden custom:flex items-center gap-12 mr-24">
+        <nav className="flex items-center text-[#004c77] justify-center">
           <Link to="/" className={navItemClass}>
             Trang Chủ
           </Link>
@@ -142,15 +142,18 @@ export default function Navbar() {
           </Dropdown>
 
           <Dropdown label="Dịch vụ">
-            <DropdownMenuItem>Khám bệnh</DropdownMenuItem>
-            <DropdownMenuItem>Điều trị tại nhà</DropdownMenuItem>
-            <DropdownMenuItem>Tiêm ngừa</DropdownMenuItem>
+            <Link to="/services/iui">
+              <DropdownMenuItem>Dịch vụ IUI</DropdownMenuItem>
+            </Link>
+            <Link to="/services/ivf">
+              <DropdownMenuItem>Dịch vụ IVF</DropdownMenuItem>
+            </Link>
           </Dropdown>
 
-          <Dropdown label="Địa điểm">
+          {/* <Dropdown label="Địa điểm">
             <DropdownMenuItem>Cơ sở Quận 1</DropdownMenuItem>
             <DropdownMenuItem>Cơ sở Thủ Đức</DropdownMenuItem>
-          </Dropdown>
+          </Dropdown> */}
         </nav>
 
         {user ? (
@@ -241,7 +244,7 @@ export default function Navbar() {
             {openDropdown === "Giới thiệu" && (
               <div className="pl-6">
                 <Link
-                  to="/about"
+                  to="/about/company"
                   className={mobileNavItemClass}
                   onClick={toggleMobileMenu}
                 >
@@ -255,7 +258,7 @@ export default function Navbar() {
                   Đội ngũ bác sĩ
                 </Link>
                 <Link
-                  to="/brand-story"
+                  to="/about/story"
                   className={mobileNavItemClass}
                   onClick={toggleMobileMenu}
                 >
@@ -304,31 +307,24 @@ export default function Navbar() {
             {openDropdown === "Dịch vụ" && (
               <div className="pl-6">
                 <Link
-                  to="/services/checkup"
+                  to="/services/iui"
                   className={mobileNavItemClass}
                   onClick={toggleMobileMenu}
                 >
-                  Khám bệnh
+                  Dịch vụ IUI
                 </Link>
                 <Link
-                  to="/services/home-treatment"
+                  to="/services/ivf"
                   className={mobileNavItemClass}
                   onClick={toggleMobileMenu}
                 >
-                  Điều trị tại nhà
-                </Link>
-                <Link
-                  to="/services/vaccination"
-                  className={mobileNavItemClass}
-                  onClick={toggleMobileMenu}
-                >
-                  Tiêm ngừa
+                  Dịch vụ IVF
                 </Link>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <button
               className={`${mobileNavItemClass} text-left flex justify-between items-center`}
               onClick={() => toggleDropdown("Địa điểm")}
@@ -354,7 +350,7 @@ export default function Navbar() {
                 </Link>
               </div>
             )}
-          </div>
+          </div> */}
 
           <Link
             to="/authorization/login"
