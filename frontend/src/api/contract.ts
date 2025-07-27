@@ -86,3 +86,13 @@ export const signContract = async (id: string): Promise<ApiResponse<ContractResp
 
     return response.json();
 };
+
+export const getTemplateContract = async(id:string): Promise<ApiResponse<string>>=>{
+    const response = await fetchWrapper(`contracts/template/${id}`, {}, true);
+
+    if(!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to get template contract');
+    }
+    return response.json();
+}

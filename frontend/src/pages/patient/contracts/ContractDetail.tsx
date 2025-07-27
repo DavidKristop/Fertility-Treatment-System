@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import ContractDetailForm from "@/components/contracts/ContractDetailForm"
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import {DocusealForm} from "@docuseal/react";
+import { getTemplateContract } from "@/api/contract"
 
 export default function PatientContractDetail() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const {setTitle, setBreadCrumbs} = useAuthHeader()
+  const [slug, setSlug] = useState('');
 
   useEffect(()=>{
     setTitle("Chi tiết hợp đồng")
@@ -18,6 +21,18 @@ export default function PatientContractDetail() {
       { label: "Chi tiết hợp đồng" },
     ])
   },[])
+
+  useEffect(()=>{
+    const fetchContract = async () => {
+      try {
+        const response = await getTemplateContract(id!);
+        setSlug(response?.payload || '');
+      } catch (err) {
+        console.error("Lỗi khi tải thông tin hợp đồng", err);
+      }
+    };
+    fetchContract();
+  }, [id]);
 
   return (
     <div className="space-y-6">
@@ -46,6 +61,8 @@ export default function PatientContractDetail() {
         showPatientInfo={false}
         userRole="patient"
       />
+
+      {slug && <DocusealForm src={`https://docuseal.com/s/${slug}`} onComplete={(data)=>console.log(data)}/>}
     </div>
   )
 }
