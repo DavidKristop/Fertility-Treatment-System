@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { me } from "@/api/auth";
 import { getDoctorScheduleInAMonth } from "@/api/schedule";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
 import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 import { toast } from "react-toastify";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
+import LoadingComponent from "@/components/common/LoadingComponent";
 
 export default function Schedules() {
-  const [doctorName, setDoctorName] = useState<string>("");
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
   const navigate = useNavigate();
   const {setTitle,setBreadCrumbs} = useAuthHeader()
@@ -23,16 +22,6 @@ export default function Schedules() {
     }
   }, []); 
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const user = await me(); // sẽ gửi header Bearer <token>
-        setDoctorName(user.fullName); // dùng email làm display name
-      } catch {
-        navigate("/authorization/login", { replace: true });
-      }
-    })();
-  }, [navigate]);
 
   useEffect(() => {
     setTitle("Lịch khám")
@@ -41,12 +30,6 @@ export default function Schedules() {
       { label: "Lịch khám" },
     ])
   },[])
-
-  if (!doctorName) {
-    return (
-      <div>Đang tải thông tin người dùng…</div>
-    );
-  }
 
 
   return (

@@ -27,15 +27,6 @@ export default function ManagerContracts() {
     navigate(`/manager/contracts/${contract.id}`)
   }
 
-  const handleDownloadContract = (contractId: string) => {
-    const contract = contractManager.contracts.find((c) => c.id === contractId)
-    if (contract?.contractUrl) {
-      window.open(contract.contractUrl, "_blank")
-    } else {
-      toast.error("Không tìm thấy file hợp đồng")
-    }
-  }
-
   useEffect(()=>{
     setTitle("Hợp đồng điều trị")
     setBreadCrumbs([{ label: "Trang tổng quan", path: "/manager/dashboard" },
@@ -69,7 +60,6 @@ export default function ManagerContracts() {
         totalPages={contractManager.totalPages}
         totalElements={contractManager.totalElements}
         onViewContract={handleViewContract}
-        onDownloadContract={handleDownloadContract}
         onPageChange={contractManager.handlePageChange}
         onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
         showPatientInfo={true}

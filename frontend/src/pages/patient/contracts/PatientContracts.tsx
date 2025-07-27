@@ -9,7 +9,6 @@ import { getPatientContracts } from "@/api/contract"
 import { useContractManagement } from "@/hooks/useContractManagement"
 import { getPageTitle, getPageDescription } from "@/utils/contractHelpers"
 import type { ContractResponse } from "@/api/types"
-import { toast } from "react-toastify"
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
 
 export default function PatientContracts() {
@@ -29,15 +28,6 @@ export default function PatientContracts() {
 
   const handleSignContract = (contractId: string) => {
     navigate(`/patient/contracts/${contractId}/sign`)
-  }
-
-  const handleDownloadContract = (contractId: string) => {
-    const contract = contractManager.contracts.find((c) => c.id === contractId)
-    if (contract?.contractUrl) {
-      window.open(contract.contractUrl, "_blank")
-    } else {
-      toast.error("Không tìm thấy file hợp đồng")
-    }
   }
 
   useEffect(()=>{
@@ -74,7 +64,6 @@ export default function PatientContracts() {
         totalElements={contractManager.totalElements}
         onViewContract={handleViewContract}
         onSignContract={handleSignContract}
-        onDownloadContract={handleDownloadContract}
         onPageChange={contractManager.handlePageChange}
         onRefresh={() => contractManager.fetchContracts(contractManager.currentPage)}
         showPatientInfo={false}

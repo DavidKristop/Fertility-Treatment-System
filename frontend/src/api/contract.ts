@@ -71,10 +71,14 @@ export const getManagerContractById = async (id: string): Promise<ApiResponse<Co
 };
 
 // Sign a contract
-export const signContract = async (id: string): Promise<ApiResponse<ContractResponse>> => {
+export const signContract = async (id: string,signedUrl:string): Promise<ApiResponse<ContractResponse>> => {
     const response = await fetchWrapper(`contracts/sign/${id}`, 
         {
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({signedUrl})
         },
         true
     );
@@ -86,13 +90,3 @@ export const signContract = async (id: string): Promise<ApiResponse<ContractResp
 
     return response.json();
 };
-
-export const getTemplateContract = async(id:string): Promise<ApiResponse<string>>=>{
-    const response = await fetchWrapper(`contracts/template/${id}`, {}, true);
-
-    if(!response.ok){
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to get template contract');
-    }
-    return response.json();
-}

@@ -4,45 +4,41 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, FileText, Download, PenTool } from "lucide-react"
-import { getPatientContractById, getManagerContractById } from "@/api/contract"
+import { RefreshCw, FileText } from "lucide-react"
+import { getPatientContractById, getManagerContractById, signContract } from "@/api/contract"
 import type { ContractResponse } from "@/api/types"
 import { toast } from "react-toastify"
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
+import {DocusealForm} from "@docuseal/react"
 
 interface ContractDetailFormProps {
   contract?: ContractResponse | null
   contractId?: string | null
-  showPatientInfo?: boolean
   userRole?: "patient" | "manager"
-  onRefresh?: () => void
 }
 
 export default function ContractDetailForm({
   contract: initialContract,
   contractId,
-  showPatientInfo = false,
   userRole = "patient",
-  onRefresh,
 }: ContractDetailFormProps) {
-  const navigate = useNavigate()
-  const [contract, setContract] = useState<ContractResponse | null>(null)
+  const [contract, setContract] = useState<ContractResponse | undefined>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (initialContract) {
-      setContract(initialContract)
-      setLoading(false)
-      setError(null)
-    } else if (contractId) {
-      fetchContractDetail()
-    } else {
-      setContract(null)
-      setLoading(false)
-      setError("Không có thông tin hợp đồng")
+  const handleSignContract = async (contractId:string,signedUrl:string) => {
+    try {
+      const response = await signContract(contractId,signedUrl)
+      if (response.success) {
+        toast.success("Ký hợp đồng thành công")
+      } else {
+        toast.error("Ký hợp đồng thất bại")
+      }
+    } catch (err) {
+      console.error("Error signing contract:", err)
+      toast.error("Ký hợp đồng thất bại")
     }
-  }, [contractId, initialContract])
+  }
 
   const fetchContractDetail = async () => {
     if (!contractId) {
@@ -71,33 +67,21 @@ export default function ContractDetailForm({
     }
   }
 
-  const handleRefresh = () => {
-    if (contractId) {
-      fetchContractDetail()
-    }
-    if (onRefresh) {
-      onRefresh()
-    }
-  }
-
-  const handleDownloadContract = () => {
-    if (contract?.contractUrl) {
-      window.open(contract.contractUrl, "_blank")
-    } else {
-      toast.error("Không tìm thấy file hợp đồng")
-    }
-  }
-
-  const handleSignContract = () => {
-    if (contract) {
-      const signPath =
-        userRole === "patient" ? `/patient/contracts/${contract.id}/sign` : `/manager/contracts/${contract.id}/sign`
-      navigate(signPath)
-    }
-  }
-
   const isExpired = contract ? new Date(contract.signDeadline) < new Date() : false
-  const canSign = contract && !contract.signed && !isExpired && userRole === "patient"
+  
+  useEffect(() => {
+    if (initialContract) {
+      setContract(initialContract)
+      setLoading(false)
+      setError(null)
+    } else if (contractId) {
+      fetchContractDetail()
+    } else {
+      setContract(undefined)
+      setLoading(false)
+      setError("Không có thông tin hợp đồng")
+    }
+  }, [contractId, initialContract])
 
   if (loading) {
     return (
@@ -149,30 +133,16 @@ export default function ContractDetailForm({
               <FileText className="h-5 w-5" />
               Thông tin hợp đồng
             </CardTitle>
-            <div className="flex gap-2">
-              {canSign && (
-                <Button onClick={handleSignContract} size="sm">
-                  <PenTool className="h-4 w-4 mr-2" />
-                  Ký hợp đồng
-                </Button>
-              )}
-              {contract.signed && contract.contractUrl && (
-                <Button variant="outline" size="sm" onClick={handleDownloadContract}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Tải xuống
-                </Button>
-              )}
-            </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-600">Contract ID</label>
+              <label className="text-sm font-medium text-gray-600">ID hợp đồng</label>
               <p className="font-medium text-gray-900 break-all">{contract.id}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-600">Treatment ID</label>
+              <label className="text-sm font-medium text-gray-600">ID điều trị</label>
               <p className="font-medium text-gray-900 break-all">
                 {contract.treatmentId ? (
                   userRole === "patient" ? (
@@ -192,11 +162,11 @@ export default function ContractDetailForm({
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-600">Sign Deadline</label>
+              <label className="text-sm font-medium text-gray-600">Hạn ký</label>
               <p className="font-medium text-gray-900">{new Date(contract.signDeadline).toLocaleString("vi-VN")}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-600">Status</label>
+              <label className="text-sm font-medium text-gray-600">Trạng thái</label>
               <div className="mt-1 flex gap-2">
                 <Badge className={contract.signed ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
                   {contract.signed ? "Đã ký" : "Chờ ký"}
@@ -204,17 +174,21 @@ export default function ContractDetailForm({
                 {isExpired && !contract.signed && <Badge className="bg-red-100 text-red-800">Hết hạn</Badge>}
               </div>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Contract File</label>
-              <div className="mt-1">
-                {contract.contractUrl ? (
-                  <Button variant="link" className="p-0 h-auto text-blue-600" onClick={handleDownloadContract}>
-                    Tải xuống
-                  </Button>
-                ) : (
-                  <span className="text-gray-500">Chưa có</span>
-                )}
-              </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-600">Nội dung hợp đồng</label>
+            <div className="max-h-[500px] overflow-y-auto" >
+              {contract.signed?
+              <Link to={contract.contractUrl} target="_blank">Xem hợp đồng</Link>:<>
+                {contract.contractUrl && <DocusealForm 
+                  readonlyFields={(userRole === "patient" || isExpired) ? [] : ["Chữ ký bệnh nhân"]}
+                  src={contract.contractUrl} 
+                  onComplete={(data)=>{
+                    console.log(data)
+                    handleSignContract(contract.id,data.submission_url)
+                  }}/>
+                }
+              </>}
             </div>
           </div>
         </CardContent>
