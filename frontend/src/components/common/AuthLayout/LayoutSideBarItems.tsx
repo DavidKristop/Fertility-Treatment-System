@@ -1,5 +1,5 @@
 import type { SidebarItem } from "@/api/types";
-import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus } from "lucide-react";
+import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus, FilePlus2, ChartBar, UserPlus } from "lucide-react";
 
 //Patient
 export const patientSidebarItemsProp: SidebarItem[] = [
@@ -111,6 +111,7 @@ export const doctorSidebarItemsProp: SidebarItem[] = [
     },
 ]
 
+//Admin
 export const admindSideBarItemsProp: SidebarItem[] = [
     {
       id: "dashboard",
@@ -190,6 +191,7 @@ export const admindSideBarItemsProp: SidebarItem[] = [
     },
 ]
 
+//Manager
 export const managerSideBarItemProps: SidebarItem[] = [
     {
       id: "dashboard",
@@ -200,7 +202,7 @@ export const managerSideBarItemProps: SidebarItem[] = [
     {
       id: "protocol",
       label: "Phác đồ điều trị",
-      icon: FileText,
+      icon: FilePlus2,
       children: [
         {
           id: "createprotocols",
@@ -216,16 +218,11 @@ export const managerSideBarItemProps: SidebarItem[] = [
         },
       ],
     },
-    {
-      id: "assigned-drugs",
-      label: "Quản lý đơn thuốc",
-      icon: FileText,
-      path: "/manager/assigned-drugs",
-    },
+
     {
       id: "drugsAndServicesManagement",
       label: "Quản lý thuốc & Dịch vụ",
-      icon: FileText,
+      icon: ChartBar,
       children: [
         {
           id: "drugs",
@@ -241,24 +238,14 @@ export const managerSideBarItemProps: SidebarItem[] = [
         },
       ],
     },
-    {
-      id: "payments",
-      label: "Quản lý thanh toán",
-      icon: DollarSign,
-      path: "/manager/payments",
-    },
+
     {
       id: "contracts",
       label: "Hợp đồng",
-      icon: FileText,
+      icon: FileSignature,
       path: "/manager/contracts",
     },
-    {
-      id: "create-doctor",
-      label: "Tạo tài khoản bác sĩ",
-      icon: User,
-      path: "/manager/doctors/create",
-    },
+
     {
       id: "profile",
       label: "Hồ sơ & Cài đặt",
@@ -293,7 +280,7 @@ export const staffSidebarItemsProp: SidebarItem[] = [
   {
     id: "create-doctor",
     label: "Tạo tài khoản bác sĩ",
-    icon: Plus,
+    icon: UserPlus,
     path: "/staff/doctors/create",
   },
   {

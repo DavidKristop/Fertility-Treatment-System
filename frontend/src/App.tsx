@@ -95,6 +95,7 @@ import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
 import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
+import ManagerProfile from "./pages/manager/ManagerProfile";
 
 
 
@@ -288,6 +289,7 @@ const router = createBrowserRouter([
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
+      { path: "profile", element: <ManagerProfile /> },
       { 
         path: "contracts", 
         children: [
