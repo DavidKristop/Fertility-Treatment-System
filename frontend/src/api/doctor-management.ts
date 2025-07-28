@@ -54,3 +54,22 @@ export async function getAllDoctors(): Promise<ApiResponse<DoctorBasic[]>> {
     payload: data.payload.content // vì backend trả Page<...>
   };
 }
+
+export const getPublicDoctors = async (
+  page = 0,
+  size = 10,
+  name = ""
+): Promise<ApiPaginationResponse<DoctorProfile>> => {
+  const response = await fetchWrapper(
+    `doctor-management/public/doctors?page=${page}&size=${size}&name=${encodeURIComponent(name)}`,
+    {},
+    false // No auth required
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch doctors');
+  }
+
+  return response.json();
+};

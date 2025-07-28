@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import type { TreatmentResponse, TreatmentStatus } from "@/api/types";
+import { treatmentStatus, type TreatmentResponse, type TreatmentStatus } from "@/api/types";
 import { toast } from "react-toastify";
 import {
   Pagination,
@@ -159,7 +159,7 @@ export default function TreatmentPage() {
                             treatment.status === 'AWAITING_CONTRACT_SIGNED' ? 'bg-yellow-100 text-yellow-800' :
                             'bg-gray-100 text-gray-800'}`}
                           >
-                            {treatment.status}
+                            {treatmentStatus[treatment.status]}
                           </span>
                         </div>
                         <div className="flex flex-col gap-1">
