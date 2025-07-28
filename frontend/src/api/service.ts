@@ -1,4 +1,4 @@
-import type { ApiPaginationResponse, ServiceResponse, ApiResponse } from "@/api/types";
+import type { ApiPaginationResponse, ServiceResponse, ApiResponse, ProtocolResponse } from "@/api/types";
 import { fetchWrapper } from ".";
 
 export const getServices = async ({
@@ -71,4 +71,23 @@ export const reactivateService = async (id: string) => {
   }, true);
   if (!res.ok) throw new Error("Không thể kích hoạt lại dịch vụ");
   return res.json();
+};
+
+export const getActiveProtocols = async (
+  page = 0,
+  size = 10,
+  title = ""
+): Promise<ApiPaginationResponse<ProtocolResponse>> => {
+  const response = await fetchWrapper(
+    `protocols?page=${page}&size=${size}&title=${encodeURIComponent(title)}`,
+    {},
+    false
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to fetch protocols");
+  }
+
+  return response.json();
 };
