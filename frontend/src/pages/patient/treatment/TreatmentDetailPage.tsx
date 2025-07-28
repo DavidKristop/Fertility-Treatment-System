@@ -3,7 +3,7 @@ import type { TreatmentResponse } from "@/api/types";
 import LoadingComponent from "@/components/common/LoadingComponent";
 import { Button } from "@/components/ui/button";
 import { Grid } from "@mui/material";
-import { Clipboard, ClipboardPlus } from "lucide-react";
+import { Clipboard, ClipboardPlus, ClipboardSignature } from "lucide-react";
 import TreatmentPhaseManager from "@/components/doctor/treatment/TreatmentPhaseManager";
 import TreatmentInfoCard from "@/components/doctor/treatment/TreatmentInfoCard";
 import { useEffect, useState } from "react";
@@ -14,6 +14,8 @@ import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 import UnSignedContract from "@/components/common/UnSignedContract";
 import UnPaidPayment from "@/components/common/UnPaidPayment";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
+import { createFeedback } from "@/api/feedback";
+import { Editor } from "primereact/editor";
 
 export default function TreatmentDetailPage(){
   const [isLoading, setIsLoading] = useState(false)
@@ -21,6 +23,11 @@ export default function TreatmentDetailPage(){
 
   const {id} = useParams<{id: string}>()
   const {setTitle, setBreadCrumbs} = useAuthHeader()
+
+  const [doctorsNote, setDoctorsNote] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const treatmentId = id || "";
 
   const navigate = useNavigate()
 
@@ -36,6 +43,24 @@ export default function TreatmentDetailPage(){
       setIsLoading(false)
     }
   }
+
+  const handleSubmitFeedback = async () => {
+    if (!doctorsNote || !treatmentId) {
+      toast.error("Vui lòng nhập ghi chú");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await createFeedback(treatmentId, doctorsNote);
+      toast.success("Gửi phản hồi thành công!");
+      setDoctorsNote("");
+    } catch (error: any) {
+      toast.error(error.message || "Gửi phản hồi thất bại!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(()=>{
     setBreadCrumbs([{ label: "Trang tổng quan", path: "/patient/dashboard" },
@@ -95,6 +120,23 @@ export default function TreatmentDetailPage(){
                 initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
                 isSettable={false}
               />
+            </FormSection>
+          </Grid>
+          <Grid size={12}>
+            <FormSection title="Góp ý về quá trình điều trị" icon={ClipboardSignature}>
+              <Editor
+                value={doctorsNote}
+                onTextChange={(e) => setDoctorsNote(e.htmlValue || "")}
+                placeholder="Bạn có thể chia sẻ cảm nhận, góp ý hoặc bất kỳ điều gì liên quan đến kế hoạch điều trị..."
+                className="h-[300px] mt-2"
+              />
+              <Button
+                className="mt-4"
+                onClick={handleSubmitFeedback}
+                disabled={!doctorsNote || isSubmitting}
+              >
+                {isSubmitting ? "Đang gửi..." : "Gửi góp ý"}
+              </Button>
             </FormSection>
           </Grid>
         </Grid>
