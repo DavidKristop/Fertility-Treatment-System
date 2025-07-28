@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { Phone, CheckCircle, Stethoscope, Calendar, TestTube, Microscope, Heart, Clock } from "lucide-react";
 import demo_hospital from "@/assets/doctor1.jpg";
 
@@ -22,13 +23,11 @@ export default function Ivf() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="gap-2">
-                <Phone className="w-4 h-4" />
-                Đặt Lịch Tư Vấn
-              </Button>
-              {/* <Button variant="outline" size="lg">
-                Tìm Hiểu Thêm
-              </Button> */}
+              <Link to="/authorization/login">
+                <Button size="lg" className="gap-2">
+                  Đặt lịch tư vấn
+                </Button>
+              </Link>
             </div>
           </div>
 
