@@ -71,7 +71,6 @@ import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
 import PaymentDetail from "./pages/staff/PaymentDetail";
 
 // Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import Story from "./pages/guest/about/Story";
 import BlogPage from "./pages/blog/page";
 import BlogPostPage from "./pages/blog/[id]/page";
@@ -94,6 +93,7 @@ import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
 import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
+import ManagerProfile from "./pages/manager/ManagerProfile";
 import NotFound from "./pages/not-found/not-found";
 
 
@@ -287,6 +287,7 @@ const router = createBrowserRouter([
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
+      { path: "profile", element: <ManagerProfile /> },
       { 
         path: "contracts", 
         children: [
