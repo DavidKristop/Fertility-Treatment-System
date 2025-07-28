@@ -64,7 +64,7 @@ const StaffDashboard = () => {
 
         const today = new Date()
         const from = new Date(today.getFullYear(), today.getMonth(), 1)
-        const to = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+        const to = new Date(today.getFullYear(), today.getMonth() + 7, 0)
 
         const res = await getStaffSchedule(from, to, undefined, selectedDoctorId)
 

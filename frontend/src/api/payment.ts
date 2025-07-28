@@ -82,7 +82,7 @@ export const processPaymentByStaff = async (
     paymentMethod: "CASH" | "VNPAY"
 ): Promise<ApiResponse<PaymentResponse>> => {
     const response = await fetchWrapper(
-        `payments/staff/process/${paymentId}?paymentMethod=${paymentMethod}`,
+        `payments/manager/process/${paymentId}?paymentMethod=${paymentMethod}`,
         {
             method: "PUT",
         },

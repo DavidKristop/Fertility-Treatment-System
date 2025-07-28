@@ -1,6 +1,6 @@
 import type { SidebarItem } from "@/api/types";
 
-import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, FileText, PlusIcon, Users, DollarSign, ListCollapse, Plus, MessageCircle, ChartBar, FilePlus2, UserPlus } from "lucide-react";
 
 
 //Patient
