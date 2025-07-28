@@ -19,10 +19,9 @@ export default function ProtectedRoute({
   allowedRoles: string[]
 }) {
   const token = localStorage.getItem('access_token')
-  const location = useLocation()
 
   if (!token) {
-    return <Navigate to="/authorization/login" replace state={{from: location}}/>
+    return <NotAuthorized/>
   }
 
   let payload: { role: string }

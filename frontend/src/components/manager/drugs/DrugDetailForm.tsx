@@ -34,8 +34,6 @@ export default function DrugDetailForm({
     )
   }
 
-  const canEdit = !drug.active
-
   return (
     <Card>
       <CardHeader>
@@ -142,7 +140,6 @@ export default function DrugDetailForm({
                 </Button>
               ) : (
                 <>
-                  {/* ✅ HIỂN THỊ edit button cho inactive drugs */}
                   <Button
                     onClick={onEdit}
                     disabled={actionLoading}
@@ -172,11 +169,10 @@ export default function DrugDetailForm({
               )}
             </div>
 
-            {/* ✅ Info cho inactive drugs */}
             {!drug.active && (
               <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  ℹ️ Thuốc đã vô hiệu hóa. Có thể chỉnh sửa nếu đã đủ 120 ngày kể từ khi vô hiệu hóa.
+                  ℹ️ Thuốc đã vô hiệu hóa.
                 </p>
               </div>
             )}
