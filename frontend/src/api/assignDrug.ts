@@ -59,7 +59,6 @@ export const getAllAssignedDrugsForDoctor = async({
   return response.json();
 };
 
-// Manager: lấy danh sách thuốc được kê
 export const getAllAssignedDrugsForStaff = async ({
   page = 0,
   size = 10,
@@ -72,7 +71,7 @@ export const getAllAssignedDrugsForStaff = async ({
   title?: string;
 }): Promise<ApiPaginationResponse<AssignDrugDetailResponse>> => {
   const statusParams = status.map(status => `status=${status}`).join('&');
-  const url = `assign-drug/manager?page=${page}&title=${title}&size=${size}&${statusParams}`;
+  const url = `assign-drug/staff?page=${page}&title=${title}&size=${size}&${statusParams}`;
 
   const response = await fetchWrapper(url, {}, true);
   if (!response.ok) {
@@ -83,7 +82,7 @@ export const getAllAssignedDrugsForStaff = async ({
 };
 
 export const getAssignDrugByIdForStaff = async (id: string): Promise<ApiResponse<AssignDrugDetailResponse>> => {
-  const response = await fetchWrapper(`assign-drug/manager/${id}`, {}, true);
+  const response = await fetchWrapper(`assign-drug/staff/${id}`, {}, true);
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -106,7 +105,7 @@ export const getAssignDrugByIdForDoctor = async (id: string): Promise<ApiRespons
 
 
 export const markAssignDrugAsTaken = async (id: string): Promise<ApiResponse<AssignDrugDetailResponse>> => {
-  const response = await fetchWrapper(`assign-drug/manager/complete/${id}`, {
+  const response = await fetchWrapper(`assign-drug/staff/complete/${id}`, {
     method: "PUT",
   }, true);
 
@@ -119,7 +118,7 @@ export const markAssignDrugAsTaken = async (id: string): Promise<ApiResponse<Ass
 };
 
 export const cancelAssignDrug = async (id: string): Promise<ApiResponse<AssignDrugDetailResponse>> => {
-  const response = await fetchWrapper(`assign-drug/manager/cancel/${id}`, {
+  const response = await fetchWrapper(`assign-drug/staff/cancel/${id}`, {
     method: "PUT",
   }, true);
 

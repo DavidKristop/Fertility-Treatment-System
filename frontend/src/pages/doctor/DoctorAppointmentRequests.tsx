@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
+import LoadingComponent from "@/components/common/LoadingComponent";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Đang chờ" },
@@ -171,104 +172,107 @@ export default function DoctorAppointmentRequest() {
             ))}
           </select>
         </form>
-        {loading && <p>Đang tải...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        {!loading && !error && (
+        <LoadingComponent isLoading={loading}>
           <>
-            <div className="grid gap-4">
-              {requests.length === 0 ? (
-                <div className="text-center p-4 border rounded bg-gray-50">
-                  Không có yêu cầu nào
-                </div>
-              ) : (
-                requests.map((req) => (
-                  <div
-                    key={req.id}
-                    className="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center gap-2 bg-white"
-                  >
-                    <div className="flex-1">
-                      <div className="font-semibold text-lg">Hẹn với bệnh nhân {req.patient.fullName}</div>
-                      <div className="text-sm text-gray-500 mb-1">Email bệnh nhân: {req.patient.email}</div>
-                      <div className="text-sm">
-                        <span className="font-medium">Thời gian: </span>
-                        {new Date(req.appointmentDatetime).toLocaleString("vi-VN") + " - " + new Date(new Date(req.appointmentDatetime).getTime() + 30 * 60 * 1000).toLocaleString("vi-VN")}
-                      </div>
-                      <div className="text-sm">
-                        <span className="font-medium">Trạng thái: </span>
-                        {req.status === "PENDING" && (
-                          <span className="text-yellow-600">Đang chờ</span>
-                        )}
-                        {req.status === "ACCEPTED" && (
-                          <span className="text-green-600">Đã chấp nhận</span>
-                        )}
-                        {req.status === "DENIED" && (
-                          <span className="text-red-600">Từ chối</span>
-                        )}
-                      </div>
-                      {req.status === "DENIED" && (
-                        <div className="text-sm text-red-500">
-                          <span className="font-medium">Lý do từ chối: </span>
-                          {req.rejectedReason || "-"}
-                        </div>
-                      )}
-                      <div className="flex gap-2">
-                        {req.status === "PENDING" && (
-                          <>
-                            <Button
-                              onClick={() => {
-                                setSelectedRequestId(req.id);
-                                setIsAcceptDialogOpen(true);
-                              }}
-                              variant="default"
-                            >
-                              Duyệt
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                setSelectedRequestId(req.id);
-                                setIsRejectDialogOpen(true);
-                              }}
-                              variant="destructive"
-                              
-                            >
-                              Từ chối
-                            </Button>
-                          </>
-                        )}
-                      </div>
+            {error && <p className="text-red-500">{error}</p>}
+            {!loading && !error && (
+              <>
+                <div className="grid gap-4">
+                  {requests.length === 0 ? (
+                    <div className="text-center p-4 border rounded bg-gray-50">
+                      Không có yêu cầu nào
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div className="mt-6 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => setPage((p) => Math.max(0, p - 1))}
-                    />
-                  </PaginationItem>
-                  {Array.from({ length: totalPages }).map((_, idx) => (
-                    <PaginationItem key={idx}>
-                      <PaginationLink
-                        isActive={page === idx}
-                        onClick={() => setPage(idx)}
+                  ) : (
+                    requests.map((req) => (
+                      <div
+                        key={req.id}
+                        className="border rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center gap-2 bg-white"
                       >
-                        {idx + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-lg">Hẹn với bệnh nhân {req.patient.fullName}</div>
+                          <div className="text-sm text-gray-500 mb-1">Email bệnh nhân: {req.patient.email}</div>
+                          <div className="text-sm">
+                            <span className="font-medium">Thời gian: </span>
+                            {new Date(req.appointmentDatetime).toLocaleString("vi-VN") + " - " + new Date(new Date(req.appointmentDatetime).getTime() + 30 * 60 * 1000).toLocaleString("vi-VN")}
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium">Trạng thái: </span>
+                            {req.status === "PENDING" && (
+                              <span className="text-yellow-600">Đang chờ</span>
+                            )}
+                            {req.status === "ACCEPTED" && (
+                              <span className="text-green-600">Đã chấp nhận</span>
+                            )}
+                            {req.status === "DENIED" && (
+                              <span className="text-red-600">Từ chối</span>
+                            )}
+                          </div>
+                          {req.status === "DENIED" && (
+                            <div className="text-sm text-red-500">
+                              <span className="font-medium">Lý do từ chối: </span>
+                              {req.rejectedReason || "-"}
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            {req.status === "PENDING" && (
+                              <>
+                                <Button
+                                  onClick={() => {
+                                    setSelectedRequestId(req.id);
+                                    setIsAcceptDialogOpen(true);
+                                  }}
+                                  variant="default"
+                                >
+                                  Duyệt
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    setSelectedRequestId(req.id);
+                                    setIsRejectDialogOpen(true);
+                                  }}
+                                  variant="destructive"
+                                  
+                                >
+                                  Từ chối
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="mt-6 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setPage((p) => Math.max(0, p - 1))}
+                        />
+                      </PaginationItem>
+                      {Array.from({ length: totalPages }).map((_, idx) => (
+                        <PaginationItem key={idx}>
+                          <PaginationLink
+                            isActive={page === idx}
+                            onClick={() => setPage(idx)}
+                          >
+                            {idx + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              </>
+            )}
           </>
-        )}
+        </LoadingComponent>
       </div>
       {/* Accept Dialog */}
       <Dialog open={isAcceptDialogOpen} onOpenChange={setIsAcceptDialogOpen}>

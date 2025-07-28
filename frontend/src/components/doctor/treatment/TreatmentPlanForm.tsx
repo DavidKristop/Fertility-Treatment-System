@@ -40,6 +40,7 @@ export function CreateTreatmentForm() {
   const [patients, setPatients] = useState<{ email: string; fullName: string; medicalHistory: string; id: string }[]>([]);
   const [protocols, setProtocols] = useState<ProtocolResponse[]>([]);
   const [hasTreatment, setHasTreatment] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const navigate = useNavigate();
 
@@ -112,6 +113,7 @@ export function CreateTreatmentForm() {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsCreating(true);
       if (!selectedPatient || !selectedProtocol) {
         throw new Error("Please select both patient and protocol");
       }
@@ -137,6 +139,8 @@ export function CreateTreatmentForm() {
     } catch (error) {
       console.error("Error creating treatment:", error);
       toast.error(error instanceof Error ? error.message : "Lỗi khi tạo dữ liệu");
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -144,7 +148,7 @@ export function CreateTreatmentForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
       <input autoComplete="false" name="hidden" type="text" style={{ display: "none" }} />
       <div className="space-y-2">
-        <Label htmlFor="patientEmail">Patient Email</Label>
+        <Label htmlFor="patientEmail">Email của bệnh nhân</Label>
         <Autocomplete
           value={selectedPatient}
           onChange={(_, newValue) => {
@@ -170,7 +174,7 @@ export function CreateTreatmentForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="title">Treatment Title</Label>
+        <Label htmlFor="title">Tiêu đề</Label>
         <TextField
           fullWidth
           {...register("title")}
@@ -181,7 +185,7 @@ export function CreateTreatmentForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="medicalHistory">Medical History</Label>
+        <Label htmlFor="medicalHistory">Lịch sử bệnh</Label>
         <Textarea
           {...register("medicalHistory")}
           disabled={!selectedPatient}
@@ -194,7 +198,7 @@ export function CreateTreatmentForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="protocolTitle">Protocol Title</Label>
+        <Label htmlFor="protocolTitle">Tiêu đề của phác đồ</Label>
         <Autocomplete
           value={selectedProtocol}
           onChange={(_, newValue) => {
@@ -224,16 +228,16 @@ export function CreateTreatmentForm() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Selected Protocol Details</CardTitle>
+              <CardTitle>Chi tiết của phác đồ</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>Tiêu đề</Label>
                   <Input value={selectedProtocol.title} disabled />
                 </div>
                 <div className="space-y-2">
-                  <Label>Description</Label>
+                  <Label>Mô tả</Label>
                   <Textarea
                     value={selectedProtocol.description}
                     disabled
@@ -241,22 +245,22 @@ export function CreateTreatmentForm() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Estimated Price</Label>
+                  <Label>Giá ước tính</Label>
                   <Input value={selectedProtocol.estimatedPrice.toLocaleString("vi-VN")+" đ"} disabled />
                 </div>
                 <div className="space-y-2">
-                  <Label>Phases</Label>
+                  <Label>Giai đoạn</Label>
                   <Accordion type="single" collapsible className="w-full">
                     {selectedProtocol.phases.map((phase) => (
                       <AccordionItem key={phase.id} value={phase.id}>
                         <AccordionTrigger>
-                          {phase.title} (Phase {phase.position})
+                          {phase.title} (Giai đoạn {phase.position})
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="space-y-4">
                             {phase.services && phase.services.length > 0 && (
                               <div>
-                                <h3 className="font-medium">Services</h3>
+                                <h3 className="font-medium">Dịch vụ</h3>
                                 <ul className="list-disc list-inside space-y-2">
                                   {phase.services.map((service: ServiceResponse) => (
                                     <li key={service.id}>
@@ -268,7 +272,7 @@ export function CreateTreatmentForm() {
                             )}
                             {phase.drugs && phase.drugs.length > 0 && (
                               <div>
-                                <h3 className="font-medium">Drugs</h3>
+                                <h3 className="font-medium">Thuốc</h3>
                                 <ul className="list-disc list-inside space-y-2">
                                   {phase.drugs.map((drug: DrugResponse) => (
                                     <li key={drug.id}>
@@ -291,22 +295,22 @@ export function CreateTreatmentForm() {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="paymentType">Payment Type</Label>
+        <Label htmlFor="paymentType">Phương thức thanh toán</Label>
         <select
           {...register("paymentType")}
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <option value="FULL">Full Payment</option>
-          <option value="BY_PHASE">By Phases</option>
+          <option value="FULL">Thanh toán toàn bộ</option>
+          <option value="BY_PHASE">Thanh toán theo giai đoạn</option>
         </select>
       </div>
 
-      <Button type="submit" className="w-full" disabled={hasTreatment}>
-        Create Treatment
+      <Button type="submit" className={`w-full ${isCreating ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`} disabled={hasTreatment || isCreating}>
+        {isCreating ? "Đang tạo..." : "Tạo kế hoạch điều trị"}
       </Button>
       {hasTreatment && (
         <p className="text-red-500 mt-2">
-          Bệnh nhân đã có một kế hoạch đang trong trạng thái điều trị hoặc là đang chờ kí hợp đồng.
+          Bệnh nhân đã có một kế hoạch điều trị đang trong trạng thái điều trị hoặc là đang chờ kí hợp đồng.
         </p>
       )}
     </form>

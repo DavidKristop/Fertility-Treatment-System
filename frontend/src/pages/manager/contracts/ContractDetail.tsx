@@ -45,7 +45,6 @@ export default function ManagerContractDetail() {
       {/* Contract Detail Form */}
       <ContractDetailForm
         contractId={id || null}
-        showPatientInfo={true}
         userRole="manager"
       />
     </div>

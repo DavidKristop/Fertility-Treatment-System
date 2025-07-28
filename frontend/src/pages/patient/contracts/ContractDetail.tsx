@@ -43,9 +43,9 @@ export default function PatientContractDetail() {
       {/* Contract Detail Form */}
       <ContractDetailForm
         contractId={id || null}
-        showPatientInfo={false}
         userRole="patient"
       />
+
     </div>
   )
 }

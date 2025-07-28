@@ -1,8 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Download, Eye, PenTool, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { CheckCircle, Clock, AlertCircle } from "lucide-react"
 import type { ContractResponse } from "@/api/types"
 import { Link } from "react-router-dom"
 
@@ -10,7 +9,6 @@ interface ContractCardProps {
   contract: ContractResponse
   onView: (contract: ContractResponse) => void
   onSign?: (contractId: string) => void
-  onDownload: (contractId: string) => void
   showPatientInfo?: boolean
   userRole?: "patient" | "manager"
 }
@@ -18,8 +16,6 @@ interface ContractCardProps {
 export default function ContractCard({
   contract,
   onView,
-  onSign,
-  onDownload,
   userRole = "patient",
 }: ContractCardProps) {
   const getStatusColor = (signed: boolean) => {
@@ -37,7 +33,7 @@ export default function ContractCard({
   const isExpired = new Date(contract.signDeadline) < new Date()
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+    <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow" onClick={() => onView(contract)}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
@@ -83,18 +79,6 @@ export default function ContractCard({
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col gap-2 ml-4">
-          <Button variant="outline" size="sm" onClick={() => onView(contract)}>
-            <Eye className="h-4 w-4 mr-2" />
-            Xem chi tiết
-          </Button>
-          {contract.signed && contract.contractUrl && (
-            <Button variant="outline" size="sm" onClick={() => onDownload(contract.id)}>
-              <Download className="h-4 w-4 mr-2" />
-              Tải xuống
-            </Button>
-          )}
         </div>
       </div>
     </div>

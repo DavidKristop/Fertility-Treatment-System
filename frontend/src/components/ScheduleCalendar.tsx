@@ -1,12 +1,12 @@
 import { Calendar, Views, type Event, type View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { dateFnsLocalizer } from 'react-big-calendar';
-import type { PatientDrugResponse, ScheduleDetailResponse, ScheduleResponse, ScheduleStatus } from '@/api/types';
+import { scheduleStatus, scheduleStatusColor, type PatientDrugResponse, type ScheduleDetailResponse, type ScheduleResponse, type ScheduleStatus } from '@/api/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { vi } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const localizer = dateFnsLocalizer({
   format,
@@ -34,36 +34,6 @@ interface CustomCalendarProps {
   onDrugClick?: (drug: PatientDrugResponse) => void;
 }
 
-function getStatusColor(status: string) {
-  switch (status) {
-    case 'PENDING':
-      return 'blue';
-    case 'CHANGED':
-      return 'yellow';
-    case 'CANCELLED':
-      return 'red';
-    case 'DONE':
-      return 'green';
-    default:
-      return 'gray';
-  }
-}
-
-function getStatusText(status: string) {
-  switch (status) {
-    case 'PENDING':
-      return 'Chờ xử lý';
-    case 'CHANGED':
-      return 'Đã thay đổi';
-    case 'CANCELLED':
-      return 'Đã hủy';
-    case 'DONE':
-      return 'Đã hoàn thành';
-    default:
-      return status;
-  }
-}
-
 interface CalendarEvent extends Event {
   type: 'schedule' | 'drug' | 'preview-schedule';
   status?: string;
@@ -73,11 +43,13 @@ interface CalendarEvent extends Event {
 }
 
 export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDoctorPov=false,onScheduleClick, onDrugClick,onNavigate,hasFilterStatus=false, calendarStyle, initialView=Views.MONTH, canChangeView=true,initialDate,hasDatePicker }: CustomCalendarProps) {
+  //Memorize initialDate because it keep changing for some reason
+  const memorizedInitialDate = useMemo(() => initialDate, []);
+  
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [currView,setCurrView] = useState<View>(initialView)
-  const [currentDate, setCurrentDate] = useState(initialDate || new Date());
+  const [currentDate, setCurrentDate] = useState(memorizedInitialDate || new Date());
   const [filterStatus, setFilterStatus] = useState<ScheduleStatus | "ALL">("ALL");
-  const [scrollToTime, setScrollToTime] = useState<Date>(currentDate)
 
   const getEventStyle = useCallback((event: CalendarEvent) => {
     const style = {
@@ -150,8 +122,11 @@ export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDo
   },[setCurrView])
 
   useEffect(()=>{
+    console.log("Filter status:"+filterStatus)
+    console.log("current date: "+currentDate)
+    console.log("current view: "+currView)
     handleNavigate(currentDate,currView)
-  },[filterStatus,currentDate,currView])
+  },[filterStatus,currView])
 
   useEffect(()=>{
     const scheduleEvents: CalendarEvent[] = schedules.map(schedule => ({
@@ -178,7 +153,6 @@ export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDo
         type: 'preview-schedule',
         previewSchedule,
       })
-      setScrollToTime(new Date(previewSchedule.appointmentDateTime))
     }
 
     setEvents(newEvents);
@@ -218,7 +192,6 @@ export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDo
         <Calendar
           style={{ height: `700px`, ...calendarStyle }}
           localizer={localizer}
-          scrollToTime={scrollToTime}
           events={events}
           onView={handleChangeView}
           views={canChangeView?[Views.WEEK, Views.MONTH, Views.DAY]:[currView]}
@@ -245,8 +218,8 @@ export default function ScheduleCalendar({ schedules, drugs,previewSchedule,isDo
             event: ({ event }) => (
               <div>
                 {event.type === 'schedule' && event.schedule?.status && (
-                  <Badge variant="outline" className={`text-${getStatusColor(event.schedule.status)}`.toLowerCase()}>
-                    {getStatusText(event.schedule.status)}
+                  <Badge variant="outline" className={`text-${scheduleStatusColor[event.schedule.status]}`.toLowerCase()}>
+                    {scheduleStatus[event.schedule.status]}
                   </Badge>
                 )}
                 <div className="flex-1">

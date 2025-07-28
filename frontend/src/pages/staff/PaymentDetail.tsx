@@ -45,7 +45,7 @@ const PaymentDetail: React.FC = () => {
     }
   }
 
-  const handleProcessPayment = async (paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL") => {
+  const handleProcessPayment = async (paymentMethod: "CASH" | "VNPAY") => {
     if (!id) return
 
     try {

@@ -150,10 +150,10 @@ export default function PaymentDetailPage() {
                     <div className="font-medium mb-1">
                       Đơn thuốc #{assign.id} -{" "}
                       {assign.status === "PENDING" && (
-                        <span className="text-yellow-600">Chờ hoàn thành</span>
+                        <span className="text-yellow-600">Chờ lấy</span>
                       )}
                       {assign.status === "COMPLETED" && (
-                        <span className="text-green-600">Đã hoàn thành</span>
+                        <span className="text-green-600">Đã lấy</span>
                       )}
                     </div>
                     {assign.patientDrugs?.length ? (

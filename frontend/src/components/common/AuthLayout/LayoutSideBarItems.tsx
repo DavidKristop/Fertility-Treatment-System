@@ -138,51 +138,6 @@ export const admindSideBarItemsProp: SidebarItem[] = [
       ],
     },
     {
-      id: "analytics",
-      label: "Phân tích hệ thống",
-      icon: BarChart,
-      children: [
-        {
-          id: "appointment-analytics",
-          label: "Phân tích lịch hẹn",
-          icon: FileText,
-          path: "/admin/analytics/appointments",
-        },
-        {
-          id: "financial-analytics",
-          label: "Phân tích tài chính",
-          icon: BarChart,
-          path: "/admin/analytics/financial",
-        },
-      ],
-    },
-    {
-      id: "alerts",
-      label: "Cảnh báo hệ thống",
-      icon: AlertTriangle,
-      badge: 3,
-      path: "/admin/alerts",
-    },
-    {
-      id: "notifications",
-      label: "Thông báo",
-      icon: Bell,
-      badge: 4,
-      path: "/admin/notifications",
-    },
-    {
-      id: "support",
-      label: "Hỗ trợ & Tư vấn",
-      icon: MessageSquare,
-      path: "/admin/support",
-    },
-    {
-      id: "settings",
-      label: "Cài đặt hệ thống",
-      icon: Settings,
-      path: "/admin/settings",
-    },
-    {
       id: "profile",
       label: "Hồ sơ & Cài đặt",
       icon: User,
@@ -217,12 +172,6 @@ export const managerSideBarItemProps: SidebarItem[] = [
       ],
     },
     {
-      id: "assigned-drugs",
-      label: "Quản lý đơn thuốc",
-      icon: FileText,
-      path: "/manager/assigned-drugs",
-    },
-    {
       id: "drugsAndServicesManagement",
       label: "Quản lý thuốc & Dịch vụ",
       icon: FileText,
@@ -240,12 +189,6 @@ export const managerSideBarItemProps: SidebarItem[] = [
           path: "/manager/services",
         },
       ],
-    },
-    {
-      id: "payments",
-      label: "Quản lý thanh toán",
-      icon: DollarSign,
-      path: "/manager/payments",
     },
     {
       id: "contracts",

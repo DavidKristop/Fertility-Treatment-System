@@ -71,10 +71,14 @@ export const getManagerContractById = async (id: string): Promise<ApiResponse<Co
 };
 
 // Sign a contract
-export const signContract = async (id: string): Promise<ApiResponse<ContractResponse>> => {
+export const signContract = async (id: string,signedUrl:string): Promise<ApiResponse<ContractResponse>> => {
     const response = await fetchWrapper(`contracts/sign/${id}`, 
         {
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({signedUrl})
         },
         true
     );
