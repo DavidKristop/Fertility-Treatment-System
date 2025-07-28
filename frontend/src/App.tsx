@@ -15,8 +15,6 @@ import Home from "./pages/Home";
 import Company from "./pages/guest/about/Company";
 import Team from "./pages/guest/about/Team";
 import Services from "./pages/guest/pricing/Services";
-import Insurance from "./pages/guest/pricing/Insurance";
-import Financing from "./pages/guest/pricing/Financing";
 import Iui from "./pages/guest/services/iui";
 import Ivf from "./pages/guest/services/ivf";
 import DoctorListPage from "./pages/guest/doctorList/DoctorListPage";
@@ -125,8 +123,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "services", element: <Services /> },
-          { path: "insurance", element: <Insurance /> },
-          { path: "financing", element: <Financing /> },
         ],
       },
       {
