@@ -170,7 +170,7 @@ export default function CreateProtocolPage() {
             min={0}
             max={100}
             value={refundPercentage}
-            onChange={(e) => setRefundPercentage(Number(e.target.value))}
+            onChange={(e) => setRefundPercentage(Number(e.target.value)/100)}
           />
         </div>
 
@@ -203,7 +203,7 @@ export default function CreateProtocolPage() {
                 <Label>Hệ số điều chỉnh (%)</Label>
                 <Input
                   type="number"
-                  step={0.01}
+                  step={0.1}
                   value={phase.phaseModifierPercentage}
                   onChange={(e) =>
                     updatePhase(

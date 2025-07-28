@@ -6,7 +6,7 @@ import RegisterForm from "@/components/auth/RegisterForm";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
+import { patientRegisterSchemaWithConfirmPassword, type PatientRegisterFormWithConfirmPasswordValues } from "@/lib/validations/auth";
 import { auth } from '@/api';
 import { type RegisterRequest } from '@/api/types';
 import { toast } from 'react-toastify';
@@ -15,7 +15,7 @@ import { useState } from "react";
 export default function RegisterPage() {
 
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
-  const handleRegister = async (values: RegisterFormValues) => {
+  const handleRegister = async (values: PatientRegisterFormWithConfirmPasswordValues) => {
     try {
       const registerData: RegisterRequest = {
         username: values.username,
@@ -35,7 +35,7 @@ export default function RegisterPage() {
     }
   };
 
-  const formik = useFormik<RegisterFormValues>({
+  const formik = useFormik<PatientRegisterFormWithConfirmPasswordValues>({
       initialValues: {
         username:'',
         email: '',
@@ -44,8 +44,10 @@ export default function RegisterPage() {
         dateOfBirth: '',
         password: '',
         confirmPassword: '',
+        role: "ROLE_PATIENT",
+        medicalHistory: '',
       },
-      validationSchema: toFormikValidationSchema(registerSchema),
+      validationSchema: toFormikValidationSchema(patientRegisterSchemaWithConfirmPassword),
       validateOnBlur: true,
       onSubmit: handleRegister,
     });

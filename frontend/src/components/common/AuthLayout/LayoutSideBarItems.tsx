@@ -113,12 +113,6 @@ export const doctorSidebarItemsProp: SidebarItem[] = [
 
 export const admindSideBarItemsProp: SidebarItem[] = [
     {
-      id: "dashboard",
-      label: "Trang tổng quan",
-      icon: LayoutDashboard,
-      path: "/admin/dashboard",
-    },
-    {
       id: "users",
       label: "Quản lý người dùng",
       icon: Users,
