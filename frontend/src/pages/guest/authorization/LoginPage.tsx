@@ -123,8 +123,6 @@ export default function LoginPage() {
 
           <div className="space-y-6">
             <LoginForm formik={formik} />
-            <div className="text-center text-sm text-gray-500">Hoặc đăng nhập với</div>
-            <GoogleAuth text="Đăng nhập Google" mode="login" />
           </div>
         </CardContent>
       </Card>

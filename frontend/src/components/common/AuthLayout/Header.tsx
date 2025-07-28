@@ -98,16 +98,6 @@ const profilePath = profilePathMap[userRole] ?? "/"
 
         {/* Right side - Notifications, Profile */}
         <div className="flex items-center gap-2 lg:gap-4">
-          {/* Notifications */}
-          <Link to="/patient/notifications">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0">
-                7
-              </Badge>
-            </Button>
-          </Link>
-
           {/* Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -307,15 +307,12 @@ export default function PatientScheduleResult() {
           </div>
         </FormSection>
         <FormSection title="Ghi chú của bác sĩ" icon={FileText}>
-          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-            {schedule?.scheduleResult?.doctorsNote ? (
-              <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
-                {schedule?.scheduleResult?.doctorsNote}
-              </p>
-            ) : (
-              <p className="text-gray-500 italic">Chưa có ghi chú nào.</p>
-            )}
-          </div>
+          {schedule?.scheduleResult?.doctorsNote ? (
+            <div className="text-gray-800" dangerouslySetInnerHTML={{__html: schedule?.scheduleResult?.doctorsNote}}>
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">Chưa có ghi chú nào.</p>
+          )}
         </FormSection>
 
       </div>

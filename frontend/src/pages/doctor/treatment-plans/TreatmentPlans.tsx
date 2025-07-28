@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTreatmentICreated } from "@/api/treatment";
-import type { TreatmentResponse } from "@/api/types";
+import { treatmentStatus, type TreatmentResponse } from "@/api/types";
 import {
   Pagination,
   PaginationContent,
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
+import LoadingComponent from "@/components/common/LoadingComponent";
 
 // Helper function for date formatting
 const formatDate = (date: string | null | undefined): string => {
@@ -136,10 +137,8 @@ export default function TreatmentPlans() {
         </select>
       </div>
 
-      {loading ? (
-        <div className="text-center py-4">Đang tải...</div>
-      ) : (
-          <div className="space-y-4">
+      <LoadingComponent isLoading={loading}>
+        <div className="space-y-4">
           {treatments.map((treatment) => (
             <Link key={treatment.id} to={`/doctor/treatment-plans/treatment-details/${treatment.id}`}>
               <div
@@ -167,7 +166,7 @@ export default function TreatmentPlans() {
                             treatment.status === 'AWAITING_CONTRACT_SIGNED' ? 'bg-yellow-100 text-yellow-800' :
                             'bg-gray-100 text-gray-800'}`}
                           >
-                            {treatment.status}
+                            {treatmentStatus[treatment.status]}
                           </span>
                         </div>
                         <div className="flex flex-col gap-1">
@@ -186,7 +185,7 @@ export default function TreatmentPlans() {
             </Link>
           ))}
         </div>
-      )}
+      </LoadingComponent>
 
       <div className="mt-6 flex justify-center">
         <Pagination>

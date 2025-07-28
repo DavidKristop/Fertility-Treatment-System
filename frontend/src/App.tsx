@@ -15,8 +15,6 @@ import Home from "./pages/Home";
 import Company from "./pages/guest/about/Company";
 import Team from "./pages/guest/about/Team";
 import Services from "./pages/guest/pricing/Services";
-import Insurance from "./pages/guest/pricing/Insurance";
-import Financing from "./pages/guest/pricing/Financing";
 import Iui from "./pages/guest/services/iui";
 import Ivf from "./pages/guest/services/ivf";
 import DoctorListPage from "./pages/guest/doctorList/DoctorListPage";
@@ -72,7 +70,6 @@ import CreateProtocolsPage from "./pages/manager/CreateProtocolPage";
 import PaymentDetail from "./pages/staff/PaymentDetail";
 
 // Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import Story from "./pages/guest/about/Story";
 import BlogPage from "./pages/blog/page";
 import BlogPostPage from "./pages/blog/[id]/page";
@@ -96,6 +93,7 @@ import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
 import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
 import ManagerProfile from "./pages/manager/ManagerProfile";
+import NotFound from "./pages/not-found/not-found";
 
 
 
@@ -125,8 +123,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "services", element: <Services /> },
-          { path: "insurance", element: <Insurance /> },
-          { path: "financing", element: <Financing /> },
         ],
       },
       {
@@ -219,7 +215,7 @@ const router = createBrowserRouter([
       { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
       { path: "profile", element: <StaffProfile /> },
       // fallback for patient subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
@@ -250,7 +246,7 @@ const router = createBrowserRouter([
       // Profile routes
       { path: "profile", element: <DoctorProfile /> },
       // fallback for doctor subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
@@ -308,7 +304,7 @@ const router = createBrowserRouter([
       },
 
       // fallback for manager subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
@@ -322,10 +318,6 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "dashboard",
-        element: <AdminDashboard />,
-      },
-      {
         path: "/admin/manage-users",
         element: <ManageUserPage />,
       },
@@ -338,7 +330,7 @@ const router = createBrowserRouter([
         element: <CreateManagerPage />,
       },
       // fallback for admin subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 

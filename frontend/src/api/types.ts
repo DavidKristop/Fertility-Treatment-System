@@ -404,7 +404,6 @@ export interface PaymentPreviewResponse {
 export interface ContractPreviewResponse{
   id: string;
   signed: boolean;
-  contractUrl: string;
 }
 
 export interface PaymentResponse {
@@ -501,10 +500,86 @@ export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
 export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 
-export type PaymentMethod = "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
+export type PaymentMethod = "CASH" | "VNPAY" | null;
 
 export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";
 
+// ==================== TRANSLATE STATUS ENUMS ==================== 
+
+export const scheduleStatus = {
+  PENDING: "Đang chờ",
+  CHANGED: "Đã thay đổi",
+  CANCELLED: "Đã hủy",
+  DONE: "Đã hoàn thành",
+}
+
+export const treatmentStatus = {
+  IN_PROGRESS: "Đang điều trị",
+  COMPLETED: "Đã hoàn thành",
+  CANCELLED: "Đã hủy",
+  AWAITING_CONTRACT_SIGNED: "Đang chờ ký hợp đồng",
+}
+
+export const appointmentStatus = {
+  PENDING: "Đang chờ",
+  ACCEPTED: "Đã chấp nhận",
+  DENIED: "Đã từ chối",
+}
+
+export const assignDrugStatus = {
+  PENDING: "Đang chờ",
+  COMPLETED: "Đã hoàn thành",
+  CANCELLED: "Đã hủy",
+}
+
+export const paymentMethod = {
+  CASH: "Tiền mặt",
+  VNPAY: "VNPay",
+}
+
+export const paymentStatus = {
+  PENDING: "Đang chờ",
+  COMPLETED: "Đã hoàn thành",
+  CANCELED: "Đã hủy",
+}
+
+//Color
+export const scheduleStatusColor = {
+  PENDING: "yellow",
+  CHANGED: "blue",
+  CANCELLED: "red",
+  DONE: "green",
+}
+
+export const treatmentStatusColor = {
+  IN_PROGRESS: "blue",
+  COMPLETED: "green",
+  CANCELLED: "red",
+  AWAITING_CONTRACT_SIGNED: "yellow",
+}
+
+export const appointmentStatusColor = {
+  PENDING: "yellow",
+  ACCEPTED: "blue",
+  DENIED: "red",
+}
+
+export const assignDrugStatusColor = {
+  PENDING: "yellow",
+  COMPLETED: "green",
+  CANCELLED: "red",
+}
+
+export const paymentMethodColor = {
+  CASH: "blue",
+  VNPAY: "green",
+}
+
+export const paymentStatusColor = {
+  PENDING: "yellow",
+  COMPLETED: "green",
+  CANCELED: "red",
+}
 
 //  ==================== UI TYPES ====================
 

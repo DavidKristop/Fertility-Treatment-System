@@ -13,6 +13,7 @@ import {
 import AssignDrugDisplay from "@/components/assignDrug/AssignDrugDisplay";
 import { TextField } from "@mui/material";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
+import LoadingComponent from "@/components/common/LoadingComponent";
 
 const STATUS_OPTIONS = [
   { value: "PENDING", label: "Chờ hoàn thành" },
@@ -111,46 +112,48 @@ export default function DoctorAssignDrugsPage() {
           className="border px-2 py-1 rounded"
         />
       </div>
+      <LoadingComponent isLoading={loading}>
+        <>
+          {error && <p className="text-red-500">{error}</p>}
 
-      {loading && <p>Đang tải dữ liệu...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+          {!loading && assignDrugs.length === 0 && (
+            <div className="text-gray-500 italic">Không có dữ liệu</div>
+          )}
 
-      {!loading && assignDrugs.length === 0 && (
-        <div className="text-gray-500 italic">Không có dữ liệu</div>
-      )}
+          {!loading && assignDrugs.length > 0 && (
+            <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/doctor/assigned-drugs/${assignDrug.id}`)}/>
+          )}
 
-      {!loading && assignDrugs.length > 0 && (
-        <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/doctor/assigned-drugs/${assignDrug.id}`)}/>
-      )}
-
-      {totalPages > 1 && (
-        <div className="mt-6 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                />
-              </PaginationItem>
-              {Array.from({ length: totalPages }).map((_, idx) => (
-                <PaginationItem key={idx}>
-                  <PaginationLink
-                    isActive={page === idx}
-                    onClick={() => setPage(idx)}
-                  >
-                    {idx + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
+          {totalPages > 1 && (
+            <div className="mt-6 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setPage((p) => Math.max(0, p - 1))}
+                    />
+                  </PaginationItem>
+                  {Array.from({ length: totalPages }).map((_, idx) => (
+                    <PaginationItem key={idx}>
+                      <PaginationLink
+                        isActive={page === idx}
+                        onClick={() => setPage(idx)}
+                      >
+                        {idx + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </>
+      </LoadingComponent>
     </div>
   );
 }

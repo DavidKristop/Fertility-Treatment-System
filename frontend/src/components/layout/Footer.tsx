@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-bold text-[19px]">Liên hệ chúng tôi</h4>
           <p>0903 123 1234</p>
-          <p>info@ucare.vn</p>
+          <p className="text-sm break-words">ucaretreatmentsystem@gmail.com</p>
           <div className="flex justify-center sm:justify-start gap-4 pt-2">
             <Facebook className="w-5 h-5" />
             <Instagram className="w-5 h-5" />
@@ -54,7 +54,11 @@ export default function Footer() {
         <div className="space-y-2 text-center sm:text-left">
           <h4 className="font-bold text-[19px]">Chi phí</h4>
           <ul className="space-y-1 text-sm">
-            <li>Dịch vụ & Bảng giá</li>
+            <li>
+              <Link to="/pricing/services" className="hover:underline">
+                Bảng giá dịch vụ
+              </Link>
+            </li>
           </ul>
         </div>
 

@@ -3,17 +3,12 @@
 import type React from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import type { PaymentResponse } from "@/api/types"
 import { format } from "date-fns"
 
 interface PaymentCardProps {
   payment: PaymentResponse
   onViewDetails: (paymentId: string) => void
-  onProcessPayment: (paymentId: string) => void
-  onCancelPayment: (paymentId: string) => void
-  isProcessing?: boolean
-  isCanceling?: boolean
 }
 
 const statusText = {
@@ -24,17 +19,12 @@ const statusText = {
 
 const methodText = {
   CASH: "Tiền mặt",
-  CREDIT_CARD: "Thẻ",
-  PAYPAL: "PayPal",
+  VNPAY: "VNPay",
 }
 
 const PaymentCard: React.FC<PaymentCardProps> = ({
   payment,
   onViewDetails,
-  onProcessPayment,
-  onCancelPayment,
-  isProcessing = false,
-  isCanceling = false,
 }) => {
   const status = statusText[payment.status as keyof typeof statusText]
   return (

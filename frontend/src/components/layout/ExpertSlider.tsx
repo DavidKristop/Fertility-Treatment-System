@@ -1,27 +1,11 @@
+import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Doctor1 from "@/assets/doctor1.jpg";
-import Doctor2 from "@/assets/doctor2.jpg";
-import Doctor3 from "@/assets/doctor3.jpg";
-
-const experts = [
-  {
-    name: "Dr. Lynn Westphal",
-    role: "Lead CMO, Medicine + Research & REI",
-    image: Doctor1,
-  },
-  {
-    name: "Dr. Kristin Bendikson",
-    role: "CMO, Clinical Development & REI",
-    image: Doctor2,
-  },
-  {
-    name: "Dr. Amber Cooper",
-    role: "CMO, Genomic + Lab Operations & REI",
-    image: Doctor3,
-  },
-];
+import { getPublicDoctors } from "@/api/doctor-management";
+import type { DoctorProfile } from "@/api/types";
+import doctorDefaultImg from "@/assets/doctor1.jpg";
+import { toast } from "react-toastify";
 
 function NextArrow(props: any) {
   const { onClick } = props;
@@ -52,6 +36,25 @@ function PrevArrow(props: any) {
 }
 
 export default function ExpertSlider() {
+  const [doctors, setDoctors] = useState<DoctorProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await getPublicDoctors(0, 6); // Lấy 6 bác sĩ đầu tiên
+        setDoctors(response.payload.content);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+        toast.error("Không thể tải danh sách bác sĩ");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -73,6 +76,14 @@ export default function ExpertSlider() {
     ],
   };
 
+  if (loading) {
+    return (
+      <section className="py-20 px-4 bg-white">
+        <div className="text-center">Đang tải thông tin bác sĩ...</div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 px-4 bg-white">
       <h2 className="text-2xl sm:text-3xl text-[#004c77] font-semibold text-center mb-12">
@@ -81,16 +92,17 @@ export default function ExpertSlider() {
 
       <div className="max-w-6xl mx-auto relative">
         <Slider {...settings}>
-          {experts.map((expert, idx) => (
-            <div key={idx} className="px-4">
+          {doctors.map((doctor) => (
+            <div key={doctor.id} className="px-4">
               <div className="bg-white text-center border rounded-lg shadow-md p-4">
                 <img
-                  src={expert.image}
-                  alt={expert.name}
+                  src={doctor.avatarUrl || doctorDefaultImg}
+                  alt={doctor.fullName}
                   className="mx-auto mb-4 rounded-md h-[300px] w-full object-cover"
                 />
-                <h3 className="font-medium text-lg text-[#004c77]">{expert.name}</h3>
-                <p className="font-semibold text-sm text-gray-800 mt-1">{expert.role}</p>
+                <h3 className="font-medium text-lg text-[#004c77]">{doctor.fullName}</h3>
+                <p className="font-semibold text-sm text-gray-800 mt-1">{doctor.specialty}</p>
+                <p className="text-sm text-gray-600 mt-1">{doctor.degree}</p>
               </div>
             </div>
           ))}

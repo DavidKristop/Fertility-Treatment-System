@@ -44,6 +44,15 @@ const UserDetailPage = () => {
     fetchUser();
   }, [id]);
 
+  useEffect(() => {
+    setTitle("Chi tiết người dùng")
+    setBreadCrumbs([
+      { label: "Trang chủ", path: "/admin" },
+      { label: "Quản lý", path: "/admin" },
+      { label: "Quản lý người dùng", path: "/admin/manage-users" },
+    ])
+  },[])
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -55,15 +64,6 @@ const UserDetailPage = () => {
   if (!user) {
     return <div className="text-center text-red-500">Không tìm thấy người dùng</div>;
   }
-
-  useEffect(() => {
-    setTitle("Chi tiết người dùng")
-    setBreadCrumbs([
-      { label: "Trang chủ", path: "/admin" },
-      { label: "Quản lý", path: "/admin" },
-      { label: "Quản lý người dùng", path: "/admin/manage-users" },
-    ])
-  },[])
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-4">

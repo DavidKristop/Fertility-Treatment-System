@@ -30,6 +30,8 @@ import LoadingComponent from "@/components/common/LoadingComponent";
 import type { ScheduleDetailResponse } from "@/api/types";
 import { toast } from "react-toastify";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
+import { Editor } from 'primereact/editor';
+        
 
 // Mock patient medical history data
 
@@ -101,6 +103,7 @@ export default function DoctorScheduleResult() {
       try {
         const detail = await getDoctorScheduleById(scheduleId)
         setSchedule(detail.payload);
+        setDoctorsNote(detail.payload?.scheduleResult?.doctorsNote || "");
       } catch (err) {
         console.error(err);
         toast.error(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tải dữ liệu")
@@ -340,29 +343,18 @@ export default function DoctorScheduleResult() {
           {/* Schedule Result */}
 
           <FormSection title="Ghi chú của bác sĩ" icon={FileText}>
-            <Label htmlFor="doctorsNote">Ghi chú chi tiết</Label>
-            <fieldset
+            <Label htmlFor="doctorsNote" className="mb-2">Ghi chú chi tiết</Label>
+            <Editor 
               disabled={schedule?.status !== "DONE"}
-              className={schedule?.status !== "DONE" ? "opacity-50" : ""}
-            >
-              <Textarea
-                id="doctorsNote"
-                placeholder="Nhập ghi chú..."
-                value={doctorsNote}
-                onChange={(e) => setDoctorsNote(e.target.value)}
-                className="mt-2 min-h-[150px]"
-              />
-            </fieldset>
+              className={schedule?.status !== "DONE" ? "opacity-50" : "h-[300px]"}
+              id="doctorsNote"
+              placeholder="Nhập ghi chú..."
+              value={doctorsNote}
+              onTextChange={(e)=>setDoctorsNote(e.htmlValue||"")}
+            />
           </FormSection>
 
-          <div className="flex gap-4 justify-end">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/doctor/schedule")}
-              disabled={saving}
-            >
-              Hủy
-            </Button>
+          <div className="flex gap-4 justify-end mt-6">
             <LoadingComponent isLoading={saving}>
               <Button
                 onClick={handleSaveResult}

@@ -1,5 +1,5 @@
 import type { SidebarItem } from "@/api/types";
-import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus, FilePlus2, ChartBar, UserPlus } from "lucide-react";
+import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, FileText, PlusIcon, Users, DollarSign, ListCollapse, Plus, FilePlus2, ChartBar, UserPlus } from "lucide-react";
 
 //Patient
 export const patientSidebarItemsProp: SidebarItem[] = [
@@ -139,51 +139,6 @@ export const admindSideBarItemsProp: SidebarItem[] = [
       ],
     },
     {
-      id: "analytics",
-      label: "Phân tích hệ thống",
-      icon: BarChart,
-      children: [
-        {
-          id: "appointment-analytics",
-          label: "Phân tích lịch hẹn",
-          icon: FileText,
-          path: "/admin/analytics/appointments",
-        },
-        {
-          id: "financial-analytics",
-          label: "Phân tích tài chính",
-          icon: BarChart,
-          path: "/admin/analytics/financial",
-        },
-      ],
-    },
-    {
-      id: "alerts",
-      label: "Cảnh báo hệ thống",
-      icon: AlertTriangle,
-      badge: 3,
-      path: "/admin/alerts",
-    },
-    {
-      id: "notifications",
-      label: "Thông báo",
-      icon: Bell,
-      badge: 4,
-      path: "/admin/notifications",
-    },
-    {
-      id: "support",
-      label: "Hỗ trợ & Tư vấn",
-      icon: MessageSquare,
-      path: "/admin/support",
-    },
-    {
-      id: "settings",
-      label: "Cài đặt hệ thống",
-      icon: Settings,
-      path: "/admin/settings",
-    },
-    {
       id: "profile",
       label: "Hồ sơ & Cài đặt",
       icon: User,
@@ -218,7 +173,6 @@ export const managerSideBarItemProps: SidebarItem[] = [
         },
       ],
     },
-
     {
       id: "drugsAndServicesManagement",
       label: "Quản lý thuốc & Dịch vụ",
@@ -238,7 +192,6 @@ export const managerSideBarItemProps: SidebarItem[] = [
         },
       ],
     },
-
     {
       id: "contracts",
       label: "Hợp đồng",

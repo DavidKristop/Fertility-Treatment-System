@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { FileText, RefreshCw } from "lucide-react"
+import { FileText } from "lucide-react"
 import { 
   Pagination, 
   PaginationContent, 
@@ -25,7 +25,6 @@ interface ContractListProps {
   totalElements: number
   onViewContract: (contract: ContractResponse) => void
   onSignContract?: (contractId: string) => void
-  onDownloadContract: (contractId: string) => void
   onPageChange: (page: number) => void
   onRefresh: () => void
   showPatientInfo?: boolean
@@ -42,7 +41,6 @@ export default function ContractList({
   totalPages,
   onViewContract,
   onSignContract,
-  onDownloadContract,
   onPageChange,
   onRefresh,
   showPatientInfo = false,
@@ -115,7 +113,6 @@ export default function ContractList({
       {/* Status Warnings */}
       <ContractStatusWarnings statusFilter={statusFilter} userRole={userRole} />
 
-      {/* ✅ Contract Cards - Bỏ Card wrapper */}
       <div className="space-y-4">
         {filteredContracts.map((contract) => (
           <ContractCard
@@ -123,7 +120,6 @@ export default function ContractList({
             contract={contract}
             onView={onViewContract}
             onSign={onSignContract}
-            onDownload={onDownloadContract}
             showPatientInfo={showPatientInfo}
           />
         ))}
