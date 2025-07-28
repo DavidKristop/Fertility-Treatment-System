@@ -40,7 +40,6 @@ export default function DrugList({
   searchTerm,
   currentPage,
   totalPages,
-  totalElements,
   onViewDrug,
   onEditDrug,
   onDeactivateDrug,

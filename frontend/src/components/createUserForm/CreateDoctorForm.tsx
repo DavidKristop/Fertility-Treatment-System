@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
-import type { DoctorRegisterFormValues } from "@/lib/validations/auth";
+import { doctorRegisterSchema, type DoctorRegisterFormValues } from "@/lib/validations/auth";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 export default function CreateDoctorForm({
     onSubmitCb,
@@ -11,6 +12,7 @@ export default function CreateDoctorForm({
     onSubmitCb: (data: DoctorRegisterFormValues) => Promise<void>,
 }){
     const formik = useFormik<DoctorRegisterFormValues>({
+        validationSchema: toFormikValidationSchema(doctorRegisterSchema),
         initialValues: {
             username: '',
             email: '',

@@ -23,11 +23,6 @@ export default function DrugsManagement() {
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const {setTitle,setBreadCrumbs} = useAuthHeader()
 
-  const breadcrumbs = [
-    { label: "Trang tổng quan", path: "/manager/dashboard" },
-    { label: "Quản lý thuốc" },
-  ]
-
   const fetchDrugs = async () => {
     setLoading(true)
     try {
@@ -62,7 +57,7 @@ export default function DrugsManagement() {
   }
 
   const handleViewDrug = (drugId: string) => {
-    navigate(`/manager/drugs/${drugId}`)
+    navigate(`/manager/drugs/edit/${drugId}`)
   }
 
   const handleEditDrug = (drugId: string) => {

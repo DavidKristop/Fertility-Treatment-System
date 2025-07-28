@@ -37,7 +37,6 @@ const patientData = {
 };
 
 export default function PatientProfile() {
-  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(patientData);
   const {setTitle,setBreadCrumbs} = useAuthHeader()
   useEffect(() => {
@@ -54,17 +53,6 @@ export default function PatientProfile() {
       ...prev,
       [field]: value,
     }));
-  };
-
-  const handleSave = () => {
-    // TODO: API call to update profile
-    console.log("Saving profile data:", formData);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setFormData(patientData);
-    setIsEditing(false);
   };
 
   const calculateAge = (dateOfBirth: string) => {
@@ -118,11 +106,7 @@ export default function PatientProfile() {
                 <Button
                   size="sm"
                   className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0"
-                  onClick={() => {
-                    /* TODO: Handle avatar upload */
-                  }}
                 >
-                  <Camera className="h-4 w-4" />
                 </Button>
               </div>
 
@@ -135,32 +119,9 @@ export default function PatientProfile() {
                     <Calendar className="h-4 w-4" />
                     <span>{formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Stethoscope className="h-4 w-4" />
-                    <span>Nhóm máu: {formData.bloodType}</span>
-                  </div>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                {!isEditing ? (
-                  <Button onClick={() => setIsEditing(true)}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Chỉnh sửa
-                  </Button>
-                ) : (
-                  <>
-                    <Button onClick={handleSave}>
-                      <Save className="h-4 w-4 mr-2" />
-                      Lưu
-                    </Button>
-                    <Button variant="outline" onClick={handleCancel}>
-                      <X className="h-4 w-4 mr-2" />
-                      Hủy
-                    </Button>
-                  </>
-                )}
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -178,32 +139,14 @@ export default function PatientProfile() {
               <div className="grid grid-cols-1 gap-4">
                 <div>
                   <Label htmlFor="fullName">Họ và tên</Label>
-                  {isEditing ? (
-                    <Input
-                      id="fullName"
-                      value={formData.fullName}
-                      onChange={(e) => handleInputChange("fullName", e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
-                  )}
+                  <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Mail className="h-4 w-4 text-gray-400" />
-                    {isEditing ? (
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <span className="text-sm text-gray-600">{user.email}</span>
-                    )}
+                    <span className="text-sm text-gray-600">{user.email}</span>
                   </div>
                 </div>
 
@@ -211,16 +154,7 @@ export default function PatientProfile() {
                   <Label htmlFor="phone">Số điện thoại</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Phone className="h-4 w-4 text-gray-400" />
-                    {isEditing ? (
-                      <Input
-                        id="phone"
-                        value={user.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <span className="text-sm text-gray-600">{user.phone}</span>
-                    )}
+                    <span className="text-sm text-gray-600">{user.phone}</span>
                   </div>
                 </div>
 
@@ -228,19 +162,9 @@ export default function PatientProfile() {
                   <Label htmlFor="dateOfBirth">Ngày sinh</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4 text-gray-400" />
-                    {isEditing ? (
-                      <Input
-                        id="dateOfBirth"
-                        type="date"
-                        value={user.dateOfBirth}
-                        onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <span className="text-sm text-gray-600">
-                        {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
-                      </span>
-                    )}
+                    <span className="text-sm text-gray-600">
+                      {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
+                    </span>
                   </div>
                 </div>
 
@@ -248,16 +172,7 @@ export default function PatientProfile() {
                   <Label htmlFor="address">Địa chỉ</Label>
                   <div className="flex items-start gap-2 mt-1">
                     <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-                    {isEditing ? (
-                      <Input
-                        id="address"
-                        value={user?.address}
-                        onChange={(e) => handleInputChange("address", e.target.value)}
-                        className="flex-1"
-                      />
-                    ) : (
-                      <span className="text-sm text-gray-600">{user.address}</span>
-                    )}
+                    <span className="text-sm text-gray-600">{user.address}</span>
                   </div>
                 </div>
               </div>

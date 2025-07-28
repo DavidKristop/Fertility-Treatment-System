@@ -7,8 +7,9 @@ import CreateDoctorForm from "@/components/createUserForm/CreateDoctorForm";
 import { toast } from "react-toastify";
 import type { DoctorRegisterFormValues, RegisterFormValues } from "@/lib/validations/auth";
 import CreateUserForm from "@/components/createUserForm/CreateUserForm";
+import { createManager } from "@/api/manager-management";
 
-export default function CreateUserPage() {
+export default function AdminCreateUserPage() {
   const { setTitle, setBreadCrumbs } = useAuthHeader()
   const [userRole, setUserRole] = useState<'ROLE_DOCTOR' | 'ROLE_MANAGER' | 'ROLE_STAFF'>('ROLE_DOCTOR')
 
@@ -24,7 +25,7 @@ export default function CreateUserPage() {
   const handleUserFormSubmit = async (data: RegisterFormValues) => {
     try {
       if(userRole === 'ROLE_STAFF') await createStaff({...data,role:"ROLE_STAFF"});
-      else if(userRole === 'ROLE_MANAGER') await createStaff({...data,role:"ROLE_MANAGER"});
+      else if(userRole === 'ROLE_MANAGER') await createManager({...data,role:"ROLE_MANAGER"});
       toast.success("Tạo tài khoản quản lý thành công!");
     } catch (err: any) {
       toast.error("Tạo tài khoản thất bại: " + err.message);
@@ -53,6 +54,7 @@ export default function CreateUserPage() {
           >
             <MenuItem value="ROLE_DOCTOR">Tạo tài khoản bác sĩ</MenuItem>
             <MenuItem value="ROLE_STAFF">Tạo tài khoản nhân viên</MenuItem>
+            <MenuItem value="ROLE_MANAGER">Tạo tài khoản quản lý</MenuItem>
           </Select>
         </FormControl>
         <CardContent className="pt-6 space-y-4">

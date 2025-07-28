@@ -58,7 +58,6 @@ export const createDrug = async (drugData: DrugCreateRequest): Promise<ApiRespon
   return response.json();
 }
 
-// ✅ Thêm API update drug
 export const updateDrug = async (id: string, drugData: DrugUpdateRequest): Promise<ApiResponse<DrugResponse>> => {
   const response = await fetchWrapper(
     `drugs/${id}`,
@@ -80,7 +79,6 @@ export const updateDrug = async (id: string, drugData: DrugUpdateRequest): Promi
   return response.json();
 }
 
-// ✅ Thêm API deactivate drug
 export const deactivateDrug = async (id: string): Promise<ApiResponse<string>> => {
   const response = await fetchWrapper(
     `drugs/deactivate/${id}`,
@@ -98,7 +96,6 @@ export const deactivateDrug = async (id: string): Promise<ApiResponse<string>> =
   return response.json();
 }
 
-// ✅ Thêm API reactivate drug
 export const reactivateDrug = async (id: string): Promise<ApiResponse<string>> => {
   const response = await fetchWrapper(
     `drugs/reactivate/${id}`,

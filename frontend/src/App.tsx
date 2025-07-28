@@ -57,7 +57,6 @@ import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
 import ManagerContractDetail from "./pages/manager/contracts/ContractDetail";
 import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
-import DrugDetail from "./pages/manager/drugs/DrugDetail";
 import EditDrug from "./pages/manager/drugs/EditDrug";
 import StaffAssignedDrugPage from "@/pages/staff/AssignDrug/StaffAssignDrugPage";
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
@@ -94,6 +93,7 @@ import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps
 import ManagerProfile from "./pages/manager/ManagerProfile";
 import NotFound from "./pages/not-found/not-found";
 import CreateUserPage from "./pages/manager/CreateUserPage";
+import AdminCreateUserPage from "./pages/admin/AdminCreateUserPage";
 
 
 
@@ -300,7 +300,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <DrugsManagement /> },
           { path: "create", element: <CreateDrug /> },
-          { path: ":id", element: <DrugDetail /> },
           { path: "edit/:id", element: <EditDrug /> },
         ],
       },
@@ -329,7 +328,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin/create-user",
-        element: <CreateUserPage />,
+        element: <AdminCreateUserPage />,
       },
       // fallback for admin subpaths
       { path: "*", element: <NotFound /> },

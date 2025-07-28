@@ -204,6 +204,19 @@ export const assignDrugSetRequestSchema = z.object({
   patientDrugs:z.array(patientDrugSetRequestSchema)
 })
 
+export const serviceSchema = z.object({
+  name: z.string()
+    .min(1, "Tên dịch vụ không được để trống")
+    .max(50, "Tên không được quá 50 ký tự"),
+  description: z.string()
+    .max(200, "Mô tả không được quá 200 ký tự"),
+  price: z.number()
+    .min(0.01, "Giá phải lớn hơn 0"),
+  unit: z.string()
+    .min(1, "Đơn vị không được để trống")
+    .max(50, "Đơn vị không được quá 50 ký tự"),
+});
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 export type PatientRegisterFormWithConfirmPasswordValues = z.infer<typeof patientRegisterSchemaWithConfirmPassword>;
@@ -213,4 +226,5 @@ export type StaffRegisterFormValues = z.infer<typeof staffRegisterSchema>;
 export type AdminRegisterFormValues = z.infer<typeof adminRegisterSchema>;
 export type ManagerRegisterFormValues = z.infer<typeof managerRegisterSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+export type ServiceSchema = z.infer<typeof serviceSchema>;
 export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

@@ -4,7 +4,8 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
-import type { RegisterFormValues } from "@/lib/validations/auth";
+import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 export default function CreateUserForm({
     onSubmitCb,
@@ -12,6 +13,7 @@ export default function CreateUserForm({
     onSubmitCb: (data: RegisterFormValues) => Promise<void>,
 }){
     const formik = useFormik<RegisterFormValues>({
+        validationSchema: toFormikValidationSchema(registerSchema),
         initialValues: {
             username: '',
             email: '',
@@ -38,7 +40,7 @@ export default function CreateUserForm({
     useEffect(() => {
       setTitle("Tạo tài khoản Quản lý")
       setBreadCrumbs([
-        { label: "Tạo tài khoản Quản lý", path: "/admin/create-manager" },
+        { label: "Tạo tài khoản Quản lý", path: "/admin/create-user" },
       ])
     },[])
   

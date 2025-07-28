@@ -122,23 +122,10 @@ export const admindSideBarItemsProp: SidebarItem[] = [
       path: "/admin/manage-users",
     },
     {
-      id: "account",
-      label: "Tạo tài khoản",
-      icon: User,
-      children: [
-        {
-          id: "account-manager",
-          label: "Tạo tài khoản Quản lý",
-          icon: PlusIcon,
-          path: "/admin/create-manager",
-        },
-      ],
-    },
-    {
       id: "create-user",
-      label: "Tạo tài khoản bác sĩ",
+      label: "Tạo tài khoản người dùng",
       icon: User,
-      path: "/manager/create-user",
+      path: "/admin/create-user",
     },
     {
       id: "profile",
