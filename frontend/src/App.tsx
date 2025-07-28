@@ -42,6 +42,7 @@ import CreateDoctorPage from "./pages/staff/CreateDoctorPage";
 import PaymentManagement from "./pages/staff/PaymentManagement";
 import StaffProfile from "./pages/staff/StaffProfile";
 import ScheduleDetail from "./pages/staff/ScheduleDetail";
+import StaffFeedbackPage from "./pages/staff/StaffFeedbackPage";
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -213,6 +214,7 @@ const router = createBrowserRouter([
       },
       { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
       { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
+      { path: "get-all-feedback", element: <StaffFeedbackPage /> },
       { path: "profile", element: <StaffProfile /> },
       // fallback for patient subpaths
       { path: "*", element: <NotFound /> },
