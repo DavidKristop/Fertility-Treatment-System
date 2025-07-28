@@ -122,23 +122,25 @@ export default function TreatmentDetailPage(){
               />
             </FormSection>
           </Grid>
-          <Grid size={12}>
-            <FormSection title="Góp ý về quá trình điều trị" icon={ClipboardSignature}>
-              <Editor
-                value={doctorsNote}
-                onTextChange={(e) => setDoctorsNote(e.htmlValue || "")}
-                placeholder="Bạn có thể chia sẻ cảm nhận, góp ý hoặc bất kỳ điều gì liên quan đến kế hoạch điều trị..."
-                className="h-[300px] mt-2"
-              />
-              <Button
-                className="mt-4"
-                onClick={handleSubmitFeedback}
-                disabled={!doctorsNote || isSubmitting}
-              >
-                {isSubmitting ? "Đang gửi..." : "Gửi góp ý"}
-              </Button>
-            </FormSection>
-          </Grid>
+          {treatmentDetail?.status === "COMPLETED" && (
+            <Grid size={12}>
+              <FormSection title="Góp ý về quá trình điều trị" icon={ClipboardSignature}>
+                <Editor
+                  value={doctorsNote}
+                  onTextChange={(e) => setDoctorsNote(e.htmlValue || "")}
+                  placeholder="Bạn có thể chia sẻ cảm nhận, góp ý hoặc bất kỳ điều gì liên quan đến kế hoạch điều trị..."
+                  className="h-[300px] mt-2"
+                />
+                <Button
+                  className="mt-4"
+                  onClick={handleSubmitFeedback}
+                  disabled={!doctorsNote || isSubmitting}
+                >
+                  {isSubmitting ? "Đang gửi..." : "Gửi góp ý"}
+                </Button>
+              </FormSection>
+            </Grid>
+          )}
         </Grid>
       </LoadingComponent>
     </TreatmentDetailProvider>

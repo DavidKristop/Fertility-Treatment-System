@@ -1,5 +1,5 @@
 import type { SidebarItem } from "@/api/types";
-import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus } from "lucide-react";
+import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus, MessageCircle } from "lucide-react";
 
 //Patient
 export const patientSidebarItemsProp: SidebarItem[] = [
@@ -295,6 +295,12 @@ export const staffSidebarItemsProp: SidebarItem[] = [
     label: "Tạo tài khoản bác sĩ",
     icon: Plus,
     path: "/staff/doctors/create",
+  },
+  {
+    id: "get-all-feedback",
+    label: "Phản hồi của bệnh nhân",
+    icon: MessageCircle,
+    path: "/staff/get-all-feedback",
   },
   {
     id: "profile",
