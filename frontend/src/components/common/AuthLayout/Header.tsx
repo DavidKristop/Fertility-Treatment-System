@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Bell, User, Menu, LogOut } from "lucide-react"
+import { User, Menu, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,7 +48,7 @@ export default function Header({
     ROLE_PATIENT: "Bệnh nhân",
     ROLE_DOCTOR: "Bác sĩ",
     ROLE_MANAGER: "Quản lý",
-    ROLE_ADMIN: "Admin",
+    ROLE_ADMIN: "Quản trị",
     ROLE_STAFF: "Nhân viên",
   }
   const roleLabel = roleLabelMap[userRole] ?? userRole

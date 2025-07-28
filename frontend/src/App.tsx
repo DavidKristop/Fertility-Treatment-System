@@ -92,11 +92,17 @@ import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
-import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
+import {
+  admindSideBarItemsProp,
+  doctorSidebarItemsProp,
+  managerSideBarItemProps,
+  patientSidebarItemsProp,
+  staffSidebarItemsProp,
+} from "./components/common/AuthLayout/LayoutSideBarItems";
 import ManagerProfile from "./pages/manager/ManagerProfile";
 import NotFound from "./pages/not-found/not-found";
-
-
+import AdminProfile from "./pages/admin/AdminProfile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 // Layout for authenticated dashboards (no header/footer)
 
@@ -156,7 +162,10 @@ const router = createBrowserRouter([
     path: "patient",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_PATIENT"]}>
-        <Layout sideBarItemsProp={patientSidebarItemsProp} children={<Outlet />} />
+        <Layout
+          sideBarItemsProp={patientSidebarItemsProp}
+          children={<Outlet />}
+        />
       </ProtectedRoute>
     ),
     children: [
@@ -197,13 +206,16 @@ const router = createBrowserRouter([
     path: "staff",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_STAFF"]}>
-        <Layout sideBarItemsProp={staffSidebarItemsProp} children={<Outlet />} />
+        <Layout
+          sideBarItemsProp={staffSidebarItemsProp}
+          children={<Outlet />}
+        />
       </ProtectedRoute>
     ),
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <StaffDashboard /> },
-      { path: "schedule-detail/:scheduleId", element: <ScheduleDetail />, },
+      { path: "schedule-detail/:scheduleId", element: <ScheduleDetail /> },
       { path: "doctors/create", element: <CreateDoctorPage /> },
       {
         path: "payments",
@@ -213,7 +225,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
-      { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
+      { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage /> },
       { path: "get-all-feedback", element: <StaffFeedbackPage /> },
       { path: "profile", element: <StaffProfile /> },
       // fallback for patient subpaths
@@ -226,13 +238,19 @@ const router = createBrowserRouter([
     path: "doctor",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_DOCTOR"]}>
-        <Layout sideBarItemsProp={doctorSidebarItemsProp} children={<Outlet />} />
+        <Layout
+          sideBarItemsProp={doctorSidebarItemsProp}
+          children={<Outlet />}
+        />
       </ProtectedRoute>
     ),
     children: [
       { path: "dashboard", element: <DoctorDashboard /> },
       { path: "schedule", element: <Schedules /> },
-      { path: "schedule-result/:scheduleId", element: <DoctorScheduleResult />, },
+      {
+        path: "schedule-result/:scheduleId",
+        element: <DoctorScheduleResult />,
+      },
       { path: "assigned-drugs", element: <DoctorAssignDrugsPage /> },
       { path: "assigned-drugs/:id", element: <DoctorAssignDrugDetailPage /> },
       { path: "pending", element: <DoctorAppointmentRequest /> },
@@ -257,7 +275,10 @@ const router = createBrowserRouter([
     path: "manager",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_MANAGER"]}>
-        <Layout sideBarItemsProp={managerSideBarItemProps} children={<Outlet />} />
+        <Layout
+          sideBarItemsProp={managerSideBarItemProps}
+          children={<Outlet />}
+        />
       </ProtectedRoute>
     ),
     children: [
@@ -288,8 +309,8 @@ const router = createBrowserRouter([
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
       { path: "profile", element: <ManagerProfile /> },
-      { 
-        path: "contracts", 
+      {
+        path: "contracts",
         children: [
           { index: true, element: <ManagerContracts /> },
           { path: ":id", element: <ManagerContractDetail /> },
@@ -315,10 +336,17 @@ const router = createBrowserRouter([
     path: "admin",
     element: (
       <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-        <Layout sideBarItemsProp={admindSideBarItemsProp} children={<Outlet />} />
+        <Layout
+          sideBarItemsProp={admindSideBarItemsProp}
+          children={<Outlet />}
+        />
       </ProtectedRoute>
     ),
     children: [
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
+      },
       {
         path: "/admin/manage-users",
         element: <ManageUserPage />,
@@ -330,6 +358,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/create-manager",
         element: <CreateManagerPage />,
+      },
+      {
+        path: "profile",
+        element: <AdminProfile />,
       },
       // fallback for admin subpaths
       { path: "*", element: <NotFound /> },
