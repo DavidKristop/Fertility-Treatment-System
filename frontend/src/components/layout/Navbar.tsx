@@ -140,8 +140,11 @@ export default function Navbar() {
           </Dropdown>
 
           <Dropdown label="Bảng giá">
-            <DropdownMenuItem>Khám tổng quát</DropdownMenuItem>
-            <DropdownMenuItem>Xét nghiệm</DropdownMenuItem>
+            <Link to="/pricing/services">
+              <DropdownMenuItem className="cursor-pointer">
+                Dịch vụ
+              </DropdownMenuItem>
+            </Link>
           </Dropdown>
 
           <Dropdown label="Dịch vụ">
@@ -152,11 +155,6 @@ export default function Navbar() {
               <DropdownMenuItem>Dịch vụ IVF</DropdownMenuItem>
             </Link>
           </Dropdown>
-
-          {/* <Dropdown label="Địa điểm">
-            <DropdownMenuItem>Cơ sở Quận 1</DropdownMenuItem>
-            <DropdownMenuItem>Cơ sở Thủ Đức</DropdownMenuItem>
-          </Dropdown> */}
         </nav>
 
         {user ? (
@@ -282,18 +280,11 @@ export default function Navbar() {
             {openDropdown === "Bảng giá" && (
               <div className="pl-6">
                 <Link
-                  to="/pricing/general-checkup"
+                  to="/pricing/services"
                   className={mobileNavItemClass}
                   onClick={toggleMobileMenu}
                 >
-                  Khám tổng quát
-                </Link>
-                <Link
-                  to="/pricing/tests"
-                  className={mobileNavItemClass}
-                  onClick={toggleMobileMenu}
-                >
-                  Xét nghiệm
+                  Dịch vụ
                 </Link>
               </div>
             )}
@@ -326,34 +317,6 @@ export default function Navbar() {
               </div>
             )}
           </div>
-
-          {/* <div className="flex flex-col">
-            <button
-              className={`${mobileNavItemClass} text-left flex justify-between items-center`}
-              onClick={() => toggleDropdown("Địa điểm")}
-            >
-              Địa điểm
-              <span>{openDropdown === "Địa điểm" ? "−" : "+"}</span>
-            </button>
-            {openDropdown === "Địa điểm" && (
-              <div className="pl-6">
-                <Link
-                  to="/locations/district-1"
-                  className={mobileNavItemClass}
-                  onClick={toggleMobileMenu}
-                >
-                  Cơ sở Quận 1
-                </Link>
-                <Link
-                  to="/locations/thu-duc"
-                  className={mobileNavItemClass}
-                  onClick={toggleMobileMenu}
-                >
-                  Cơ sở Thủ Đức
-                </Link>
-              </div>
-            )}
-          </div> */}
 
           <Link
             to="/authorization/login"
