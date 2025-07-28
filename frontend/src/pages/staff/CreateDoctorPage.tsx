@@ -28,8 +28,8 @@ export default function CreateDoctorPage() {
   },[])
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <Card>
+    <div className="mx-auto p-6">
+      <Card className="p-6">
         <CardContent className="pt-6 space-y-4">
           <CreateDoctorForm onSubmitCb={handleSubmit}/>
         </CardContent>

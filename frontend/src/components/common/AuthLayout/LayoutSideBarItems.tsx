@@ -22,13 +22,13 @@ export const patientSidebarItemsProp: SidebarItem[] = [
         },
         {
           id: "schedule-appointment",
-          label: "Đặt lịch hẹn",
+          label: "Đặt lịch hẹn tư vấn",
           icon: CalendarPlus,
           path: "/patient/appointments/schedule",
         },
         {
           id: "my-requests",
-          label: "Xem lịch hẹn đặt",
+          label: "Xem lịch tư vấn đã đặt",
           icon: CalendarCheck,
           path: "/patient/appointments/my-request"
         }
@@ -132,6 +132,12 @@ export const admindSideBarItemsProp: SidebarItem[] = [
       ],
     },
     {
+      id: "create-user",
+      label: "Tạo tài khoản bác sĩ",
+      icon: User,
+      path: "/manager/create-user",
+    },
+    {
       id: "profile",
       label: "Hồ sơ & Cài đặt",
       icon: User,
@@ -191,10 +197,10 @@ export const managerSideBarItemProps: SidebarItem[] = [
       path: "/manager/contracts",
     },
     {
-      id: "create-doctor",
-      label: "Tạo tài khoản bác sĩ",
+      id: "create-user",
+      label: "Tạo tài khoản",
       icon: User,
-      path: "/manager/doctors/create",
+      path: "/manager/create-user",
     },
     {
       id: "profile",
@@ -231,7 +237,7 @@ export const staffSidebarItemsProp: SidebarItem[] = [
     id: "create-doctor",
     label: "Tạo tài khoản bác sĩ",
     icon: Plus,
-    path: "/staff/doctors/create",
+    path: "/staff/create-doctor",
   },
   {
     id: "profile",

@@ -40,9 +40,9 @@ export default function CreateUserPage() {
   }, [])
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <Card>
-        <FormControl fullWidth className="mb-4">
+    <div className="mx-auto p-6">
+      <Card className="p-6">
+        <FormControl fullWidth>
           <InputLabel>Tạo tài khoản</InputLabel>
           <Select
             value={userRole}
