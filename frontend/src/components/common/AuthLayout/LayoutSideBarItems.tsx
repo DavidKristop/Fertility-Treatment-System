@@ -1,5 +1,7 @@
 import type { SidebarItem } from "@/api/types";
-import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus } from "lucide-react";
+
+import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus, MessageCircle, ChartBar, FilePlus2 } from "lucide-react";
+
 
 //Patient
 export const patientSidebarItemsProp: SidebarItem[] = [
@@ -111,6 +113,7 @@ export const doctorSidebarItemsProp: SidebarItem[] = [
     },
 ]
 
+//Admin
 export const admindSideBarItemsProp: SidebarItem[] = [
     {
       id: "users",
@@ -145,6 +148,7 @@ export const admindSideBarItemsProp: SidebarItem[] = [
     },
 ]
 
+//Manager
 export const managerSideBarItemProps: SidebarItem[] = [
     {
       id: "dashboard",
@@ -155,7 +159,7 @@ export const managerSideBarItemProps: SidebarItem[] = [
     {
       id: "protocol",
       label: "Phác đồ điều trị",
-      icon: FileText,
+      icon: FilePlus2,
       children: [
         {
           id: "createprotocols",
@@ -174,7 +178,7 @@ export const managerSideBarItemProps: SidebarItem[] = [
     {
       id: "drugsAndServicesManagement",
       label: "Quản lý thuốc & Dịch vụ",
-      icon: FileText,
+      icon: ChartBar,
       children: [
         {
           id: "drugs",
@@ -193,7 +197,7 @@ export const managerSideBarItemProps: SidebarItem[] = [
     {
       id: "contracts",
       label: "Hợp đồng",
-      icon: FileText,
+      icon: FileSignature,
       path: "/manager/contracts",
     },
     {
@@ -238,6 +242,12 @@ export const staffSidebarItemsProp: SidebarItem[] = [
     label: "Tạo tài khoản bác sĩ",
     icon: Plus,
     path: "/staff/create-doctor",
+  },
+  {
+    id: "get-all-feedback",
+    label: "Phản hồi của bệnh nhân",
+    icon: MessageCircle,
+    path: "/staff/get-all-feedback",
   },
   {
     id: "profile",

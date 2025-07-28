@@ -19,9 +19,6 @@ export default function Journey() {
           <p className="text-sm leading-relaxed">
             Từ chẩn đoán đến điều trị, tất cả đều được thực hiện tại cơ sở hiện đại với quy trình chuẩn hóa.
           </p>
-          <button className="mt-4 bg-[#ffdfb6] text-black font-bold px-6 py-3 rounded-full hover:bg-[#f2cd9f] transition-colors">
-            Xem dịch vụ
-          </button>
         </div>
 
         {/* Cột 2 */}
@@ -30,9 +27,6 @@ export default function Journey() {
           <p className="text-sm leading-relaxed">
             Ứng dụng các phương pháp IUI và IVF hiện đại, tăng tỷ lệ thành công ngay từ chu kỳ đầu.
           </p>
-          <button className="mt-4 bg-[#ffdfb6] text-black font-bold px-6 py-3 rounded-full hover:bg-[#f2cd9f] transition-colors">
-            Tìm hiểu
-          </button>
         </div>
 
         {/* Cột 3 */}
@@ -41,9 +35,6 @@ export default function Journey() {
           <p className="text-sm leading-relaxed">
             Mỗi ca điều trị là một câu chuyện riêng, và chúng tôi luôn sẵn sàng lắng nghe, chia sẻ và hỗ trợ.
           </p>
-          <button className="mt-4 bg-[#ffdfb6] text-black font-bold px-6 py-3 rounded-full hover:bg-[#f2cd9f] transition-colors">
-            Gặp chuyên gia
-          </button>
         </div>
       </div>
     </section>

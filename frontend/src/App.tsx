@@ -15,8 +15,6 @@ import Home from "./pages/Home";
 import Company from "./pages/guest/about/Company";
 import Team from "./pages/guest/about/Team";
 import Services from "./pages/guest/pricing/Services";
-import Insurance from "./pages/guest/pricing/Insurance";
-import Financing from "./pages/guest/pricing/Financing";
 import Iui from "./pages/guest/services/iui";
 import Ivf from "./pages/guest/services/ivf";
 import DoctorListPage from "./pages/guest/doctorList/DoctorListPage";
@@ -43,6 +41,7 @@ import CreateDoctorPage from "./pages/staff/CreateDoctorPage";
 import PaymentManagement from "./pages/staff/PaymentManagement";
 import StaffProfile from "./pages/staff/StaffProfile";
 import ScheduleDetail from "./pages/staff/ScheduleDetail";
+import StaffFeedbackPage from "./pages/staff/StaffFeedbackPage";
 
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -92,6 +91,7 @@ import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
 import Layout from "./components/common/AuthLayout/Layout";
 import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
+import ManagerProfile from "./pages/manager/ManagerProfile";
 import NotFound from "./pages/not-found/not-found";
 import CreateUserPage from "./pages/manager/CreateUserPage";
 
@@ -123,8 +123,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "services", element: <Services /> },
-          { path: "insurance", element: <Insurance /> },
-          { path: "financing", element: <Financing /> },
         ],
       },
       {
@@ -215,6 +213,7 @@ const router = createBrowserRouter([
       { path: "create-doctor", element: <CreateDoctorPage /> },
       { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
       { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
+      { path: "get-all-feedback", element: <StaffFeedbackPage /> },
       { path: "profile", element: <StaffProfile /> },
       // fallback for patient subpaths
       { path: "*", element: <NotFound /> },
@@ -288,6 +287,7 @@ const router = createBrowserRouter([
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
       { path: "create-user", element: <CreateUserPage /> },
+      { path: "profile", element: <ManagerProfile /> },
       { 
         path: "contracts", 
         children: [

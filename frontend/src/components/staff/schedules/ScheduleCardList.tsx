@@ -18,19 +18,27 @@ const ScheduleCardList: React.FC<ScheduleCardListProps> = ({
   totalPages,
   onPageChange,
 }) => {
+  // Sắp xếp để trạng thái PENDING ở đầu
+  const sortedSchedules = [...schedules].sort((a, b) => {
+    if (a.status === "PENDING" && b.status !== "PENDING") return -1;
+    if (a.status !== "PENDING" && b.status === "PENDING") return 1;
+    return 0;
+  });
+
   return (
     <div>
-        <>
-          {schedules.map((schedule) => (
-            <ScheduleCard
-              key={schedule.id}
-              schedule={schedule}
-              onViewDetails={onViewDetails}
-            />
-          ))}
+      <>
+        {sortedSchedules.map((schedule) => (
+          <ScheduleCard
+            key={schedule.id}
+            schedule={schedule}
+            onViewDetails={onViewDetails}
+          />
+        ))}
 
-          {/* Pagination UI nếu cần */}
-          {typeof currentPage === "number" && typeof totalPages === "number" && onPageChange && (
+        {typeof currentPage === "number" &&
+          typeof totalPages === "number" &&
+          onPageChange && (
             <div className="mt-4 flex justify-center space-x-2">
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
@@ -45,9 +53,9 @@ const ScheduleCardList: React.FC<ScheduleCardListProps> = ({
               ))}
             </div>
           )}
-        </>
+      </>
     </div>
-  )
-}
+  );
+};
 
-export default ScheduleCardList
+export default ScheduleCardList;

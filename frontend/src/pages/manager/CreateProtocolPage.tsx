@@ -131,15 +131,17 @@ export default function CreateProtocolPage() {
   }, []);
 
   useEffect(()=>{
-    setTitle("Tạo Protocol mới")
+    setTitle("Tạo phác đồ điều trị mới")
     setBreadCrumbs([
       { label: "Trang tổng quan", path: "/manager/dashboard" },
+      { label: "Tạo phác đồ điều trị mới"},
+
     ])
   },[])
 
   return (
     <div className="mx-auto p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Tạo Protocol mới</h2>
+      <h2 className="text-2xl font-bold mb-4">Tạo phác đồ điều trị mới</h2>
 
       {error && <p className="text-red-600 mb-4">{error}</p>}
 
