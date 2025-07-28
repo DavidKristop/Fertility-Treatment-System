@@ -1,5 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
+import NotAuthorized from '@/pages/not-authorized/not-authorized'
+import NotFound from '@/pages/not-found/not-found'
 
 const HOME_BY_ROLE: Record<string,string> = {
   ROLE_PATIENT: '/patient/dashboard',
@@ -28,13 +30,11 @@ export default function ProtectedRoute({
     payload = jwtDecode<{ role: string }>(token)
   } catch {
     localStorage.removeItem('access_token')
-    return <Navigate to="/authorization/login" replace/>
+    return <NotAuthorized/>
   }
 
   if (!allowedRoles.includes(payload.role)) {
-    // redirect về dashboard của chính role đó
-    const home = HOME_BY_ROLE[payload.role] || '/home'
-    return <Navigate to={home} replace />
+    return <NotAuthorized/>
   }
 
   return <>{children}</>

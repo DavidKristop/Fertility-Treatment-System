@@ -95,6 +95,7 @@ import UserDetailPage from "./pages/admin/UserDetailPage";
 import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
 import { admindSideBarItemsProp, doctorSidebarItemsProp, managerSideBarItemProps, patientSidebarItemsProp, staffSidebarItemsProp } from "./components/common/AuthLayout/LayoutSideBarItems";
+import NotFound from "./pages/not-found/not-found";
 
 
 
@@ -218,7 +219,7 @@ const router = createBrowserRouter([
       { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage />, },
       { path: "profile", element: <StaffProfile /> },
       // fallback for patient subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
@@ -249,7 +250,7 @@ const router = createBrowserRouter([
       // Profile routes
       { path: "profile", element: <DoctorProfile /> },
       // fallback for doctor subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
@@ -306,7 +307,7 @@ const router = createBrowserRouter([
       },
 
       // fallback for manager subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
@@ -320,10 +321,6 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "dashboard",
-        element: <AdminDashboard />,
-      },
-      {
         path: "/admin/manage-users",
         element: <ManageUserPage />,
       },
@@ -336,7 +333,7 @@ const router = createBrowserRouter([
         element: <CreateManagerPage />,
       },
       // fallback for admin subpaths
-      { path: "*", element: <Navigate to="/authorization/login" replace /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 

@@ -10,7 +10,7 @@ import { RefreshCw } from "lucide-react"
 
 interface PaymentDetailFormProps {
   payment: PaymentResponse
-  onProcessPayment: (paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL") => void
+  onProcessPayment: (paymentMethod: "CASH" | "VNPAY") => void
   onCancelPayment: () => void
   isProcessing?: boolean
   isCanceling?: boolean
@@ -53,10 +53,8 @@ const PaymentDetailForm: React.FC<PaymentDetailFormProps> = ({
     switch (method) {
       case "CASH":
         return "Tiền mặt"
-      case "CREDIT_CARD":
-        return "Thẻ"
-      case "PAYPAL":
-        return "PayPal"
+      case "VNPAY":
+        return "VNPay"
       default:
         return "-"
     }
@@ -67,10 +65,8 @@ const PaymentDetailForm: React.FC<PaymentDetailFormProps> = ({
     switch (method) {
       case "CASH":
         return "bg-blue-100 text-blue-800"
-      case "CREDIT_CARD":
+      case "VNPAY":
         return "bg-purple-100 text-purple-800"
-      case "PAYPAL":
-        return "bg-indigo-100 text-indigo-800"
       default:
         return "bg-gray-100 text-gray-800"
     }

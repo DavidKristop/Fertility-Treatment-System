@@ -500,7 +500,7 @@ export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
 export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 
-export type PaymentMethod = "CASH" | "CREDIT_CARD" | "PAYPAL" | null;
+export type PaymentMethod = "CASH" | "VNPAY" | null;
 
 export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";
 
@@ -534,8 +534,7 @@ export const assignDrugStatus = {
 
 export const paymentMethod = {
   CASH: "Tiền mặt",
-  CREDIT_CARD: "Thẻ tín dụng",
-  PAYPAL: "PayPal",
+  VNPAY: "VNPay",
 }
 
 export const paymentStatus = {
@@ -573,8 +572,7 @@ export const assignDrugStatusColor = {
 
 export const paymentMethodColor = {
   CASH: "blue",
-  CREDIT_CARD: "green",
-  PAYPAL: "yellow",
+  VNPAY: "green",
 }
 
 export const paymentStatusColor = {

@@ -79,10 +79,10 @@ export const getStaffPaymentDetail = async (id: string): Promise<ApiResponse<Pay
 
 export const processPaymentByStaff = async (
     paymentId: string,
-    paymentMethod: "CASH" | "CREDIT_CARD" | "PAYPAL"
+    paymentMethod: "CASH" | "VNPAY"
 ): Promise<ApiResponse<PaymentResponse>> => {
     const response = await fetchWrapper(
-        `payments/manager/process/${paymentId}?paymentMethod=${paymentMethod}`,
+        `payments/staff/process/${paymentId}?paymentMethod=${paymentMethod}`,
         {
             method: "PUT",
         },
@@ -99,7 +99,7 @@ export const processPaymentByStaff = async (
 
 export const cancelPaymentByStaff = async (paymentId: string): Promise<ApiResponse<PaymentResponse>> => {
     const response = await fetchWrapper(
-        `payments/manager/cancel/${paymentId}`,
+        `payments/staff/cancel/${paymentId}`,
         {
             method: "PUT",
         },
