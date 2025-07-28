@@ -191,7 +191,6 @@ export function CreateTreatmentForm() {
           disabled={!selectedPatient}
           placeholder="Medical history will be auto-filled when patient is selected..."
           className="resize-none"
-          readOnly={true}
         />
       </div>
 

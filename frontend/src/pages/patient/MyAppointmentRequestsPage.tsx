@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyAppointmentRequests } from "@/api/request-appointment";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import type { RequestAppointmentResponse } from "@/api/types";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
@@ -158,6 +158,9 @@ export default function MyAppointmentRequests() {
                         {req.status === "DENIED" && (
                           <span className="text-red-600">Từ chối</span>
                         )}
+                      </div>
+                      <div className="text-sm">
+                        Buổi hẹn: <Link className="text-blue-600 hover:underline" to={`/patient/schedule-result/${req.schedule?.id}`}>{req.schedule?.id}</Link>
                       </div>
                       {req.status === "DENIED" && (
                         <div className="text-sm text-red-500">

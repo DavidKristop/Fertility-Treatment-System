@@ -16,6 +16,7 @@ import UnPaidPayment from "@/components/common/UnPaidPayment";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 import { createFeedback } from "@/api/feedback";
 import { Editor } from "primereact/editor";
+import TreatmentPhasesDetail from "@/components/TreatmentPhasesDetail";
 
 export default function TreatmentDetailPage(){
   const [isLoading, setIsLoading] = useState(false)
@@ -113,6 +114,7 @@ export default function TreatmentDetailPage(){
               <TreatmentInfoCard treatment={treatmentDetail!} />
             </FormSection>
           </Grid>
+          <TreatmentPhasesDetail treatment={treatmentDetail!} />
           <Grid size={12}>
             <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
               <TreatmentPhaseManager

@@ -93,7 +93,7 @@ export default function StaffAssignDrugDetailPage() {
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
-              onClick={() => navigate("/manager/assigned-drugs")}
+              onClick={() => navigate("/staff/assigned-drugs")}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -120,17 +120,17 @@ export default function StaffAssignDrugDetailPage() {
             <p className="text-gray-600">{assignDrug?.title}</p>
           </div>
 
-          {/* Contract Section */}
+          {/* Contract Section
           {assignDrug?.contract?.signed === false && (
-              <UnSignedContract contractUrl={`manager/contracts/${assignDrug.contract.id}`} />
-          )}
+              <UnSignedContract contractUrl={`staff/contracts/${assignDrug.contract.id}`} />
+          )} */}
 
           {/* Payment Section */}
           {assignDrug?.payment?.status === "PENDING" && (
               <UnPaidPayment 
                   payments={assignDrug?.payment ? [assignDrug.payment] : []}
                   onClick={(payment) => {
-                      navigate(`manager/payments/${payment.id}`)
+                      navigate(`staff/payments/${payment.id}`)
                   }}  
               />
           )}
@@ -212,7 +212,7 @@ export default function StaffAssignDrugDetailPage() {
                 disabled={assignDrug.payment.status === "PENDING"}
                 onClick={() => handleComplete()}
               >
-                {assignDrug.payment.status !== "PENDING"?"Hoàn thành":"Đang chờ thanh toán"}
+                {assignDrug.payment.status !== "PENDING"?"Lấy toa thuốc":"Đang chờ thanh toán"}
               </Button>
             )}
           </div>

@@ -121,7 +121,7 @@ export default function StaffAssignedDrugPage() {
       )}
 
       {!loading && assignDrugs.length > 0 && (
-        <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/manager/assigned-drugs/${assignDrug.id}`)}/>
+        <AssignDrugDisplay assignDrugs={assignDrugs} onClick={(assignDrug)=>navigate(`/staff/assigned-drugs/${assignDrug.id}`)}/>
       )}
 
       {totalPages > 1 && (

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getAppointmentRequestToMe } from "@/api/request-appointment";
 import { acceptRequestAppointment, rejectRequestAppointment } from "@/api/request-appointment";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "@/components/ui/pagination";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import type { RequestAppointmentResponse } from "@/api/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -206,6 +206,9 @@ export default function DoctorAppointmentRequest() {
                             {req.status === "DENIED" && (
                               <span className="text-red-600">Từ chối</span>
                             )}
+                          </div>
+                          <div className="text-sm">
+                            Buổi hẹn: <Link className="text-blue-600 hover:underline" to={`/doctor/schedule-result/${req.schedule?.id}`}>{req.schedule?.id}</Link>
                           </div>
                           {req.status === "DENIED" && (
                             <div className="text-sm text-red-500">
