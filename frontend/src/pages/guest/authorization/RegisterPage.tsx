@@ -89,8 +89,6 @@ export default function RegisterPage() {
                 </button>
               </div>
             )}
-            <div className="text-center text-sm text-gray-500">Hoặc đăng kí với</div>
-            <GoogleAuth text="Đăng kí Google" mode="register" />
           </div>
         </CardContent>
       </Card>
