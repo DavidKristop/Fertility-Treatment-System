@@ -9,6 +9,10 @@ import { format } from "date-fns"
 interface PaymentCardProps {
   payment: PaymentResponse
   onViewDetails: (paymentId: string) => void
+  onProcessPayment: (paymentId: string) => void
+  onCancelPayment: (paymentId: string) => void
+  isProcessing?: boolean
+  isCanceling?: boolean
 }
 
 const statusText = {

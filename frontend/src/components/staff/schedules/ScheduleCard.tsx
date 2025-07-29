@@ -40,6 +40,10 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({
             {schedule.patient.fullName}
           </div>
           <div className="text-sm mb-1">
+            <span className="font-medium">Bác sĩ:</span>{" "}
+            {schedule.doctor.fullName}
+          </div>
+          <div className="text-sm mb-1">
             <span className="font-medium">Dịch vụ:</span>{" "}
             {schedule.services.map((s) => s.name).join(", ")}
           </div>

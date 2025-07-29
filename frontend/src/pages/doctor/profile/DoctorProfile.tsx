@@ -38,14 +38,13 @@ export default function DoctorProfile() {
     })();
   }, []);
 
-
   useEffect(() => {
-    setTitle("Hồ sơ cá nhân")
+    setTitle("Hồ sơ & cài đặt");
     setBreadCrumbs([
-      { label: "Trang chủ", path: "/doctor/dashboard" },
-      { label: "Hồ sơ cá nhân" },
+      { label: "Trang tổng quan", path: "/doctor/dashboard" },
+      { label: "Hồ sơ cài đặt" },
     ])
-  },[])
+  }, [setTitle, setBreadCrumbs])
 
   return (
     <LoadingComponent isLoading={isFetchingUserProfile}>

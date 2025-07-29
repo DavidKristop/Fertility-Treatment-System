@@ -5,7 +5,6 @@ import ScheduleCalendar from "@/components/ScheduleCalendar";
 import type { ScheduleDetailResponse, ScheduleStatus } from "@/api/types";
 import { toast } from "react-toastify";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
-import LoadingComponent from "@/components/common/LoadingComponent";
 
 export default function Schedules() {
   const [events, setEvents] = useState<ScheduleDetailResponse[]>([]);
