@@ -100,7 +100,7 @@ export const doctorSidebarItemsProp: SidebarItem[] = [
   
     {
       id: "pending-approvals",
-      label: "Chờ duyệt",
+      label: "Yêu cầu tư vấn chờ duyệt",
       icon: ClipboardList,
       path: "/doctor/pending",
     },

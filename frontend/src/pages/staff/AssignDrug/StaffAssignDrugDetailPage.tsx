@@ -130,7 +130,7 @@ export default function StaffAssignDrugDetailPage() {
               <UnPaidPayment 
                   payments={assignDrug?.payment ? [assignDrug.payment] : []}
                   onClick={(payment) => {
-                      navigate(`staff/payments/${payment.id}`)
+                      navigate(`/staff/payments/${payment.id}`)
                   }}  
               />
           )}
@@ -196,7 +196,7 @@ export default function StaffAssignDrugDetailPage() {
             <TreatmentInfo 
               treatment={assignDrug?.treatment || { id: "", status: getDefaultTreatmentStatus(), contractId: "" }}
               phase={assignDrug?.treatmentPhase || { id: "", title: "" }}
-              treatmentUrl={`/manager/treatments/${assignDrug?.treatment.id}`}
+              treatmentUrl={`/staff/treatments/${assignDrug?.treatment.id}`}
             />
           </FormSection>
 

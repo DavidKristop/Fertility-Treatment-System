@@ -53,21 +53,21 @@ export const getStaffPayments = async ({
     const emailParam = email ? `&email=${encodeURIComponent(email)}` : '';
     
     const response = await fetchWrapper(
-        `payments/manager?page=${page}&size=${size}${emailParam}&${statusParams}`,
+        `payments/staff?page=${page}&size=${size}${emailParam}&${statusParams}`,
         {}, 
         true
     );
     
     if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch manager payments');
+        throw new Error(errorData.message || 'Failed to fetch staff payments');
     }
     
     return response.json();
 }
 
 export const getStaffPaymentDetail = async (id: string): Promise<ApiResponse<PaymentResponse>> => {
-    const response = await fetchWrapper(`payments/manager/${id}`, {}, true);
+    const response = await fetchWrapper(`payments/staff/${id}`, {}, true);
     
     if (!response.ok) {
         const errorData = await response.json();
@@ -82,7 +82,7 @@ export const processPaymentByStaff = async (
     paymentMethod: "CASH" | "VNPAY"
 ): Promise<ApiResponse<PaymentResponse>> => {
     const response = await fetchWrapper(
-        `payments/manager/process/${paymentId}?paymentMethod=${paymentMethod}`,
+        `payments/staff/process/${paymentId}?paymentMethod=${paymentMethod}`,
         {
             method: "PUT",
         },
