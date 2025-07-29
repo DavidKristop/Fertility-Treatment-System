@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { getMyProfile } from "@/api/profile";
 import UserGeneralInfo from "@/components/profiles/UserGeneralInfo";
 
-export default function ManagerProfile() {
+export default function AdminProfile() {
   const {setTitle,setBreadCrumbs} = useAuthHeader()
   const [user, setUser] = useState<UserProfileResponse>({
     id: "",
@@ -38,10 +38,9 @@ export default function ManagerProfile() {
   }, []);
 
   useEffect(() => {
-    setTitle("Hồ sơ quản lý")
+    setTitle("Hồ sơ admin")
     setBreadCrumbs([
-      { label: "Trang tổng quan", path: "/manager/dashboard" },
-      { label: "Hồ sơ quản lý" },
+      { label: "Hồ sơ admin" },
     ])
   }, [setTitle, setBreadCrumbs])
 

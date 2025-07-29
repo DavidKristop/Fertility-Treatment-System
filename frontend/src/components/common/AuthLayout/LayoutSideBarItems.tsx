@@ -68,7 +68,7 @@ export const patientSidebarItemsProp: SidebarItem[] = [
     },
     {
       id: "profile",
-      label: "Hồ sơ & Cài đặt",
+      label: "Hồ sơ",
       icon: User,
       path: "/patient/profile",
     },
@@ -111,6 +111,12 @@ export const doctorSidebarItemsProp: SidebarItem[] = [
       icon: Activity,
       path: "/doctor/treatment-plans",
     },
+    {
+      id: "profile",
+      label: "Hồ sơ",
+      icon: User,
+      path: "/doctor/profile",
+    },
 ]
 
 //Admin
@@ -129,7 +135,7 @@ export const admindSideBarItemsProp: SidebarItem[] = [
     },
     {
       id: "profile",
-      label: "Hồ sơ & Cài đặt",
+      label: "Hồ sơ",
       icon: User,
       path: "/admin/profile",
     },
@@ -195,7 +201,7 @@ export const managerSideBarItemProps: SidebarItem[] = [
     },
     {
       id: "profile",
-      label: "Hồ sơ & Cài đặt",
+      label: "Hồ sơ",
       icon: User,
       path: "/manager/profile",
     },
@@ -238,7 +244,7 @@ export const staffSidebarItemsProp: SidebarItem[] = [
   },
   {
     id: "profile",
-    label: "Hồ sơ & Cài đặt",
+    label: "Hồ sơ",
     icon: User,
     path: "/staff/profile",
   },

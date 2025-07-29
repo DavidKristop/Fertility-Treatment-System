@@ -67,6 +67,22 @@ export interface PatientProfile extends UserProfile {
   medicalHistory: string;
 }
 
+export interface UserProfileResponse extends UserResponse{
+  doctorProfile?:DoctorProfileResponse
+  patientProfile?:PatientProfileResponse
+}
+
+export interface DoctorProfileResponse {
+  specialty: string;
+  degree: string;
+  yearsOfExperience: number;
+  licenseNumber: string;
+}
+
+export interface PatientProfileResponse{
+  medicalHistory: string;
+}
+
 export interface DoctorResponse {
   id: string;
   fullName: string;
@@ -531,6 +547,14 @@ export const treatmentStatus = {
   COMPLETED: "Đã hoàn thành",
   CANCELLED: "Đã hủy",
   AWAITING_CONTRACT_SIGNED: "Đang chờ ký hợp đồng",
+}
+
+export const userRole = {
+  ROLE_PATIENT: "Khách hàng",
+  ROLE_STAFF: "Nhân viên",
+  ROLE_DOCTOR: "Bác sĩ",
+  ROLE_ADMIN: "Quản trị viên",
+  ROLE_MANAGER: "Quản lý",
 }
 
 export const appointmentStatus = {

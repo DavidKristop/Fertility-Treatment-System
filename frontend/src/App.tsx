@@ -94,6 +94,7 @@ import ManagerProfile from "./pages/manager/ManagerProfile";
 import NotFound from "./pages/not-found/not-found";
 import CreateUserPage from "./pages/manager/CreateUserPage";
 import AdminCreateUserPage from "./pages/admin/AdminCreateUserPage";
+import AdminProfile from "./pages/admin/AdminProfile";
 
 
 
@@ -303,7 +304,7 @@ const router = createBrowserRouter([
           { path: "edit/:id", element: <EditDrug /> },
         ],
       },
-
+      { path: "profile", element: <ManagerProfile /> },
       // fallback for manager subpaths
       { path: "*", element: <NotFound /> },
     ],
@@ -330,6 +331,7 @@ const router = createBrowserRouter([
         path: "/admin/create-user",
         element: <AdminCreateUserPage />,
       },
+      { path: "profile", element: <AdminProfile /> },
       // fallback for admin subpaths
       { path: "*", element: <NotFound /> },
     ],

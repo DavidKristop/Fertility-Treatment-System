@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import FormSection from "@/components/doctor/common/FormSection";
 import { TreatmentDetailProvider } from "@/lib/context/TreatmentDetailContext";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
+import TreatmentPhasesDetail from "@/components/TreatmentPhasesDetail";
 
 export default function TreatmentDetail(){
   const [isLoading, setIsLoading] = useState(false)
@@ -95,6 +96,7 @@ export default function TreatmentDetail(){
               <TreatmentInfoCard treatment={treatmentDetail!} />
             </FormSection>
           </Grid>
+          <TreatmentPhasesDetail treatment={treatmentDetail!} />
           <Grid size={12}>
             <FormSection title="Giai đoạn điều trị" icon={ClipboardPlus}>
               <TreatmentPhaseManager

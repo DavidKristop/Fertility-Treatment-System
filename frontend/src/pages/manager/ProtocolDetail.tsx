@@ -90,7 +90,7 @@ export default function ProtocolDetail() {
                 {/* Services */}
                 {phase.services && phase.services.length > 0 && (
                   <div className="mb-2">
-                    <div className="font-medium mb-1">Services:</div>
+                    <div className="font-medium mb-1">Dịch vụ:</div>
                     <ul className="list-disc list-inside">
                       {phase.services.map((s) => (
                         <li key={s.id}>
@@ -105,7 +105,7 @@ export default function ProtocolDetail() {
                 {/* Drugs */}
                 {phase.drugs && phase.drugs.length > 0 && (
                   <div>
-                    <div className="font-medium mb-1">Drugs:</div>
+                    <div className="font-medium mb-1">Giai đoạn:</div>
                     <ul className="list-disc list-inside">
                       {phase.drugs.map((d) => (
                         <li key={d.id}>
