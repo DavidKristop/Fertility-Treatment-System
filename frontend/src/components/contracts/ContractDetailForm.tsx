@@ -30,6 +30,7 @@ export default function ContractDetailForm({
     try {
       const response = await signContract(contractId,signedUrl)
       if (response.success) {
+        setContract({...contract!,signed:true})
         toast.success("Ký hợp đồng thành công")
       } else {
         toast.error("Ký hợp đồng thất bại")
@@ -179,7 +180,7 @@ export default function ContractDetailForm({
             <label className="text-sm font-medium text-gray-600">Nội dung hợp đồng</label>
             <div className="max-h-[500px] overflow-y-auto" >
               {contract.signed?
-              <Link to={contract.contractUrl} target="_blank">Xem hợp đồng</Link>:<>
+              <Link to={contract.contractUrl} className="text-blue-600 underline" target="_blank">Xem hợp đồng</Link>:<>
                 {contract.contractUrl && <DocusealForm 
                   readonlyFields={(userRole === "patient" || isExpired) ? [] : ["Chữ ký bệnh nhân"]}
                   src={contract.contractUrl} 

@@ -109,7 +109,6 @@ export default function RequestAppointment() {
         0,
         0
       );
-      // Giả lập API response
       const response = await createRequestAppointment({
         doctorId: selectedDoctor,
         appointmentDatetime: appointmentDateTime,
@@ -118,7 +117,6 @@ export default function RequestAppointment() {
         throw new Error(response.message || "Đã xảy ra lỗi khi đặt lịch")
       }
       toast.success(response.message)
-      // Reset form sau khi đặt thành công
       setSelectedDate(undefined)
       setSelectedTime(null)
       setSelectedDoctor(null)

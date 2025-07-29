@@ -56,7 +56,7 @@ export default function LoginPage() {
           navigate('/manager/dashboard');
           break;
         case 'ROLE_ADMIN':
-          navigate('/admin/dashboard');
+          navigate('/admin/manage-users');
           break;
         case 'ROLE_STAFF':
           navigate('/staff/dashboard');

@@ -1,40 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createService } from "@/api/service";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+
+import ServiceForm from "@/components/manager/services/ServiceForm";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
-export default function ManagerServiceCreatePage() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number | string>("");
-  const [unit, setUnit] = useState("");
-  const [loading, setLoading] = useState(false);
+const ManagerServiceCreatePage = () => {
+  const navigate = useNavigate();
   const {setTitle,setBreadCrumbs} = useAuthHeader()
 
-  const navigate = useNavigate();
+  const onSuccess = () => {
+    navigate("/manager/services");
+  };
 
-  const handleSubmit = async () => {
-    if (!name || !description || !price || !unit) {
-      toast.warning("Vui lòng điền đầy đủ thông tin");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await createService({ name, description, price: Number(price), unit });
-      toast.success("Tạo dịch vụ thành công");
-      setName("");
-      setDescription("");
-      setPrice("");
-      setUnit("");
-    } catch (err: any) {
-      toast.error(err.message || "Tạo dịch vụ thất bại");
-    } finally {
-      setLoading(false);
-    }
+  const onCancel = () => {
+    navigate("/manager/services");
   };
 
   useEffect(()=>{
@@ -46,40 +25,17 @@ export default function ManagerServiceCreatePage() {
   },[])
 
   return (
-    <div className="max-w-xl p-4 space-y-4">
-      <Input
-        placeholder="Tên dịch vụ"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <Input
-        placeholder="Mô tả"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <Input
-        placeholder="Giá (VND)"
-        type="number"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-      />
-      <Input
-        placeholder="Đơn vị (lần / buổi / gói...)"
-        value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-      />
-
-      <Button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Đang tạo..." : "Tạo dịch vụ"}
-      </Button>
-
-      <Button
-          variant="outline"
-          onClick={() => navigate("/manager/services")}
-          disabled={loading}
-      >
-          Quay lại danh sách
-      </Button>
+    <div className="container mx-auto py-8">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h1 className="text-2xl font-bold mb-6">Tạo dịch vụ mới</h1>
+        <ServiceForm
+          mode="create"
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+        />
+      </div>
     </div>
   );
-}
+};
+
+export default ManagerServiceCreatePage;

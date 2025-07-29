@@ -29,7 +29,6 @@ import PatientDashboard from "./pages/patient/PatientDashboard";
 import RequestAppointment from "./pages/patient/RequestAppointment";
 import PatientContracts from "./pages/patient/contracts/PatientContracts";
 import PatientContractDetail from "./pages/patient/contracts/ContractDetail";
-import ContractSignPage from "./pages/patient/contracts/ContractSignPage";
 import PatientProfile from "./pages/patient/profile/PatientProfile";
 import TreatmentPage from "./pages/patient/treatment/TreatmentPage";
 import TreatmentDetailPage from "./pages/patient/treatment/TreatmentDetailPage";
@@ -58,7 +57,6 @@ import ManagerContracts from "./pages/manager/contracts/ManagerContracts";
 import ManagerContractDetail from "./pages/manager/contracts/ContractDetail";
 import DrugsManagement from "./pages/manager/drugs/DrugManagement";
 import CreateDrug from "./pages/manager/drugs/CreateDrug";
-import DrugDetail from "./pages/manager/drugs/DrugDetail";
 import EditDrug from "./pages/manager/drugs/EditDrug";
 import StaffAssignedDrugPage from "@/pages/staff/AssignDrug/StaffAssignDrugPage";
 import ManagerServicePage from "@/pages/manager/servicePages/ManagerServicePage";
@@ -90,7 +88,6 @@ import DoctorAssignDrugDetailPage from "./pages/doctor/assignDrugs/DoctorAssignD
 import MySchedulePage from "./pages/patient/MySchedulePage";
 import ManageUserPage from "./pages/admin/ManageUsersPage";
 import UserDetailPage from "./pages/admin/UserDetailPage";
-import CreateManagerPage from "./pages/admin/CreateManagerPage";
 import Layout from "./components/common/AuthLayout/Layout";
 import {
   admindSideBarItemsProp,
@@ -102,7 +99,8 @@ import {
 import ManagerProfile from "./pages/manager/ManagerProfile";
 import NotFound from "./pages/not-found/not-found";
 import AdminProfile from "./pages/admin/AdminProfile";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import CreateUserPage from "./pages/manager/CreateUserPage";
+import AdminCreateUserPage from "./pages/admin/AdminCreateUserPage";
 
 // Layout for authenticated dashboards (no header/footer)
 
@@ -188,7 +186,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <PatientContracts /> },
           { path: ":id", element: <PatientContractDetail /> },
-          { path: ":id/sign", element: <ContractSignPage /> }, // New route for signing contracts
         ],
       },
       { path: "profile", element: <PatientProfile /> },
@@ -224,6 +221,7 @@ const router = createBrowserRouter([
           { path: ":id", element: <PaymentDetail /> },
         ],
       },
+      { path: "create-doctor", element: <CreateDoctorPage /> },
       { path: "assigned-drugs", element: <StaffAssignedDrugPage /> },
       { path: "assigned-drugs/:id", element: <StaffAssignDrugDetailPage /> },
       { path: "get-all-feedback", element: <StaffFeedbackPage /> },
@@ -308,6 +306,7 @@ const router = createBrowserRouter([
       { path: "protocols", element: <ProtocolsList /> },
       { path: "createprotocols", element: <CreateProtocolsPage /> },
       { path: "protocols/protocolDetail/:id", element: <ProtocolDetailPage /> },
+      { path: "create-user", element: <CreateUserPage /> },
       { path: "profile", element: <ManagerProfile /> },
       {
         path: "contracts",
@@ -321,7 +320,6 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <DrugsManagement /> },
           { path: "create", element: <CreateDrug /> },
-          { path: ":id", element: <DrugDetail /> },
           { path: "edit/:id", element: <EditDrug /> },
         ],
       },
@@ -343,10 +341,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        path: "dashboard",
-        element: <AdminDashboard />,
-      },
+
       {
         path: "/admin/manage-users",
         element: <ManageUserPage />,
@@ -356,8 +351,8 @@ const router = createBrowserRouter([
         element: <UserDetailPage />,
       },
       {
-        path: "/admin/create-manager",
-        element: <CreateManagerPage />,
+        path: "/admin/create-user",
+        element: <AdminCreateUserPage />,
       },
       {
         path: "profile",

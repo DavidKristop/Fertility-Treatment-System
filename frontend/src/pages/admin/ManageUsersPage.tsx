@@ -119,8 +119,6 @@ export default function ManageUserPage() {
   useEffect(() => {
     setTitle("Quản lý người dùng");
     setBreadCrumbs([
-      { label: "Trang chủ", path: "/admin" },
-      { label: "Quản lý", path: "/admin" },
       { label: "Quản lý người dùng", path: "/admin/manage-users" },
     ]);
   }, []);

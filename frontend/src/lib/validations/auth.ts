@@ -3,7 +3,6 @@ import { z } from "zod";
 
 const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,32}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-const usernameRegex = /^[a-zA-Z]+$/;
 const phoneRegex = /^[0-9]{10}$/;
 
 // Hàm kiểm tra định dạng YYYY-MM-DD và tính tuổi trực tiếp
@@ -78,7 +77,7 @@ export const registerSchema = loginSchema.extend({
     })
     .refine((dateStr) => calculateAgeFromString(dateStr) >= 18, {
       message: "Bạn phải trên 18 tuổi",
-    }), // Giữ nguyên chuỗi, không cần transform thêm
+    }),
   
   password: z.string({
     required_error: "Mật khẩu là bắt buộc",
@@ -86,14 +85,55 @@ export const registerSchema = loginSchema.extend({
     .regex(passwordRegex, "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt và không chứa khoảng trắng")
     .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
     .max(32, "Mật khẩu phải có nhiều nhất 32 ký tự"),
+})
+// .refine((data) => data.password === data.confirmPassword, {
+//   message: "Mật khẩu xác nhận không khớp",
+//   path: ["confirmPassword"],
+//});
 
+export const patientRegisterSchema = registerSchema.extend({
+  role: z.string().default("ROLE_PATIENT").readonly(),
+  medicalHistory: z.string()
+    .max(200, "Lịch sử bệnh không được quá 200 ký tự")
+    .optional()
+})
+
+export const patientRegisterSchemaWithConfirmPassword = patientRegisterSchema.extend({
   confirmPassword: z.string({
     required_error: "Xác nhận mật khẩu là bắt buộc",
   })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Mật khẩu xác nhận không khớp",
   path: ["confirmPassword"],
-});
+})
+
+export const doctorRegisterSchema = registerSchema.extend({
+  role: z.string().default("ROLE_DOCTOR").readonly(),
+  specialty: z.string({
+    required_error: "Chuyên khoa là bắt buộc",
+  }),
+  degree: z.string({
+    required_error: "Học vị là bắt buộc",
+  }),
+  yearsOfExperience: z.number({
+    required_error: "Kinh nghiệm là bắt buộc",
+  }).min(0, "Kinh nghiệm phải lớn hơn 0"),
+  licenseNumber: z.string({
+    required_error: "Số giấy phép là bắt buộc",
+  })
+})
+
+export const staffRegisterSchema = registerSchema.extend({
+  role: z.string().default("ROLE_STAFF").readonly(),
+})
+
+export const adminRegisterSchema = registerSchema.extend({
+  role: z.string().default("ROLE_ADMIN").readonly(),
+})
+
+export const managerRegisterSchema = registerSchema.extend({
+  role: z.string().default("ROLE_MANAGER").readonly(),
+})
 
 export const forgotPasswordSchema = z.object({
   email: z.string({
@@ -164,7 +204,27 @@ export const assignDrugSetRequestSchema = z.object({
   patientDrugs:z.array(patientDrugSetRequestSchema)
 })
 
+export const serviceSchema = z.object({
+  name: z.string()
+    .min(1, "Tên dịch vụ không được để trống")
+    .max(50, "Tên không được quá 50 ký tự"),
+  description: z.string()
+    .max(200, "Mô tả không được quá 200 ký tự"),
+  price: z.number()
+    .min(0.01, "Giá phải lớn hơn 0"),
+  unit: z.string()
+    .min(1, "Đơn vị không được để trống")
+    .max(50, "Đơn vị không được quá 50 ký tự"),
+});
+
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
+export type PatientRegisterFormWithConfirmPasswordValues = z.infer<typeof patientRegisterSchemaWithConfirmPassword>;
+export type PatientRegisterFormValues = z.infer<typeof patientRegisterSchema>;
+export type DoctorRegisterFormValues = z.infer<typeof doctorRegisterSchema>;
+export type StaffRegisterFormValues = z.infer<typeof staffRegisterSchema>;
+export type AdminRegisterFormValues = z.infer<typeof adminRegisterSchema>;
+export type ManagerRegisterFormValues = z.infer<typeof managerRegisterSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+export type ServiceSchema = z.infer<typeof serviceSchema>;
 export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

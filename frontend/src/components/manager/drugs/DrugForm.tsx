@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Save, Pill, AlertTriangle } from "lucide-react"
-import { createDrug, updateDrug } from "@/api/drug"
+import { Save, Pill, Ban, CheckCircle } from "lucide-react"
+import { createDrug, updateDrug, deactivateDrug, reactivateDrug } from "@/api/drug"
 import type { DrugCreateRequest, DrugResponse, DrugUpdateRequest } from "@/api/types"
 import { toast } from "react-toastify"
 
@@ -25,17 +25,12 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
     price: 0,
     unit: ""
   })
+  const [actionLoading, setActionLoading] = useState(false)
 
   const isEditMode = mode === 'edit'
 
-  // ✅ LOGIC ĐỂN GIẢN: Active = không edit, Inactive = cho thử edit
-  const canEdit = isEditMode ? !drug?.active : true
+  const canEdit = true  // Always allow editing
 
-  const getEditBlockReason = () => {
-    if (!isEditMode) return null
-    if (drug?.active) return "Thuốc đang hoạt động - vô hiệu hóa trước khi chỉnh sửa"
-    return null
-  }
 
   useEffect(() => {
     if (isEditMode && drug) {
@@ -55,15 +50,39 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
     }
   }, [drug, isEditMode])
 
+  const handleDeactivate = async () => {
+    if (!drug?.id) return;
+
+    setActionLoading(true);
+    try {
+      await deactivateDrug(drug.id);
+      toast.success("Thuốc đã được vô hiệu hóa thành công!");
+      onSuccess();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Lỗi khi vô hiệu hóa thuốc");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleReactivate = async () => {
+    if (!drug?.id) return;
+
+    setActionLoading(true);
+    try {
+      await reactivateDrug(drug.id);
+      toast.success("Thuốc đã được kích hoạt lại thành công!");
+      onSuccess();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Lỗi khi kích hoạt lại thuốc");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (isEditMode && !canEdit) {
-      toast.error(`Không thể cập nhật: ${getEditBlockReason()}`)
-      return
-    }
-
-    // Validation
     if (!formData.name.trim()) {
       toast.error("Tên thuốc không được để trống")
       return
@@ -84,16 +103,14 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
     setLoading(true)
     try {
       if (isEditMode && drug) {
-        // ✅ Gọi PUT /api/drugs/{id} - backend sẽ validate 120 ngày
         await updateDrug(drug.id, formData as DrugUpdateRequest)
-        toast.success("Thuốc đã được cập nhật và kích hoạt lại thành công!")
+        toast.success("Thuốc đã được cập nhật thành công!")
       } else {
         await createDrug(formData)
         toast.success("Thuốc đã được tạo thành công!")
       }
       onSuccess()
     } catch (error) {
-      // ✅ Backend sẽ báo lỗi nếu chưa đủ 120 ngày
       const action = isEditMode ? "cập nhật" : "tạo"
       toast.error(error instanceof Error ? error.message : `Lỗi khi ${action} thuốc`)
     } finally {
@@ -138,32 +155,6 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {/* ✅ Warning chỉ cho active drugs */}
-        {isEditMode && !canEdit && (
-          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-              <div className="text-amber-800">
-                <h4 className="font-medium mb-2">Không thể chỉnh sửa thuốc</h4>
-                <p className="text-sm">{getEditBlockReason()}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ✅ Info cho inactive drugs */}
-        {isEditMode && canEdit && (
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="text-blue-800">
-              <h4 className="font-medium mb-1">Chỉnh sửa thuốc</h4>
-              <p className="text-sm">
-                Lưu ý: Thuốc phải được vô hiệu hóa ít nhất 120 ngày mới có thể cập nhật. 
-                Hệ thống sẽ kiểm tra điều kiện khi submit.
-              </p>
-            </div>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
@@ -177,7 +168,7 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
                 placeholder="Nhập tên thuốc..."
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                disabled={loading || (isEditMode && !canEdit)}
+                disabled={loading}
                 required
               />
             </div>
@@ -193,7 +184,7 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
                 placeholder="Ví dụ: viên, chai, ml..."
                 value={formData.unit}
                 onChange={(e) => handleInputChange('unit', e.target.value)}
-                disabled={loading || (isEditMode && !canEdit)}
+                disabled={loading}
                 required
               />
             </div>
@@ -255,11 +246,40 @@ export default function DrugForm({ drug, mode, onSuccess, onCancel }: DrugFormPr
                 </>
               )}
             </Button>
+            {isEditMode && drug && (
+              <Button
+                variant={drug.active ? "destructive" : "default"}
+                onClick={drug.active ? handleDeactivate : handleReactivate}
+                disabled={actionLoading || loading}
+                className="flex-1 md:flex-none"
+              >
+                {actionLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Đang xử lý...
+                  </>
+                ) : (
+                  <>
+                    {drug.active ? (
+                      <>
+                        <Ban className="h-4 w-4 mr-2" />
+                        Vô hiệu hóa
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Kích hoạt lại
+                      </>
+                    )}
+                  </>
+                )}
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
               onClick={onCancel}
-              disabled={loading}
+              disabled={loading || actionLoading}
             >
               Hủy bỏ
             </Button>

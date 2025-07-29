@@ -16,8 +16,13 @@ import { me } from "@/api/auth";
 
 
 
+<<<<<<< HEAD
 export default function ManagerProfile() {
 
+=======
+export default function PatientProfile() {
+  const [formData, setFormData] = useState(patientData);
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
   const {setTitle,setBreadCrumbs} = useAuthHeader()
   useEffect(() => {
     setTitle("Hồ sơ & cài đặt");
@@ -29,7 +34,10 @@ export default function ManagerProfile() {
   const [user, setUser] = useState<{ fullName: string; role: string; email: string; phone: string; address: string; dateOfBirth: string } | null>(null);
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
   const calculateAge = (dateOfBirth: string) => {
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
@@ -81,11 +89,7 @@ export default function ManagerProfile() {
                 <Button
                   size="sm"
                   className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0"
-                  onClick={() => {
-                    /* TODO: Handle avatar upload */
-                  }}
                 >
-                  <Camera className="h-4 w-4" />
                 </Button>
               </div>
 
@@ -98,11 +102,17 @@ export default function ManagerProfile() {
                     <Calendar className="h-4 w-4" />
                     <span>{formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)</span>
                   </div>
+<<<<<<< HEAD
 
                 </div>
               </div>
 
 
+=======
+                </div>
+              </div>
+
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
             </div>
           </CardContent>
         </Card>
@@ -120,18 +130,26 @@ export default function ManagerProfile() {
               <div className="grid grid-cols-1 gap-4">
                 <div>
                   <Label htmlFor="fullName">Họ và tên</Label>
+<<<<<<< HEAD
 
                     <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
    
+=======
+                  <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Mail className="h-4 w-4 text-gray-400" />
+<<<<<<< HEAD
  
                       <span className="text-sm text-gray-600">{user.email}</span>
 
+=======
+                    <span className="text-sm text-gray-600">{user.email}</span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
 
@@ -139,9 +157,13 @@ export default function ManagerProfile() {
                   <Label htmlFor="phone">Số điện thoại</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Phone className="h-4 w-4 text-gray-400" />
+<<<<<<< HEAD
 
                       <span className="text-sm text-gray-600">{user.phone}</span>
     
+=======
+                    <span className="text-sm text-gray-600">{user.phone}</span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
 
@@ -149,10 +171,16 @@ export default function ManagerProfile() {
                   <Label htmlFor="dateOfBirth">Ngày sinh</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4 text-gray-400" />
+<<<<<<< HEAD
 
                       <span className="text-sm text-gray-600">
                         {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
                       </span>
+=======
+                    <span className="text-sm text-gray-600">
+                      {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
+                    </span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
 
@@ -160,9 +188,13 @@ export default function ManagerProfile() {
                   <Label htmlFor="address">Địa chỉ</Label>
                   <div className="flex items-start gap-2 mt-1">
                     <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+<<<<<<< HEAD
 
                       <span className="text-sm text-gray-600">{user.address}</span>
 
+=======
+                    <span className="text-sm text-gray-600">{user.address}</span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
               </div>

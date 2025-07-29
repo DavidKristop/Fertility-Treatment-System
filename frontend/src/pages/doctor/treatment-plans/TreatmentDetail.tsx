@@ -101,7 +101,7 @@ export default function TreatmentDetail(){
                 role="doctor"
                 initialPhasePosition={treatmentDetail?.currentPhase.position!+1}
               />
-              {treatmentDetail?.canMoveToNextPhase && (<Button onClick={() => changePhase(treatmentDetail!.id!)} disabled={isMovingToNextPhase}>
+              {treatmentDetail?.canMoveToNextPhase && (<Button className="mt-4" onClick={() => changePhase(treatmentDetail!.id!)} disabled={isMovingToNextPhase}>
                 {isMovingToNextPhase ? "Đang thực hiện thao tác..." : 
                   treatmentDetail?.currentPhase.position === treatmentDetail?.phases.length - 1 ? "Hoàn thành kế hoạch điều trị" :
                   "Di chuyển đến giai đoạn tiếp theo"

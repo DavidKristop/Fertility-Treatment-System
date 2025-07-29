@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { type FormikProps } from 'formik';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import type { RegisterFormValues } from '@/lib/validations/auth';
 import { Button } from '../ui/button';
 import { Eye, EyeOff } from 'lucide-react';
+import type { PatientRegisterFormWithConfirmPasswordValues } from '@/lib/validations/auth';
+import { TextareaAutosize } from '@mui/material';
 
 interface RegisterFormProps {
-  formik: FormikProps<RegisterFormValues>;
+  formik: FormikProps<PatientRegisterFormWithConfirmPasswordValues>;
 }
 
 const formatDate = (dateStr: string) => {
@@ -120,6 +121,23 @@ export default function RegisterForm({ formik }: RegisterFormProps) {
             <div className="text-red-500 text-xs sm:text-sm mt-1">
               {formik.errors.dateOfBirth} {formik.values.dateOfBirth && `(Định dạng: ${formatDate(formik.values.dateOfBirth)})`}
             </div>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="medicalHistory" className="block text-sm font-medium text-gray-700">
+            Bệnh sử
+          </Label>
+          <TextareaAutosize
+            id="medicalHistory"
+            placeholder="Nhập bệnh sử của bạn(VD: dị ứng, bệnh tim, huyết áp cao, ... )"
+            {...formik.getFieldProps('medicalHistory')}
+            className={`mt-1 w-full bg-gray-100 p-2 text-base sm:text-sm ${
+              formik.touched.medicalHistory && formik.errors.medicalHistory ? 'border-red-500' : ''
+            }`}
+          />
+          {formik.touched.medicalHistory && formik.errors.medicalHistory && (
+            <div className="text-red-500 text-xs sm:text-sm mt-1">{formik.errors.medicalHistory}</div>
           )}
         </div>
 

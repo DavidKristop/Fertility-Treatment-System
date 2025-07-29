@@ -111,7 +111,6 @@ export default function EditDrug() {
         </div>
       </div>
 
-      {/* ✅ Reuse DrugForm in edit mode */}
       <DrugForm
         drug={drug}
         mode="edit"

@@ -16,7 +16,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 
 export default function ManagerServicePage() {
@@ -112,46 +112,35 @@ export default function ManagerServicePage() {
             <div className="text-center text-gray-500">Không có dịch vụ nào</div>
           ) : (
             services.map((service) => (
-              <div
-                key={service.id}
-                className="border rounded-lg p-4 shadow-sm bg-white"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-semibold text-lg">{service.name}</h3>
-                    <p className="text-sm text-gray-500">{service.description}</p>
-                    <p className="text-sm mt-1">
-                      Giá:{" "}
-                      <span className="font-medium text-green-700">
-                        {service.price.toLocaleString("vi-VN")}đ / {service.unit}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="secondary"
-                      onClick={() => navigate(`/manager/services/${service.id}`)}
-                    >
-                      Xem
-                    </Button>
-                    <Button
-                      variant="outline"
-                      disabled={service.active}
-                      onClick={() => navigate(`/manager/services/${service.id}/edit`)}
-                    >
-                      Cập nhật
-                    </Button>
-                    <Button
-                      variant={service.active ? "destructive" : "default"}
-                      onClick={() =>
-                        handleToggleActive(service.id, service.active)
-                      }
-                    >
-                      {service.active ? "Vô hiệu hóa" : "Kích hoạt lại"}
-                    </Button>
+              <Link to={`/manager/services/${service.id}/edit`}>
+                <div
+                  key={service.id}
+                  className="border rounded-lg p-4 shadow-sm bg-white"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-semibold text-lg">{service.name}</h3>
+                      <p className="text-sm text-gray-500">{service.description}</p>
+                      <p className="text-sm mt-1">
+                        Giá:{" "}
+                        <span className="font-medium text-green-700">
+                          {service.price.toLocaleString("vi-VN")}đ / {service.unit}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={service.active ? "destructive" : "default"}
+                        onClick={() =>
+                          handleToggleActive(service.id, service.active)
+                        }
+                      >
+                        {service.active ? "Vô hiệu hóa" : "Kích hoạt lại"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>

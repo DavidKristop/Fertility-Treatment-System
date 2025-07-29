@@ -79,6 +79,17 @@ export interface DoctorResponse {
   licenseNumber: string;
 }
 
+export interface UserResponse{
+  id: string;
+  email: string;
+  phone: string;
+  fullName: string;
+  dateOfBirth: string;
+  address: string;
+  avatarUrl: string;
+  role: string;
+}
+
 export interface ManagedUserResponse {
   id: string;
   email: string;
@@ -500,9 +511,11 @@ export type AppointmentStatus = "PENDING" | "ACCEPTED" | "DENIED";
 
 export type AssignDrugStatus = "PENDING" | "COMPLETED" | "CANCELLED";
 
-export type PaymentMethod = "CASH" | "VNPAY" | null;
+export type PaymentMethod = "CASH" | "VNPAY";
 
 export type PaymentStatus = "PENDING" | "COMPLETED" | "CANCELED";
+
+export type UserRole = "ROLE_PATIENT" | "ROLE_STAFF" | "ROLE_DOCTOR" | "ROLE_ADMIN" | "ROLE_MANAGER";
 
 // ==================== TRANSLATE STATUS ENUMS ==================== 
 
