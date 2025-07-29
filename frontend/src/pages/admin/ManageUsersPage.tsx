@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { deactivateUser, getUsers, reactivateUser } from "@/api/user";
 import type { ManagedUserResponse } from "@/api/types";
-import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
+import { useAuthHeader } from "@/lib/context/AuthHeaderContext";
 import {
   Pagination,
   PaginationContent,
@@ -44,13 +44,13 @@ export default function ManageUserPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [role, setRole] = useState(roleParam);
   const [keyword, setKeyword] = useState(keywordParam);
-  const {setTitle,setBreadCrumbs} = useAuthHeader()
+  const { setTitle, setBreadCrumbs } = useAuthHeader();
 
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await getUsers( role, keyword, page, 10 );
+      const res = await getUsers(role, keyword, page, 10);
       setUsers(res.payload.content);
       setTotalPages(res.payload.totalPages);
     } catch (err) {
@@ -59,7 +59,6 @@ export default function ManageUserPage() {
       setLoading(false);
     }
   };
-
 
   const handleDeactivate = async (id: string) => {
     try {
@@ -101,7 +100,9 @@ export default function ManageUserPage() {
       case "ROLE_MANAGER":
         return "Quản lý";
       case "ROLE_PATIENT":
-        return "Người dùng";
+        return "Bệnh nhân";
+      case "ROLE_STAFF":
+        return "Nhân viên";
       default:
         return role;
     }
@@ -116,12 +117,12 @@ export default function ManageUserPage() {
   }, [role, keyword, page]);
 
   useEffect(() => {
-    setTitle("Quản lý người dùng")
+    setTitle("Quản lý người dùng");
     setBreadCrumbs([
       { label: "Quản lý người dùng", path: "/admin/manage-users" },
-    ])
-  },[])
-  
+    ]);
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <h2 className="text-xl font-bold mb-4">Danh sách người dùng</h2>
@@ -175,8 +176,8 @@ export default function ManageUserPage() {
                 <strong>Họ tên:</strong> {user.fullName}
               </div>
               <div>
-                <strong>Vai trò:</strong>{" "}
-                {renderRoleIcon(user.role)} {getRoleLabel(user.role)}
+                <strong>Vai trò:</strong> {renderRoleIcon(user.role)}{" "}
+                {getRoleLabel(user.role)}
               </div>
               <div>
                 <strong>Trạng thái:</strong>{" "}
@@ -215,7 +216,9 @@ export default function ManageUserPage() {
                 <Button
                   variant="outline"
                   className="flex items-center gap-1"
-                  onClick={() => window.location.href = `/admin/manage-users/${user.id}`}
+                  onClick={() =>
+                    (window.location.href = `/admin/manage-users/${user.id}`)
+                  }
                 >
                   <Eye className="w-4 h-4" />
                   Xem chi tiết
@@ -247,7 +250,9 @@ export default function ManageUserPage() {
               ))}
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

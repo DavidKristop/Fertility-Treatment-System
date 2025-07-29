@@ -91,7 +91,7 @@ export default function ManagerProfile() {
 
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{user.fullName}</h1>
-                <p className="text-lg text-blue-600 mb-3">Bác sĩ</p>
+                <p className="text-lg text-blue-600 mb-3">Quản trị</p>
 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600 mb-4">
                   <div className="flex items-center gap-1">

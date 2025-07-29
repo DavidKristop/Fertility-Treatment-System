@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import  Avatar  from "@/assets/avatar.png";
 import { useAuthHeader } from "@/lib/context/AuthHeaderContext"
@@ -11,50 +10,34 @@ import {
   Phone,
   MapPin,
   Calendar,
-  Stethoscope,
-  Edit,
-  Save,
-  X,
   Camera,
 } from "lucide-react";
 import { me } from "@/api/auth";
 
-// Mock data for patient profile
-const patientData = {
-  // From User table
-  id: "987e6543-e21b-12d3-a456-426614174001",
-  email: "patient.tran@ucare.vn",
-  phone: "0909876543",
-  fullName: "Nguyễn Thị Lan",
-  dateOfBirth: "1990-07-20",
-  address: "456 Đường Nguyễn Huệ, Quận 1, TP.HCM",
-  avatarUrl: "/placeholder.svg?height=150&width=150",
 
-  // Additional patient information
-  bloodType: "O+",
-  medicalHistory: ["Tiểu đường type 2", "Tăng huyết áp", "Dị ứng penicillin"],
-  emergencyContact: "0908765432",
-};
 
+<<<<<<< HEAD
+export default function ManagerProfile() {
+
+=======
 export default function PatientProfile() {
   const [formData, setFormData] = useState(patientData);
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
   const {setTitle,setBreadCrumbs} = useAuthHeader()
   useEffect(() => {
-    setTitle("Hồ sơ nhân viên")
+    setTitle("Hồ sơ & cài đặt");
     setBreadCrumbs([
-      { label: "Trang tổng quan", path: "/staff/dashboard" },
-      { label: "Hồ sơ nhân viên" },
+      { label: "Trang tổng quan", path: "/manager/dashboard" },
+      { label: "Hồ sơ cài đặt" },
     ])
   }, [setTitle, setBreadCrumbs])
   const [user, setUser] = useState<{ fullName: string; role: string; email: string; phone: string; address: string; dateOfBirth: string } | null>(null);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
   const calculateAge = (dateOfBirth: string) => {
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
@@ -119,9 +102,17 @@ export default function PatientProfile() {
                     <Calendar className="h-4 w-4" />
                     <span>{formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)</span>
                   </div>
+<<<<<<< HEAD
+
                 </div>
               </div>
 
+
+=======
+                </div>
+              </div>
+
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
             </div>
           </CardContent>
         </Card>
@@ -139,14 +130,26 @@ export default function PatientProfile() {
               <div className="grid grid-cols-1 gap-4">
                 <div>
                   <Label htmlFor="fullName">Họ và tên</Label>
+<<<<<<< HEAD
+
+                    <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
+   
+=======
                   <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                 </div>
 
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Mail className="h-4 w-4 text-gray-400" />
+<<<<<<< HEAD
+ 
+                      <span className="text-sm text-gray-600">{user.email}</span>
+
+=======
                     <span className="text-sm text-gray-600">{user.email}</span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
 
@@ -154,7 +157,13 @@ export default function PatientProfile() {
                   <Label htmlFor="phone">Số điện thoại</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Phone className="h-4 w-4 text-gray-400" />
+<<<<<<< HEAD
+
+                      <span className="text-sm text-gray-600">{user.phone}</span>
+    
+=======
                     <span className="text-sm text-gray-600">{user.phone}</span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
 
@@ -162,9 +171,16 @@ export default function PatientProfile() {
                   <Label htmlFor="dateOfBirth">Ngày sinh</Label>
                   <div className="flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4 text-gray-400" />
+<<<<<<< HEAD
+
+                      <span className="text-sm text-gray-600">
+                        {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
+                      </span>
+=======
                     <span className="text-sm text-gray-600">
                       {formatDate(user.dateOfBirth)} ({calculateAge(user.dateOfBirth)} tuổi)
                     </span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
 
@@ -172,7 +188,13 @@ export default function PatientProfile() {
                   <Label htmlFor="address">Địa chỉ</Label>
                   <div className="flex items-start gap-2 mt-1">
                     <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+<<<<<<< HEAD
+
+                      <span className="text-sm text-gray-600">{user.address}</span>
+
+=======
                     <span className="text-sm text-gray-600">{user.address}</span>
+>>>>>>> 5a96ad1a13c85796834f4217996ea3c66c8b16f6
                   </div>
                 </div>
               </div>

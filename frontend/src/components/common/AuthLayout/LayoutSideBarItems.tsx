@@ -1,6 +1,6 @@
 import type { SidebarItem } from "@/api/types";
 
-import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, AlertTriangle, BarChart, FileText, MessageSquare, PlusIcon, Settings, Users, DollarSign, ListCollapse, Plus, MessageCircle, ChartBar, FilePlus2 } from "lucide-react";
+import { LayoutDashboard, Calendar, CalendarCheck, CalendarPlus, Activity, FileSignature, Pill, CreditCard, Bell, User, ClipboardList, FileText, Users, DollarSign, ListCollapse, Plus, MessageCircle, ChartBar, FilePlus2 } from "lucide-react";
 
 
 //Patient
@@ -77,41 +77,48 @@ export const patientSidebarItemsProp: SidebarItem[] = [
 //Doctor
 
 export const doctorSidebarItemsProp: SidebarItem[] = [
-    {
-      id: "dashboard",
-      label: "Trang tổng quan",
-      icon: LayoutDashboard,
-      path: "/doctor/dashboard",
-    },
-  
-    {
-      id: "schedule",
-      label: "Lịch khám",
-      icon: Calendar,
-      path: "/doctor/schedule",
-    },
-  
-    {
-      id: "assigned-drugs",
-      label: "Đơn thuốc",
-      icon: Pill,
-      path: "/doctor/assigned-drugs",
-    },
-  
-    {
-      id: "pending-approvals",
-      label: "Chờ duyệt",
-      icon: ClipboardList,
-      path: "/doctor/pending",
-    },
-  
-    {
-      id: "treatment-plans",
-      label: "Kế hoạch điều trị",
-      icon: Activity,
-      path: "/doctor/treatment-plans",
-    },
-]
+  {
+    id: "dashboard",
+    label: "Trang tổng quan",
+    icon: LayoutDashboard,
+    path: "/doctor/dashboard",
+  },
+
+  {
+    id: "schedule",
+    label: "Lịch khám",
+    icon: Calendar,
+    path: "/doctor/schedule",
+  },
+
+  {
+    id: "assigned-drugs",
+    label: "Đơn thuốc",
+    icon: Pill,
+    path: "/doctor/assigned-drugs",
+  },
+
+  {
+    id: "pending-approvals",
+    label: "Chờ duyệt",
+    icon: ClipboardList,
+    path: "/doctor/pending",
+  },
+
+  {
+    id: "treatment-plans",
+    label: "Kế hoạch điều trị",
+    icon: Activity,
+    path: "/doctor/treatment-plans",
+  },
+
+  {
+    id: "profile",
+    label: "Hồ sơ & Cài đặt",
+    icon: User,
+    path: "/doctor/profile",
+  },
+];
 
 //Admin
 export const admindSideBarItemsProp: SidebarItem[] = [
